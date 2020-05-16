@@ -20,24 +20,21 @@ public class MKConfig {
         CLIENT_CONFIG = CLIENT_BUILDER.build();
     }
 
-    public static final String CATEGORY_GENERAL = "general";
+    public static ForgeConfigSpec.ConfigValue<Integer> talentPointLimit;
 
-    public static ForgeConfigSpec.BooleanValue doLogging;
-    public static ForgeConfigSpec.BooleanValue doClientLogging;
-
-    private static void initClient(ForgeConfigSpec.Builder CLIENT_BUILDER) {
-        CLIENT_BUILDER.comment("General settings for all mods using mcjtylib").push(CATEGORY_GENERAL);
-
-        doClientLogging = SERVER_BUILDER.comment("Do logging on the client").define("logging", false);
-
-        CLIENT_BUILDER.pop();
+    private static void initClient(ForgeConfigSpec.Builder builder) {
+        builder.comment("General settings").push("general");
+        builder.pop();
     }
 
-    private static void initServer(ForgeConfigSpec.Builder SERVER_BUILDER) {
-        SERVER_BUILDER.comment("General settings for all mods using mcjtylib").push(CATEGORY_GENERAL);
+    private static void initServer(ForgeConfigSpec.Builder builder) {
+        builder.comment("General settings").push("general");
+        builder.pop();
 
-        doLogging = SERVER_BUILDER.comment("Do logging on the server").define("logging", false);
-
-        SERVER_BUILDER.pop();
+        builder.comment("Gameplay settings").push("gameplay");
+        talentPointLimit = builder
+                .comment("Max number of talents (-1 for unlimited)")
+                .define("talentPointLimit", -1);
+        builder.pop();
     }
 }

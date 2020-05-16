@@ -2,6 +2,7 @@ package com.chaosbuffalo.mkcore;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -20,7 +21,7 @@ import org.apache.logging.log4j.Logger;
 public class MKCore {
     public static final String MOD_ID = "mkcore";
     // Directly reference a log4j logger.
-    private static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger();
 
     public static MKCore INSTANCE;
 
@@ -40,6 +41,7 @@ public class MKCore {
         // some preinit code
         LOGGER.info("HELLO FROM PREINIT");
         LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
+        Capabilities.registerCapabilities();
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
@@ -63,5 +65,9 @@ public class MKCore {
             // register a new block here
             LOGGER.info("HELLO from Register Block");
         }
+    }
+
+    public static ResourceLocation makeRL(String path) {
+        return new ResourceLocation(MKCore.MOD_ID, path);
     }
 }
