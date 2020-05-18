@@ -1,6 +1,6 @@
-package com.chaosbuffalo.mkcore;
+package com.chaosbuffalo.mkcore.core;
 
-import com.chaosbuffalo.mkcore.core.IMKPlayer;
+import com.chaosbuffalo.mkcore.MKCore;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
