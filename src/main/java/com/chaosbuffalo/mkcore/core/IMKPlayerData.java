@@ -7,7 +7,17 @@ public interface IMKPlayerData {
 
     void attach(PlayerEntity player);
 
+    PlayerEntity getPlayer();
+
     float getMana();
+
+    default float getHealth() {
+        return getPlayer().getHealth();
+    }
+
+    default float getMaxHealth() {
+        return getPlayer().getMaxHealth();
+    }
 
     void update();
 
