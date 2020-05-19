@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkcore.network;
 
 import com.chaosbuffalo.mkcore.Capabilities;
-import com.chaosbuffalo.mkcore.core.PlayerCapabilityHandler;
+import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -17,7 +17,7 @@ public class PlayerDataSyncPacket {
     UUID targetUUID;
     CompoundNBT updateTag;
 
-    public PlayerDataSyncPacket(PlayerCapabilityHandler player, UUID targetUUID) {
+    public PlayerDataSyncPacket(MKPlayerData player, UUID targetUUID) {
         this.targetUUID = targetUUID;
         updateTag = new CompoundNBT();
         player.serializeClientUpdate(updateTag);
@@ -46,8 +46,8 @@ public class PlayerDataSyncPacket {
                 return;
 
             entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap -> {
-                if (cap instanceof PlayerCapabilityHandler) {
-                    ((PlayerCapabilityHandler) cap).deserializeClientUpdate(updateTag);
+                if (cap instanceof MKPlayerData) {
+                    ((MKPlayerData) cap).deserializeClientUpdate(updateTag);
                 }
             });
         });

@@ -3,7 +3,7 @@ package com.chaosbuffalo.mkcore.core;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 
-public interface IMKPlayer {
+public interface IMKPlayerData {
 
     void attach(PlayerEntity player);
 

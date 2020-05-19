@@ -20,13 +20,13 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class PlayerCapabilityHandler implements IMKPlayer {
+public class MKPlayerData implements IMKPlayerData {
 
     private PlayerEntity player;
     private final SyncFloat mana = new SyncFloat("mana", 0f);
     private final CompositeUpdater dirtyUpdater = new CompositeUpdater(mana);
 
-    public PlayerCapabilityHandler() {
+    public MKPlayerData() {
 
     }
 
@@ -102,17 +102,17 @@ public class PlayerCapabilityHandler implements IMKPlayer {
     }
 
 
-    public static class Storage implements Capability.IStorage<IMKPlayer> {
+    public static class Storage implements Capability.IStorage<IMKPlayerData> {
 
         @Override
-        public CompoundNBT writeNBT(Capability<IMKPlayer> capability, IMKPlayer instance, Direction side) {
+        public CompoundNBT writeNBT(Capability<IMKPlayerData> capability, IMKPlayerData instance, Direction side) {
             CompoundNBT tag = new CompoundNBT();
             instance.serialize(tag);
             return tag;
         }
 
         @Override
-        public void readNBT(Capability<IMKPlayer> capability, IMKPlayer instance, Direction side, INBT nbt) {
+        public void readNBT(Capability<IMKPlayerData> capability, IMKPlayerData instance, Direction side, INBT nbt) {
             if (nbt instanceof CompoundNBT && instance != null) {
                 CompoundNBT tag = (CompoundNBT) nbt;
                 instance.deserialize(tag);
@@ -121,7 +121,7 @@ public class PlayerCapabilityHandler implements IMKPlayer {
     }
 
     public static class Provider implements ICapabilitySerializable<CompoundNBT> {
-        private final IMKPlayer playerHandler;
+        private final IMKPlayerData playerHandler;
 
         public Provider(PlayerEntity playerEntity) {
             this.playerHandler = Capabilities.PLAYER_CAPABILITY.getDefaultInstance();
