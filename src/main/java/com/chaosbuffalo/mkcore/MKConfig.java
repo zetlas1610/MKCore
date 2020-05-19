@@ -20,7 +20,7 @@ public class MKConfig {
         CLIENT_CONFIG = CLIENT_BUILDER.build();
     }
 
-    public static ForgeConfigSpec.ConfigValue<Integer> talentPointLimit;
+    public static ForgeConfigSpec.IntValue talentPointLimit;
 
     private static void initClient(ForgeConfigSpec.Builder builder) {
         builder.comment("General settings").push("general");
@@ -34,7 +34,7 @@ public class MKConfig {
         builder.comment("Gameplay settings").push("gameplay");
         talentPointLimit = builder
                 .comment("Max number of talents (-1 for unlimited)")
-                .define("talentPointLimit", -1);
+                .defineInRange("talentPointLimit", -1, -1, Integer.MAX_VALUE);
         builder.pop();
     }
 }
