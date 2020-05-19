@@ -7,6 +7,8 @@ public interface IMKPlayerData {
 
     void attach(PlayerEntity player);
 
+    float getMana();
+
     void update();
 
     void serialize(CompoundNBT nbt);

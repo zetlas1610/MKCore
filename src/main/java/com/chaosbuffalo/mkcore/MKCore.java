@@ -1,5 +1,6 @@
 package com.chaosbuffalo.mkcore;
 
+import com.chaosbuffalo.mkcore.command.MKCommand;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import net.minecraft.block.Block;
 import net.minecraft.util.ResourceLocation;
@@ -61,6 +62,7 @@ public class MKCore {
     public void onServerStarting(FMLServerStartingEvent event) {
         // do something when the server starts
         LOGGER.info("HELLO from server starting");
+        MKCommand.register(event.getCommandDispatcher());
     }
 
     // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD

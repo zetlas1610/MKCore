@@ -38,6 +38,11 @@ public class MKPlayerData implements IMKPlayerData {
 //        MKCore.LOGGER.info("ctor set mana to {}", mana.get());
     }
 
+    @Override
+    public float getMana() {
+        return mana.get();
+    }
+
     public PlayerEntity getPlayer() {
         return player;
     }
