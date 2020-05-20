@@ -43,6 +43,20 @@ public class MKPlayerData implements IMKPlayerData {
         return mana.get();
     }
 
+    @Override
+    public void setMana(float value) {
+        mana.set(value);
+    }
+
+    @Override
+    public void clone(IMKPlayerData previous) {
+        MKCore.LOGGER.info("onDeath!");
+
+        CompoundNBT tag = new CompoundNBT();
+        previous.serialize(tag);
+        deserialize(tag);
+    }
+
     public PlayerEntity getPlayer() {
         return player;
     }
@@ -100,10 +114,9 @@ public class MKPlayerData implements IMKPlayerData {
     @Override
     public void deserialize(CompoundNBT nbt) {
         if (nbt.contains("mana")) {
-            mana.set(nbt.getFloat("mana"));
-
-            MKCore.LOGGER.info("deserialize({})", mana.get());
+            setMana(nbt.getFloat("mana"));
         }
+        MKCore.LOGGER.info("deserialize({})", mana.get());
     }
 
 

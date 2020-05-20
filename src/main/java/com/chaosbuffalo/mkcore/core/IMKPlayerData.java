@@ -11,13 +11,21 @@ public interface IMKPlayerData {
 
     float getMana();
 
+    void setMana(float value);
+
     default float getHealth() {
         return getPlayer().getHealth();
+    }
+
+    default void setHealth(float value) {
+        getPlayer().setHealth(value);
     }
 
     default float getMaxHealth() {
         return getPlayer().getMaxHealth();
     }
+
+    void clone(IMKPlayerData previous);
 
     void update();
 
