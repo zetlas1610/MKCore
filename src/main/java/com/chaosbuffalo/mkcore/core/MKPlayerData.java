@@ -6,6 +6,7 @@ import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncPacket;
 import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
 import com.chaosbuffalo.mkcore.sync.SyncFloat;
+import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -33,9 +34,13 @@ public class MKPlayerData implements IMKPlayerData {
     @Override
     public void attach(PlayerEntity player) {
         this.player = player;
+        registerAttributes();
+    }
 
-//        mana.set((float) Math.random());
-//        MKCore.LOGGER.info("ctor set mana to {}", mana.get());
+    private void registerAttributes() {
+        AbstractAttributeMap attributes = player.getAttributes();
+        attributes.registerAttribute(PlayerAttributes.MAX_MANA);
+        attributes.registerAttribute(PlayerAttributes.MANA_REGEN);
     }
 
     @Override
@@ -117,51 +122,5 @@ public class MKPlayerData implements IMKPlayerData {
             setMana(nbt.getFloat("mana"));
         }
         MKCore.LOGGER.info("deserialize({})", mana.get());
-    }
-
-
-    public static class Storage implements Capability.IStorage<IMKPlayerData> {
-
-        @Override
-        public CompoundNBT writeNBT(Capability<IMKPlayerData> capability, IMKPlayerData instance, Direction side) {
-            CompoundNBT tag = new CompoundNBT();
-            instance.serialize(tag);
-            return tag;
-        }
-
-        @Override
-        public void readNBT(Capability<IMKPlayerData> capability, IMKPlayerData instance, Direction side, INBT nbt) {
-            if (nbt instanceof CompoundNBT && instance != null) {
-                CompoundNBT tag = (CompoundNBT) nbt;
-                instance.deserialize(tag);
-            }
-        }
-    }
-
-    public static class Provider implements ICapabilitySerializable<CompoundNBT> {
-        private final IMKPlayerData playerHandler;
-
-        public Provider(PlayerEntity playerEntity) {
-            this.playerHandler = Capabilities.PLAYER_CAPABILITY.getDefaultInstance();
-            if (playerHandler != null) {
-                this.playerHandler.attach(playerEntity);
-            }
-        }
-
-        @Nonnull
-        @Override
-        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-            return Capabilities.PLAYER_CAPABILITY.orEmpty(cap, LazyOptional.of(() -> playerHandler));
-        }
-
-        @Override
-        public CompoundNBT serializeNBT() {
-            return (CompoundNBT) Capabilities.PLAYER_CAPABILITY.getStorage().writeNBT(Capabilities.PLAYER_CAPABILITY, playerHandler, null);
-        }
-
-        @Override
-        public void deserializeNBT(CompoundNBT nbt) {
-            Capabilities.PLAYER_CAPABILITY.getStorage().readNBT(Capabilities.PLAYER_CAPABILITY, playerHandler, null, nbt);
-        }
     }
 }
