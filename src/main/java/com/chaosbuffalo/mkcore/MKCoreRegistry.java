@@ -1,6 +1,5 @@
 package com.chaosbuffalo.mkcore;
 
-import com.chaosbuffalo.mkcore.MKCore;
 import net.minecraft.util.ResourceLocation;
 
 public class MKCoreRegistry {

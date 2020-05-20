@@ -13,6 +13,14 @@ public interface IMKPlayerData {
 
     void setMana(float value);
 
+    default float getMaxMana() {
+        return (float) getPlayer().getAttribute(PlayerAttributes.MAX_MANA).getValue();
+    }
+
+    default float getManaRegenRate() {
+        return (float) getPlayer().getAttribute(PlayerAttributes.MANA_REGEN).getValue();
+    }
+
     default float getHealth() {
         return getPlayer().getHealth();
     }

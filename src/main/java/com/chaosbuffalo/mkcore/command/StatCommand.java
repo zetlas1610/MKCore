@@ -36,12 +36,12 @@ public class StatCommand {
     static ArgumentBuilder<CommandSource, ?> createSimpleFloatStat(String name, Function<IMKPlayerData, Float> getter, BiConsumer<IMKPlayerData, Float> setter) {
         Function<PlayerEntity, Integer> getAction = playerEntity -> {
             playerEntity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap ->
-                    sendPlayerMessage(playerEntity, String.format("%s is %.2f", name, getter.apply(cap))));
+                    sendPlayerMessage(playerEntity, String.format("%s is %f", name, getter.apply(cap))));
 
             return Command.SINGLE_SUCCESS;
         };
 
-        BiFunction<PlayerEntity, Float, Integer> setAction = (playerEntity, value) -> Command.SINGLE_SUCCESS;
+        BiFunction<PlayerEntity, Float, Integer> setAction;
         if (setter != null) {
             setAction = (playerEntity, value) -> {
                 playerEntity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap -> {
@@ -51,6 +51,8 @@ public class StatCommand {
                 });
                 return Command.SINGLE_SUCCESS;
             };
+        } else {
+            setAction = (playerEntity, value) -> Command.SINGLE_SUCCESS;
         }
         return createCore(name, getAction, setAction);
     }

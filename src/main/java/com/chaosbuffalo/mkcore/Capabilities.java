@@ -40,7 +40,7 @@ public class Capabilities {
     @SubscribeEvent
     public static void attachEntityCapability(AttachCapabilitiesEvent<Entity> e) {
         if (e.getObject() instanceof PlayerEntity) {
-            e.addCapability(PLAYER_CAP_ID, new PlayerDataProvider((PlayerEntity)e.getObject()));
+            e.addCapability(PLAYER_CAP_ID, new PlayerDataProvider((PlayerEntity) e.getObject()));
         }
     }
 
@@ -67,9 +67,9 @@ public class Capabilities {
         private final IMKPlayerData playerHandler;
 
         public PlayerDataProvider(PlayerEntity playerEntity) {
-            this.playerHandler = Capabilities.PLAYER_CAPABILITY.getDefaultInstance();
+            playerHandler = Capabilities.PLAYER_CAPABILITY.getDefaultInstance();
             if (playerHandler != null) {
-                this.playerHandler.attach(playerEntity);
+                playerHandler.attach(playerEntity);
             }
         }
 
