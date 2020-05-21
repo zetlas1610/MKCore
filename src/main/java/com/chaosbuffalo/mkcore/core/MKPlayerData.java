@@ -10,14 +10,14 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.fml.network.NetworkDirection;
-import net.minecraftforge.fml.network.PacketDistributor;
 
 public class MKPlayerData implements IMKPlayerData {
 
     private PlayerEntity player;
     private float regenTime;
+    private AbilityTracker abilityTracker;
     private final SyncFloat mana = new SyncFloat("mana", 0f);
     private final CompositeUpdater dirtyUpdater = new CompositeUpdater(mana);
 
@@ -28,6 +28,7 @@ public class MKPlayerData implements IMKPlayerData {
     @Override
     public void attach(PlayerEntity player) {
         this.player = player;
+        abilityTracker = AbilityTracker.getTracker(player);
         registerAttributes();
 
         AttributeModifier mod = new AttributeModifier("test max mana", 20, AttributeModifier.Operation.ADDITION).setSaved(false);
@@ -61,6 +62,27 @@ public class MKPlayerData implements IMKPlayerData {
     }
 
     @Override
+    public void setCooldown(ResourceLocation id, int ticks) {
+        MKCore.LOGGER.info("setCooldown({}, {})", id, ticks);
+
+        setTimer(id, ticks);
+    }
+
+    @Override
+    public void setTimer(ResourceLocation id, int cooldown) {
+        if (cooldown > 0) {
+            abilityTracker.setCooldown(id, cooldown);
+        } else {
+            abilityTracker.removeCooldown(id);
+        }
+    }
+
+    @Override
+    public int getTimer(ResourceLocation id) {
+        return abilityTracker.getCooldownTicks(id);
+    }
+
+    @Override
     public void clone(IMKPlayerData previous) {
         MKCore.LOGGER.info("onDeath!");
 
@@ -79,6 +101,7 @@ public class MKPlayerData implements IMKPlayerData {
 
     @Override
     public void update() {
+        abilityTracker.tick();
 
 //        MKCore.LOGGER.info("update {} {}", this.player, mana.get());
 
@@ -93,8 +116,7 @@ public class MKPlayerData implements IMKPlayerData {
             PlayerDataSyncPacket packet = getUpdateMessage();
             if (packet != null) {
                 MKCore.LOGGER.info("sending dirty update for {}", player);
-                PacketDistributor.TRACKING_ENTITY_AND_SELF.with(this::getPlayer)
-                        .send(PacketHandler.getNetworkChannel().toVanillaPacket(packet, NetworkDirection.PLAY_TO_CLIENT));
+                PacketHandler.sendToTrackingAndSelf(packet, (ServerPlayerEntity) player);
             }
         }
     }
@@ -138,17 +160,28 @@ public class MKPlayerData implements IMKPlayerData {
         MKCore.LOGGER.info("deserializeClientUpdatePost - {}", mana.get());
     }
 
+    public void serializeActiveState(CompoundNBT nbt) {
+        nbt.putFloat("mana", mana.get());
+    }
+
+    public void deserializeActiveState(CompoundNBT nbt) {
+        // TODO: activate persona here
+        if (nbt.contains("mana")) {
+            setMana(nbt.getFloat("mana"));
+        }
+    }
 
     @Override
     public void serialize(CompoundNBT nbt) {
-        nbt.putFloat("mana", mana.get());
+        serializeActiveState(nbt);
+        abilityTracker.serialize(nbt);
     }
 
     @Override
     public void deserialize(CompoundNBT nbt) {
-        if (nbt.contains("mana")) {
-            setMana(nbt.getFloat("mana"));
-        }
+        deserializeActiveState(nbt);
+        abilityTracker.deserialize(nbt);
+
         MKCore.LOGGER.info("deserialize({})", mana.get());
     }
 }

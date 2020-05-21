@@ -2,6 +2,7 @@ package com.chaosbuffalo.mkcore.core;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 
 public interface IMKPlayerData {
 
@@ -46,6 +47,12 @@ public interface IMKPlayerData {
     default float getMaxHealth() {
         return getPlayer().getMaxHealth();
     }
+
+    void setCooldown(ResourceLocation id, int ticks);
+
+    void setTimer(ResourceLocation id, int cooldown);
+
+    int getTimer(ResourceLocation id);
 
     void clone(IMKPlayerData previous);
 
