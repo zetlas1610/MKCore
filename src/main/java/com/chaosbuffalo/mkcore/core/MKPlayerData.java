@@ -83,7 +83,7 @@ public class MKPlayerData implements IMKPlayerData {
     }
 
     @Override
-    public void clone(IMKPlayerData previous) {
+    public void clone(IMKPlayerData previous, boolean death) {
         MKCore.LOGGER.info("onDeath!");
 
         CompoundNBT tag = new CompoundNBT();

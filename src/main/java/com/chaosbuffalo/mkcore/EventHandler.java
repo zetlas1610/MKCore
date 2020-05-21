@@ -37,6 +37,6 @@ public class EventHandler {
 
         player.getCapability(Capabilities.PLAYER_CAPABILITY)
                 .ifPresent(newCap -> oldPlayer.getCapability(Capabilities.PLAYER_CAPABILITY)
-                        .ifPresent(newCap::clone));
+                        .ifPresent(oldCap -> newCap.clone(oldCap, evt.isWasDeath())));
     }
 }

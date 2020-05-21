@@ -54,7 +54,7 @@ public interface IMKPlayerData {
 
     int getTimer(ResourceLocation id);
 
-    void clone(IMKPlayerData previous);
+    void clone(IMKPlayerData previous, boolean death);
 
     void update();
 
