@@ -26,8 +26,8 @@ public class MKPlayerData implements IMKPlayerData {
     }
 
     @Override
-    public void attach(PlayerEntity player) {
-        this.player = player;
+    public void attach(PlayerEntity newPlayer) {
+        player = newPlayer;
         abilityTracker = AbilityTracker.getTracker(player);
         registerAttributes();
 
@@ -126,14 +126,15 @@ public class MKPlayerData implements IMKPlayerData {
             return;
         }
 
-        if (getMana() > getMaxMana())
-            setMana(getMaxMana());
+        float max = getMaxMana();
+        if (getMana() > max)
+            setMana(max);
 
         regenTime += 1. / 20.;
-        float i_regen = 3.0f / this.getManaRegenRate();
+        float i_regen = 3.0f / getManaRegenRate();
         if (regenTime >= i_regen) {
-            MKCore.LOGGER.info("regen - adding 1 mana");
-            if (this.getMana() < this.getMaxMana()) {
+//            MKCore.LOGGER.info("regen - adding 1 mana");
+            if (getMana() < max) {
                 addMana(1);
             }
             regenTime -= i_regen;
@@ -150,14 +151,14 @@ public class MKPlayerData implements IMKPlayerData {
 
 
     public void serializeClientUpdate(CompoundNBT updateTag) {
-        MKCore.LOGGER.info("serializeClientUpdate {}", mana.get());
+//        MKCore.LOGGER.info("serializeClientUpdate {}", mana.get());
         dirtyUpdater.serializeUpdate(updateTag);
     }
 
     public void deserializeClientUpdate(CompoundNBT updateTag) {
-        MKCore.LOGGER.info("deserializeClientUpdatePre {}", mana.get());
+//        MKCore.LOGGER.info("deserializeClientUpdatePre {}", mana.get());
         dirtyUpdater.deserializeUpdate(updateTag);
-        MKCore.LOGGER.info("deserializeClientUpdatePost - {}", mana.get());
+//        MKCore.LOGGER.info("deserializeClientUpdatePost - {}", mana.get());
     }
 
     public void serializeActiveState(CompoundNBT nbt) {

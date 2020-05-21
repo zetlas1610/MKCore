@@ -24,7 +24,9 @@ public class StatCommand {
     public static LiteralArgumentBuilder<CommandSource> register() {
         return Commands.literal("stat")
                 .then(createSimpleFloatStat("mana", IMKPlayerData::getMana, IMKPlayerData::setMana))
-                .then(createSimpleFloatStat("health", IMKPlayerData::getHealth, IMKPlayerData::setHealth));
+                .then(createSimpleFloatStat("health", IMKPlayerData::getHealth, IMKPlayerData::setHealth))
+                .then(createSimpleFloatStat("manaregen", IMKPlayerData::getManaRegenRate, null))
+                .then(createSimpleFloatStat("maxmana", IMKPlayerData::getMaxMana, null));
     }
 
     static void sendPlayerMessage(PlayerEntity playerEntity, String msg) {
@@ -52,7 +54,10 @@ public class StatCommand {
                 return Command.SINGLE_SUCCESS;
             };
         } else {
-            setAction = (playerEntity, value) -> Command.SINGLE_SUCCESS;
+            setAction = (playerEntity, value) -> {
+                sendPlayerMessage(playerEntity, String.format("Setting %s is not supported", name));
+                return Command.SINGLE_SUCCESS;
+            };
         }
         return createCore(name, getAction, setAction);
     }
