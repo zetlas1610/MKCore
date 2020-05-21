@@ -13,9 +13,23 @@ public interface IMKPlayerData {
 
     void setMana(float value);
 
+    default void addMana(float value) {
+        setMana(getMana() + value);
+    }
+
+    default boolean consumeMana(float amount) {
+        if (getMana() >= amount) {
+            setMana(getMana() - amount);
+            return true;
+        }
+        return false;
+    }
+
     default float getMaxMana() {
         return (float) getPlayer().getAttribute(PlayerAttributes.MAX_MANA).getValue();
     }
+
+    void setMaxMana(float max);
 
     default float getManaRegenRate() {
         return (float) getPlayer().getAttribute(PlayerAttributes.MANA_REGEN).getValue();
