@@ -49,20 +49,7 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         return new PlayerAbilityInfo(this);
     }
 
-    @Nullable
-    public SoundEvent getCastingSoundEvent() {
-//        return ModSounds.casting_general;
-        return null;
-    }
 
-    @Nullable
-    public SoundEvent getSpellCompleteSoundEvent() {
-//        return ModSounds.spell_cast_3;
-        return null;
-    }
-
-    public void continueCastClient(PlayerEntity entity, IMKPlayerData data, World theWorld, int castTimeLeft) {
-    }
 
     public String getAbilityName() {
         return I18n.format(getTranslationKey());
@@ -131,10 +118,24 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
 //                player.getCurrentAbilityCooldown(abilityId) == 0;
     }
 
+    @Nullable
+    public SoundEvent getCastingSoundEvent() {
+//        return ModSounds.casting_general;
+        return null;
+    }
+
+    @Nullable
+    public SoundEvent getSpellCompleteSoundEvent() {
+//        return ModSounds.spell_cast_3;
+        return null;
+    }
 
     public abstract void execute(PlayerEntity entity, IMKPlayerData data, World theWorld);
 
     public void continueCast(PlayerEntity entity, IMKPlayerData data, World theWorld, int castTimeLeft, CastState state) {
+    }
+
+    public void continueCastClient(PlayerEntity entity, IMKPlayerData data, World theWorld, int castTimeLeft) {
     }
 
     public void endCast(PlayerEntity entity, IMKPlayerData data, World theWorld, CastState state) {

@@ -55,7 +55,8 @@ public class RayTraceUtils {
     }
 
     public static BlockRayTraceResult rayTraceBlocks(Entity entity, Vec3d from, Vec3d to, boolean stopOnLiquid) {
-        RayTraceContext context = new RayTraceContext(from, to, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, entity);
+        RayTraceContext.FluidMode mode = stopOnLiquid ? RayTraceContext.FluidMode.SOURCE_ONLY : RayTraceContext.FluidMode.NONE;
+        RayTraceContext context = new RayTraceContext(from, to, RayTraceContext.BlockMode.COLLIDER, mode, entity);
         return entity.getEntityWorld().rayTraceBlocks(context);
     }
 
@@ -97,7 +98,8 @@ public class RayTraceUtils {
         return null;
     }
 
-    private static <E extends Entity> RayTraceResult rayTraceBlocksAndEntities(Class<E> clazz, Entity mainEntity, Vec3d from, Vec3d to, boolean stopOnLiquid,
+    private static <E extends Entity> RayTraceResult rayTraceBlocksAndEntities(Class<E> clazz, Entity mainEntity,
+                                                                               Vec3d from, Vec3d to, boolean stopOnLiquid,
                                                                                final Predicate<E> entityFilter) {
         BlockRayTraceResult block = rayTraceBlocks(mainEntity, from, to, stopOnLiquid);
         if (block.getType() == RayTraceResult.Type.BLOCK)
