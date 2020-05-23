@@ -54,6 +54,10 @@ public interface IMKPlayerData {
 
     int getTimer(ResourceLocation id);
 
+    void executeHotBarAbility(int slot);
+
+    ResourceLocation getAbilityInSlot(int slot);
+
     void clone(IMKPlayerData previous, boolean death);
 
     void update();

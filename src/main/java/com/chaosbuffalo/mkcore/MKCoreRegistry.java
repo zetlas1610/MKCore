@@ -9,11 +9,19 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 
+import javax.annotation.Nullable;
+
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class MKCoreRegistry {
     public static ResourceLocation INVALID_CLASS = new ResourceLocation(MKCore.MOD_ID, "class.invalid");
     public static ResourceLocation INVALID_ABILITY = new ResourceLocation(MKCore.MOD_ID, "ability.invalid");
     public static IForgeRegistry<PlayerAbility> ABILITIES = null;
+
+
+    @Nullable
+    public static PlayerAbility getAbility(ResourceLocation abilityId) {
+        return ABILITIES.getValue(abilityId);
+    }
 
     @SubscribeEvent
     public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {

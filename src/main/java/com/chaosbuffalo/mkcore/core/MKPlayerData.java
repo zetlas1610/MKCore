@@ -35,11 +35,17 @@ public class MKPlayerData implements IMKPlayerData {
         abilityTracker = AbilityTracker.getTracker(player);
         registerAttributes();
 
+        setupFakeStats();
+    }
+
+    void setupFakeStats() {
         AttributeModifier mod = new AttributeModifier("test max mana", 20, AttributeModifier.Operation.ADDITION).setSaved(false);
         player.getAttribute(PlayerAttributes.MAX_MANA).applyModifier(mod);
 
         AttributeModifier mod2 = new AttributeModifier("test mana regen", 1, AttributeModifier.Operation.ADDITION).setSaved(false);
         player.getAttribute(PlayerAttributes.MANA_REGEN).applyModifier(mod2);
+
+
     }
 
     private void registerAttributes() {
@@ -63,6 +69,14 @@ public class MKPlayerData implements IMKPlayerData {
     public void setMaxMana(float max) {
         player.getAttribute(PlayerAttributes.MAX_MANA).setBaseValue(max);
         setMana(getMana()); // Refresh the mana to account for the updated maximum
+    }
+
+    public void executeHotBarAbility(int slot) {
+        MKCore.LOGGER.info("executeHotBarAbility {}", slot);
+    }
+
+    public ResourceLocation getAbilityInSlot(int slot) {
+        return MKCoreRegistry.INVALID_ABILITY;
     }
 
     @Override
