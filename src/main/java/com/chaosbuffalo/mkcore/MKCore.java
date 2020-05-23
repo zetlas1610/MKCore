@@ -1,5 +1,6 @@
 package com.chaosbuffalo.mkcore;
 
+import com.chaosbuffalo.mkcore.client.gui.MKOverlay;
 import com.chaosbuffalo.mkcore.command.MKCommand;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import net.minecraft.block.Block;
@@ -55,6 +56,7 @@ public class MKCore {
     private void doClientStuff(final FMLClientSetupEvent event) {
         // do something that can only be done on the client
         LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().gameSettings);
+        MinecraftForge.EVENT_BUS.register(new MKOverlay());
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
