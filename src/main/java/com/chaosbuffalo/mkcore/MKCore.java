@@ -2,10 +2,13 @@ package com.chaosbuffalo.mkcore;
 
 import com.chaosbuffalo.mkcore.client.gui.MKOverlay;
 import com.chaosbuffalo.mkcore.command.MKCommand;
+import com.chaosbuffalo.mkcore.core.IMKPlayerData;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -69,5 +72,9 @@ public class MKCore {
 
     public static ResourceLocation makeRL(String path) {
         return new ResourceLocation(MKCore.MOD_ID, path);
+    }
+
+    public static LazyOptional<IMKPlayerData> getPlayer(PlayerEntity playerEntity) {
+        return playerEntity.getCapability(Capabilities.PLAYER_CAPABILITY);
     }
 }

@@ -13,6 +13,8 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 
 public class MKPlayerData implements IMKPlayerData {
 
@@ -144,6 +146,7 @@ public class MKPlayerData implements IMKPlayerData {
         MKCore.LOGGER.info("initial sync");
         if (isServerSide()) {
             fullSyncTo((ServerPlayerEntity) player);
+            abilityTracker.sync();
             readyForUpdates = true;
         }
     }
@@ -222,8 +225,15 @@ public class MKPlayerData implements IMKPlayerData {
         MKCore.LOGGER.info("deserialize({})", mana.get());
     }
 
-    void dump() {
-        MKCore.LOGGER.info("dump: {}", player.world.isRemote);
-        MKCore.LOGGER.info("\tmana {}", mana.get());
+    public void debugDumpAllAbilities() {
+        String msg = "All active cooldowns:";
+
+        player.sendMessage(new StringTextComponent(msg));
+        abilityTracker.iterateActive((abilityId, current) -> {
+            String name = abilityId.toString();
+            int max = abilityTracker.getMaxCooldownTicks(abilityId);
+            ITextComponent line = new StringTextComponent(String.format("%s: %d / %d", name, current, max));
+            player.sendMessage(line);
+        });
     }
 }

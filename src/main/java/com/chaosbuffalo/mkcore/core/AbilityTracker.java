@@ -1,5 +1,6 @@
 package com.chaosbuffalo.mkcore.core;
 
+import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.network.AbilityCooldownPacket;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import net.minecraft.entity.player.PlayerEntity;
@@ -72,8 +73,12 @@ public class AbilityTracker {
     }
 
     public void setCooldown(ResourceLocation id, int ticksIn) {
-        this.cooldowns.put(id, new Cooldown(this.ticks, this.ticks + ticksIn));
+        setCooldownInternal(id, ticksIn);
         this.notifyOnSet(id, ticksIn);
+    }
+
+    protected void setCooldownInternal(ResourceLocation id, int ticksIn) {
+        this.cooldowns.put(id, new Cooldown(this.ticks, this.ticks + ticksIn));
     }
 
     public void removeCooldown(ResourceLocation id) {
@@ -87,6 +92,9 @@ public class AbilityTracker {
     protected void notifyOnRemove(ResourceLocation id) {
     }
 
+    protected void sync() {
+    }
+
     public void serialize(CompoundNBT nbt) {
         CompoundNBT root = new CompoundNBT();
         iterateActive((id, cd) -> root.putInt(id.toString(), cd));
@@ -97,7 +105,7 @@ public class AbilityTracker {
         if (nbt.contains("cooldowns")) {
             CompoundNBT root = nbt.getCompound("cooldowns");
             for (String key : root.keySet()) {
-                setCooldown(new ResourceLocation(key), root.getInt(key));
+                setCooldownInternal(new ResourceLocation(key), root.getInt(key));
             }
         }
     }
@@ -148,6 +156,12 @@ public class AbilityTracker {
         protected void notifyOnRemove(ResourceLocation id) {
             super.notifyOnRemove(id);
             PacketHandler.sendMessage(new AbilityCooldownPacket(id, 0), player);
+        }
+
+        @Override
+        protected void sync() {
+            MKCore.LOGGER.info("AbilityTrackerServer.sync()");
+            iterateActive(this::notifyOnSet);
         }
     }
 

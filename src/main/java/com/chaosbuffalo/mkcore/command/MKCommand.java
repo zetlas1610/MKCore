@@ -9,7 +9,8 @@ public class MKCommand {
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         LiteralArgumentBuilder<CommandSource> builder = Commands.literal("mk")
-                .then(StatCommand.register());
+                .then(StatCommand.register())
+                .then(CooldownCommand.register());
         dispatcher.register(builder);
     }
 
