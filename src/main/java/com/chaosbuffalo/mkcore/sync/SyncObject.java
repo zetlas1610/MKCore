@@ -42,8 +42,13 @@ public class SyncObject<T> implements ISyncObject {
     @Override
     public void serializeUpdate(CompoundNBT tag) {
         if (dirty) {
-            serializer.accept(tag, this);
+            serializeFull(tag);
             dirty = false;
         }
+    }
+
+    @Override
+    public void serializeFull(CompoundNBT tag) {
+        serializer.accept(tag, this);
     }
 }

@@ -8,4 +8,6 @@ public interface ISyncObject {
     void deserializeUpdate(CompoundNBT tag);
 
     void serializeUpdate(CompoundNBT tag);
+
+    void serializeFull(CompoundNBT tag);
 }

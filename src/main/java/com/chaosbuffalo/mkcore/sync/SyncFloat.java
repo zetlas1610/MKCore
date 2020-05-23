@@ -40,8 +40,13 @@ public class SyncFloat implements ISyncObject {
     @Override
     public void serializeUpdate(CompoundNBT tag) {
         if (dirty) {
-            tag.putFloat(name, value);
+            serializeFull(tag);
             dirty = false;
         }
+    }
+
+    @Override
+    public void serializeFull(CompoundNBT tag) {
+        tag.putFloat(name, value);
     }
 }

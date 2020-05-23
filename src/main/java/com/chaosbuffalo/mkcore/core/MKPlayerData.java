@@ -1,6 +1,7 @@
 package com.chaosbuffalo.mkcore.core;
 
 import com.chaosbuffalo.mkcore.MKCore;
+import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncPacket;
 import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
@@ -17,9 +18,10 @@ public class MKPlayerData implements IMKPlayerData {
 
     private PlayerEntity player;
     private float regenTime;
+    private boolean readyForUpdates = false;
     private AbilityTracker abilityTracker;
     private final SyncFloat mana = new SyncFloat("mana", 0f);
-    private final CompositeUpdater dirtyUpdater = new CompositeUpdater(mana);
+    private final CompositeUpdater publicUpdater = new CompositeUpdater(mana);
 
     public MKPlayerData() {
         regenTime = 0f;
@@ -65,7 +67,9 @@ public class MKPlayerData implements IMKPlayerData {
     public void setCooldown(ResourceLocation id, int ticks) {
         MKCore.LOGGER.info("setCooldown({}, {})", id, ticks);
 
-        setTimer(id, ticks);
+        if (!id.equals(MKCoreRegistry.INVALID_ABILITY)) {
+            setTimer(id, ticks);
+        }
     }
 
     @Override
@@ -112,12 +116,35 @@ public class MKPlayerData implements IMKPlayerData {
 
         updateMana();
 
+        syncState();
+    }
+
+    private void syncState() {
+        if (!readyForUpdates) {
+            MKCore.LOGGER.info("deferring update because client not ready");
+            return;
+        }
+
         if (isDirty()) {
             PlayerDataSyncPacket packet = getUpdateMessage();
             if (packet != null) {
                 MKCore.LOGGER.info("sending dirty update for {}", player);
                 PacketHandler.sendToTrackingAndSelf(packet, (ServerPlayerEntity) player);
             }
+        }
+    }
+
+    public void fullSyncTo(ServerPlayerEntity otherPlayer) {
+        MKCore.LOGGER.info("need full sync to {}", otherPlayer);
+        PlayerDataSyncPacket packet = getFullSyncMessage();
+        PacketHandler.sendMessage(packet, otherPlayer);
+    }
+
+    public void initialSync() {
+        MKCore.LOGGER.info("initial sync");
+        if (isServerSide()) {
+            fullSyncTo((ServerPlayerEntity) player);
+            readyForUpdates = true;
         }
     }
 
@@ -142,23 +169,31 @@ public class MKPlayerData implements IMKPlayerData {
     }
 
     private boolean isDirty() {
-        return dirtyUpdater.isDirty();
+        return publicUpdater.isDirty();
     }
 
     private PlayerDataSyncPacket getUpdateMessage() {
-        return isDirty() ? new PlayerDataSyncPacket(this, player.getUniqueID()) : null;
+        return isDirty() ? new PlayerDataSyncPacket(this, player.getUniqueID(), false) : null;
+    }
+
+    private PlayerDataSyncPacket getFullSyncMessage() {
+        return new PlayerDataSyncPacket(this, player.getUniqueID(), true);
     }
 
 
-    public void serializeClientUpdate(CompoundNBT updateTag) {
-//        MKCore.LOGGER.info("serializeClientUpdate {}", mana.get());
-        dirtyUpdater.serializeUpdate(updateTag);
+    public void serializeClientUpdate(CompoundNBT updateTag, boolean fullSync) {
+        MKCore.LOGGER.info("serializeClientUpdate {} {}", mana.get(), fullSync);
+        if (fullSync) {
+            publicUpdater.serializeFull(updateTag);
+        } else {
+            publicUpdater.serializeUpdate(updateTag);
+        }
     }
 
     public void deserializeClientUpdate(CompoundNBT updateTag) {
-//        MKCore.LOGGER.info("deserializeClientUpdatePre {}", mana.get());
-        dirtyUpdater.deserializeUpdate(updateTag);
-//        MKCore.LOGGER.info("deserializeClientUpdatePost - {}", mana.get());
+        MKCore.LOGGER.info("deserializeClientUpdatePre {}", mana.get());
+        publicUpdater.deserializeUpdate(updateTag);
+        MKCore.LOGGER.info("deserializeClientUpdatePost - {}", mana.get());
     }
 
     public void serializeActiveState(CompoundNBT nbt) {
@@ -174,6 +209,7 @@ public class MKPlayerData implements IMKPlayerData {
 
     @Override
     public void serialize(CompoundNBT nbt) {
+        MKCore.LOGGER.info("serialize({})", mana.get());
         serializeActiveState(nbt);
         abilityTracker.serialize(nbt);
     }
@@ -184,5 +220,10 @@ public class MKPlayerData implements IMKPlayerData {
         abilityTracker.deserialize(nbt);
 
         MKCore.LOGGER.info("deserialize({})", mana.get());
+    }
+
+    void dump() {
+        MKCore.LOGGER.info("dump: {}", player.world.isRemote);
+        MKCore.LOGGER.info("\tmana {}", mana.get());
     }
 }

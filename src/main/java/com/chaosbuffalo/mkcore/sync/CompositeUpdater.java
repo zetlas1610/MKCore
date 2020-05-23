@@ -30,6 +30,13 @@ public class CompositeUpdater implements ISyncObject {
 
     @Override
     public void serializeUpdate(CompoundNBT tag) {
-        components.stream().filter(ISyncObject::isDirty).forEach(c -> c.serializeUpdate(tag));
+        components.stream()
+                .filter(ISyncObject::isDirty)
+                .forEach(c -> c.serializeUpdate(tag));
+    }
+
+    @Override
+    public void serializeFull(CompoundNBT tag) {
+        components.forEach(c -> c.serializeFull(tag));
     }
 }

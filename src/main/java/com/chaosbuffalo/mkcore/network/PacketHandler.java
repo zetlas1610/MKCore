@@ -28,6 +28,11 @@ public class PacketHandler {
         int id = 1;
         networkChannel.registerMessage(id++, PlayerDataSyncPacket.class, PlayerDataSyncPacket::toBytes, PlayerDataSyncPacket::new, PlayerDataSyncPacket::handle);
         networkChannel.registerMessage(id++, AbilityCooldownPacket.class, AbilityCooldownPacket::toBytes, AbilityCooldownPacket::new, AbilityCooldownPacket::handle);
+        networkChannel.registerMessage(id++, PlayerDataSyncRequestPacket.class, PlayerDataSyncRequestPacket::toBytes, PlayerDataSyncRequestPacket::new, PlayerDataSyncRequestPacket::handle);
+    }
+
+    public static <T> void sendMessageToServer(T msg) {
+        networkChannel.sendToServer(msg);
     }
 
     public static <T> void sendMessage(T msg, ServerPlayerEntity target) {

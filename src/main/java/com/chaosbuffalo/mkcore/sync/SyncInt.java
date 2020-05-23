@@ -40,8 +40,13 @@ public class SyncInt implements ISyncObject {
     @Override
     public void serializeUpdate(CompoundNBT tag) {
         if (dirty) {
-            tag.putInt(name, value);
+            serializeFull(tag);
             dirty = false;
         }
+    }
+
+    @Override
+    public void serializeFull(CompoundNBT tag) {
+        tag.putInt(name, value);
     }
 }
