@@ -30,6 +30,7 @@ public class PacketHandler {
         networkChannel.registerMessage(id++, AbilityCooldownPacket.class, AbilityCooldownPacket::toBytes, AbilityCooldownPacket::new, AbilityCooldownPacket::handle);
         networkChannel.registerMessage(id++, PlayerDataSyncRequestPacket.class, PlayerDataSyncRequestPacket::toBytes, PlayerDataSyncRequestPacket::new, PlayerDataSyncRequestPacket::handle);
         networkChannel.registerMessage(id++, ExecuteActiveAbilityPacket.class, ExecuteActiveAbilityPacket::toBytes, ExecuteActiveAbilityPacket::new, ExecuteActiveAbilityPacket::handle);
+        networkChannel.registerMessage(id++, PlayerStartCastPacket.class, PlayerStartCastPacket::toBytes, PlayerStartCastPacket::new, PlayerStartCastPacket::handle);
     }
 
     public static <T> void sendMessageToServer(T msg) {

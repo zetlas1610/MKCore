@@ -119,8 +119,6 @@ public class EmberAbility extends PlayerAbility {
             SingleTargetCastState singleTargetState = (SingleTargetCastState) state;
             if (singleTargetState != null) {
                 singleTargetState.setTarget(targetEntity);
-
-                endCast(entity, pData, theWorld, state);
             }
         }
     }

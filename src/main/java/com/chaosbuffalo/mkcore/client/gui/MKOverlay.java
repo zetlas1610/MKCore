@@ -3,6 +3,8 @@ package com.chaosbuffalo.mkcore.client.gui;
 
 import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.MKCore;
+import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
+import com.chaosbuffalo.mkcore.abilities.PlayerAbilityInfo;
 import com.chaosbuffalo.mkcore.core.IMKPlayerData;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -45,8 +47,28 @@ public class MKOverlay {
             int manaX = manaCellWidth * (i % maxManaPerRow);
             int manaY = (i / maxManaPerRow) * manaCellRowSize;
             GuiUtils.drawTexturedModalRect(manaStartX + manaX, manaStartY + manaY, MANA_START_U, MANA_START_V,
-                    MANA_CELL_WIDTH, MANA_CELL_HEIGHT, 1);
+                    MANA_CELL_WIDTH, MANA_CELL_HEIGHT, 0f);
         }
+    }
+
+    private void drawCastBar(IMKPlayerData data) {
+        if (!data.isCasting()) {
+            return;
+        }
+        PlayerAbilityInfo info = data.getAbilityInfo(data.getCastingAbility());
+        if (info == null || !info.isCurrentlyKnown()) {
+            return;
+        }
+        PlayerAbility ability = info.getAbility();
+        int height = mc.getMainWindow().getScaledHeight();
+        int castStartY = height / 2 + 8;
+        int width = 50;
+        int barSize = width * data.getCastTicks() / ability.getCastTime(info.getRank());
+        int castStartX = mc.getMainWindow().getScaledWidth() / 2 - barSize / 2;
+
+        mc.getTextureManager().bindTexture(barTexture);
+        RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
+        GuiUtils.drawTexturedModalRect(castStartX, castStartY, 26, 21, barSize, 3, 0f);
     }
 
     @SuppressWarnings("unused")
@@ -63,9 +85,8 @@ public class MKOverlay {
 
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             drawMana(cap);
+            drawCastBar(cap);
             //        int slotCount = data.getActionBarSize();
-//
-//        drawCastBar(data);
 //        drawBarSlots(slotCount);
 //        drawAbilities(data, slotCount, event.getPartialTicks());
         });
