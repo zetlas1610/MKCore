@@ -1,5 +1,7 @@
 package com.chaosbuffalo.mkcore.core;
 
+import com.chaosbuffalo.mkcore.abilities.CastState;
+import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
@@ -57,6 +59,10 @@ public interface IMKPlayerData {
     void executeHotBarAbility(int slot);
 
     ResourceLocation getAbilityInSlot(int slot);
+
+    int getAbilityRank(ResourceLocation abilityId);
+
+    CastState startAbility(PlayerAbility ability);
 
     void clone(IMKPlayerData previous, boolean death);
 

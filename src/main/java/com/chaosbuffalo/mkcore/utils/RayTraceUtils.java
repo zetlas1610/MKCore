@@ -65,7 +65,7 @@ public class RayTraceUtils {
         return rayTraceEntities(Entity.class, world, from, to, aaExpansion, aaGrowth, entityExpansion, filter);
     }
 
-    public static <E extends Entity> RayTraceResult rayTraceEntities(Class<E> clazz, World world,
+    public static <E extends Entity> EntityRayTraceResult rayTraceEntities(Class<E> clazz, World world,
                                                                      Vec3d from, Vec3d to,
                                                                      Vec3d aaExpansion,
                                                                      float aaGrowth,
@@ -105,7 +105,7 @@ public class RayTraceUtils {
         if (block.getType() == RayTraceResult.Type.BLOCK)
             to = block.getHitVec();
 
-        RayTraceResult entity = rayTraceEntities(clazz, mainEntity.getEntityWorld(), from, to, Vec3d.ZERO, 0.5f, 0.5f, entityFilter);
+        EntityRayTraceResult entity = rayTraceEntities(clazz, mainEntity.getEntityWorld(), from, to, Vec3d.ZERO, 0.5f, 0.5f, entityFilter);
 
         if (block.getType() == RayTraceResult.Type.MISS) {
             if (entity == null) {

@@ -2,6 +2,8 @@ package com.chaosbuffalo.mkcore.core;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
+import com.chaosbuffalo.mkcore.abilities.CastState;
+import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncPacket;
 import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
@@ -73,10 +75,22 @@ public class MKPlayerData implements IMKPlayerData {
 
     public void executeHotBarAbility(int slot) {
         MKCore.LOGGER.info("executeHotBarAbility {}", slot);
+
+        MKCoreRegistry.getAbility(MKCore.makeRL("ability.ember")).execute(player, this, player.world);
     }
 
     public ResourceLocation getAbilityInSlot(int slot) {
         return MKCoreRegistry.INVALID_ABILITY;
+    }
+
+    @Override
+    public int getAbilityRank(ResourceLocation abilityId) {
+        return 1;
+    }
+
+    @Override
+    public CastState startAbility(PlayerAbility ability) {
+        return ability.createCastState(0);
     }
 
     @Override
