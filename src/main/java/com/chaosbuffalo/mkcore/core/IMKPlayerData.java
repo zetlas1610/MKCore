@@ -51,6 +51,8 @@ public interface IMKPlayerData {
         return getPlayer().getMaxHealth();
     }
 
+    int getActionBarSize();
+
     void setCooldown(ResourceLocation id, int ticks);
 
     void setTimer(ResourceLocation id, int cooldown);
@@ -66,6 +68,8 @@ public interface IMKPlayerData {
     float getAbilityManaCost(ResourceLocation abilityId);
 
     PlayerAbilityInfo getAbilityInfo(ResourceLocation abilityId);
+
+    float getCooldownPercent(PlayerAbilityInfo abilityInfo, float partialTicks);
 
     CastState startAbility(PlayerAbility ability);
 

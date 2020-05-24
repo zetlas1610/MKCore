@@ -1,5 +1,6 @@
 package com.chaosbuffalo.mkcore.core;
 
+import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.CastState;
@@ -10,21 +11,20 @@ import com.chaosbuffalo.mkcore.network.PlayerDataSyncPacket;
 import com.chaosbuffalo.mkcore.network.PlayerStartCastPacket;
 import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
 import com.chaosbuffalo.mkcore.sync.SyncFloat;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
 
 public class MKPlayerData implements IMKPlayerData {
 
@@ -35,6 +35,9 @@ public class MKPlayerData implements IMKPlayerData {
     private PlayerCastingState currentCast;
     private final SyncFloat mana = new SyncFloat("mana", 0f);
     private final CompositeUpdater publicUpdater = new CompositeUpdater(mana);
+
+    // TODO: this should be in player knowledge
+    private List<ResourceLocation> hotbar = Collections.emptyList();
 
     public MKPlayerData() {
         regenTime = 0f;
@@ -56,7 +59,7 @@ public class MKPlayerData implements IMKPlayerData {
         AttributeModifier mod2 = new AttributeModifier("test mana regen", 1, AttributeModifier.Operation.ADDITION).setSaved(false);
         player.getAttribute(PlayerAttributes.MANA_REGEN).applyModifier(mod2);
 
-
+        hotbar = Collections.singletonList(MKCore.makeRL("ability.ember"));
     }
 
     private void registerAttributes() {
@@ -82,6 +85,12 @@ public class MKPlayerData implements IMKPlayerData {
         setMana(getMana()); // Refresh the mana to account for the updated maximum
     }
 
+    @Override
+    public int getActionBarSize() {
+        // TODO: expandable
+        return GameConstants.CLASS_ACTION_BAR_SIZE;
+    }
+
     public void executeHotBarAbility(int slot) {
         MKCore.LOGGER.info("executeHotBarAbility {}", slot);
 
@@ -89,6 +98,9 @@ public class MKPlayerData implements IMKPlayerData {
     }
 
     public ResourceLocation getAbilityInSlot(int slot) {
+        if (slot < hotbar.size()) {
+            return hotbar.get(slot);
+        }
         return MKCoreRegistry.INVALID_ABILITY;
     }
 
@@ -228,7 +240,6 @@ public class MKPlayerData implements IMKPlayerData {
         ServerCastingState serverCastingState = new ServerCastingState(this, abilityInfo, castTime);
         currentCast = serverCastingState;
         if (isServerSide()) {
-            // TODO: cast packet
             PacketHandler.sendToTrackingAndSelf(new PlayerStartCastPacket(abilityInfo.getId(), castTime), (ServerPlayerEntity) player);
         }
 
@@ -277,14 +288,14 @@ public class MKPlayerData implements IMKPlayerData {
 
     private void completeAbility(PlayerAbility ability, PlayerAbilityInfo info) {
         int cooldown = ability.getCooldownTicks(info.getRank());
-//        cooldown = PlayerFormulas.applyCooldownReduction(this, cooldown); TODO
+//        cooldown = PlayerFormulas.applyCooldownReduction(this, cooldown); TODO: formulas
         setCooldown(info.getId(), cooldown);
         SoundEvent sound = ability.getSpellCompleteSoundEvent();
 //        if (sound != null) {
 //            AbilityUtils.playSoundAtServerEntity(player, sound, SoundCategory.PLAYERS);
 //        }
         clearCastingAbility();
-//        MinecraftForge.EVENT_BUS.post(new PlayerAbilityEvent.Completed(player, this, info));
+//        MinecraftForge.EVENT_BUS.post(new PlayerAbilityEvent.Completed(player, this, info)); TODO: events
     }
 
 
@@ -298,6 +309,11 @@ public class MKPlayerData implements IMKPlayerData {
         PlayerAbilityInfo info = new PlayerAbilityInfo(ability);
         info.upgrade();
         return info;
+    }
+
+    @Override
+    public float getCooldownPercent(PlayerAbilityInfo abilityInfo, float partialTicks) {
+        return abilityInfo != null ? abilityTracker.getCooldown(abilityInfo.getId(), partialTicks) : 0.0f;
     }
 
     @Override
@@ -407,9 +423,9 @@ public class MKPlayerData implements IMKPlayerData {
             setMana(max);
 
         regenTime += 1. / 20.;
+        // if getManaRegenRate == 1, this is 1 mana per 3 seconds
         float i_regen = 3.0f / getManaRegenRate();
         if (regenTime >= i_regen) {
-//            MKCore.LOGGER.info("regen - adding 1 mana");
             if (getMana() < max) {
                 addMana(1);
             }
