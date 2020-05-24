@@ -12,7 +12,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.ResourceLocation;
 
 public class CooldownCommand {
 
@@ -22,7 +21,7 @@ public class CooldownCommand {
                         .then(Commands.argument("name", StringArgumentType.string())
                                 .then(Commands.argument("ticks", IntegerArgumentType.integer())
                                         .executes(CooldownCommand::newTimer)
-                        ))
+                                ))
                 )
                 .then(Commands.literal("list")
                         .executes(CooldownCommand::listTimer)

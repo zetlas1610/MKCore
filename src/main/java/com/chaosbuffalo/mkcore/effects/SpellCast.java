@@ -103,13 +103,13 @@ public class SpellCast {
         return this;
     }
 
-    public SpellCast setResourceLocation(String name, ResourceLocation loc){
+    public SpellCast setResourceLocation(String name, ResourceLocation loc) {
         data.putString(name, loc.toString());
         return this;
     }
 
     @Nullable
-    public ResourceLocation getResourceLocation(String name){
+    public ResourceLocation getResourceLocation(String name) {
         return new ResourceLocation(data.getString(name));
     }
 

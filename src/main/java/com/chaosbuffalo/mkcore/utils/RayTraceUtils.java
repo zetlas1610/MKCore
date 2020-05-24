@@ -66,11 +66,11 @@ public class RayTraceUtils {
     }
 
     public static <E extends Entity> EntityRayTraceResult rayTraceEntities(Class<E> clazz, World world,
-                                                                     Vec3d from, Vec3d to,
-                                                                     Vec3d aaExpansion,
-                                                                     float aaGrowth,
-                                                                     float entityExpansion,
-                                                                     final Predicate<E> filter) {
+                                                                           Vec3d from, Vec3d to,
+                                                                           Vec3d aaExpansion,
+                                                                           float aaGrowth,
+                                                                           float entityExpansion,
+                                                                           final Predicate<E> filter) {
 
         Predicate<E> predicate = input -> defaultFilter.test(input) && filter.test(input);
 

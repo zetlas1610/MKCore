@@ -8,7 +8,10 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
-import net.minecraft.potion.*;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.EffectType;
+import net.minecraft.potion.EffectUtils;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -22,7 +25,7 @@ public abstract class SpellPotionBase extends Effect {
     public SpellPotionBase finish() {
         // This method is called from the registry callback, so our mod is the active mod
         // The single parameter overload of setRegistryName uses the domain of the active mod automatically
-        setRegistryName(getName());
+//        setRegistryName(getName()); TODO: check if this is still required since setPotionName is gone
         return this;
     }
 
@@ -233,11 +236,12 @@ public abstract class SpellPotionBase extends Effect {
 
     @Override
     public void renderHUDEffect(EffectInstance effect, AbstractGui gui, int x, int y, float z, float alpha) {
-        if (getIconTexture() != null) {
-            Minecraft.getInstance().getTextureManager().bindTexture(getIconTexture());
-//            Gui.drawModalRectWithCustomSizedTexture(x + 4, y + 4, 0, 0, 16, 16, 16, 16);
-            AbstractGui.blit(x + 4, y + 4, 0, 0, 16, 16, 16, 16);
-        }
+        // FIXME: this may not work anymore on 1.15 due to effect icons being required to be located at textures/mob_effect/<id>.png. check PotionSpriteUploader
+//        if (getIconTexture() != null) {
+//            Minecraft.getInstance().getTextureManager().bindTexture(getIconTexture());
+////            Gui.drawModalRectWithCustomSizedTexture(x + 4, y + 4, 0, 0, 16, 16, 16, 16);
+//            AbstractGui.blit(x + 4, y + 4, 0, 0, 16, 16, 16, 16);
+//        }
 
     }
 }

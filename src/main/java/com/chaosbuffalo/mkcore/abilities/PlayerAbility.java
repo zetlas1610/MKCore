@@ -50,7 +50,6 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
     }
 
 
-
     public String getAbilityName() {
         return I18n.format(getTranslationKey());
     }
@@ -112,10 +111,9 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
     }
 
     public boolean meetsRequirements(IMKPlayerData player) {
-        return true;
-//        return !player.isCasting() &&
-//                player.getMana() >= player.getAbilityManaCost(abilityId) &&
-//                player.getCurrentAbilityCooldown(abilityId) == 0;
+        return !player.isCasting() &&
+                player.getMana() >= player.getAbilityManaCost(abilityId) &&
+                player.getCurrentAbilityCooldown(abilityId) == 0;
     }
 
     @Nullable

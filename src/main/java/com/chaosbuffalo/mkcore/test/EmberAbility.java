@@ -84,7 +84,7 @@ public class EmberAbility extends PlayerAbility {
     @Override
     public void endCast(PlayerEntity entity, IMKPlayerData data, World theWorld, CastState state) {
         super.endCast(entity, data, theWorld, state);
-        SingleTargetCastState singleTargetState = (SingleTargetCastState)state;
+        SingleTargetCastState singleTargetState = (SingleTargetCastState) state;
         if (singleTargetState == null) {
             return;
         }

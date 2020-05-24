@@ -69,6 +69,8 @@ public interface IMKPlayerData {
 
     PlayerAbilityInfo getAbilityInfo(ResourceLocation abilityId);
 
+    int getCurrentAbilityCooldown(ResourceLocation abilityId);
+
     float getCooldownPercent(PlayerAbilityInfo abilityInfo, float partialTicks);
 
     CastState startAbility(PlayerAbility ability);

@@ -25,7 +25,7 @@ public class ClientEventHandler {
 
     private static int currentGCDTicks;
 
-    public static void initKeybinds() {
+    public static void initKeybindings() {
         playerMenuBind = new KeyBinding("key.hud.playermenu", GLFW.GLFW_KEY_J, "key.mkcore.category");
         ClientRegistry.registerKeyBinding(playerMenuBind);
 
@@ -49,9 +49,16 @@ public class ClientEventHandler {
         return (float) GameConstants.GLOBAL_COOLDOWN_TICKS / GameConstants.TICKS_PER_SECOND;
     }
 
+    static boolean isOnGlobalCooldown() {
+        return currentGCDTicks > 0;
+    }
+
+    static void startGlobalCooldown() {
+        currentGCDTicks = GameConstants.GLOBAL_COOLDOWN_TICKS;
+    }
+
     @SubscribeEvent
     public static void onKeyEvent(InputEvent.KeyInputEvent event) {
-//        MKCore.LOGGER.info("key {}", event.getKey());
         handleInputEvent();
     }
 
@@ -61,26 +68,20 @@ public class ClientEventHandler {
     }
 
     static void handleAbilityBarPressed(PlayerEntity player, int slot) {
-        if (currentGCDTicks == 0) {
-            MKCore.getPlayer(player).ifPresent(pData -> {
+        if (isOnGlobalCooldown())
+            return;
 
-                MKCore.LOGGER.info("sending execute ability {}", slot);
+        MKCore.getPlayer(player).ifPresent(pData -> {
+            MKCore.LOGGER.info("sending execute ability {}", slot);
 
-                    ResourceLocation abilityId = pData.getAbilityInSlot(slot);
-                    PlayerAbility ability = MKCoreRegistry.getAbility(abilityId);
-//                    if (ability == null)
-//                        continue;
-//
-//                    if (ability.meetsRequirements(pData)) {
-//                        PacketHandler.sendMessageToServer(new ExecuteActivePacket(i));
-//                        currentGCDTicks = GameConstants.GLOBAL_COOLDOWN_TICKS;
-//                        break;
-//                    }
+            ResourceLocation abilityId = pData.getAbilityInSlot(slot);
+            PlayerAbility ability = MKCoreRegistry.getAbility(abilityId);
+            if (ability == null || !ability.meetsRequirements(pData))
+                return;
 
-                PacketHandler.sendMessageToServer(new ExecuteActiveAbilityPacket(slot));
-                currentGCDTicks = GameConstants.GLOBAL_COOLDOWN_TICKS;
-            });
-        }
+            PacketHandler.sendMessageToServer(new ExecuteActiveAbilityPacket(slot));
+            startGlobalCooldown();
+        });
     }
 
     public static void handleInputEvent() {

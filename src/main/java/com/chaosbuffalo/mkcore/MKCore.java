@@ -58,7 +58,7 @@ public class MKCore {
         // do something that can only be done on the client
         LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().gameSettings);
         MinecraftForge.EVENT_BUS.register(new MKOverlay());
-        ClientEventHandler.initKeybinds();
+        ClientEventHandler.initKeybindings();
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

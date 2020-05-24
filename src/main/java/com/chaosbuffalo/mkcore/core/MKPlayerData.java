@@ -6,8 +6,10 @@ import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.CastState;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbilityInfo;
+import com.chaosbuffalo.mkcore.abilities.PlayerToggleAbility;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncPacket;
+import com.chaosbuffalo.mkcore.network.PlayerDataSyncRequestPacket;
 import com.chaosbuffalo.mkcore.network.PlayerStartCastPacket;
 import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
 import com.chaosbuffalo.mkcore.sync.SyncFloat;
@@ -23,8 +25,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class MKPlayerData implements IMKPlayerData {
 
@@ -33,6 +34,7 @@ public class MKPlayerData implements IMKPlayerData {
     private boolean readyForUpdates = false;
     private AbilityTracker abilityTracker;
     private PlayerCastingState currentCast;
+    private final Map<ResourceLocation, PlayerToggleAbility> activeToggleMap = new HashMap<>();
     private final SyncFloat mana = new SyncFloat("mana", 0f);
     private final CompositeUpdater publicUpdater = new CompositeUpdater(mana);
 
@@ -59,13 +61,23 @@ public class MKPlayerData implements IMKPlayerData {
         AttributeModifier mod2 = new AttributeModifier("test mana regen", 1, AttributeModifier.Operation.ADDITION).setSaved(false);
         player.getAttribute(PlayerAttributes.MANA_REGEN).applyModifier(mod2);
 
-        hotbar = Collections.singletonList(MKCore.makeRL("ability.ember"));
+        hotbar = Arrays.asList(MKCore.makeRL("ability.ember"), MKCore.makeRL("ability.skin_like_wood"));
     }
 
     private void registerAttributes() {
         AbstractAttributeMap attributes = player.getAttributes();
         attributes.registerAttribute(PlayerAttributes.MAX_MANA);
         attributes.registerAttribute(PlayerAttributes.MANA_REGEN);
+    }
+
+    public void onJoinWorld() {
+        if (isServerSide()) {
+            MKCore.LOGGER.info("server player joined world!");
+            rebuildActiveToggleMap();
+        } else {
+            MKCore.LOGGER.info("client player joined world!");
+            PacketHandler.sendMessageToServer(new PlayerDataSyncRequestPacket());
+        }
     }
 
     @Override
@@ -94,7 +106,22 @@ public class MKPlayerData implements IMKPlayerData {
     public void executeHotBarAbility(int slot) {
         MKCore.LOGGER.info("executeHotBarAbility {}", slot);
 
-        MKCoreRegistry.getAbility(MKCore.makeRL("ability.ember")).execute(player, this, player.world);
+        ResourceLocation abilityId = getAbilityInSlot(slot);
+        if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
+            return;
+
+        PlayerAbilityInfo info = getAbilityInfo(abilityId);
+        if (info == null || !info.isCurrentlyKnown())
+            return;
+
+        if (getCurrentAbilityCooldown(abilityId) == 0) {
+
+            PlayerAbility ability = info.getAbility();
+            if (ability != null && ability.meetsRequirements(this)) {
+//                    !MinecraftForge.EVENT_BUS.post(new PlayerAbilityEvent.StartCasting(player, this, info))) { TODO: player events
+                ability.execute(player, this, player.getEntityWorld());
+            }
+        }
     }
 
     public ResourceLocation getAbilityInSlot(int slot) {
@@ -202,7 +229,7 @@ public class MKPlayerData implements IMKPlayerData {
     }
 
     static class ClientCastingState extends PlayerCastingState {
-//        MovingSoundCasting sound; TODO: sound
+        //        MovingSoundCasting sound; TODO: sound
         boolean playing = false;
 
         public ClientCastingState(MKPlayerData player, PlayerAbility ability, int castTicks) {
@@ -311,6 +338,12 @@ public class MKPlayerData implements IMKPlayerData {
         return info;
     }
 
+
+    public int getCurrentAbilityCooldown(ResourceLocation abilityId) {
+        PlayerAbilityInfo abilityInfo = getAbilityInfo(abilityId);
+        return abilityInfo != null ? abilityTracker.getCooldownTicks(abilityId) : GameConstants.ACTION_BAR_INVALID_COOLDOWN;
+    }
+
     @Override
     public float getCooldownPercent(PlayerAbilityInfo abilityInfo, float partialTicks) {
         return abilityInfo != null ? abilityTracker.getCooldown(abilityInfo.getId(), partialTicks) : 0.0f;
@@ -323,8 +356,58 @@ public class MKPlayerData implements IMKPlayerData {
             return 0.0f;
         }
         float manaCost = abilityInfo.getAbility().getManaCost(abilityInfo.getRank());
-//        return PlayerFormulas.applyManaCostReduction(this, );
+//        return PlayerFormulas.applyManaCostReduction(this, ); TODO: formulas
         return manaCost;
+    }
+
+    public int getAbilityCooldown(PlayerAbility ability) {
+        int ticks = ability.getCooldownTicks(getAbilityRank(ability.getAbilityId()));
+//        return PlayerFormulas.applyCooldownReduction(this, ticks)); TODO: formulas
+        return ticks;
+    }
+
+    private void rebuildActiveToggleMap() {
+        for (int i = 0; i < GameConstants.ACTION_BAR_SIZE; i++) {
+            ResourceLocation abilityId = getAbilityInSlot(i);
+            PlayerAbility ability = MKCoreRegistry.getAbility(abilityId);
+            if (ability instanceof PlayerToggleAbility && player != null) {
+                PlayerToggleAbility toggle = (PlayerToggleAbility) ability;
+                if (player.isPotionActive(toggle.getToggleEffect()))
+                    setToggleGroupAbility(toggle.getToggleGroupId(), toggle);
+            }
+        }
+    }
+
+    private void updateToggleAbility(PlayerAbility ability) {
+        if (ability instanceof PlayerToggleAbility && player != null) {
+            PlayerToggleAbility toggle = (PlayerToggleAbility) ability;
+            PlayerAbilityInfo info = getAbilityInfo(ability.getAbilityId());
+            if (info != null && info.isCurrentlyKnown()) {
+                // If this is a toggle ability we must re-apply the effect to make sure it's working at the proper rank
+                if (player.isPotionActive(toggle.getToggleEffect())) {
+                    toggle.removeEffect(player, this, player.getEntityWorld());
+                    toggle.applyEffect(player, this, player.getEntityWorld());
+                }
+            } else {
+                // Unlearning, remove the effect
+                toggle.removeEffect(player, this, player.getEntityWorld());
+            }
+        }
+    }
+
+    public void clearToggleGroupAbility(ResourceLocation groupId) {
+        activeToggleMap.remove(groupId);
+    }
+
+    public void setToggleGroupAbility(ResourceLocation groupId, PlayerToggleAbility ability) {
+        PlayerToggleAbility current = activeToggleMap.get(ability.getToggleGroupId());
+        // This can also be called when rebuilding the activeToggleMap after transferring dimensions and in that case
+        // ability will be the same as current
+        if (current != null && current != ability) {
+            current.removeEffect(player, this, player.getEntityWorld());
+            setCooldown(current.getAbilityId(), getAbilityCooldown(current));
+        }
+        activeToggleMap.put(groupId, ability);
     }
 
     @Override

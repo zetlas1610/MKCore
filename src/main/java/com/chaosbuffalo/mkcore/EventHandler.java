@@ -2,8 +2,6 @@ package com.chaosbuffalo.mkcore;
 
 import com.chaosbuffalo.mkcore.core.IMKPlayerData;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
-import com.chaosbuffalo.mkcore.network.PacketHandler;
-import com.chaosbuffalo.mkcore.network.PlayerDataSyncRequestPacket;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -28,10 +26,8 @@ public class EventHandler {
     @SubscribeEvent
     public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
         if (event.getEntity() instanceof PlayerEntity) {
-            if (event.getWorld().isRemote) {
-                MKCore.LOGGER.info("client player joined world!");
-                PacketHandler.sendMessageToServer(new PlayerDataSyncRequestPacket());
-            }
+            MKCore.getPlayer((PlayerEntity) event.getEntity()).ifPresent(cap -> ((MKPlayerData) cap).onJoinWorld());
+
         }
     }
 
