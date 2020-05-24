@@ -7,6 +7,7 @@ import com.chaosbuffalo.mkcore.abilities.CastState;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbilityInfo;
 import com.chaosbuffalo.mkcore.abilities.PlayerToggleAbility;
+import com.chaosbuffalo.mkcore.events.PlayerAbilityEvent;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncPacket;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncRequestPacket;
@@ -23,6 +24,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -117,8 +119,9 @@ public class MKPlayerData implements IMKPlayerData {
         if (getCurrentAbilityCooldown(abilityId) == 0) {
 
             PlayerAbility ability = info.getAbility();
-            if (ability != null && ability.meetsRequirements(this)) {
-//                    !MinecraftForge.EVENT_BUS.post(new PlayerAbilityEvent.StartCasting(player, this, info))) { TODO: player events
+            if (ability != null &&
+                    ability.meetsRequirements(this) &&
+                    !MinecraftForge.EVENT_BUS.post(new PlayerAbilityEvent.StartCasting(this, info))) {
                 ability.execute(player, this, player.getEntityWorld());
             }
         }
@@ -322,7 +325,7 @@ public class MKPlayerData implements IMKPlayerData {
 //            AbilityUtils.playSoundAtServerEntity(player, sound, SoundCategory.PLAYERS);
 //        }
         clearCastingAbility();
-//        MinecraftForge.EVENT_BUS.post(new PlayerAbilityEvent.Completed(player, this, info)); TODO: events
+        MinecraftForge.EVENT_BUS.post(new PlayerAbilityEvent.Completed(this, info));
     }
 
 
