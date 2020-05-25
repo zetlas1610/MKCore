@@ -40,6 +40,10 @@ public class AreaEffectBuilder {
         return spellCast(cast, cast.toPotionEffect(amplifier), targetType, false);
     }
 
+    public AreaEffectBuilder spellCast(SpellCast cast, int amplifier, Targeting.TargetType targetType, boolean excludeCaster) {
+        return spellCast(cast, cast.toPotionEffect(amplifier), targetType, excludeCaster);
+    }
+
     public AreaEffectBuilder spellCast(SpellCast cast, int duration, int amplifier, Targeting.TargetType targetType) {
         return spellCast(cast, cast.toPotionEffect(duration, amplifier), targetType, false);
     }

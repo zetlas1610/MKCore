@@ -13,7 +13,7 @@ public abstract class SpellPeriodicPotionBase extends SpellPotionBase {
 
     @Override
     public boolean isReady(int duration, int amplitude) {
-        return super.isReady(duration, amplitude) && duration % period == 0;
+        return super.isReady(duration, amplitude) && duration % getPeriod() == 0;
     }
 
     @Override
