@@ -63,7 +63,7 @@ public class MKPlayerData implements IMKPlayerData {
         AttributeModifier mod2 = new AttributeModifier("test mana regen", 1, AttributeModifier.Operation.ADDITION).setSaved(false);
         player.getAttribute(PlayerAttributes.MANA_REGEN).applyModifier(mod2);
 
-        hotbar = Arrays.asList(MKCore.makeRL("ability.ember"), MKCore.makeRL("ability.skin_like_wood"));
+        hotbar = Arrays.asList(MKCore.makeRL("ability.ember"), MKCore.makeRL("ability.skin_like_wood"), MKCore.makeRL("ability.fire_armor"));
     }
 
     private void registerAttributes() {
