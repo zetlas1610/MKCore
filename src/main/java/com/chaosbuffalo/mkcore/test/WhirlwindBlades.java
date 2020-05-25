@@ -6,14 +6,15 @@ import com.chaosbuffalo.mkcore.abilities.CastState;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import com.chaosbuffalo.mkcore.core.IMKPlayerData;
 import com.chaosbuffalo.mkcore.effects.AreaEffectBuilder;
+import com.chaosbuffalo.mkcore.effects.ParticlePotion;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.targeting_api.Targeting;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -46,7 +47,7 @@ public class WhirlwindBlades extends PlayerAbility {
 
     @Override
     public Targeting.TargetType getTargetType() {
-        return Targeting.TargetType.ALL;
+        return Targeting.TargetType.ENEMY;
     }
 
     @Override
@@ -92,17 +93,17 @@ public class WhirlwindBlades extends PlayerAbility {
             float scaling = count * baseAmount;
             // What to do for each target hit
             SpellCast damage = AbilityMagicDamage.Create(entity, BASE_DAMAGE, DAMAGE_SCALE, scaling);
-//            SpellCast particlePotion = ParticlePotion.Create(entity,
-//                    EnumParticleTypes.SWEEP_ATTACK.getParticleID(),
-//                    ParticleEffects.CIRCLE_MOTION, false,
-//                    new Vec3d(1.0, 1.0, 1.0),
-//                    new Vec3d(0.0, 1.0, 0.0),
-//                    4, 0, 1.0);
+            SpellCast particlePotion = ParticlePotion.Create(entity,
+                    ParticleTypes.SWEEP_ATTACK,
+                    ParticleEffects.CIRCLE_MOTION, false,
+                    new Vec3d(1.0, 1.0, 1.0),
+                    new Vec3d(0.0, 1.0, 0.0),
+                    4, 0, 1.0);
 
 
             AreaEffectBuilder.Create(entity, entity)
                     .spellCast(damage, level, getTargetType())
-//                    .spellCast(particlePotion, level, getTargetType())
+                    .spellCast(particlePotion, level, getTargetType())
 //                    .spellCast(SoundPotion.Create(entity, ModSounds.spell_shadow_2, SoundCategory.PLAYERS),
 //                            1, getTargetType())
                     .instant()
@@ -111,13 +112,13 @@ public class WhirlwindBlades extends PlayerAbility {
                     .spawn();
 
             Vec3d lookVec = entity.getLookVec();
-            PacketHandler.sendToTracking(
+            PacketHandler.sendToTrackingAndSelf(
                     new ParticleEffectSpawnPacket(
                             ParticleTypes.SWEEP_ATTACK,
                             ParticleEffects.SPHERE_MOTION, 16, 4,
                             entity.getPosX(), entity.getPosY() + 1.0,
                             entity.getPosZ(), 1.0, 1.0, 1.0, 1.5,
-                            lookVec), entity);
+                            lookVec), (ServerPlayerEntity) entity);
         }
     }
 

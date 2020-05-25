@@ -4,10 +4,13 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import com.chaosbuffalo.mkcore.abilities.PlayerToggleAbility;
-import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.fx.ParticleEffects;
+import com.chaosbuffalo.mkcore.network.PacketHandler;
+import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.EffectType;
 
@@ -45,15 +48,15 @@ public abstract class SongApplicator extends SongPotionBase {
                 for (SpellCast toCast : getSpellCasts(player)) {
                     player.addPotionEffect(toCast.setTarget(player).toPotionEffect(getPeriod(), amplifier));
                 }
-                // TODO: particles
-//                MKUltra.packetHandler.sendToAllAround(
-//                        new ParticleEffectSpawnPacket(
-//                                EnumParticleTypes.NOTE.getParticleID(),
-//                                ParticleEffects.CIRCLE_MOTION, 12, 4,
-//                                target.posX, target.posY + 1.0f,
-//                                target.posZ, .25, .25, .25, .5,
-//                                target.getLookVec()),
-//                        target, 50.0f);
+
+                PacketHandler.sendToTracking(
+                        new ParticleEffectSpawnPacket(
+                                ParticleTypes.NOTE,
+                                ParticleEffects.CIRCLE_MOTION, 12, 4,
+                                target.getPosX(), target.getPosY() + 1.0f,
+                                target.getPosZ(), .25, .25, .25, .5,
+                                target.getLookVec()),
+                        target);
             });
         }
     }

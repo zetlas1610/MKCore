@@ -50,7 +50,7 @@ public class PacketHandler {
                 .send(PacketHandler.getNetworkChannel().toVanillaPacket(msg, NetworkDirection.PLAY_TO_CLIENT));
     }
 
-    public static <T> void sendToTracking(T msg, Entity entity){
+    public static <T> void sendToTracking(T msg, Entity entity) {
         PacketDistributor.TRACKING_ENTITY.with(() -> entity)
                 .send(PacketHandler.getNetworkChannel().toVanillaPacket(msg, NetworkDirection.PLAY_TO_CLIENT));
     }

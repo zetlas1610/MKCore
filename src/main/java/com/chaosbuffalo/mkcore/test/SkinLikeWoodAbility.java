@@ -4,10 +4,16 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import com.chaosbuffalo.mkcore.abilities.PlayerToggleAbility;
 import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.fx.ParticleEffects;
+import com.chaosbuffalo.mkcore.network.PacketHandler;
+import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.targeting_api.Targeting;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.Effect;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -74,15 +80,15 @@ public class SkinLikeWoodAbility extends PlayerToggleAbility {
 //        AbilityUtils.playSoundAtServerEntity(entity, ModSounds.spell_earth_7, SoundCategory.PLAYERS);
         // What to do for each target hit
         entity.addPotionEffect(SkinLikeWoodPotion.Create(entity).setTarget(entity).toPotionEffect(BASE_DURATION, level));
-//        Vec3d lookVec = entity.getLookVec();
-//        MKUltra.packetHandler.sendToAllAround(
-//                new ParticleEffectSpawnPacket(
-//                        EnumParticleTypes.SLIME.getParticleID(),
-//                        ParticleEffects.CIRCLE_MOTION, 30, 0,
-//                        entity.posX, entity.posY + .5,
-//                        entity.posZ, 1.0, 1.0, 1.0, 1.0f,
-//                        lookVec),
-//                entity, 50.0f);
+        Vec3d lookVec = entity.getLookVec();
+        PacketHandler.sendToTrackingAndSelf(
+                new ParticleEffectSpawnPacket(
+                        ParticleTypes.ITEM_SLIME,
+                        ParticleEffects.CIRCLE_MOTION, 30, 0,
+                        entity.getPosX(), entity.getPosY() + .5,
+                        entity.getPosZ(), 1.0, 1.0, 1.0, 1.0f,
+                        lookVec),
+                (ServerPlayerEntity) entity);
 
     }
 }

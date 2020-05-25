@@ -1,10 +1,8 @@
 package com.chaosbuffalo.mkcore.fx;
 
 import com.chaosbuffalo.mkcore.MKCore;
-import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 public class ParticleEffects {
@@ -14,7 +12,7 @@ public class ParticleEffects {
     public static int DIRECTED_SPOUT = 3;
     public static int RAIN_EFFECT = 4;
 
-    public static void spawnParticle(IParticleData particleID, double speed, Vec3d position, Vec3d heading, World world){
+    public static void spawnParticle(IParticleData particleID, double speed, Vec3d position, Vec3d heading, World world) {
         Vec3d motion = heading.scale(speed);
         world.addOptionalParticle(particleID, position.x, position.y, position.z, motion.x, motion.y, motion.z);
     }
@@ -91,7 +89,7 @@ public class ParticleEffects {
             ret[3] = heading.x * speed * data;
             ret[4] = heading.y * speed * data;
             ret[5] = heading.z * speed * data;
-        } else if (motionType == RAIN_EFFECT){
+        } else if (motionType == RAIN_EFFECT) {
             Vec3d posVec = new Vec3d(getRandomInRadiusRange(position.x, radii.x),
                     getRandomInRadiusRange(position.y, radii.y),
                     getRandomInRadiusRange(position.z, radii.z));
@@ -108,7 +106,6 @@ public class ParticleEffects {
         return ret;
 
     }
-
 
 
     private static double getRandomInRadiusRange(double coord, double radius) {
