@@ -66,7 +66,7 @@ public class MKPlayerData implements IMKPlayerData {
         AttributeModifier mod3 = new AttributeModifier("test cdr", 0.1, AttributeModifier.Operation.ADDITION).setSaved(false);
         player.getAttribute(PlayerAttributes.COOLDOWN).applyModifier(mod3);
 
-        hotbar = Arrays.asList(MKCore.makeRL("ability.ember"), MKCore.makeRL("ability.skin_like_wood"), MKCore.makeRL("ability.fire_armor"), MKCore.makeRL("ability.notorious_dot"));
+        hotbar = Arrays.asList(MKCore.makeRL("ability.ember"), MKCore.makeRL("ability.skin_like_wood"), MKCore.makeRL("ability.fire_armor"), MKCore.makeRL("ability.notorious_dot"), MKCore.makeRL("ability.whirlwind_blades"));
     }
 
     private void registerAttributes() {
