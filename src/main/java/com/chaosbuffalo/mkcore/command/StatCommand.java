@@ -2,6 +2,7 @@ package com.chaosbuffalo.mkcore.command;
 
 import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.core.PlayerAttributes;
 import com.chaosbuffalo.mkcore.utils.TextUtils;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.FloatArgumentType;
@@ -10,6 +11,8 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntityArgument;
+import net.minecraft.entity.ai.attributes.IAttribute;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
@@ -23,8 +26,8 @@ public class StatCommand {
         return Commands.literal("stat")
                 .then(createSimpleFloatStat("mana", IMKPlayerData::getMana, IMKPlayerData::setMana))
                 .then(createSimpleFloatStat("health", IMKPlayerData::getHealth, IMKPlayerData::setHealth))
-                .then(createSimpleFloatStat("manaregen", IMKPlayerData::getManaRegenRate, null))
-                .then(createSimpleFloatStat("maxmana", IMKPlayerData::getMaxMana, null));
+                .then(createAttributeStat("manaregen", PlayerAttributes.MANA_REGEN))
+                .then(createAttributeStat("maxmana", PlayerAttributes.MAX_MANA));
     }
 
     static ArgumentBuilder<CommandSource, ?> createSimpleFloatStat(String name, Function<IMKPlayerData, Float> getter, BiConsumer<IMKPlayerData, Float> setter) {
@@ -51,6 +54,33 @@ public class StatCommand {
                 return Command.SINGLE_SUCCESS;
             };
         }
+        return createCore(name, getAction, setAction);
+    }
+
+    static ArgumentBuilder<CommandSource, ?> createAttributeStat(String name, IAttribute attribute) {
+        Function<PlayerEntity, Integer> getAction = playerEntity -> {
+            IAttributeInstance instance = playerEntity.getAttribute(attribute);
+            if (instance != null) {
+                TextUtils.sendPlayerChatMessage(playerEntity, String.format("%s is %f", name, instance.getValue()));
+            } else {
+                TextUtils.sendPlayerChatMessage(playerEntity, String.format("Attribute %s not found", name));
+            }
+
+            return Command.SINGLE_SUCCESS;
+        };
+
+        BiFunction<PlayerEntity, Float, Integer> setAction = (playerEntity, value) -> {
+            IAttributeInstance instance = playerEntity.getAttribute(attribute);
+            if (instance != null) {
+                instance.setBaseValue(value);
+                TextUtils.sendPlayerChatMessage(playerEntity, String.format("%s is now %f", name, instance.getValue()));
+            } else {
+                TextUtils.sendPlayerChatMessage(playerEntity, String.format("Attribute %s not found", name));
+            }
+            return Command.SINGLE_SUCCESS;
+        };
+
+
         return createCore(name, getAction, setAction);
     }
 
