@@ -25,6 +25,9 @@ public class CooldownCommand {
                 )
                 .then(Commands.literal("list")
                         .executes(CooldownCommand::listTimer)
+                )
+                .then(Commands.literal("reset")
+                        .executes(CooldownCommand::resetTimers)
                 );
     }
 
@@ -43,7 +46,14 @@ public class CooldownCommand {
 
     static int listTimer(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
         ServerPlayerEntity player = ctx.getSource().asPlayer();
-        MKCore.getPlayer(player).ifPresent(playerData -> ((MKPlayerData) playerData).debugDumpAllAbilities());
+        MKCore.getPlayer(player).ifPresent(playerData -> ((MKPlayerData) playerData).printActiveCooldowns());
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    static int resetTimers(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
+        ServerPlayerEntity player = ctx.getSource().asPlayer();
+        MKCore.getPlayer(player).ifPresent(playerData -> ((MKPlayerData) playerData).resetAllCooldowns());
 
         return Command.SINGLE_SUCCESS;
     }

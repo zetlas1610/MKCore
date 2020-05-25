@@ -573,7 +573,7 @@ public class MKPlayerData implements IMKPlayerData {
         MKCore.LOGGER.info("deserialize({})", mana.get());
     }
 
-    public void debugDumpAllAbilities() {
+    public void printActiveCooldowns() {
         String msg = "All active cooldowns:";
 
         player.sendMessage(new StringTextComponent(msg));
@@ -583,5 +583,9 @@ public class MKPlayerData implements IMKPlayerData {
             ITextComponent line = new StringTextComponent(String.format("%s: %d / %d", name, current, max));
             player.sendMessage(line);
         });
+    }
+
+    public void resetAllCooldowns() {
+        abilityTracker.removeAll();
     }
 }
