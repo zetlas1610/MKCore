@@ -6,10 +6,15 @@ import com.chaosbuffalo.mkcore.abilities.CastState;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import com.chaosbuffalo.mkcore.abilities.SingleTargetCastState;
 import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.fx.ParticleEffects;
+import com.chaosbuffalo.mkcore.network.PacketHandler;
+import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.targeting_api.Targeting;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -95,16 +100,14 @@ public class EmberAbility extends PlayerAbility {
 //            targetEntity.attackEntityFrom(MKDamageSource.causeIndirectMagicDamage(getAbilityId(), entity, entity), BASE_DAMAGE + level * DAMAGE_SCALE);
             targetEntity.attackEntityFrom(DamageSource.causeIndirectMagicDamage(entity, entity), BASE_DAMAGE + level * DAMAGE_SCALE);
 //            AbilityUtils.playSoundAtServerEntity(targetEntity, ModSounds.spell_fire_6, SoundCategory.PLAYERS);
-//            Vec3d lookVec = entity.getLookVec();
-//            MKUltra.packetHandler.sendToAllAround(
-//                    new ParticleEffectSpawnPacket(
-//                            EnumParticleTypes.FLAME.getParticleID(),
-//                            ParticleEffects.CIRCLE_PILLAR_MOTION, 60, 10,
-//                            targetEntity.posX, targetEntity.posY + 1.0,
-//                            targetEntity.posZ, 1.0, 1.0, 1.0, 1.0,
-//                            lookVec),
-//                    entity.dimension, targetEntity.posX,
-//                    targetEntity.posY, targetEntity.posZ, 50.0f);
+            Vec3d lookVec = entity.getLookVec();
+            PacketHandler.sendToTracking(
+                    new ParticleEffectSpawnPacket(
+                            ParticleTypes.FLAME,
+                            ParticleEffects.CIRCLE_PILLAR_MOTION, 60, 10,
+                            targetEntity.getPosX(), targetEntity.getPosY() + 1.0,
+                            targetEntity.getPosZ(), 1.0, 1.0, 1.0, .25,
+                            lookVec), targetEntity);
         });
     }
 

@@ -1,6 +1,7 @@
 package com.chaosbuffalo.mkcore.network;
 
 import com.chaosbuffalo.mkcore.MKCore;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -26,11 +27,18 @@ public class PacketHandler {
 
     public static void registerMessages() {
         int id = 1;
-        networkChannel.registerMessage(id++, PlayerDataSyncPacket.class, PlayerDataSyncPacket::toBytes, PlayerDataSyncPacket::new, PlayerDataSyncPacket::handle);
-        networkChannel.registerMessage(id++, AbilityCooldownPacket.class, AbilityCooldownPacket::toBytes, AbilityCooldownPacket::new, AbilityCooldownPacket::handle);
-        networkChannel.registerMessage(id++, PlayerDataSyncRequestPacket.class, PlayerDataSyncRequestPacket::toBytes, PlayerDataSyncRequestPacket::new, PlayerDataSyncRequestPacket::handle);
-        networkChannel.registerMessage(id++, ExecuteActiveAbilityPacket.class, ExecuteActiveAbilityPacket::toBytes, ExecuteActiveAbilityPacket::new, ExecuteActiveAbilityPacket::handle);
-        networkChannel.registerMessage(id++, PlayerStartCastPacket.class, PlayerStartCastPacket::toBytes, PlayerStartCastPacket::new, PlayerStartCastPacket::handle);
+        networkChannel.registerMessage(id++, PlayerDataSyncPacket.class, PlayerDataSyncPacket::toBytes,
+                PlayerDataSyncPacket::new, PlayerDataSyncPacket::handle);
+        networkChannel.registerMessage(id++, AbilityCooldownPacket.class, AbilityCooldownPacket::toBytes,
+                AbilityCooldownPacket::new, AbilityCooldownPacket::handle);
+        networkChannel.registerMessage(id++, PlayerDataSyncRequestPacket.class, PlayerDataSyncRequestPacket::toBytes,
+                PlayerDataSyncRequestPacket::new, PlayerDataSyncRequestPacket::handle);
+        networkChannel.registerMessage(id++, ExecuteActiveAbilityPacket.class, ExecuteActiveAbilityPacket::toBytes,
+                ExecuteActiveAbilityPacket::new, ExecuteActiveAbilityPacket::handle);
+        networkChannel.registerMessage(id++, PlayerStartCastPacket.class, PlayerStartCastPacket::toBytes,
+                PlayerStartCastPacket::new, PlayerStartCastPacket::handle);
+        networkChannel.registerMessage(id++, ParticleEffectSpawnPacket.class, ParticleEffectSpawnPacket::toBytes,
+                ParticleEffectSpawnPacket::new, ParticleEffectSpawnPacket::handle);
     }
 
     public static <T> void sendMessageToServer(T msg) {
@@ -39,6 +47,11 @@ public class PacketHandler {
 
     public static <T> void sendMessage(T msg, ServerPlayerEntity target) {
         PacketDistributor.PLAYER.with(() -> target)
+                .send(PacketHandler.getNetworkChannel().toVanillaPacket(msg, NetworkDirection.PLAY_TO_CLIENT));
+    }
+
+    public static <T> void sendToTracking(T msg, Entity entity){
+        PacketDistributor.TRACKING_ENTITY.with(() -> entity)
                 .send(PacketHandler.getNetworkChannel().toVanillaPacket(msg, NetworkDirection.PLAY_TO_CLIENT));
     }
 
