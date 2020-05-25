@@ -11,7 +11,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 
 public class AreaEffectBuilder {
 
-    private EntityMKAreaEffect areaEffectCloud;
+    private final EntityMKAreaEffect areaEffectCloud;
 
     private AreaEffectBuilder(LivingEntity caster, Entity center) {
         areaEffectCloud = new EntityMKAreaEffect(center.getEntityWorld(), center.getPosX(), center.getPosY(), center.getPosZ());
