@@ -18,12 +18,9 @@ import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.network.play.server.SSpawnObjectPacket;
 import net.minecraft.particles.IParticleData;
-import net.minecraft.particles.ParticleType;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.EffectUtils;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -39,7 +36,8 @@ import java.util.UUID;
 
 // This class exists mostly because EntityAreaEffectCloud has all its members marked as private and many have no getters
 public class EntityMKAreaEffect extends Entity {
-    @ObjectHolder(MKCore.MOD_ID + ":mk_area_effect") public static EntityType<EntityMKAreaEffect> TYPE;
+    @ObjectHolder(MKCore.MOD_ID + ":mk_area_effect")
+    public static EntityType<EntityMKAreaEffect> TYPE;
 
     private static final DataParameter<Float> RADIUS = EntityDataManager.createKey(EntityMKAreaEffect.class, DataSerializers.FLOAT);
     private static final DataParameter<Integer> COLOR = EntityDataManager.createKey(EntityMKAreaEffect.class, DataSerializers.VARINT);
@@ -497,9 +495,9 @@ public class EntityMKAreaEffect extends Entity {
                     int j1 = l1 & 255;
                     world.addOptionalParticle(enumparticletypes, getPosX() + f8, getPosY(), getPosZ() + f9, i2 / 255f, j2 / 255f, j1 / 255f);
                 } else if (enumparticletypes == ParticleTypes.NOTE) {
-                    world.addOptionalParticle(enumparticletypes, getPosX() + f8, getPosY(), getPosZ() + f9, this.rand.nextInt(24) / 24.0f, 0.009999999776482582D,  (0.5D - this.rand.nextDouble()) * 0.15D);
+                    world.addOptionalParticle(enumparticletypes, getPosX() + f8, getPosY(), getPosZ() + f9, this.rand.nextInt(24) / 24.0f, 0.009999999776482582D, (0.5D - this.rand.nextDouble()) * 0.15D);
                 } else {
-                    world.addOptionalParticle(enumparticletypes, getPosX() + f8, getPosY(), getPosZ() + f9, (0.5D - this.rand.nextDouble()) * 0.15D, 0.009999999776482582D,  (0.5D - this.rand.nextDouble()) * 0.15D);
+                    world.addOptionalParticle(enumparticletypes, getPosX() + f8, getPosY(), getPosZ() + f9, (0.5D - this.rand.nextDouble()) * 0.15D, 0.009999999776482582D, (0.5D - this.rand.nextDouble()) * 0.15D);
                 }
             }
         }
