@@ -2,8 +2,6 @@ package com.chaosbuffalo.mkcore.core;
 
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.MKCoreRegistry;
-import com.chaosbuffalo.mkcore.abilities.CastState;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbilityInfo;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
@@ -21,9 +19,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class MKPlayerData implements IMKPlayerData {
@@ -32,12 +28,10 @@ public class MKPlayerData implements IMKPlayerData {
     private float regenTime;
     private boolean readyForUpdates = false;
     private PlayerAbilityExecutor abilityExecutor;
+    private PlayerKnowledge knowledge;
     private AbilityTracker abilityTracker;
     private final SyncFloat mana = new SyncFloat("mana", 0f);
     private final CompositeUpdater publicUpdater = new CompositeUpdater(mana);
-
-    // TODO: this should be in player knowledge
-    private List<ResourceLocation> hotbar = Collections.emptyList();
 
     public MKPlayerData() {
         regenTime = 0f;
@@ -46,6 +40,7 @@ public class MKPlayerData implements IMKPlayerData {
     @Override
     public void attach(PlayerEntity newPlayer) {
         player = newPlayer;
+        knowledge = new PlayerKnowledge(this);
         abilityExecutor = new PlayerAbilityExecutor(this);
         abilityTracker = AbilityTracker.getTracker(player);
         registerAttributes();
@@ -63,7 +58,13 @@ public class MKPlayerData implements IMKPlayerData {
         AttributeModifier mod3 = new AttributeModifier("test cdr", 0.1, AttributeModifier.Operation.ADDITION).setSaved(false);
         player.getAttribute(PlayerAttributes.COOLDOWN).applyModifier(mod3);
 
-        hotbar = Arrays.asList(MKCore.makeRL("ability.ember"), MKCore.makeRL("ability.skin_like_wood"), MKCore.makeRL("ability.fire_armor"), MKCore.makeRL("ability.notorious_dot"), MKCore.makeRL("ability.whirlwind_blades"));
+        List<ResourceLocation> hotbar = Arrays.asList(
+                MKCore.makeRL("ability.ember"),
+                MKCore.makeRL("ability.skin_like_wood"),
+                MKCore.makeRL("ability.fire_armor"),
+                MKCore.makeRL("ability.notorious_dot"),
+                MKCore.makeRL("ability.whirlwind_blades"));
+        knowledge.setHotBar(hotbar);
     }
 
     private void registerAttributes() {
@@ -100,65 +101,18 @@ public class MKPlayerData implements IMKPlayerData {
         setMana(getMana()); // Refresh the mana to account for the updated maximum
     }
 
+    @Override
     public PlayerAbilityExecutor getAbilityExecutor() {
         return abilityExecutor;
     }
 
     @Override
-    public int getActionBarSize() {
-        // TODO: expandable
-        return GameConstants.CLASS_ACTION_BAR_SIZE;
+    public PlayerKnowledge getKnowledge() {
+        return knowledge;
     }
-
-    public ResourceLocation getAbilityInSlot(int slot) {
-        if (slot < hotbar.size()) {
-            return hotbar.get(slot);
-        }
-        return MKCoreRegistry.INVALID_ABILITY;
-    }
-
-    @Override
-    public int getAbilityRank(ResourceLocation abilityId) {
-        return 1;
-    }
-
-    @Nullable
-    @Override
-    public CastState startAbility(PlayerAbility ability) {
-        return getAbilityExecutor().startAbility(ability);
-    }
-
-    @Override
-    public boolean isCasting() {
-        return abilityExecutor.isCasting();
-    }
-
-    @Override
-    public int getCastTicks() {
-        return abilityExecutor.getCastTicks();
-    }
-
-    @Override
-    public ResourceLocation getCastingAbility() {
-        return abilityExecutor.getCastingAbility();
-    }
-
-
-    @Override
-    @Nullable
-    public PlayerAbilityInfo getAbilityInfo(ResourceLocation abilityId) {
-        // TODO: player knowledge
-//        PlayerClassInfo info = getActiveClass();
-//        return info != null ? info.getAbilityInfo(abilityId) : null;
-        PlayerAbility ability = MKCoreRegistry.getAbility(abilityId);
-        PlayerAbilityInfo info = new PlayerAbilityInfo(ability);
-        info.upgrade();
-        return info;
-    }
-
 
     public int getCurrentAbilityCooldown(ResourceLocation abilityId) {
-        PlayerAbilityInfo abilityInfo = getAbilityInfo(abilityId);
+        PlayerAbilityInfo abilityInfo = getKnowledge().getAbilityInfo(abilityId);
         return abilityInfo != null ? abilityTracker.getCooldownTicks(abilityId) : GameConstants.ACTION_BAR_INVALID_COOLDOWN;
     }
 
@@ -169,7 +123,7 @@ public class MKPlayerData implements IMKPlayerData {
 
     @Override
     public float getAbilityManaCost(ResourceLocation abilityId) {
-        PlayerAbilityInfo abilityInfo = getAbilityInfo(abilityId);
+        PlayerAbilityInfo abilityInfo = getKnowledge().getAbilityInfo(abilityId);
         if (abilityInfo == null) {
             return 0.0f;
         }
@@ -180,17 +134,8 @@ public class MKPlayerData implements IMKPlayerData {
 
     public int getAbilityCooldown(PlayerAbility ability) {
         int ticks = ability.getCooldownTicks(getAbilityRank(ability.getAbilityId()));
-        ticks = PlayerFormulas.applyCooldownReduction(this, ticks); //TODO: formulas
+        ticks = PlayerFormulas.applyCooldownReduction(this, ticks);
         return ticks;
-    }
-
-    @Override
-    public void setCooldown(ResourceLocation id, int ticks) {
-        MKCore.LOGGER.info("setCooldown({}, {})", id, ticks);
-
-        if (!id.equals(MKCoreRegistry.INVALID_ABILITY)) {
-            setTimer(id, ticks);
-        }
     }
 
     @Override

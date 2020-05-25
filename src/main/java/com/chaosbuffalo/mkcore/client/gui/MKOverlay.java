@@ -8,7 +8,6 @@ import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbilityInfo;
 import com.chaosbuffalo.mkcore.core.IMKPlayerData;
-import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.core.PlayerAbilityExecutor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -61,7 +60,7 @@ public class MKOverlay {
     }
 
     private void drawCastBar(IMKPlayerData data) {
-        PlayerAbilityExecutor executor = ((MKPlayerData) data).getAbilityExecutor();
+        PlayerAbilityExecutor executor = data.getAbilityExecutor();
         if (!executor.isCasting()) {
             return;
         }
@@ -73,7 +72,7 @@ public class MKOverlay {
         int height = mc.getMainWindow().getScaledHeight();
         int castStartY = height / 2 + 8;
         int width = 50;
-        int barSize = width * executor.getCastTicks() / ability.getCastTime(info.getRank());
+        int barSize = width * executor.getCastTicks() / ability.getCastTime(info.getRank()); // FIXME: this is wrong calc if we have spell haste
         int castStartX = mc.getMainWindow().getScaledWidth() / 2 - barSize / 2;
 
         mc.getTextureManager().bindTexture(barTexture);

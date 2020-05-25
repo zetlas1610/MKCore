@@ -1,7 +1,6 @@
 package com.chaosbuffalo.mkcore.network;
 
 import com.chaosbuffalo.mkcore.Capabilities;
-import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -32,7 +31,7 @@ public class ExecuteActiveAbilityPacket {
                 return;
 
             entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap ->
-                    ((MKPlayerData) cap).getAbilityExecutor().executeHotBarAbility(slot));
+                    cap.getAbilityExecutor().executeHotBarAbility(slot));
         });
         ctx.setPacketHandled(true);
     }

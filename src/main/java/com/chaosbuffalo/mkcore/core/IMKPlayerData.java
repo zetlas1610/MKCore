@@ -13,6 +13,10 @@ public interface IMKPlayerData {
 
     PlayerEntity getPlayer();
 
+    PlayerAbilityExecutor getAbilityExecutor();
+
+    PlayerKnowledge getKnowledge();
+
     float getMana();
 
     void setMana(float value);
@@ -51,33 +55,39 @@ public interface IMKPlayerData {
         return getPlayer().getMaxHealth();
     }
 
-    int getActionBarSize();
-
-    void setCooldown(ResourceLocation id, int ticks);
+    default int getActionBarSize() {
+        return getKnowledge().getActionBarSize();
+    }
 
     void setTimer(ResourceLocation id, int cooldown);
 
     int getTimer(ResourceLocation id);
 
-    ResourceLocation getAbilityInSlot(int slot);
+    default ResourceLocation getAbilityInSlot(int slot) {
+        return getKnowledge().getAbilityInSlot(slot);
+    }
 
-    int getAbilityRank(ResourceLocation abilityId);
+    default int getAbilityRank(ResourceLocation abilityId) {
+        return getKnowledge().getAbilityRank(abilityId);
+    }
 
     float getAbilityManaCost(ResourceLocation abilityId);
 
-    PlayerAbilityInfo getAbilityInfo(ResourceLocation abilityId);
+    default PlayerAbilityInfo getAbilityInfo(ResourceLocation abilityId) {
+        return getKnowledge().getAbilityInfo(abilityId);
+    }
 
     int getCurrentAbilityCooldown(ResourceLocation abilityId);
 
     float getCooldownPercent(PlayerAbilityInfo abilityInfo, float partialTicks);
 
-    CastState startAbility(PlayerAbility ability);
+    default CastState startAbility(PlayerAbility ability) {
+        return getAbilityExecutor().startAbility(ability);
+    }
 
-    boolean isCasting();
-
-    int getCastTicks();
-
-    ResourceLocation getCastingAbility();
+    default boolean isCasting() {
+        return getAbilityExecutor().isCasting();
+    }
 
     void clone(IMKPlayerData previous, boolean death);
 

@@ -45,7 +45,7 @@ public class PlayerAbilityExecutor {
     }
 
     public void executeAbility(ResourceLocation abilityId) {
-        PlayerAbilityInfo info = playerData.getAbilityInfo(abilityId);
+        PlayerAbilityInfo info = playerData.getKnowledge().getAbilityInfo(abilityId);
         if (info == null || !info.isCurrentlyKnown())
             return;
 
@@ -67,6 +67,14 @@ public class PlayerAbilityExecutor {
     public void onJoinWorld() {
         if (isServerSide()) {
             rebuildActiveToggleMap();
+        }
+    }
+
+    public void setCooldown(ResourceLocation id, int ticks) {
+        MKCore.LOGGER.info("setCooldown({}, {})", id, ticks);
+
+        if (!id.equals(MKCoreRegistry.INVALID_ABILITY)) {
+            playerData.setTimer(id, ticks);
         }
     }
 
@@ -121,7 +129,7 @@ public class PlayerAbilityExecutor {
     }
 
     public CastState startAbility(PlayerAbility ability) {
-        PlayerAbilityInfo info = playerData.getAbilityInfo(ability.getAbilityId());
+        PlayerAbilityInfo info = playerData.getKnowledge().getAbilityInfo(ability.getAbilityId());
         if (info == null || !info.isCurrentlyKnown() || isCasting()) {
             MKCore.LOGGER.info("startAbility null {} {}", info, isCasting());
             return null;
@@ -142,7 +150,7 @@ public class PlayerAbilityExecutor {
     private void completeAbility(PlayerAbility ability, PlayerAbilityInfo info) {
         int cooldown = ability.getCooldownTicks(info.getRank());
         cooldown = PlayerFormulas.applyCooldownReduction(playerData, cooldown);
-        playerData.setCooldown(info.getId(), cooldown);
+        setCooldown(info.getId(), cooldown);
 //        SoundEvent sound = ability.getSpellCompleteSoundEvent();
 //        if (sound != null) {
 //            AbilityUtils.playSoundAtServerEntity(player, sound, SoundCategory.PLAYERS);
@@ -274,7 +282,7 @@ public class PlayerAbilityExecutor {
         PlayerEntity player = playerData.getPlayer();
         if (ability instanceof PlayerToggleAbility && player != null) {
             PlayerToggleAbility toggle = (PlayerToggleAbility) ability;
-            PlayerAbilityInfo info = playerData.getAbilityInfo(ability.getAbilityId());
+            PlayerAbilityInfo info = playerData.getKnowledge().getAbilityInfo(ability.getAbilityId());
             if (info != null && info.isCurrentlyKnown()) {
                 // If this is a toggle ability we must re-apply the effect to make sure it's working at the proper rank
                 if (player.isPotionActive(toggle.getToggleEffect())) {
@@ -299,7 +307,7 @@ public class PlayerAbilityExecutor {
         // ability will be the same as current
         if (current != null && current != ability) {
             current.removeEffect(player, playerData, player.getEntityWorld());
-            playerData.setCooldown(current.getAbilityId(), playerData.getAbilityCooldown(current));
+            setCooldown(current.getAbilityId(), playerData.getAbilityCooldown(current));
         }
         activeToggleMap.put(groupId, ability);
     }
