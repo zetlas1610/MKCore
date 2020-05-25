@@ -110,8 +110,6 @@ public class MKPlayerData implements IMKPlayerData {
     }
 
     public void executeHotBarAbility(int slot) {
-        MKCore.LOGGER.info("executeHotBarAbility {}", slot);
-
         ResourceLocation abilityId = getAbilityInSlot(slot);
         if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
             return;
@@ -475,7 +473,7 @@ public class MKPlayerData implements IMKPlayerData {
 
     private void syncState() {
         if (!readyForUpdates) {
-            MKCore.LOGGER.info("deferring update because client not ready");
+//            MKCore.LOGGER.info("deferring update because client not ready");
             return;
         }
 
@@ -537,7 +535,7 @@ public class MKPlayerData implements IMKPlayerData {
 
 
     public void serializeClientUpdate(CompoundNBT updateTag, boolean fullSync) {
-        MKCore.LOGGER.info("serializeClientUpdate {} {}", mana.get(), fullSync);
+//        MKCore.LOGGER.info("serializeClientUpdate {} {}", mana.get(), fullSync);
         if (fullSync) {
             publicUpdater.serializeFull(updateTag);
         } else {
@@ -546,9 +544,9 @@ public class MKPlayerData implements IMKPlayerData {
     }
 
     public void deserializeClientUpdate(CompoundNBT updateTag) {
-        MKCore.LOGGER.info("deserializeClientUpdatePre {}", mana.get());
+//        MKCore.LOGGER.info("deserializeClientUpdatePre {}", mana.get());
         publicUpdater.deserializeUpdate(updateTag);
-        MKCore.LOGGER.info("deserializeClientUpdatePost - {}", mana.get());
+//        MKCore.LOGGER.info("deserializeClientUpdatePost - {}", mana.get());
     }
 
     public void serializeActiveState(CompoundNBT nbt) {
@@ -564,7 +562,7 @@ public class MKPlayerData implements IMKPlayerData {
 
     @Override
     public void serialize(CompoundNBT nbt) {
-        MKCore.LOGGER.info("serialize({})", mana.get());
+//        MKCore.LOGGER.info("serialize({})", mana.get());
         serializeActiveState(nbt);
         abilityTracker.serialize(nbt);
     }
@@ -574,7 +572,7 @@ public class MKPlayerData implements IMKPlayerData {
         deserializeActiveState(nbt);
         abilityTracker.deserialize(nbt);
 
-        MKCore.LOGGER.info("deserialize({})", mana.get());
+//        MKCore.LOGGER.info("deserialize({})", mana.get());
     }
 
     public void printActiveCooldowns() {
