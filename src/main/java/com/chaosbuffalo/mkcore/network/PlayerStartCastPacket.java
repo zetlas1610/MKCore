@@ -42,7 +42,8 @@ public class PlayerStartCastPacket {
             if (entity == null)
                 return;
 
-            entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap -> ((MKPlayerData) cap).startCastClient(abilityId, castTicks));
+            entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap ->
+                    ((MKPlayerData) cap).getAbilityExecutor().startCastClient(abilityId, castTicks));
         });
         ctx.setPacketHandled(true);
     }

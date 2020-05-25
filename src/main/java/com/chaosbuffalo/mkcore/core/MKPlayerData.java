@@ -6,12 +6,9 @@ import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.CastState;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbilityInfo;
-import com.chaosbuffalo.mkcore.abilities.PlayerToggleAbility;
-import com.chaosbuffalo.mkcore.events.PlayerAbilityEvent;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncPacket;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncRequestPacket;
-import com.chaosbuffalo.mkcore.network.PlayerStartCastPacket;
 import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
 import com.chaosbuffalo.mkcore.sync.SyncFloat;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
@@ -20,23 +17,22 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class MKPlayerData implements IMKPlayerData {
 
     private PlayerEntity player;
     private float regenTime;
     private boolean readyForUpdates = false;
+    private PlayerAbilityExecutor abilityExecutor;
     private AbilityTracker abilityTracker;
-    private PlayerCastingState currentCast;
-    private final Map<ResourceLocation, PlayerToggleAbility> activeToggleMap = new HashMap<>();
     private final SyncFloat mana = new SyncFloat("mana", 0f);
     private final CompositeUpdater publicUpdater = new CompositeUpdater(mana);
 
@@ -50,6 +46,7 @@ public class MKPlayerData implements IMKPlayerData {
     @Override
     public void attach(PlayerEntity newPlayer) {
         player = newPlayer;
+        abilityExecutor = new PlayerAbilityExecutor(this);
         abilityTracker = AbilityTracker.getTracker(player);
         registerAttributes();
 
@@ -77,9 +74,9 @@ public class MKPlayerData implements IMKPlayerData {
     }
 
     public void onJoinWorld() {
+        getAbilityExecutor().onJoinWorld();
         if (isServerSide()) {
             MKCore.LOGGER.info("server player joined world!");
-            rebuildActiveToggleMap();
         } else {
             MKCore.LOGGER.info("client player joined world!");
             PacketHandler.sendMessageToServer(new PlayerDataSyncRequestPacket());
@@ -103,30 +100,14 @@ public class MKPlayerData implements IMKPlayerData {
         setMana(getMana()); // Refresh the mana to account for the updated maximum
     }
 
+    public PlayerAbilityExecutor getAbilityExecutor() {
+        return abilityExecutor;
+    }
+
     @Override
     public int getActionBarSize() {
         // TODO: expandable
         return GameConstants.CLASS_ACTION_BAR_SIZE;
-    }
-
-    public void executeHotBarAbility(int slot) {
-        ResourceLocation abilityId = getAbilityInSlot(slot);
-        if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
-            return;
-
-        PlayerAbilityInfo info = getAbilityInfo(abilityId);
-        if (info == null || !info.isCurrentlyKnown())
-            return;
-
-        if (getCurrentAbilityCooldown(abilityId) == 0) {
-
-            PlayerAbility ability = info.getAbility();
-            if (ability != null &&
-                    ability.meetsRequirements(this) &&
-                    !MinecraftForge.EVENT_BUS.post(new PlayerAbilityEvent.StartCasting(this, info))) {
-                ability.execute(player, this, player.getEntityWorld());
-            }
-        }
     }
 
     public ResourceLocation getAbilityInSlot(int slot) {
@@ -141,193 +122,25 @@ public class MKPlayerData implements IMKPlayerData {
         return 1;
     }
 
+    @Nullable
+    @Override
+    public CastState startAbility(PlayerAbility ability) {
+        return getAbilityExecutor().startAbility(ability);
+    }
+
     @Override
     public boolean isCasting() {
-        return currentCast != null;
+        return abilityExecutor.isCasting();
     }
 
     @Override
     public int getCastTicks() {
-        return currentCast != null ? currentCast.getCastTicks() : 0;
+        return abilityExecutor.getCastTicks();
     }
 
     @Override
     public ResourceLocation getCastingAbility() {
-        return currentCast != null ? currentCast.getAbilityId() : MKCoreRegistry.INVALID_ABILITY;
-    }
-
-    private void clearCastingAbility() {
-        currentCast = null;
-    }
-
-    static abstract class PlayerCastingState {
-        boolean started = false;
-        int castTicks;
-        PlayerAbility ability;
-        MKPlayerData playerData;
-
-        public PlayerCastingState(MKPlayerData playerData, PlayerAbility ability, int castTicks) {
-            this.playerData = playerData;
-            this.ability = ability;
-            this.castTicks = castTicks;
-        }
-
-        public int getCastTicks() {
-            return castTicks;
-        }
-
-        public ResourceLocation getAbilityId() {
-            return ability.getAbilityId();
-        }
-
-        public boolean tick() {
-            if (castTicks <= 0)
-                return false;
-
-            if (!started) {
-                begin();
-                started = true;
-            }
-
-            activeTick();
-            castTicks--;
-            boolean active = castTicks > 0;
-            if (!active) {
-                finish();
-            }
-            return active;
-        }
-
-        void begin() {
-
-        }
-
-        abstract void activeTick();
-
-        abstract void finish();
-    }
-
-    static class ServerCastingState extends PlayerCastingState {
-        PlayerAbilityInfo info;
-        CastState abilityCastState;
-
-        public ServerCastingState(MKPlayerData playerData, PlayerAbilityInfo ability, int castTicks) {
-            super(playerData, ability.getAbility(), castTicks);
-            this.info = ability;
-            abilityCastState = ability.getAbility().createCastState(castTicks);
-        }
-
-        public CastState getAbilityCastState() {
-            return abilityCastState;
-        }
-
-        @Override
-        void activeTick() {
-            ability.continueCast(playerData.player, playerData, playerData.player.getEntityWorld(), castTicks, abilityCastState);
-        }
-
-        @Override
-        void finish() {
-            ability.endCast(playerData.player, playerData, playerData.player.getEntityWorld(), abilityCastState);
-            playerData.completeAbility(ability, info);
-        }
-    }
-
-    static class ClientCastingState extends PlayerCastingState {
-        //        MovingSoundCasting sound; TODO: sound
-        boolean playing = false;
-
-        public ClientCastingState(MKPlayerData player, PlayerAbility ability, int castTicks) {
-            super(player, ability, castTicks);
-        }
-
-        @Override
-        void begin() {
-            SoundEvent event = ability.getCastingSoundEvent();
-            if (event != null) {
-                // TODO: sound
-//                sound = new MovingSoundCasting(playerData.player, event, SoundCategory.PLAYERS, castTicks);
-//                Minecraft.getMinecraft().getSoundHandler().playSound(sound);
-                playing = true;
-            }
-        }
-
-        @Override
-        void activeTick() {
-            ability.continueCastClient(playerData.player, playerData, playerData.player.getEntityWorld(), castTicks);
-        }
-
-        @Override
-        void finish() {
-            // TODO: sound
-//            if (playing && sound != null) {
-//                Minecraft.getInstance().getSoundHandler().stopSound(sound);
-//                playing = false;
-//            }
-        }
-    }
-
-    private CastState startCast(PlayerAbilityInfo abilityInfo, int castTime) {
-        MKCore.LOGGER.info("startCast {} {}", abilityInfo.getId(), castTime);
-        ServerCastingState serverCastingState = new ServerCastingState(this, abilityInfo, castTime);
-        currentCast = serverCastingState;
-        if (isServerSide()) {
-            PacketHandler.sendToTrackingAndSelf(new PlayerStartCastPacket(abilityInfo.getId(), castTime), (ServerPlayerEntity) player);
-        }
-
-        return serverCastingState.getAbilityCastState();
-    }
-
-    public void startCastClient(ResourceLocation abilityId, int castTicks) {
-        MKCore.LOGGER.info("startCastClient {} {}", abilityId, castTicks);
-        PlayerAbility ability = MKCoreRegistry.getAbility(abilityId);
-        if (ability != null) {
-            currentCast = new ClientCastingState(this, ability, castTicks);
-        } else {
-            clearCastingAbility();
-        }
-    }
-
-    void updateCurrentCast() {
-        if (!isCasting())
-            return;
-
-        if (!currentCast.tick()) {
-            clearCastingAbility();
-        }
-    }
-
-    @Nullable
-    @Override
-    public CastState startAbility(PlayerAbility ability) {
-        PlayerAbilityInfo info = getAbilityInfo(ability.getAbilityId());
-        if (info == null || !info.isCurrentlyKnown() || isCasting()) {
-            MKCore.LOGGER.info("startAbility null {} {}", info, isCasting());
-            return null;
-        }
-
-        float manaCost = getAbilityManaCost(ability.getAbilityId());
-        setMana(getMana() - manaCost);
-
-        int castTime = ability.getCastTime(info.getRank());
-        if (castTime > 0) {
-            return startCast(info, castTime);
-        } else {
-            completeAbility(ability, info);
-        }
-        return null;
-    }
-
-    private void completeAbility(PlayerAbility ability, PlayerAbilityInfo info) {
-        int cooldown = ability.getCooldownTicks(info.getRank());
-        cooldown = PlayerFormulas.applyCooldownReduction(this, cooldown);
-        setCooldown(info.getId(), cooldown);
-//        SoundEvent sound = ability.getSpellCompleteSoundEvent();
-//        if (sound != null) {
-//            AbilityUtils.playSoundAtServerEntity(player, sound, SoundCategory.PLAYERS);
-//        }
-        clearCastingAbility();
-        MinecraftForge.EVENT_BUS.post(new PlayerAbilityEvent.Completed(this, info));
+        return abilityExecutor.getCastingAbility();
     }
 
 
@@ -369,50 +182,6 @@ public class MKPlayerData implements IMKPlayerData {
         int ticks = ability.getCooldownTicks(getAbilityRank(ability.getAbilityId()));
         ticks = PlayerFormulas.applyCooldownReduction(this, ticks); //TODO: formulas
         return ticks;
-    }
-
-    private void rebuildActiveToggleMap() {
-        for (int i = 0; i < GameConstants.ACTION_BAR_SIZE; i++) {
-            ResourceLocation abilityId = getAbilityInSlot(i);
-            PlayerAbility ability = MKCoreRegistry.getAbility(abilityId);
-            if (ability instanceof PlayerToggleAbility && player != null) {
-                PlayerToggleAbility toggle = (PlayerToggleAbility) ability;
-                if (player.isPotionActive(toggle.getToggleEffect()))
-                    setToggleGroupAbility(toggle.getToggleGroupId(), toggle);
-            }
-        }
-    }
-
-    private void updateToggleAbility(PlayerAbility ability) {
-        if (ability instanceof PlayerToggleAbility && player != null) {
-            PlayerToggleAbility toggle = (PlayerToggleAbility) ability;
-            PlayerAbilityInfo info = getAbilityInfo(ability.getAbilityId());
-            if (info != null && info.isCurrentlyKnown()) {
-                // If this is a toggle ability we must re-apply the effect to make sure it's working at the proper rank
-                if (player.isPotionActive(toggle.getToggleEffect())) {
-                    toggle.removeEffect(player, this, player.getEntityWorld());
-                    toggle.applyEffect(player, this, player.getEntityWorld());
-                }
-            } else {
-                // Unlearning, remove the effect
-                toggle.removeEffect(player, this, player.getEntityWorld());
-            }
-        }
-    }
-
-    public void clearToggleGroupAbility(ResourceLocation groupId) {
-        activeToggleMap.remove(groupId);
-    }
-
-    public void setToggleGroupAbility(ResourceLocation groupId, PlayerToggleAbility ability) {
-        PlayerToggleAbility current = activeToggleMap.get(ability.getToggleGroupId());
-        // This can also be called when rebuilding the activeToggleMap after transferring dimensions and in that case
-        // ability will be the same as current
-        if (current != null && current != ability) {
-            current.removeEffect(player, this, player.getEntityWorld());
-            setCooldown(current.getAbilityId(), getAbilityCooldown(current));
-        }
-        activeToggleMap.put(groupId, ability);
     }
 
     @Override
@@ -458,7 +227,7 @@ public class MKPlayerData implements IMKPlayerData {
     @Override
     public void update() {
         abilityTracker.tick();
-        updateCurrentCast();
+        getAbilityExecutor().tick();
 //        MKCore.LOGGER.info("update {} {}", this.player, mana.get());
 
         if (!isServerSide()) {

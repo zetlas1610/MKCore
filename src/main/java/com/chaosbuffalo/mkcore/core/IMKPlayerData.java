@@ -59,8 +59,6 @@ public interface IMKPlayerData {
 
     int getTimer(ResourceLocation id);
 
-    void executeHotBarAbility(int slot);
-
     ResourceLocation getAbilityInSlot(int slot);
 
     int getAbilityRank(ResourceLocation abilityId);

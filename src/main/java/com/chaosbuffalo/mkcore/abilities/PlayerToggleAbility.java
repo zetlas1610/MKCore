@@ -44,11 +44,11 @@ public abstract class PlayerToggleAbility extends PlayerAbility {
     }
 
     public void applyEffect(PlayerEntity entity, IMKPlayerData pData, World theWorld) {
-        ((MKPlayerData) pData).setToggleGroupAbility(getToggleGroupId(), this);
+        ((MKPlayerData) pData).getAbilityExecutor().setToggleGroupAbility(getToggleGroupId(), this);
     }
 
     public void removeEffect(PlayerEntity entity, IMKPlayerData pData, World theWorld) {
-        ((MKPlayerData) pData).clearToggleGroupAbility(getToggleGroupId());
+        ((MKPlayerData) pData).getAbilityExecutor().clearToggleGroupAbility(getToggleGroupId());
         entity.removePotionEffect(getToggleEffect());
     }
 
