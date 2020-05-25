@@ -27,7 +27,8 @@ public class StatCommand {
                 .then(createSimpleFloatStat("mana", IMKPlayerData::getMana, IMKPlayerData::setMana))
                 .then(createSimpleFloatStat("health", IMKPlayerData::getHealth, IMKPlayerData::setHealth))
                 .then(createAttributeStat("manaregen", PlayerAttributes.MANA_REGEN))
-                .then(createAttributeStat("maxmana", PlayerAttributes.MAX_MANA));
+                .then(createAttributeStat("maxmana", PlayerAttributes.MAX_MANA))
+                .then(createAttributeStat("cdr", PlayerAttributes.COOLDOWN));
     }
 
     static ArgumentBuilder<CommandSource, ?> createSimpleFloatStat(String name, Function<IMKPlayerData, Float> getter, BiConsumer<IMKPlayerData, Float> setter) {
@@ -61,7 +62,8 @@ public class StatCommand {
         Function<PlayerEntity, Integer> getAction = playerEntity -> {
             IAttributeInstance instance = playerEntity.getAttribute(attribute);
             if (instance != null) {
-                TextUtils.sendPlayerChatMessage(playerEntity, String.format("%s is %f", name, instance.getValue()));
+                String value = String.format("%s is %f (%f base)", name, instance.getValue(), instance.getBaseValue());
+                TextUtils.sendPlayerChatMessage(playerEntity, value);
             } else {
                 TextUtils.sendPlayerChatMessage(playerEntity, String.format("Attribute %s not found", name));
             }
@@ -73,7 +75,8 @@ public class StatCommand {
             IAttributeInstance instance = playerEntity.getAttribute(attribute);
             if (instance != null) {
                 instance.setBaseValue(value);
-                TextUtils.sendPlayerChatMessage(playerEntity, String.format("%s is now %f", name, instance.getValue()));
+                String output = String.format("%s is now %f (%f base)", name, instance.getValue(), instance.getBaseValue());
+                TextUtils.sendPlayerChatMessage(playerEntity, output);
             } else {
                 TextUtils.sendPlayerChatMessage(playerEntity, String.format("Attribute %s not found", name));
             }

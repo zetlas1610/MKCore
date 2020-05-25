@@ -63,6 +63,9 @@ public class MKPlayerData implements IMKPlayerData {
         AttributeModifier mod2 = new AttributeModifier("test mana regen", 1, AttributeModifier.Operation.ADDITION).setSaved(false);
         player.getAttribute(PlayerAttributes.MANA_REGEN).applyModifier(mod2);
 
+        AttributeModifier mod3 = new AttributeModifier("test cdr", 0.1, AttributeModifier.Operation.ADDITION).setSaved(false);
+        player.getAttribute(PlayerAttributes.COOLDOWN).applyModifier(mod3);
+
         hotbar = Arrays.asList(MKCore.makeRL("ability.ember"), MKCore.makeRL("ability.skin_like_wood"), MKCore.makeRL("ability.fire_armor"));
     }
 
@@ -70,6 +73,7 @@ public class MKPlayerData implements IMKPlayerData {
         AbstractAttributeMap attributes = player.getAttributes();
         attributes.registerAttribute(PlayerAttributes.MAX_MANA);
         attributes.registerAttribute(PlayerAttributes.MANA_REGEN);
+        attributes.registerAttribute(PlayerAttributes.COOLDOWN);
     }
 
     public void onJoinWorld() {
@@ -318,9 +322,9 @@ public class MKPlayerData implements IMKPlayerData {
 
     private void completeAbility(PlayerAbility ability, PlayerAbilityInfo info) {
         int cooldown = ability.getCooldownTicks(info.getRank());
-//        cooldown = PlayerFormulas.applyCooldownReduction(this, cooldown); TODO: formulas
+        cooldown = PlayerFormulas.applyCooldownReduction(this, cooldown);
         setCooldown(info.getId(), cooldown);
-        SoundEvent sound = ability.getSpellCompleteSoundEvent();
+//        SoundEvent sound = ability.getSpellCompleteSoundEvent();
 //        if (sound != null) {
 //            AbilityUtils.playSoundAtServerEntity(player, sound, SoundCategory.PLAYERS);
 //        }
@@ -365,7 +369,7 @@ public class MKPlayerData implements IMKPlayerData {
 
     public int getAbilityCooldown(PlayerAbility ability) {
         int ticks = ability.getCooldownTicks(getAbilityRank(ability.getAbilityId()));
-//        return PlayerFormulas.applyCooldownReduction(this, ticks)); TODO: formulas
+        ticks = PlayerFormulas.applyCooldownReduction(this, ticks); //TODO: formulas
         return ticks;
     }
 
