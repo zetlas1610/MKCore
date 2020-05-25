@@ -17,13 +17,14 @@ public class EntityMKAreaEffectRenderer extends EntityRenderer<EntityMKAreaEffec
         super(manager);
     }
 
+    @Nonnull
     @Override
-    public ResourceLocation getEntityTexture(EntityMKAreaEffect entity) {
+    public ResourceLocation getEntityTexture(@Nonnull EntityMKAreaEffect entity) {
         return AtlasTexture.LOCATION_BLOCKS_TEXTURE;
     }
 
     @Override
-    public boolean shouldRender(EntityMKAreaEffect entity, @Nonnull ClippingHelperImpl clipping, double x, double y, double z) {
+    public boolean shouldRender(@Nonnull EntityMKAreaEffect entity, @Nonnull ClippingHelperImpl clipping, double x, double y, double z) {
         return false;
     }
 }

@@ -1,6 +1,5 @@
 package com.chaosbuffalo.mkcore.core;
 
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.network.AbilityCooldownPacket;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import net.minecraft.entity.player.PlayerEntity;
@@ -160,7 +159,6 @@ public class AbilityTracker {
 
         @Override
         protected void sync() {
-            MKCore.LOGGER.info("AbilityTrackerServer.sync()");
             iterateActive(this::notifyOnSet);
         }
     }

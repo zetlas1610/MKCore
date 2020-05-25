@@ -125,7 +125,7 @@ public abstract class SpellPotionBase extends Effect {
     }
 
     @Override
-    public void applyAttributesModifiersToEntity(LivingEntity target, @Nonnull AbstractAttributeMap attributes, int amplifier) {
+    public void applyAttributesModifiersToEntity(@Nonnull LivingEntity target, @Nonnull AbstractAttributeMap attributes, int amplifier) {
         super.applyAttributesModifiersToEntity(target, attributes, amplifier);
 
         if (!target.world.isRemote || !isServerSideOnly()) {
@@ -143,7 +143,7 @@ public abstract class SpellPotionBase extends Effect {
 
 
     @Override
-    public void removeAttributesModifiersFromEntity(LivingEntity target, @Nonnull AbstractAttributeMap attributes, int amplifier) {
+    public void removeAttributesModifiersFromEntity(@Nonnull LivingEntity target, @Nonnull AbstractAttributeMap attributes, int amplifier) {
         super.removeAttributesModifiersFromEntity(target, attributes, amplifier);
 
         if (!target.world.isRemote || !isServerSideOnly()) {
