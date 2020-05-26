@@ -34,7 +34,7 @@ public class AbilityCommand {
         if (ability != null) {
             MKCore.getPlayer(player).ifPresent(cap -> {
                 MKCore.LOGGER.info("trying to learn {}", abilityId);
-//                cap.getKnowledge().learnAbility(ability); FIXME
+                cap.getKnowledge().learnAbility(ability);
             });
         }
 
@@ -48,7 +48,7 @@ public class AbilityCommand {
 
         MKCore.getPlayer(player).ifPresent(cap -> {
             MKCore.LOGGER.info("trying to unlearn {}", abilityId);
-//            cap.getKnowledge().unlearnAbility(abilityId); FIXME
+            cap.getKnowledge().unlearnAbility(abilityId);
         });
 
         return Command.SINGLE_SUCCESS;

@@ -5,6 +5,8 @@ import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncPacket;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncRequestPacket;
 import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
+import com.chaosbuffalo.mkcore.sync.ISyncObject;
+import com.chaosbuffalo.mkcore.test.EmberAbility;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,6 +27,7 @@ public class MKPlayerData implements IMKPlayerData {
     private PlayerKnowledge knowledge;
     private PlayerStatsModule stats;
     private final CompositeUpdater publicUpdater = new CompositeUpdater();
+    private final CompositeUpdater privateUpdater = new CompositeUpdater();
     private final Set<String> spellTag = new HashSet<>();
 
     public MKPlayerData() {
@@ -37,8 +40,9 @@ public class MKPlayerData implements IMKPlayerData {
         abilityExecutor = new PlayerAbilityExecutor(this);
         stats = new PlayerStatsModule(this);
         publicUpdater.add(stats);
-        registerAttributes();
+        privateUpdater.add(knowledge);
 
+        registerAttributes();
         setupFakeStats();
     }
 
@@ -52,13 +56,15 @@ public class MKPlayerData implements IMKPlayerData {
         AttributeModifier mod3 = new AttributeModifier("test cdr", 0.1, AttributeModifier.Operation.ADDITION).setSaved(false);
         player.getAttribute(PlayerAttributes.COOLDOWN).applyModifier(mod3);
 
+        knowledge.learnAbility(EmberAbility.INSTANCE);
+
         List<ResourceLocation> hotbar = Arrays.asList(
                 MKCore.makeRL("ability.ember"),
                 MKCore.makeRL("ability.skin_like_wood"),
                 MKCore.makeRL("ability.fire_armor"),
                 MKCore.makeRL("ability.notorious_dot"),
                 MKCore.makeRL("ability.whirlwind_blades"));
-        knowledge.setHotBar(hotbar);
+        knowledge.setActionBar(hotbar);
     }
 
     private void registerAttributes() {
@@ -138,18 +144,22 @@ public class MKPlayerData implements IMKPlayerData {
             return;
         }
 
-        if (isDirty()) {
-            PlayerDataSyncPacket packet = getUpdateMessage();
-            if (packet != null) {
-                MKCore.LOGGER.info("sending dirty update for {}", player);
-                PacketHandler.sendToTrackingAndSelf(packet, (ServerPlayerEntity) player);
-            }
+        if (publicUpdater.isDirty()) {
+            PlayerDataSyncPacket packet = getUpdateMessage(false);
+            MKCore.LOGGER.info("sending public dirty update for {}", player);
+            PacketHandler.sendToTrackingAndSelf(packet, (ServerPlayerEntity) player);
+        }
+
+        if (privateUpdater.isDirty()) {
+            PlayerDataSyncPacket packet = getUpdateMessage(true);
+            MKCore.LOGGER.info("sending private dirty update for {}", player);
+            PacketHandler.sendMessage(packet, (ServerPlayerEntity) player);
         }
     }
 
     public void fullSyncTo(ServerPlayerEntity otherPlayer) {
         MKCore.LOGGER.info("need full sync to {}", otherPlayer);
-        PlayerDataSyncPacket packet = getFullSyncMessage();
+        PlayerDataSyncPacket packet = getFullPublicSyncMessage();
         PacketHandler.sendMessage(packet, otherPlayer);
     }
 
@@ -162,16 +172,13 @@ public class MKPlayerData implements IMKPlayerData {
         }
     }
 
-    private boolean isDirty() {
-        return publicUpdater.isDirty();
+    private PlayerDataSyncPacket getUpdateMessage(boolean privateUpdate) {
+        ISyncObject updater = privateUpdate ? privateUpdater : publicUpdater;
+        return new PlayerDataSyncPacket(this, player.getUniqueID(), updater, false, privateUpdate);
     }
 
-    private PlayerDataSyncPacket getUpdateMessage() {
-        return isDirty() ? new PlayerDataSyncPacket(this, player.getUniqueID(), false) : null;
-    }
-
-    private PlayerDataSyncPacket getFullSyncMessage() {
-        return new PlayerDataSyncPacket(this, player.getUniqueID(), true);
+    private PlayerDataSyncPacket getFullPublicSyncMessage() {
+        return new PlayerDataSyncPacket(this, player.getUniqueID(), publicUpdater, true, false);
     }
 
 
@@ -184,10 +191,13 @@ public class MKPlayerData implements IMKPlayerData {
         }
     }
 
-    public void deserializeClientUpdate(CompoundNBT updateTag) {
-//        MKCore.LOGGER.info("deserializeClientUpdatePre {}", mana.get());
-        publicUpdater.deserializeUpdate(updateTag);
-//        MKCore.LOGGER.info("deserializeClientUpdatePost - {}", mana.get());
+    public void deserializeClientUpdate(CompoundNBT updateTag, boolean privateUpdate) {
+        MKCore.LOGGER.info("deserializeClientUpdatePre private:{}", privateUpdate);
+        if (privateUpdate) {
+            privateUpdater.deserializeUpdate(updateTag);
+        } else {
+            publicUpdater.deserializeUpdate(updateTag);
+        }
     }
 
     @Override

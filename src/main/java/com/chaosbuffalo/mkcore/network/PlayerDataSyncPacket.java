@@ -1,7 +1,9 @@
 package com.chaosbuffalo.mkcore.network;
 
 import com.chaosbuffalo.mkcore.Capabilities;
+import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
+import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -15,24 +17,32 @@ import java.util.function.Supplier;
 public class PlayerDataSyncPacket {
 
     private final UUID targetUUID;
+    private final boolean privateUpdate;
     private final CompoundNBT updateTag;
 
-    public PlayerDataSyncPacket(MKPlayerData player, UUID targetUUID, boolean fullSync) {
+    public PlayerDataSyncPacket(MKPlayerData player, UUID targetUUID, ISyncObject syncObject, boolean fullSync, boolean privateUpdate) {
         this.targetUUID = targetUUID;
+        this.privateUpdate = privateUpdate;
         updateTag = new CompoundNBT();
-        player.serializeClientUpdate(updateTag, fullSync);
+        if (fullSync) {
+            syncObject.serializeFull(updateTag);
+        } else {
+            syncObject.serializeUpdate(updateTag);
+        }
     }
 
 
     public PlayerDataSyncPacket(PacketBuffer buffer) {
         targetUUID = buffer.readUniqueId();
+        privateUpdate = buffer.readBoolean();
         updateTag = buffer.readCompoundTag();
     }
 
     public void toBytes(PacketBuffer buffer) {
         buffer.writeUniqueId(targetUUID);
+        buffer.writeBoolean(privateUpdate);
         buffer.writeCompoundTag(updateTag);
-//        MKCore.LOGGER.info("sync toBytes {}", updateTag);
+        MKCore.LOGGER.info("sync toBytes {}", updateTag);
     }
 
     public void handle(Supplier<NetworkEvent.Context> supplier) {
@@ -48,7 +58,7 @@ public class PlayerDataSyncPacket {
 
             entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap -> {
                 if (cap instanceof MKPlayerData) {
-                    ((MKPlayerData) cap).deserializeClientUpdate(updateTag);
+                    ((MKPlayerData) cap).deserializeClientUpdate(updateTag, privateUpdate);
                 }
             });
         });
