@@ -13,7 +13,6 @@ import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkcore.utils.EntityUtils;
 import com.chaosbuffalo.mkcore.utils.ItemUtils;
-import com.google.common.collect.Lists;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -26,6 +25,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SpellTriggers {
@@ -52,15 +52,15 @@ public class SpellTriggers {
     private static boolean startTrigger(Entity source, String tag) {
         if (source instanceof PlayerEntity) {
 //            Log.info("startTrigger - %s", tag);
-           return source.getCapability(Capabilities.PLAYER_CAPABILITY).map((iData) -> {
-               MKPlayerData mkData = (MKPlayerData) iData;
-               if (mkData.hasSpellTag(tag)) {
+            return source.getCapability(Capabilities.PLAYER_CAPABILITY).map(iData -> {
+                MKPlayerData mkData = (MKPlayerData) iData;
+                if (mkData.hasSpellTag(tag)) {
 //                Log.info("startTrigger - BLOCKING %s", tag);
-                   return false;
-               }
-               mkData.addSpellTag(tag);
-               return true;
-           }).orElse(true);
+                    return false;
+                }
+                mkData.addSpellTag(tag);
+                return true;
+            }).orElse(true);
 
         }
         return true;
@@ -69,7 +69,7 @@ public class SpellTriggers {
     private static void endTrigger(Entity source, String tag) {
         if (source instanceof PlayerEntity) {
 //            Log.info("endTrigger - %s", tag);
-            source.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent((iData) -> {
+            source.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(iData -> {
                 MKPlayerData mkData = (MKPlayerData) iData;
                 mkData.removeSpellTag(tag);
             });
@@ -78,7 +78,7 @@ public class SpellTriggers {
 
     public static class FALL {
         private static final String TAG = FALL.class.getName();
-        private static final List<FallTrigger> fallTriggers = Lists.newArrayList();
+        private static final List<FallTrigger> fallTriggers = new ArrayList<>();
 
         @FunctionalInterface
         public interface FallTrigger {
@@ -108,9 +108,9 @@ public class SpellTriggers {
         private static final String MELEE_TAG = "PLAYER_HURT_ENTITY.melee";
         private static final String MAGIC_TAG = "PLAYER_HURT_ENTITY.magic";
         private static final String POST_TAG = "PLAYER_HURT_ENTITY.post";
-        private static List<PlayerHurtEntityTrigger> playerHurtEntityMeleeTriggers = Lists.newArrayList();
-        private static List<PlayerHurtEntityTrigger> playerHurtEntityMagicTriggers = Lists.newArrayList();
-        private static List<PlayerHurtEntityTrigger> playerHurtEntityPostTriggers = Lists.newArrayList();
+        private static final List<PlayerHurtEntityTrigger> playerHurtEntityMeleeTriggers = new ArrayList<>();
+        private static final List<PlayerHurtEntityTrigger> playerHurtEntityMagicTriggers = new ArrayList<>();
+        private static final List<PlayerHurtEntityTrigger> playerHurtEntityPostTriggers = new ArrayList<>();
 
         public static void registerMelee(PlayerHurtEntityTrigger trigger) {
             playerHurtEntityMeleeTriggers.add(trigger);
@@ -129,7 +129,7 @@ public class SpellTriggers {
                                               IMKPlayerData sourceData) {
             if (source.isMagicDamage()) {
                 float scaleFactor = 1.0f;
-                if (isMKUltraAbilityDamage(source)){
+                if (isMKUltraAbilityDamage(source)) {
                     MKDamageSource mkSource = (MKDamageSource) source;
                     scaleFactor = mkSource.getModifierScaling();
                 }
@@ -187,7 +187,7 @@ public class SpellTriggers {
                             newDamage, CritMessagePacket.CritType.HOLY_DAMAGE_CRIT);
                 } else {
                     PlayerAbility ability = MKCoreRegistry.getAbility(mkSource.getAbilityId());
-                    if (ability != null){
+                    if (ability != null) {
                         packet = new CritMessagePacket(livingTarget.getEntityId(), playerSource.getUniqueID(),
                                 newDamage, ability.getAbilityId());
                     } else {
@@ -228,7 +228,7 @@ public class SpellTriggers {
             if (!isDirect) {
                 IAttributeInstance atkDmg = playerSource.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
                 double amount = atkDmg.getValue();
-                if (isMKUltraAbilityDamage(source)){
+                if (isMKUltraAbilityDamage(source)) {
                     MKDamageSource mkSource = (MKDamageSource) source;
                     amount *= mkSource.getModifierScaling();
                 }

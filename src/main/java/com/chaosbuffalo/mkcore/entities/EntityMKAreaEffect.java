@@ -37,7 +37,7 @@ public class EntityMKAreaEffect extends Entity {
 
     private static final DataParameter<Float> RADIUS = EntityDataManager.createKey(EntityMKAreaEffect.class, DataSerializers.FLOAT);
     private static final DataParameter<Integer> COLOR = EntityDataManager.createKey(EntityMKAreaEffect.class, DataSerializers.VARINT);
-    private static final DataParameter<Boolean> SINGLE_POINT = EntityDataManager.createKey(EntityMKAreaEffect.class, DataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> IN_WAIT_PHASE = EntityDataManager.createKey(EntityMKAreaEffect.class, DataSerializers.BOOLEAN);
     private static final DataParameter<IParticleData> PARTICLE = EntityDataManager.createKey(EntityMKAreaEffect.class, DataSerializers.PARTICLE_DATA);
     private final List<EffectEntry> effects;
     private final Map<Entity, Integer> reapplicationDelayMap;
@@ -92,7 +92,7 @@ public class EntityMKAreaEffect extends Entity {
     protected void registerData() {
         this.getDataManager().register(COLOR, 0);
         this.getDataManager().register(RADIUS, 0.5F);
-        this.getDataManager().register(SINGLE_POINT, false);
+        this.getDataManager().register(IN_WAIT_PHASE, false);
         this.getDataManager().register(PARTICLE, ParticleTypes.ENTITY_EFFECT);
     }
 
@@ -142,12 +142,12 @@ public class EntityMKAreaEffect extends Entity {
 //        getDataManager().set(PARTICLE, -1);
     }
 
-    protected void setIsSinglePoint(boolean ignoreRadius) {
-        this.getDataManager().set(SINGLE_POINT, ignoreRadius);
+    protected void setInWaitPhase(boolean waiting) {
+        this.getDataManager().set(IN_WAIT_PHASE, waiting);
     }
 
-    public boolean isSinglePoint() {
-        return this.getDataManager().get(SINGLE_POINT);
+    public boolean isInWaitPhase() {
+        return this.getDataManager().get(IN_WAIT_PHASE);
     }
 
     public int getDuration() {
@@ -162,18 +162,14 @@ public class EntityMKAreaEffect extends Entity {
     public void tick() {
         super.tick();
 
-        boolean singlePoint = this.isSinglePoint();
-        float radius = this.getRadius();
-
         if (this.world.isRemote) {
-            clientUpdate(singlePoint, radius);
+            clientUpdate();
         } else {
             serverUpdate();
         }
     }
 
     private void serverUpdate() {
-
 
         if (this.ticksExisted >= this.waitTime + this.duration) {
             this.remove();
@@ -184,14 +180,13 @@ public class EntityMKAreaEffect extends Entity {
             return;
         }
 
-        boolean mustWait = this.ticksExisted < this.waitTime;
+        boolean stillWaiting = this.ticksExisted < this.waitTime;
 
-        boolean singlePoint = this.isSinglePoint();
-        if (singlePoint != mustWait) {
-            this.setIsSinglePoint(mustWait);
+        if (isInWaitPhase() != stillWaiting) {
+            this.setInWaitPhase(stillWaiting);
         }
 
-        if (mustWait) {
+        if (stillWaiting) {
             return;
         }
 
@@ -461,7 +456,7 @@ public class EntityMKAreaEffect extends Entity {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
-    private void clientUpdate(boolean singlePoint, float radius) {
+    private void clientUpdate() {
         if (ticksExisted % 5 != 0) {
             return;
         }
@@ -469,7 +464,7 @@ public class EntityMKAreaEffect extends Entity {
         if (enumparticletypes == null)
             return;
 
-        if (singlePoint) {
+        if (isInWaitPhase()) {
             if (this.rand.nextBoolean()) {
                 for (int i = 0; i < 2; ++i) {
                     float f1 = this.rand.nextFloat() * ((float) Math.PI * 2F);
@@ -489,6 +484,7 @@ public class EntityMKAreaEffect extends Entity {
                 }
             }
         } else {
+            float radius = getRadius();
             int particleCount = (int) radius * 10;
 
             for (int k1 = 0; k1 < particleCount; ++k1) {

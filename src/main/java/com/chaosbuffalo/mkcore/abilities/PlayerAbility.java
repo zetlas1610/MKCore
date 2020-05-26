@@ -60,12 +60,12 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         return attributes;
     }
 
-    public PlayerAbility addAttribute(IAbilityAttribute<?> attr){
+    public PlayerAbility addAttribute(IAbilityAttribute<?> attr) {
         attributes.add(attr);
         return this;
     }
 
-    public PlayerAbility addAttributes(IAbilityAttribute<?>... attrs){
+    public PlayerAbility addAttributes(IAbilityAttribute<?>... attrs) {
         attributes.addAll(Arrays.asList(attrs));
         return this;
     }
@@ -166,9 +166,9 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         tag.putInt("cooldown", getCooldown());
         tag.putInt("castTime", getCastTime());
         tag.putFloat("manaCost", getManaCost());
-        if (getAttributes().size() > 0){
+        if (getAttributes().size() > 0) {
             CompoundNBT attributes = new CompoundNBT();
-            for (IAbilityAttribute<?> attr : getAttributes()){
+            for (IAbilityAttribute<?> attr : getAttributes()) {
                 attributes.put(attr.getName(), attr.serialize());
             }
             tag.put("attributes", attributes);
@@ -186,10 +186,10 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         if (nbt.contains("manaCost")) {
             setManaCost(nbt.getFloat("manaCost"));
         }
-        if (nbt.contains("attributes")){
+        if (nbt.contains("attributes")) {
             CompoundNBT attributes = nbt.getCompound("attributes");
-            for (IAbilityAttribute<?> attr : getAttributes()){
-                if (attributes.contains(attr.getName())){
+            for (IAbilityAttribute<?> attr : getAttributes()) {
+                if (attributes.contains(attr.getName())) {
                     attr.deserialize(attributes.getCompound(attr.getName()));
                 }
             }
@@ -207,10 +207,10 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         if (obj.has("castTime")) {
             setCastTime(obj.get("castTime").getAsInt());
         }
-        if (obj.has("attributes")){
+        if (obj.has("attributes")) {
             JsonObject attributes = obj.getAsJsonObject("attributes");
-            for (IAbilityAttribute<?> attr : getAttributes()){
-                if (attributes.has(attr.getName())){
+            for (IAbilityAttribute<?> attr : getAttributes()) {
+                if (attributes.has(attr.getName())) {
                     attr.readFromDataPack(attributes.getAsJsonObject(attr.getName()));
                 }
             }

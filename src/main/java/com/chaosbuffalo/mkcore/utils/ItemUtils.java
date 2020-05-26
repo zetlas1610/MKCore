@@ -1,7 +1,6 @@
 package com.chaosbuffalo.mkcore.utils;
 
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.core.PlayerAttributes;
 import com.chaosbuffalo.mkcore.core.stats.CriticalStats;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;

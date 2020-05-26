@@ -16,7 +16,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.network.NetworkDirection;
 
 import java.util.Map;
 
@@ -52,8 +51,7 @@ public class AbilityManager extends JsonReloadListener {
 
     public void syncToPlayers() {
         PlayerAbilitiesSyncPacket updatePacket = new PlayerAbilitiesSyncPacket(MKCoreRegistry.ABILITIES.getValues());
-        server.getPlayerList().sendPacketToAllPlayers(PacketHandler.getNetworkChannel().toVanillaPacket(
-                updatePacket, NetworkDirection.PLAY_TO_CLIENT));
+        PacketHandler.sendToAll(updatePacket);
     }
 
     @SuppressWarnings("unused")
@@ -64,9 +62,7 @@ public class AbilityManager extends JsonReloadListener {
             PlayerAbilitiesSyncPacket updatePacket = new PlayerAbilitiesSyncPacket(MKCoreRegistry
                     .ABILITIES.getValues());
             MKCore.LOGGER.info("Sending {} update packet", event.getPlayer());
-            ((ServerPlayerEntity) event.getPlayer()).connection.sendPacket(
-                    PacketHandler.getNetworkChannel().toVanillaPacket(
-                            updatePacket, NetworkDirection.PLAY_TO_CLIENT));
+            PacketHandler.sendMessage(updatePacket, (ServerPlayerEntity) event.getPlayer());
         }
     }
 
