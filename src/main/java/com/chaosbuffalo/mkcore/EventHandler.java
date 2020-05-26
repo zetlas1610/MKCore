@@ -48,9 +48,8 @@ public class EventHandler {
             PlayerEntity player = event.getPlayer();
             ServerPlayerEntity target = (ServerPlayerEntity) event.getTarget();
 
-            player.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap -> {
-                ((MKPlayerData) cap).fullSyncTo(target);
-            });
+            player.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap ->
+                    ((MKPlayerData) cap).fullSyncTo(target));
         }
     }
 }

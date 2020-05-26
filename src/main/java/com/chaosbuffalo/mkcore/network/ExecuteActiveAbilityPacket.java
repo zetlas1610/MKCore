@@ -30,7 +30,8 @@ public class ExecuteActiveAbilityPacket {
             if (entity == null)
                 return;
 
-            entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap -> cap.executeHotBarAbility(slot));
+            entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap ->
+                    cap.getAbilityExecutor().executeHotBarAbility(slot));
         });
         ctx.setPacketHandled(true);
     }

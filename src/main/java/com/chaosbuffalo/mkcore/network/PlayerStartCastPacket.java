@@ -1,7 +1,6 @@
 package com.chaosbuffalo.mkcore.network;
 
 import com.chaosbuffalo.mkcore.Capabilities;
-import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -42,7 +41,8 @@ public class PlayerStartCastPacket {
             if (entity == null)
                 return;
 
-            entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap -> ((MKPlayerData) cap).startCastClient(abilityId, castTicks));
+            entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap ->
+                    cap.getAbilityExecutor().startCastClient(abilityId, castTicks));
         });
         ctx.setPacketHandled(true);
     }

@@ -140,9 +140,8 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
     }
 
     public boolean meetsRequirements(IMKPlayerData player) {
-        return !player.isCasting() &&
-                player.getMana() >= player.getAbilityManaCost(abilityId) &&
-                player.getCurrentAbilityCooldown(abilityId) == 0;
+        return player.getAbilityExecutor().canActivateAbility(this) &&
+                player.getStats().canActivateAbility(this);
     }
 
     public CompoundNBT serialize(){

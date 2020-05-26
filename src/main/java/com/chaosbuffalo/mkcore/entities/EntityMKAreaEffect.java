@@ -5,7 +5,6 @@ import com.chaosbuffalo.mkcore.effects.SpellCast;
 import com.chaosbuffalo.mkcore.effects.SpellManager;
 import com.chaosbuffalo.mkcore.effects.SpellPotionBase;
 import com.chaosbuffalo.targeting_api.Targeting;
-import com.google.common.collect.Lists;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.block.material.PushReaction;

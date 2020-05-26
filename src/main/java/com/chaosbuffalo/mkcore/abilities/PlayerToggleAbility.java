@@ -3,7 +3,6 @@ package com.chaosbuffalo.mkcore.abilities;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.client.gui.MKOverlay;
 import com.chaosbuffalo.mkcore.core.IMKPlayerData;
-import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.entity.player.PlayerEntity;
@@ -44,11 +43,11 @@ public abstract class PlayerToggleAbility extends PlayerAbility {
     }
 
     public void applyEffect(PlayerEntity entity, IMKPlayerData pData, World theWorld) {
-        ((MKPlayerData) pData).setToggleGroupAbility(getToggleGroupId(), this);
+        pData.getAbilityExecutor().setToggleGroupAbility(getToggleGroupId(), this);
     }
 
     public void removeEffect(PlayerEntity entity, IMKPlayerData pData, World theWorld) {
-        ((MKPlayerData) pData).clearToggleGroupAbility(getToggleGroupId());
+        pData.getAbilityExecutor().clearToggleGroupAbility(getToggleGroupId());
         entity.removePotionEffect(getToggleEffect());
     }
 

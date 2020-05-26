@@ -8,6 +8,7 @@ import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbilityInfo;
 import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.core.PlayerAbilityExecutor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -50,7 +51,7 @@ public class MKOverlay {
         int manaStartY = height - 24 - 10;
         int manaStartX = 24;
 
-        for (int i = 0; i < data.getMana(); i++) {
+        for (int i = 0; i < data.getStats().getMana(); i++) {
             int manaX = manaCellWidth * (i % maxManaPerRow);
             int manaY = (i / maxManaPerRow) * manaCellRowSize;
             GuiUtils.drawTexturedModalRect(manaStartX + manaX, manaStartY + manaY, MANA_START_U, MANA_START_V,
@@ -59,10 +60,11 @@ public class MKOverlay {
     }
 
     private void drawCastBar(IMKPlayerData data) {
-        if (!data.isCasting()) {
+        PlayerAbilityExecutor executor = data.getAbilityExecutor();
+        if (!executor.isCasting()) {
             return;
         }
-        PlayerAbilityInfo info = data.getAbilityInfo(data.getCastingAbility());
+        PlayerAbilityInfo info = data.getKnowledge().getAbilityInfo(executor.getCastingAbility());
         if (info == null || !info.isCurrentlyKnown()) {
             return;
         }
@@ -70,7 +72,7 @@ public class MKOverlay {
         int height = mc.getMainWindow().getScaledHeight();
         int castStartY = height / 2 + 8;
         int width = 50;
-        int barSize = width * data.getCastTicks() / ability.getCastTime(1);
+        int barSize = width * executor.getCastTicks() / ability.getCastTime(info.getRank()); // FIXME: this is wrong calc if we have spell haste
         int castStartX = mc.getMainWindow().getScaledWidth() / 2 - barSize / 2;
 
         mc.getTextureManager().bindTexture(barTexture);
@@ -104,13 +106,14 @@ public class MKOverlay {
         int barStartY = getBarStartY(slotCount);
 
         float globalCooldown = ClientEventHandler.getGlobalCooldown();
+        PlayerAbilityExecutor executor = data.getAbilityExecutor();
 
         for (int i = 0; i < slotCount; i++) {
-            ResourceLocation abilityId = data.getAbilityInSlot(i);
+            ResourceLocation abilityId = data.getKnowledge().getAbilityInSlot(i);
             if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
                 continue;
 
-            PlayerAbilityInfo info = data.getAbilityInfo(abilityId);
+            PlayerAbilityInfo info = data.getKnowledge().getAbilityInfo(abilityId);
             if (info == null || !info.isCurrentlyKnown())
                 continue;
 
@@ -118,8 +121,8 @@ public class MKOverlay {
             if (ability == null)
                 continue;
 
-            float manaCost = data.getAbilityManaCost(abilityId);
-            if (!data.isCasting() && data.getMana() >= manaCost) {
+            float manaCost = data.getStats().getAbilityManaCost(abilityId);
+            if (!executor.isCasting() && data.getStats().getMana() >= manaCost) {
                 RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             } else {
                 RenderSystem.color4f(0.5f, 0.5f, 0.5f, 1.0F);
@@ -132,7 +135,7 @@ public class MKOverlay {
             AbstractGui.blit(slotX, slotY, 0, 0, ABILITY_ICON_SIZE, ABILITY_ICON_SIZE, ABILITY_ICON_SIZE, ABILITY_ICON_SIZE);
 
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-            float cooldownFactor = data.getCooldownPercent(info, partialTicks);
+            float cooldownFactor = data.getStats().getActiveCooldownPercent(info, partialTicks);
             if (globalCooldown > 0.0f && cooldownFactor == 0) {
                 cooldownFactor = globalCooldown / ClientEventHandler.getTotalGlobalCooldown();
             }
@@ -167,7 +170,7 @@ public class MKOverlay {
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             drawMana(cap);
             drawCastBar(cap);
-            int slotCount = cap.getActionBarSize();
+            int slotCount = cap.getKnowledge().getActionBarSize();
             drawBarSlots(slotCount);
             drawAbilities(cap, slotCount, event.getPartialTicks());
         });

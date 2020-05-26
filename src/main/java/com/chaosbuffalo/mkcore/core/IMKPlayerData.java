@@ -13,73 +13,23 @@ public interface IMKPlayerData {
 
     PlayerEntity getPlayer();
 
-    float getMana();
+    PlayerAbilityExecutor getAbilityExecutor();
 
-    void setMana(float value);
+    PlayerKnowledge getKnowledge();
 
-    default void addMana(float value) {
-        setMana(getMana() + value);
-    }
+    PlayerStatsModule getStats();
 
     default boolean consumeMana(float amount) {
-        if (getMana() >= amount) {
-            setMana(getMana() - amount);
-            return true;
-        }
-        return false;
+        return getStats().consumeMana(amount);
     }
 
-    default float getMaxMana() {
-        return (float) getPlayer().getAttribute(PlayerAttributes.MAX_MANA).getValue();
+    default int getAbilityRank(ResourceLocation abilityId) {
+        return getKnowledge().getAbilityRank(abilityId);
     }
 
-    void setMaxMana(float max);
-
-    default float getManaRegenRate() {
-        return (float) getPlayer().getAttribute(PlayerAttributes.MANA_REGEN).getValue();
+    default CastState startAbility(PlayerAbility ability) {
+        return getAbilityExecutor().startAbility(ability);
     }
-
-    default float getHealth() {
-        return getPlayer().getHealth();
-    }
-
-    default void setHealth(float value) {
-        getPlayer().setHealth(value);
-    }
-
-    default float getMaxHealth() {
-        return getPlayer().getMaxHealth();
-    }
-
-    int getActionBarSize();
-
-    void setCooldown(ResourceLocation id, int ticks);
-
-    void setTimer(ResourceLocation id, int cooldown);
-
-    int getTimer(ResourceLocation id);
-
-    void executeHotBarAbility(int slot);
-
-    ResourceLocation getAbilityInSlot(int slot);
-
-    int getAbilityRank(ResourceLocation abilityId);
-
-    float getAbilityManaCost(ResourceLocation abilityId);
-
-    PlayerAbilityInfo getAbilityInfo(ResourceLocation abilityId);
-
-    int getCurrentAbilityCooldown(ResourceLocation abilityId);
-
-    float getCooldownPercent(PlayerAbilityInfo abilityInfo, float partialTicks);
-
-    CastState startAbility(PlayerAbility ability);
-
-    boolean isCasting();
-
-    int getCastTicks();
-
-    ResourceLocation getCastingAbility();
 
     void clone(IMKPlayerData previous, boolean death);
 

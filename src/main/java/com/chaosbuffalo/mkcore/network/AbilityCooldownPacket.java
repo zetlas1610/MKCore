@@ -43,7 +43,8 @@ public class AbilityCooldownPacket {
             if (entity == null)
                 return;
 
-            entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap -> cap.setCooldown(abilityId, cooldown));
+            entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap ->
+                    cap.getAbilityExecutor().setCooldown(abilityId, cooldown));
         });
         ctx.setPacketHandled(true);
     }

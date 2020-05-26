@@ -74,7 +74,7 @@ public class ClientEventHandler {
         MKCore.getPlayer(player).ifPresent(pData -> {
             MKCore.LOGGER.info("sending execute ability {}", slot);
 
-            ResourceLocation abilityId = pData.getAbilityInSlot(slot);
+            ResourceLocation abilityId = pData.getKnowledge().getAbilityInSlot(slot);
             PlayerAbility ability = MKCoreRegistry.getAbility(abilityId);
             if (ability == null || !ability.meetsRequirements(pData))
                 return;

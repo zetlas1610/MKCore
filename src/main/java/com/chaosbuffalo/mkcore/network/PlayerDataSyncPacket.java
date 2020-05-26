@@ -1,7 +1,6 @@
 package com.chaosbuffalo.mkcore.network;
 
 import com.chaosbuffalo.mkcore.Capabilities;
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
@@ -33,7 +32,7 @@ public class PlayerDataSyncPacket {
     public void toBytes(PacketBuffer buffer) {
         buffer.writeUniqueId(targetUUID);
         buffer.writeCompoundTag(updateTag);
-        MKCore.LOGGER.info("sync toBytes {}", updateTag);
+//        MKCore.LOGGER.info("sync toBytes {}", updateTag);
     }
 
     public void handle(Supplier<NetworkEvent.Context> supplier) {

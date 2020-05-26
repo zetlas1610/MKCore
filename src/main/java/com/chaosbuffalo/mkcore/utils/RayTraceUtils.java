@@ -108,11 +108,7 @@ public class RayTraceUtils {
         EntityRayTraceResult entity = rayTraceEntities(clazz, mainEntity.getEntityWorld(), from, to, Vec3d.ZERO, 0.5f, 0.5f, entityFilter);
 
         if (block.getType() == RayTraceResult.Type.MISS) {
-            if (entity == null) {
-                return null;
-            } else {
-                return entity;
-            }
+            return entity;
         } else {
             if (entity == null) {
                 return block;
