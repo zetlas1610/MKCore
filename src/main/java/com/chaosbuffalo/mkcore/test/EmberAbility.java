@@ -24,7 +24,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class EmberAbility extends PlayerAbility {
     public static final EmberAbility INSTANCE = new EmberAbility();
-    private final FloatAttribute damage;
+    protected final FloatAttribute damage = new FloatAttribute("damage", 6.0f);
 
     @SubscribeEvent
     public static void register(RegistryEvent.Register<PlayerAbility> event) {
@@ -39,7 +39,6 @@ public class EmberAbility extends PlayerAbility {
 
     private EmberAbility() {
         super(MKCore.makeRL("ability.ember"));
-        damage = new FloatAttribute("damage", 6.0f);
         addAttribute(damage);
     }
 
