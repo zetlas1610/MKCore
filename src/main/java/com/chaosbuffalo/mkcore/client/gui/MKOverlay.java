@@ -69,6 +69,9 @@ public class MKOverlay {
             return;
         }
         PlayerAbility ability = info.getAbility();
+        if (ability.getCastTime() == 0){
+            return;
+        }
         int height = mc.getMainWindow().getScaledHeight();
         int castStartY = height / 2 + 8;
         int width = 50;
