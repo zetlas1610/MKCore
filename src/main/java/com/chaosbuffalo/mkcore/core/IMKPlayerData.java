@@ -17,30 +17,18 @@ public interface IMKPlayerData {
 
     PlayerKnowledge getKnowledge();
 
-    float getMana();
+    PlayerStatsModule getStats();
 
-    void setMana(float value);
+    default float getMana() {
+        return getStats().getMana();
+    }
 
-    default void addMana(float value) {
-        setMana(getMana() + value);
+    default void setMana(float value) {
+        getStats().setMana(value);
     }
 
     default boolean consumeMana(float amount) {
-        if (getMana() >= amount) {
-            setMana(getMana() - amount);
-            return true;
-        }
-        return false;
-    }
-
-    default float getMaxMana() {
-        return (float) getPlayer().getAttribute(PlayerAttributes.MAX_MANA).getValue();
-    }
-
-    void setMaxMana(float max);
-
-    default float getManaRegenRate() {
-        return (float) getPlayer().getAttribute(PlayerAttributes.MANA_REGEN).getValue();
+        return getStats().consumeMana(amount);
     }
 
     default float getHealth() {
@@ -83,10 +71,6 @@ public interface IMKPlayerData {
 
     default CastState startAbility(PlayerAbility ability) {
         return getAbilityExecutor().startAbility(ability);
-    }
-
-    default boolean isCasting() {
-        return getAbilityExecutor().isCasting();
     }
 
     void clone(IMKPlayerData previous, boolean death);

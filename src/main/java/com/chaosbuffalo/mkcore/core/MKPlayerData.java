@@ -15,7 +15,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
@@ -25,16 +24,15 @@ import java.util.List;
 public class MKPlayerData implements IMKPlayerData {
 
     private PlayerEntity player;
-    private float regenTime;
     private boolean readyForUpdates = false;
     private PlayerAbilityExecutor abilityExecutor;
     private PlayerKnowledge knowledge;
+    private PlayerStatsModule stats;
     private AbilityTracker abilityTracker;
     private final SyncFloat mana = new SyncFloat("mana", 0f);
-    private final CompositeUpdater publicUpdater = new CompositeUpdater(mana);
+    private final CompositeUpdater publicUpdater = new CompositeUpdater();
 
     public MKPlayerData() {
-        regenTime = 0f;
     }
 
     @Override
@@ -42,7 +40,9 @@ public class MKPlayerData implements IMKPlayerData {
         player = newPlayer;
         knowledge = new PlayerKnowledge(this);
         abilityExecutor = new PlayerAbilityExecutor(this);
+        stats = new PlayerStatsModule(this);
         abilityTracker = AbilityTracker.getTracker(player);
+        publicUpdater.add(stats);
         registerAttributes();
 
         setupFakeStats();
@@ -85,23 +85,6 @@ public class MKPlayerData implements IMKPlayerData {
     }
 
     @Override
-    public float getMana() {
-        return mana.get();
-    }
-
-    @Override
-    public void setMana(float value) {
-        value = MathHelper.clamp(value, 0, getMaxMana());
-        mana.set(value);
-    }
-
-    @Override
-    public void setMaxMana(float max) {
-        player.getAttribute(PlayerAttributes.MAX_MANA).setBaseValue(max);
-        setMana(getMana()); // Refresh the mana to account for the updated maximum
-    }
-
-    @Override
     public PlayerAbilityExecutor getAbilityExecutor() {
         return abilityExecutor;
     }
@@ -109,6 +92,11 @@ public class MKPlayerData implements IMKPlayerData {
     @Override
     public PlayerKnowledge getKnowledge() {
         return knowledge;
+    }
+
+    @Override
+    public PlayerStatsModule getStats() {
+        return stats;
     }
 
     public int getCurrentAbilityCooldown(ResourceLocation abilityId) {
@@ -173,14 +161,13 @@ public class MKPlayerData implements IMKPlayerData {
     public void update() {
         abilityTracker.tick();
         getAbilityExecutor().tick();
+        getStats().tick();
 //        MKCore.LOGGER.info("update {} {}", this.player, mana.get());
 
         if (!isServerSide()) {
             // client-only handling here
             return;
         }
-
-        updateMana();
 
         syncState();
     }
@@ -215,26 +202,6 @@ public class MKPlayerData implements IMKPlayerData {
         }
     }
 
-    private void updateMana() {
-        if (this.getManaRegenRate() <= 0.0f) {
-            return;
-        }
-
-        float max = getMaxMana();
-        if (getMana() > max)
-            setMana(max);
-
-        regenTime += 1. / 20.;
-        // if getManaRegenRate == 1, this is 1 mana per 3 seconds
-        float i_regen = 3.0f / getManaRegenRate();
-        if (regenTime >= i_regen) {
-            if (getMana() < max) {
-                addMana(1);
-            }
-            regenTime -= i_regen;
-        }
-    }
-
     private boolean isDirty() {
         return publicUpdater.isDirty();
     }
@@ -263,27 +230,16 @@ public class MKPlayerData implements IMKPlayerData {
 //        MKCore.LOGGER.info("deserializeClientUpdatePost - {}", mana.get());
     }
 
-    public void serializeActiveState(CompoundNBT nbt) {
-        nbt.putFloat("mana", mana.get());
-    }
-
-    public void deserializeActiveState(CompoundNBT nbt) {
-        // TODO: activate persona here
-        if (nbt.contains("mana")) {
-            setMana(nbt.getFloat("mana"));
-        }
-    }
-
     @Override
     public void serialize(CompoundNBT nbt) {
 //        MKCore.LOGGER.info("serialize({})", mana.get());
-        serializeActiveState(nbt);
+        getStats().serialize(nbt);
         abilityTracker.serialize(nbt);
     }
 
     @Override
     public void deserialize(CompoundNBT nbt) {
-        deserializeActiveState(nbt);
+        getStats().deserialize(nbt);
         abilityTracker.deserialize(nbt);
 
 //        MKCore.LOGGER.info("deserialize({})", mana.get());

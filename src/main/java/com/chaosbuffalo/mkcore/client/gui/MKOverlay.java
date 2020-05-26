@@ -51,7 +51,7 @@ public class MKOverlay {
         int manaStartY = height - 24 - 10;
         int manaStartX = 24;
 
-        for (int i = 0; i < data.getMana(); i++) {
+        for (int i = 0; i < data.getStats().getMana(); i++) {
             int manaX = manaCellWidth * (i % maxManaPerRow);
             int manaY = (i / maxManaPerRow) * manaCellRowSize;
             GuiUtils.drawTexturedModalRect(manaStartX + manaX, manaStartY + manaY, MANA_START_U, MANA_START_V,
@@ -106,6 +106,7 @@ public class MKOverlay {
         int barStartY = getBarStartY(slotCount);
 
         float globalCooldown = ClientEventHandler.getGlobalCooldown();
+        PlayerAbilityExecutor executor = data.getAbilityExecutor();
 
         for (int i = 0; i < slotCount; i++) {
             ResourceLocation abilityId = data.getAbilityInSlot(i);
@@ -121,7 +122,7 @@ public class MKOverlay {
                 continue;
 
             float manaCost = data.getAbilityManaCost(abilityId);
-            if (!data.isCasting() && data.getMana() >= manaCost) {
+            if (!executor.isCasting() && data.getStats().getMana() >= manaCost) {
                 RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             } else {
                 RenderSystem.color4f(0.5f, 0.5f, 0.5f, 1.0F);

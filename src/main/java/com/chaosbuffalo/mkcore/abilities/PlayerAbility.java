@@ -111,8 +111,8 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
     }
 
     public boolean meetsRequirements(IMKPlayerData player) {
-        return !player.isCasting() &&
-                player.getMana() >= player.getAbilityManaCost(abilityId) &&
+        return !player.getAbilityExecutor().isCasting() &&
+                player.getStats().getMana() >= player.getAbilityManaCost(abilityId) &&
                 player.getCurrentAbilityCooldown(abilityId) == 0;
     }
 
