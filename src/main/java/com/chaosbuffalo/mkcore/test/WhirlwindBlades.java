@@ -1,6 +1,5 @@
 package com.chaosbuffalo.mkcore.test;
 
-import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.CastState;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
@@ -72,7 +71,7 @@ public class WhirlwindBlades extends PlayerAbility {
         int tickSpeed = 6;
         if (castTimeLeft % tickSpeed == 0) {
             int level = data.getAbilityRank(getAbilityId());
-            int totalDuration = getCastTime();
+            int totalDuration = getCastTime(1);
             int count = (totalDuration - castTimeLeft) / tickSpeed;
             float baseAmount = level > 1 ? 0.10f : 0.15f;
             float scaling = count * baseAmount;

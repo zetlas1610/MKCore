@@ -84,7 +84,7 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         return new CastState(castTime);
     }
 
-    public int getCastTime() {
+    public int getCastTime(int rank) {
         return castTime;
     }
 
@@ -97,7 +97,7 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         return 1.0f;
     }
 
-    public int getCooldown(){
+    public int getCooldown(int rank){
         return cooldown;
     }
 
@@ -106,8 +106,8 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         return this;
     }
 
-    public int getCooldownTicks() {
-        return getCooldown() * GameConstants.TICKS_PER_SECOND;
+    public int getCooldownTicks(int rank) {
+        return getCooldown(rank) * GameConstants.TICKS_PER_SECOND;
     }
 
     public AbilityType getType() {
@@ -124,7 +124,7 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         return Targeting.isValidTarget(getTargetType(), caster, target, !canSelfCast());
     }
 
-    public float getManaCost(){
+    public float getManaCost(int rank){
         return manaCost;
     }
 
@@ -147,9 +147,9 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
 
     public CompoundNBT serialize(){
         CompoundNBT tag = new CompoundNBT();
-        tag.putInt("cooldown", getCooldown());
-        tag.putInt("castTime", getCastTime());
-        tag.putFloat("manaCost", getManaCost());
+        tag.putInt("cooldown", getCooldown(1));
+        tag.putInt("castTime", getCastTime(1));
+        tag.putFloat("manaCost", getManaCost(1));
         return tag;
     }
 

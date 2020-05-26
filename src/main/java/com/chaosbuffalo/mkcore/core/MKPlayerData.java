@@ -309,7 +309,7 @@ public class MKPlayerData implements IMKPlayerData {
         float manaCost = getAbilityManaCost(ability.getAbilityId());
         setMana(getMana() - manaCost);
 
-        int castTime = ability.getCastTime();
+        int castTime = ability.getCastTime(1);
         if (castTime > 0) {
             return startCast(info, castTime);
         } else {
@@ -319,7 +319,7 @@ public class MKPlayerData implements IMKPlayerData {
     }
 
     private void completeAbility(PlayerAbility ability, PlayerAbilityInfo info) {
-        int cooldown = ability.getCooldownTicks();
+        int cooldown = ability.getCooldownTicks(1);
         cooldown = PlayerFormulas.applyCooldownReduction(this, cooldown);
         setCooldown(info.getId(), cooldown);
 //        SoundEvent sound = ability.getSpellCompleteSoundEvent();
@@ -360,13 +360,13 @@ public class MKPlayerData implements IMKPlayerData {
         if (abilityInfo == null) {
             return 0.0f;
         }
-        float manaCost = abilityInfo.getAbility().getManaCost();
+        float manaCost = abilityInfo.getAbility().getManaCost(1);
 //        return PlayerFormulas.applyManaCostReduction(this, ); TODO: formulas
         return manaCost;
     }
 
     public int getAbilityCooldown(PlayerAbility ability) {
-        int ticks = ability.getCooldownTicks();
+        int ticks = ability.getCooldownTicks(1);
         ticks = PlayerFormulas.applyCooldownReduction(this, ticks); //TODO: formulas
         return ticks;
     }

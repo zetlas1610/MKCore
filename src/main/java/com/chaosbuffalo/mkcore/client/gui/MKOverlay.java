@@ -70,7 +70,7 @@ public class MKOverlay {
         int height = mc.getMainWindow().getScaledHeight();
         int castStartY = height / 2 + 8;
         int width = 50;
-        int barSize = width * data.getCastTicks() / ability.getCastTime();
+        int barSize = width * data.getCastTicks() / ability.getCastTime(1);
         int castStartX = mc.getMainWindow().getScaledWidth() / 2 - barSize / 2;
 
         mc.getTextureManager().bindTexture(barTexture);

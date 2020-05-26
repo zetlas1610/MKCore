@@ -39,7 +39,7 @@ public abstract class SongApplicator extends SongPotionBase {
                 if (ability == null)
                     return;
 
-                if (pData.isCasting() || !pData.consumeMana(ability.getManaCost())) {
+                if (pData.isCasting() || !pData.consumeMana(ability.getManaCost(1))) {
                     player.removePotionEffect(this);
                 }
 
