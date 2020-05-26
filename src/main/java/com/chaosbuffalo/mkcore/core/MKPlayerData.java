@@ -72,6 +72,7 @@ public class MKPlayerData implements IMKPlayerData {
         attributes.registerAttribute(PlayerAttributes.SPELL_CRIT);
         attributes.registerAttribute(PlayerAttributes.SPELL_CRITICAL_DAMAGE);
         attributes.registerAttribute(PlayerAttributes.HEAL_BONUS);
+        attributes.registerAttribute(PlayerAttributes.MAGIC_ARMOR);
     }
 
     public void onJoinWorld() {

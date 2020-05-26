@@ -34,7 +34,8 @@ public class StatCommand {
                 .then(createAttributeStat("melee_crit_damage", PlayerAttributes.MELEE_CRITICAL_DAMAGE))
                 .then(createAttributeStat("spell_crit", PlayerAttributes.SPELL_CRIT))
                 .then(createAttributeStat("spell_crit_damage", PlayerAttributes.SPELL_CRITICAL_DAMAGE))
-                .then(createAttributeStat("heal_bonus", PlayerAttributes.HEAL_BONUS));
+                .then(createAttributeStat("heal_bonus", PlayerAttributes.HEAL_BONUS))
+                .then(createAttributeStat("magic_armor", PlayerAttributes.MAGIC_ARMOR));
     }
 
     static ArgumentBuilder<CommandSource, ?> createSimpleFloatStat(String name, Function<PlayerStatsModule, Float> getter, BiConsumer<PlayerStatsModule, Float> setter) {

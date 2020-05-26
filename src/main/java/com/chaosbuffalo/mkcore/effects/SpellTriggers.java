@@ -1,12 +1,14 @@
 package com.chaosbuffalo.mkcore.effects;
 
 import com.chaosbuffalo.mkcore.Capabilities;
+import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import com.chaosbuffalo.mkcore.core.IMKPlayerData;
 import com.chaosbuffalo.mkcore.core.MKDamageSource;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.core.PlayerFormulas;
+import com.chaosbuffalo.mkcore.events.ServerSideLeftClickEmpty;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.network.CritMessagePacket;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
@@ -14,6 +16,7 @@ import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkcore.utils.EntityUtils;
 import com.chaosbuffalo.mkcore.utils.ItemUtils;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -22,11 +25,15 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 import java.util.List;
+import java.util.Map;
 
 public class SpellTriggers {
 
@@ -108,9 +115,9 @@ public class SpellTriggers {
         private static final String MELEE_TAG = "PLAYER_HURT_ENTITY.melee";
         private static final String MAGIC_TAG = "PLAYER_HURT_ENTITY.magic";
         private static final String POST_TAG = "PLAYER_HURT_ENTITY.post";
-        private static List<PlayerHurtEntityTrigger> playerHurtEntityMeleeTriggers = Lists.newArrayList();
-        private static List<PlayerHurtEntityTrigger> playerHurtEntityMagicTriggers = Lists.newArrayList();
-        private static List<PlayerHurtEntityTrigger> playerHurtEntityPostTriggers = Lists.newArrayList();
+        private static final List<PlayerHurtEntityTrigger> playerHurtEntityMeleeTriggers = Lists.newArrayList();
+        private static final List<PlayerHurtEntityTrigger> playerHurtEntityMagicTriggers = Lists.newArrayList();
+        private static final List<PlayerHurtEntityTrigger> playerHurtEntityPostTriggers = Lists.newArrayList();
 
         public static void registerMelee(PlayerHurtEntityTrigger trigger) {
             playerHurtEntityMeleeTriggers.add(trigger);
@@ -255,6 +262,42 @@ public class SpellTriggers {
         }
     }
 
+    public static class ENTITY_HURT_PLAYER {
+        @FunctionalInterface
+        public interface EntityHurtPlayerTrigger {
+            void apply(LivingHurtEvent event, DamageSource source, PlayerEntity livingTarget,
+                       IMKPlayerData targetData);
+        }
+
+        private static final String TAG = ENTITY_HURT_PLAYER.class.getName();
+        private static final List<EntityHurtPlayerTrigger> entityHurtPlayerPreTriggers = Lists.newArrayList();
+        private static final List<EntityHurtPlayerTrigger> entityHurtPlayerPostTriggers = Lists.newArrayList();
+
+        public static void registerPreScale(EntityHurtPlayerTrigger trigger) {
+            entityHurtPlayerPreTriggers.add(trigger);
+        }
+
+        public static void registerPostScale(EntityHurtPlayerTrigger trigger) {
+            entityHurtPlayerPostTriggers.add(trigger);
+        }
+
+        public static void onEntityHurtPlayer(LivingHurtEvent event, DamageSource source, PlayerEntity livingTarget,
+                                              IMKPlayerData targetData) {
+            if (!startTrigger(livingTarget, TAG))
+                return;
+            entityHurtPlayerPreTriggers.forEach(f -> f.apply(event, source, livingTarget, targetData));
+
+            if (source.isMagicDamage()) {
+                float newDamage = PlayerFormulas.applyMagicArmor(targetData, event.getAmount());
+                MKCore.LOGGER.debug("Magic armor reducing damage from {} to {}", event.getAmount(), newDamage);
+                event.setAmount(newDamage);
+            }
+
+            entityHurtPlayerPostTriggers.forEach(f -> f.apply(event, source, livingTarget, targetData));
+            endTrigger(livingTarget, TAG);
+        }
+    }
+
     private static void sendCritPacket(LivingEntity livingTarget, ServerPlayerEntity playerSource,
                                        CritMessagePacket packet) {
         PacketHandler.sendToTrackingAndSelf(packet, playerSource);
@@ -268,5 +311,162 @@ public class SpellTriggers {
                         livingTarget.getPosZ(), .5f, .5f, .5f, 0.2,
                         lookVec),
                 livingTarget);
+    }
+
+    public static class ATTACK_ENTITY {
+
+        @FunctionalInterface
+        public interface AttackEntityTrigger {
+            void apply(LivingEntity player, Entity target, EffectInstance effect);
+        }
+
+        private static final String TAG = ATTACK_ENTITY.class.getName();
+        private static final Map<SpellPotionBase, AttackEntityTrigger> attackEntityTriggers = Maps.newLinkedHashMap();
+
+        public static void register(SpellPotionBase potion, AttackEntityTrigger trigger) {
+            attackEntityTriggers.put(potion, trigger);
+        }
+
+        public static void onAttackEntity(LivingEntity attacker, Entity target) {
+            if (!startTrigger(attacker, TAG))
+                return;
+            attackEntityTriggers.forEach((spellPotionBase, attackEntityTrigger) -> {
+                EffectInstance effect = attacker.getActivePotionEffect(spellPotionBase);
+                if (effect != null) {
+                    attackEntityTrigger.apply(attacker, target, effect);
+                }
+            });
+            endTrigger(attacker, TAG);
+        }
+    }
+
+    public static class PLAYER_ATTACK_ENTITY {
+        @FunctionalInterface
+        public interface PlayerAttackEntityTrigger {
+            void apply(LivingEntity player, Entity target, EffectInstance effect);
+        }
+
+        private static final String TAG = PLAYER_ATTACK_ENTITY.class.getName();
+        private static final Map<SpellPotionBase, PlayerAttackEntityTrigger> attackEntityTriggers = Maps.newLinkedHashMap();
+
+        public static void register(SpellPotionBase potion, PlayerAttackEntityTrigger trigger) {
+            attackEntityTriggers.put(potion, trigger);
+        }
+
+        public static void onAttackEntity(LivingEntity attacker, Entity target) {
+            if (!startTrigger(attacker, TAG))
+                return;
+            attackEntityTriggers.forEach((spellPotionBase, attackEntityTrigger) -> {
+                EffectInstance effect = attacker.getActivePotionEffect(spellPotionBase);
+                if (effect != null) {
+                    attackEntityTrigger.apply(attacker, target, effect);
+                }
+            });
+            endTrigger(attacker, TAG);
+        }
+    }
+
+    public static class EMPTY_LEFT_CLICK {
+
+        @FunctionalInterface
+        public interface EmptyLeftClickTrigger {
+            void apply(ServerSideLeftClickEmpty event, PlayerEntity player, EffectInstance effect);
+        }
+
+        private static final String TAG = EMPTY_LEFT_CLICK.class.getName();
+        private static final Map<SpellPotionBase, EmptyLeftClickTrigger> emptyLeftClickTriggers = Maps.newLinkedHashMap();
+
+        public static void register(SpellPotionBase potion, EmptyLeftClickTrigger trigger) {
+            emptyLeftClickTriggers.put(potion, trigger);
+        }
+
+        public static void onEmptyLeftClick(PlayerEntity player, ServerSideLeftClickEmpty event) {
+            if (!startTrigger(player, TAG))
+                return;
+            emptyLeftClickTriggers.forEach((spellPotionBase, trigger) -> {
+                EffectInstance effect = player.getActivePotionEffect(spellPotionBase);
+                if (effect != null) {
+                    trigger.apply(event, player, effect);
+                }
+            });
+            endTrigger(player, TAG);
+        }
+    }
+
+    public static class PLAYER_KILL_ENTITY {
+        private static final String TAG = PLAYER_KILL_ENTITY.class.getName();
+        private static final Map<SpellPotionBase, PlayerKillEntityTrigger> killTriggers = Maps.newLinkedHashMap();
+
+        @FunctionalInterface
+        public interface PlayerKillEntityTrigger {
+            void apply(LivingDeathEvent event, DamageSource source, PlayerEntity player);
+        }
+
+        public static void register(SpellPotionBase potion, PlayerKillEntityTrigger trigger) {
+            killTriggers.put(potion, trigger);
+        }
+
+        public static void onEntityDeath(LivingDeathEvent event, DamageSource source, PlayerEntity entity) {
+            if (!startTrigger(entity, TAG))
+                return;
+            killTriggers.forEach((spellPotionBase, trigger) -> {
+                EffectInstance effect = entity.getActivePotionEffect(spellPotionBase);
+                if (effect != null) {
+                    trigger.apply(event, source, entity);
+                }
+            });
+            endTrigger(entity, TAG);
+        }
+    }
+
+    public static class PLAYER_DEATH {
+        @FunctionalInterface
+        public interface PlayerKillEntityTrigger {
+            void apply(LivingDeathEvent event, DamageSource source, PlayerEntity player);
+        }
+
+        private static final String TAG = PLAYER_DEATH.class.getName();
+        private static final Map<SpellPotionBase, PlayerKillEntityTrigger> killTriggers = Maps.newLinkedHashMap();
+
+        public static void register(SpellPotionBase potion, PlayerKillEntityTrigger trigger) {
+            killTriggers.put(potion, trigger);
+        }
+
+        public static void onEntityDeath(LivingDeathEvent event, DamageSource source, PlayerEntity entity) {
+            if (!startTrigger(entity, TAG))
+                return;
+            killTriggers.forEach((spellPotionBase, trigger) -> {
+                if (entity.isPotionActive(spellPotionBase)) {
+                    trigger.apply(event, source, entity);
+                }
+            });
+            endTrigger(entity, TAG);
+        }
+    }
+
+    public static class PLAYER_EQUIPMENT_CHANGE {
+        private static final String TAG = PLAYER_EQUIPMENT_CHANGE.class.getName();
+        private static final Map<SpellPotionBase, PlayerEquipmentChangeTrigger> triggers = Maps.newLinkedHashMap();
+
+        @FunctionalInterface
+        public interface PlayerEquipmentChangeTrigger {
+            void apply(LivingEquipmentChangeEvent event, IMKPlayerData data, PlayerEntity player);
+        }
+
+        public static void register(SpellPotionBase potion, PlayerEquipmentChangeTrigger trigger) {
+            triggers.put(potion, trigger);
+        }
+
+        public static void onEquipmentChange(LivingEquipmentChangeEvent event, IMKPlayerData data, PlayerEntity player) {
+            if (!startTrigger(player, TAG))
+                return;
+            triggers.forEach((spellPotionBase, trigger) -> {
+                EffectInstance effect = player.getActivePotionEffect(spellPotionBase);
+                if (effect != null) {
+                    trigger.apply(event, data, player);
+                }
+            });
+            endTrigger(player, TAG);
+        }
     }
 }

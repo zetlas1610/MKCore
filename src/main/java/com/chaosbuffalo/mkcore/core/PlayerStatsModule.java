@@ -35,6 +35,9 @@ public class PlayerStatsModule implements ISyncObject {
         return (float) getPlayer().getAttribute(PlayerAttributes.SPELL_CRIT).getValue();
     }
 
+    public float getMagicArmor() {
+        return (float) getPlayer().getAttribute(PlayerAttributes.MAGIC_ARMOR).getValue();
+    }
 
     public float getSpellCritDamage() {
         return (float) getPlayer().getAttribute(PlayerAttributes.SPELL_CRITICAL_DAMAGE).getValue();
@@ -231,4 +234,6 @@ public class PlayerStatsModule implements ISyncObject {
     public void serializeFull(CompoundNBT tag) {
         publicUpdater.serializeFull(tag);
     }
+
+
 }
