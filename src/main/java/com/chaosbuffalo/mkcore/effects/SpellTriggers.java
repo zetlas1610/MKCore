@@ -15,8 +15,6 @@ import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkcore.utils.EntityUtils;
 import com.chaosbuffalo.mkcore.utils.ItemUtils;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -32,6 +30,8 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -85,7 +85,7 @@ public class SpellTriggers {
 
     public static class FALL {
         private static final String TAG = FALL.class.getName();
-        private static final List<FallTrigger> fallTriggers = Lists.newArrayList();
+        private static final List<FallTrigger> fallTriggers = new ArrayList<>();
 
         @FunctionalInterface
         public interface FallTrigger {
@@ -115,9 +115,9 @@ public class SpellTriggers {
         private static final String MELEE_TAG = "PLAYER_HURT_ENTITY.melee";
         private static final String MAGIC_TAG = "PLAYER_HURT_ENTITY.magic";
         private static final String POST_TAG = "PLAYER_HURT_ENTITY.post";
-        private static final List<PlayerHurtEntityTrigger> playerHurtEntityMeleeTriggers = Lists.newArrayList();
-        private static final List<PlayerHurtEntityTrigger> playerHurtEntityMagicTriggers = Lists.newArrayList();
-        private static final List<PlayerHurtEntityTrigger> playerHurtEntityPostTriggers = Lists.newArrayList();
+        private static final List<PlayerHurtEntityTrigger> playerHurtEntityMeleeTriggers = new ArrayList<>();
+        private static final List<PlayerHurtEntityTrigger> playerHurtEntityMagicTriggers = new ArrayList<>();
+        private static final List<PlayerHurtEntityTrigger> playerHurtEntityPostTriggers = new ArrayList<>();
 
         public static void registerMelee(PlayerHurtEntityTrigger trigger) {
             playerHurtEntityMeleeTriggers.add(trigger);
@@ -270,8 +270,8 @@ public class SpellTriggers {
         }
 
         private static final String TAG = ENTITY_HURT_PLAYER.class.getName();
-        private static final List<EntityHurtPlayerTrigger> entityHurtPlayerPreTriggers = Lists.newArrayList();
-        private static final List<EntityHurtPlayerTrigger> entityHurtPlayerPostTriggers = Lists.newArrayList();
+        private static final List<EntityHurtPlayerTrigger> entityHurtPlayerPreTriggers = new ArrayList<>();
+        private static final List<EntityHurtPlayerTrigger> entityHurtPlayerPostTriggers = new ArrayList<>();
 
         public static void registerPreScale(EntityHurtPlayerTrigger trigger) {
             entityHurtPlayerPreTriggers.add(trigger);
@@ -321,7 +321,7 @@ public class SpellTriggers {
         }
 
         private static final String TAG = ATTACK_ENTITY.class.getName();
-        private static final Map<SpellPotionBase, AttackEntityTrigger> attackEntityTriggers = Maps.newLinkedHashMap();
+        private static final Map<SpellPotionBase, AttackEntityTrigger> attackEntityTriggers = new HashMap<>();
 
         public static void register(SpellPotionBase potion, AttackEntityTrigger trigger) {
             attackEntityTriggers.put(potion, trigger);
@@ -347,7 +347,7 @@ public class SpellTriggers {
         }
 
         private static final String TAG = PLAYER_ATTACK_ENTITY.class.getName();
-        private static final Map<SpellPotionBase, PlayerAttackEntityTrigger> attackEntityTriggers = Maps.newLinkedHashMap();
+        private static final Map<SpellPotionBase, PlayerAttackEntityTrigger> attackEntityTriggers = new HashMap<>();
 
         public static void register(SpellPotionBase potion, PlayerAttackEntityTrigger trigger) {
             attackEntityTriggers.put(potion, trigger);
@@ -374,7 +374,7 @@ public class SpellTriggers {
         }
 
         private static final String TAG = EMPTY_LEFT_CLICK.class.getName();
-        private static final Map<SpellPotionBase, EmptyLeftClickTrigger> emptyLeftClickTriggers = Maps.newLinkedHashMap();
+        private static final Map<SpellPotionBase, EmptyLeftClickTrigger> emptyLeftClickTriggers = new HashMap<>();
 
         public static void register(SpellPotionBase potion, EmptyLeftClickTrigger trigger) {
             emptyLeftClickTriggers.put(potion, trigger);
@@ -395,7 +395,7 @@ public class SpellTriggers {
 
     public static class PLAYER_KILL_ENTITY {
         private static final String TAG = PLAYER_KILL_ENTITY.class.getName();
-        private static final Map<SpellPotionBase, PlayerKillEntityTrigger> killTriggers = Maps.newLinkedHashMap();
+        private static final Map<SpellPotionBase, PlayerKillEntityTrigger> killTriggers = new HashMap<>();
 
         @FunctionalInterface
         public interface PlayerKillEntityTrigger {
@@ -426,7 +426,7 @@ public class SpellTriggers {
         }
 
         private static final String TAG = PLAYER_DEATH.class.getName();
-        private static final Map<SpellPotionBase, PlayerKillEntityTrigger> killTriggers = Maps.newLinkedHashMap();
+        private static final Map<SpellPotionBase, PlayerKillEntityTrigger> killTriggers = new HashMap<>();
 
         public static void register(SpellPotionBase potion, PlayerKillEntityTrigger trigger) {
             killTriggers.put(potion, trigger);
@@ -446,7 +446,7 @@ public class SpellTriggers {
 
     public static class PLAYER_EQUIPMENT_CHANGE {
         private static final String TAG = PLAYER_EQUIPMENT_CHANGE.class.getName();
-        private static final Map<SpellPotionBase, PlayerEquipmentChangeTrigger> triggers = Maps.newLinkedHashMap();
+        private static final Map<SpellPotionBase, PlayerEquipmentChangeTrigger> triggers = new HashMap<>();
 
         @FunctionalInterface
         public interface PlayerEquipmentChangeTrigger {
