@@ -32,4 +32,5 @@ public interface IMKPlayerData {
     void serialize(CompoundNBT nbt);
 
     void deserialize(CompoundNBT nbt);
+
 }

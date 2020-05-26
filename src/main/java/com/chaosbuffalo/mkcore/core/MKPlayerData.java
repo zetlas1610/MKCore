@@ -13,7 +13,9 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MKPlayerData implements IMKPlayerData {
 
@@ -23,6 +25,7 @@ public class MKPlayerData implements IMKPlayerData {
     private PlayerKnowledge knowledge;
     private PlayerStatsModule stats;
     private final CompositeUpdater publicUpdater = new CompositeUpdater();
+    private final Set<String> spellTag = new HashSet<>();
 
     public MKPlayerData() {
     }
@@ -63,6 +66,12 @@ public class MKPlayerData implements IMKPlayerData {
         attributes.registerAttribute(PlayerAttributes.MAX_MANA);
         attributes.registerAttribute(PlayerAttributes.MANA_REGEN);
         attributes.registerAttribute(PlayerAttributes.COOLDOWN);
+        attributes.registerAttribute(PlayerAttributes.MELEE_CRIT);
+        attributes.registerAttribute(PlayerAttributes.MAGIC_ATTACK_DAMAGE);
+        attributes.registerAttribute(PlayerAttributes.MELEE_CRITICAL_DAMAGE);
+        attributes.registerAttribute(PlayerAttributes.SPELL_CRIT);
+        attributes.registerAttribute(PlayerAttributes.SPELL_CRITICAL_DAMAGE);
+        attributes.registerAttribute(PlayerAttributes.HEAL_BONUS);
     }
 
     public void onJoinWorld() {
@@ -194,5 +203,17 @@ public class MKPlayerData implements IMKPlayerData {
 //        abilityTracker.deserialize(nbt);
 
 //        MKCore.LOGGER.info("deserialize({})", mana.get());
+    }
+
+    public void addSpellTag(String tag){
+        spellTag.add(tag);
+    }
+
+    public void removeSpellTag(String tag){
+        spellTag.remove(tag);
+    }
+
+    public boolean hasSpellTag(String tag){
+        return spellTag.contains(tag);
     }
 }

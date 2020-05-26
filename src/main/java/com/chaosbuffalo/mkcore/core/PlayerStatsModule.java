@@ -27,6 +27,31 @@ public class PlayerStatsModule implements ISyncObject {
         regenTime = 0f;
     }
 
+    public float getMeleeCritChance() {
+        return (float) getPlayer().getAttribute(PlayerAttributes.MELEE_CRIT).getValue();
+    }
+
+    public float getSpellCritChance() {
+        return (float) getPlayer().getAttribute(PlayerAttributes.SPELL_CRIT).getValue();
+    }
+
+
+    public float getSpellCritDamage() {
+        return (float) getPlayer().getAttribute(PlayerAttributes.SPELL_CRITICAL_DAMAGE).getValue();
+    }
+
+    public float getMeleeCritDamage() {
+        return (float) getPlayer().getAttribute(PlayerAttributes.MELEE_CRITICAL_DAMAGE).getValue();
+    }
+
+    public float getHealBonus() {
+        return (float) getPlayer().getAttribute(PlayerAttributes.HEAL_BONUS).getValue();
+    }
+
+    public float getMagicDamageBonus() {
+        return (float) getPlayer().getAttribute(PlayerAttributes.MAGIC_ATTACK_DAMAGE).getValue();
+    }
+
     private PlayerEntity getPlayer() {
         return playerData.getPlayer();
     }

@@ -22,8 +22,17 @@ public class MKConfig {
 
     public static ForgeConfigSpec.IntValue talentPointLimit;
 
+    public static ForgeConfigSpec.BooleanValue showMyCrits;
+    public static ForgeConfigSpec.BooleanValue showOthersCrits;
+
     private static void initClient(ForgeConfigSpec.Builder builder) {
         builder.comment("General settings").push("general");
+        showMyCrits = builder
+                .comment("Show your own crit messages")
+                .define("showMyCrits", true);
+        showOthersCrits = builder
+                .comment("Show other's crit messages")
+                .define("showOthersCrits", true);
         builder.pop();
     }
 
