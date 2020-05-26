@@ -3,6 +3,7 @@ package com.chaosbuffalo.mkcore.command;
 import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.core.IMKPlayerData;
 import com.chaosbuffalo.mkcore.core.PlayerAttributes;
+import com.chaosbuffalo.mkcore.core.PlayerStatsModule;
 import com.chaosbuffalo.mkcore.utils.TextUtils;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.FloatArgumentType;
@@ -24,17 +25,17 @@ public class StatCommand {
 
     public static LiteralArgumentBuilder<CommandSource> register() {
         return Commands.literal("stat")
-                .then(createSimpleFloatStat("mana", IMKPlayerData::getMana, IMKPlayerData::setMana))
-                .then(createSimpleFloatStat("health", IMKPlayerData::getHealth, IMKPlayerData::setHealth))
+                .then(createSimpleFloatStat("mana", PlayerStatsModule::getMana, PlayerStatsModule::setMana))
+                .then(createSimpleFloatStat("health", PlayerStatsModule::getHealth, PlayerStatsModule::setHealth))
                 .then(createAttributeStat("manaregen", PlayerAttributes.MANA_REGEN))
                 .then(createAttributeStat("maxmana", PlayerAttributes.MAX_MANA))
                 .then(createAttributeStat("cdr", PlayerAttributes.COOLDOWN));
     }
 
-    static ArgumentBuilder<CommandSource, ?> createSimpleFloatStat(String name, Function<IMKPlayerData, Float> getter, BiConsumer<IMKPlayerData, Float> setter) {
+    static ArgumentBuilder<CommandSource, ?> createSimpleFloatStat(String name, Function<PlayerStatsModule, Float> getter, BiConsumer<PlayerStatsModule, Float> setter) {
         Function<PlayerEntity, Integer> getAction = playerEntity -> {
             playerEntity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap ->
-                    TextUtils.sendPlayerChatMessage(playerEntity, String.format("%s is %f", name, getter.apply(cap))));
+                    TextUtils.sendPlayerChatMessage(playerEntity, String.format("%s is %f", name, getter.apply(cap.getStats()))));
 
             return Command.SINGLE_SUCCESS;
         };
@@ -44,8 +45,8 @@ public class StatCommand {
             setAction = (playerEntity, value) -> {
                 playerEntity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap -> {
                     TextUtils.sendPlayerChatMessage(playerEntity, String.format("Setting %s to %f", name, value));
-                    setter.accept(cap, value);
-                    TextUtils.sendPlayerChatMessage(playerEntity, String.format("%s is now %f", name, getter.apply(cap)));
+                    setter.accept(cap.getStats(), value);
+                    TextUtils.sendPlayerChatMessage(playerEntity, String.format("%s is now %f", name, getter.apply(cap.getStats())));
                 });
                 return Command.SINGLE_SUCCESS;
             };
@@ -61,6 +62,7 @@ public class StatCommand {
     static ArgumentBuilder<CommandSource, ?> createAttributeStat(String name, IAttribute attribute) {
         Function<PlayerEntity, Integer> getAction = playerEntity -> {
             IAttributeInstance instance = playerEntity.getAttribute(attribute);
+            //noinspection ConstantConditions
             if (instance != null) {
                 String value = String.format("%s is %f (%f base)", name, instance.getValue(), instance.getBaseValue());
                 TextUtils.sendPlayerChatMessage(playerEntity, value);
@@ -73,6 +75,7 @@ public class StatCommand {
 
         BiFunction<PlayerEntity, Float, Integer> setAction = (playerEntity, value) -> {
             IAttributeInstance instance = playerEntity.getAttribute(attribute);
+            //noinspection ConstantConditions
             if (instance != null) {
                 instance.setBaseValue(value);
                 String output = String.format("%s is now %f (%f base)", name, instance.getValue(), instance.getBaseValue());

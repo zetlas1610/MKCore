@@ -37,7 +37,7 @@ public class PlayerAbilityExecutor {
     }
 
     public void executeHotBarAbility(int slot) {
-        ResourceLocation abilityId = playerData.getAbilityInSlot(slot);
+        ResourceLocation abilityId = playerData.getKnowledge().getAbilityInSlot(slot);
         if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
             return;
 
@@ -49,7 +49,7 @@ public class PlayerAbilityExecutor {
         if (info == null || !info.isCurrentlyKnown())
             return;
 
-        if (playerData.getCurrentAbilityCooldown(abilityId) == 0) {
+        if (playerData.getStats().getCurrentAbilityCooldown(abilityId) == 0) {
 
             PlayerAbility ability = info.getAbility();
             if (ability != null &&
@@ -58,6 +58,10 @@ public class PlayerAbilityExecutor {
                 ability.execute(getPlayer(), playerData, getPlayer().getEntityWorld());
             }
         }
+    }
+
+    public boolean canActivateAbility(PlayerAbility ability) {
+        return !isCasting();
     }
 
     public void tick() {
@@ -74,22 +78,18 @@ public class PlayerAbilityExecutor {
         MKCore.LOGGER.info("setCooldown({}, {})", id, ticks);
 
         if (!id.equals(MKCoreRegistry.INVALID_ABILITY)) {
-            playerData.setTimer(id, ticks);
+            playerData.getStats().setTimer(id, ticks);
         }
     }
 
-
-    //    @Override
     public boolean isCasting() {
         return currentCast != null;
     }
 
-    //    @Override
     public int getCastTicks() {
         return currentCast != null ? currentCast.getCastTicks() : 0;
     }
 
-    //    @Override
     public ResourceLocation getCastingAbility() {
         return currentCast != null ? currentCast.getAbilityId() : MKCoreRegistry.INVALID_ABILITY;
     }
@@ -135,19 +135,23 @@ public class PlayerAbilityExecutor {
             return null;
         }
 
-        float manaCost = playerData.getAbilityManaCost(ability.getAbilityId());
+        float manaCost = playerData.getStats().getAbilityManaCost(ability.getAbilityId());
         playerData.consumeMana(manaCost);
 
         int castTime = ability.getCastTime(info.getRank());
+        CastState state = startCast(info, castTime);
         if (castTime > 0) {
-            return startCast(info, castTime);
+            return state;
         } else {
-            completeAbility(ability, info);
+            completeAbility(ability, info, state);
         }
         return null;
     }
 
-    private void completeAbility(PlayerAbility ability, PlayerAbilityInfo info) {
+    private void completeAbility(PlayerAbility ability, PlayerAbilityInfo info, CastState castState) {
+        // Finish the cast
+        ability.endCast(getPlayer(), playerData, getPlayer().getEntityWorld(), castState);
+
         int cooldown = ability.getCooldownTicks(info.getRank());
         cooldown = PlayerFormulas.applyCooldownReduction(playerData, cooldown);
         setCooldown(info.getId(), cooldown);
@@ -210,10 +214,10 @@ public class PlayerAbilityExecutor {
         PlayerAbilityInfo info;
         CastState abilityCastState;
 
-        public ServerCastingState(PlayerAbilityExecutor executor, PlayerAbilityInfo ability, int castTicks) {
-            super(executor, ability.getAbility(), castTicks);
-            this.info = ability;
-            abilityCastState = ability.getAbility().createCastState(castTicks);
+        public ServerCastingState(PlayerAbilityExecutor executor, PlayerAbilityInfo abilityInfo, int castTicks) {
+            super(executor, abilityInfo.getAbility(), castTicks);
+            this.info = abilityInfo;
+            abilityCastState = abilityInfo.getAbility().createCastState(castTicks);
         }
 
         public CastState getAbilityCastState() {
@@ -227,8 +231,7 @@ public class PlayerAbilityExecutor {
 
         @Override
         void finish() {
-            ability.endCast(executor.getPlayer(), executor.playerData, executor.getPlayer().getEntityWorld(), abilityCastState);
-            executor.completeAbility(ability, info);
+            executor.completeAbility(ability, info, abilityCastState);
         }
     }
 
@@ -268,7 +271,7 @@ public class PlayerAbilityExecutor {
 
     private void rebuildActiveToggleMap() {
         for (int i = 0; i < GameConstants.ACTION_BAR_SIZE; i++) {
-            ResourceLocation abilityId = playerData.getAbilityInSlot(i);
+            ResourceLocation abilityId = playerData.getKnowledge().getAbilityInSlot(i);
             PlayerAbility ability = MKCoreRegistry.getAbility(abilityId);
             if (ability instanceof PlayerToggleAbility && playerData.getPlayer() != null) {
                 PlayerToggleAbility toggle = (PlayerToggleAbility) ability;
@@ -307,7 +310,7 @@ public class PlayerAbilityExecutor {
         // ability will be the same as current
         if (current != null && current != ability) {
             current.removeEffect(player, playerData, player.getEntityWorld());
-            setCooldown(current.getAbilityId(), playerData.getAbilityCooldown(current));
+            setCooldown(current.getAbilityId(), playerData.getStats().getAbilityCooldown(current));
         }
         activeToggleMap.put(groupId, ability);
     }

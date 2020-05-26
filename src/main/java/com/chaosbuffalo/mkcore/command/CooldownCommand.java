@@ -37,7 +37,7 @@ public class CooldownCommand {
         int ticks = IntegerArgumentType.getInteger(ctx, "ticks");
 
         MKCore.getPlayer(player).ifPresent(playerData -> {
-            playerData.setTimer(MKCore.makeRL(name), ticks);
+            playerData.getStats().setTimer(MKCore.makeRL(name), ticks);
             TextUtils.sendPlayerChatMessage(player, String.format("Created timer %s with %d ticks", name, ticks));
         });
 
@@ -46,14 +46,14 @@ public class CooldownCommand {
 
     static int listTimer(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
         ServerPlayerEntity player = ctx.getSource().asPlayer();
-        MKCore.getPlayer(player).ifPresent(playerData -> ((MKPlayerData) playerData).printActiveCooldowns());
+        MKCore.getPlayer(player).ifPresent(playerData -> playerData.getStats().printActiveCooldowns());
 
         return Command.SINGLE_SUCCESS;
     }
 
     static int resetTimers(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
         ServerPlayerEntity player = ctx.getSource().asPlayer();
-        MKCore.getPlayer(player).ifPresent(playerData -> ((MKPlayerData) playerData).resetAllCooldowns());
+        MKCore.getPlayer(player).ifPresent(playerData -> playerData.getStats().resetAllCooldowns());
 
         return Command.SINGLE_SUCCESS;
     }

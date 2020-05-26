@@ -64,7 +64,7 @@ public class MKOverlay {
         if (!executor.isCasting()) {
             return;
         }
-        PlayerAbilityInfo info = data.getAbilityInfo(executor.getCastingAbility());
+        PlayerAbilityInfo info = data.getKnowledge().getAbilityInfo(executor.getCastingAbility());
         if (info == null || !info.isCurrentlyKnown()) {
             return;
         }
@@ -109,11 +109,11 @@ public class MKOverlay {
         PlayerAbilityExecutor executor = data.getAbilityExecutor();
 
         for (int i = 0; i < slotCount; i++) {
-            ResourceLocation abilityId = data.getAbilityInSlot(i);
+            ResourceLocation abilityId = data.getKnowledge().getAbilityInSlot(i);
             if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
                 continue;
 
-            PlayerAbilityInfo info = data.getAbilityInfo(abilityId);
+            PlayerAbilityInfo info = data.getKnowledge().getAbilityInfo(abilityId);
             if (info == null || !info.isCurrentlyKnown())
                 continue;
 
@@ -121,7 +121,7 @@ public class MKOverlay {
             if (ability == null)
                 continue;
 
-            float manaCost = data.getAbilityManaCost(abilityId);
+            float manaCost = data.getStats().getAbilityManaCost(abilityId);
             if (!executor.isCasting() && data.getStats().getMana() >= manaCost) {
                 RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             } else {
@@ -135,7 +135,7 @@ public class MKOverlay {
             AbstractGui.blit(slotX, slotY, 0, 0, ABILITY_ICON_SIZE, ABILITY_ICON_SIZE, ABILITY_ICON_SIZE, ABILITY_ICON_SIZE);
 
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-            float cooldownFactor = data.getCooldownPercent(info, partialTicks);
+            float cooldownFactor = data.getStats().getActiveCooldownPercent(info, partialTicks);
             if (globalCooldown > 0.0f && cooldownFactor == 0) {
                 cooldownFactor = globalCooldown / ClientEventHandler.getTotalGlobalCooldown();
             }
@@ -170,7 +170,7 @@ public class MKOverlay {
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             drawMana(cap);
             drawCastBar(cap);
-            int slotCount = cap.getActionBarSize();
+            int slotCount = cap.getKnowledge().getActionBarSize();
             drawBarSlots(slotCount);
             drawAbilities(cap, slotCount, event.getPartialTicks());
         });

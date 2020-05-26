@@ -8,7 +8,6 @@ import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncPacket;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncRequestPacket;
 import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
-import com.chaosbuffalo.mkcore.sync.SyncFloat;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
@@ -28,8 +27,6 @@ public class MKPlayerData implements IMKPlayerData {
     private PlayerAbilityExecutor abilityExecutor;
     private PlayerKnowledge knowledge;
     private PlayerStatsModule stats;
-    private AbilityTracker abilityTracker;
-    private final SyncFloat mana = new SyncFloat("mana", 0f);
     private final CompositeUpdater publicUpdater = new CompositeUpdater();
 
     public MKPlayerData() {
@@ -41,7 +38,6 @@ public class MKPlayerData implements IMKPlayerData {
         knowledge = new PlayerKnowledge(this);
         abilityExecutor = new PlayerAbilityExecutor(this);
         stats = new PlayerStatsModule(this);
-        abilityTracker = AbilityTracker.getTracker(player);
         publicUpdater.add(stats);
         registerAttributes();
 
@@ -99,47 +95,6 @@ public class MKPlayerData implements IMKPlayerData {
         return stats;
     }
 
-    public int getCurrentAbilityCooldown(ResourceLocation abilityId) {
-        PlayerAbilityInfo abilityInfo = getKnowledge().getAbilityInfo(abilityId);
-        return abilityInfo != null ? abilityTracker.getCooldownTicks(abilityId) : GameConstants.ACTION_BAR_INVALID_COOLDOWN;
-    }
-
-    @Override
-    public float getCooldownPercent(PlayerAbilityInfo abilityInfo, float partialTicks) {
-        return abilityInfo != null ? abilityTracker.getCooldown(abilityInfo.getId(), partialTicks) : 0.0f;
-    }
-
-    @Override
-    public float getAbilityManaCost(ResourceLocation abilityId) {
-        PlayerAbilityInfo abilityInfo = getKnowledge().getAbilityInfo(abilityId);
-        if (abilityInfo == null) {
-            return 0.0f;
-        }
-        float manaCost = abilityInfo.getAbility().getManaCost(abilityInfo.getRank());
-//        return PlayerFormulas.applyManaCostReduction(this, ); TODO: formulas
-        return manaCost;
-    }
-
-    public int getAbilityCooldown(PlayerAbility ability) {
-        int ticks = ability.getCooldownTicks(getAbilityRank(ability.getAbilityId()));
-        ticks = PlayerFormulas.applyCooldownReduction(this, ticks);
-        return ticks;
-    }
-
-    @Override
-    public void setTimer(ResourceLocation id, int cooldown) {
-        if (cooldown > 0) {
-            abilityTracker.setCooldown(id, cooldown);
-        } else {
-            abilityTracker.removeCooldown(id);
-        }
-    }
-
-    @Override
-    public int getTimer(ResourceLocation id) {
-        return abilityTracker.getCooldownTicks(id);
-    }
-
     @Override
     public void clone(IMKPlayerData previous, boolean death) {
         MKCore.LOGGER.info("onDeath!");
@@ -159,9 +114,10 @@ public class MKPlayerData implements IMKPlayerData {
 
     @Override
     public void update() {
-        abilityTracker.tick();
-        getAbilityExecutor().tick();
+//        abilityTracker.tick();
         getStats().tick();
+        getAbilityExecutor().tick();
+
 //        MKCore.LOGGER.info("update {} {}", this.player, mana.get());
 
         if (!isServerSide()) {
@@ -197,7 +153,7 @@ public class MKPlayerData implements IMKPlayerData {
         MKCore.LOGGER.info("initial sync");
         if (isServerSide()) {
             fullSyncTo((ServerPlayerEntity) player);
-            abilityTracker.sync();
+            getStats().sync();
             readyForUpdates = true;
         }
     }
@@ -234,30 +190,14 @@ public class MKPlayerData implements IMKPlayerData {
     public void serialize(CompoundNBT nbt) {
 //        MKCore.LOGGER.info("serialize({})", mana.get());
         getStats().serialize(nbt);
-        abilityTracker.serialize(nbt);
+//        abilityTracker.serialize(nbt);
     }
 
     @Override
     public void deserialize(CompoundNBT nbt) {
         getStats().deserialize(nbt);
-        abilityTracker.deserialize(nbt);
+//        abilityTracker.deserialize(nbt);
 
 //        MKCore.LOGGER.info("deserialize({})", mana.get());
-    }
-
-    public void printActiveCooldowns() {
-        String msg = "All active cooldowns:";
-
-        player.sendMessage(new StringTextComponent(msg));
-        abilityTracker.iterateActive((abilityId, current) -> {
-            String name = abilityId.toString();
-            int max = abilityTracker.getMaxCooldownTicks(abilityId);
-            ITextComponent line = new StringTextComponent(String.format("%s: %d / %d", name, current, max));
-            player.sendMessage(line);
-        });
-    }
-
-    public void resetAllCooldowns() {
-        abilityTracker.removeAll();
     }
 }

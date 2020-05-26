@@ -1,21 +1,29 @@
 package com.chaosbuffalo.mkcore.core;
 
+import com.chaosbuffalo.mkcore.GameConstants;
+import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
+import com.chaosbuffalo.mkcore.abilities.PlayerAbilityInfo;
 import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
 import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import com.chaosbuffalo.mkcore.sync.SyncFloat;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 
 public class PlayerStatsModule implements ISyncObject {
     private final MKPlayerData playerData;
     private float regenTime;
+    private final AbilityTracker abilityTracker;
     private final SyncFloat mana = new SyncFloat("mana", 0f);
     private final CompositeUpdater publicUpdater = new CompositeUpdater(mana);
 
     public PlayerStatsModule(MKPlayerData playerData) {
         this.playerData = playerData;
+        abilityTracker = AbilityTracker.getTracker(playerData.getPlayer());
         regenTime = 0f;
     }
 
@@ -25,6 +33,18 @@ public class PlayerStatsModule implements ISyncObject {
 
     private boolean isServerSide() {
         return getPlayer() instanceof ServerPlayerEntity;
+    }
+
+    public float getHealth() {
+        return getPlayer().getHealth();
+    }
+
+    public void setHealth(float value) {
+        getPlayer().setHealth(value);
+    }
+
+    public float getMaxHealth() {
+        return getPlayer().getMaxHealth();
     }
 
     public float getMana() {
@@ -49,13 +69,17 @@ public class PlayerStatsModule implements ISyncObject {
         return (float) getPlayer().getAttribute(PlayerAttributes.MANA_REGEN).getValue();
     }
 
+    public void sync() {
+        abilityTracker.sync();
+    }
+
     public void tick() {
+        abilityTracker.tick();
 
         if (isServerSide()) {
             updateMana();
         }
     }
-
 
     private void updateMana() {
         if (this.getManaRegenRate() <= 0.0f) {
@@ -89,11 +113,73 @@ public class PlayerStatsModule implements ISyncObject {
         return false;
     }
 
+    public int getCurrentAbilityCooldown(ResourceLocation abilityId) {
+        PlayerAbilityInfo abilityInfo = playerData.getKnowledge().getAbilityInfo(abilityId);
+        return abilityInfo != null ? abilityTracker.getCooldownTicks(abilityId) : GameConstants.ACTION_BAR_INVALID_COOLDOWN;
+    }
+
+    public float getActiveCooldownPercent(PlayerAbilityInfo abilityInfo, float partialTicks) {
+        return abilityInfo != null ? abilityTracker.getCooldown(abilityInfo.getId(), partialTicks) : 0.0f;
+    }
+
+    public int getAbilityCooldown(PlayerAbility ability) {
+        int ticks = ability.getCooldownTicks(playerData.getAbilityRank(ability.getAbilityId()));
+        ticks = PlayerFormulas.applyCooldownReduction(playerData, ticks);
+        return ticks;
+    }
+
+    public float getAbilityManaCost(ResourceLocation abilityId) {
+        PlayerAbilityInfo abilityInfo = playerData.getKnowledge().getAbilityInfo(abilityId);
+        if (abilityInfo == null) {
+            return 0.0f;
+        }
+        float manaCost = abilityInfo.getAbility().getManaCost(abilityInfo.getRank());
+//        return PlayerFormulas.applyManaCostReduction(this, ); TODO: formulas
+        return manaCost;
+    }
+
+    public boolean canActivateAbility(PlayerAbility ability) {
+        ResourceLocation abilityId = ability.getAbilityId();
+        return getMana() >= getAbilityManaCost(abilityId) &&
+                getCurrentAbilityCooldown(abilityId) == 0;
+    }
+
+    public void setTimer(ResourceLocation id, int cooldown) {
+        if (cooldown > 0) {
+            abilityTracker.setCooldown(id, cooldown);
+        } else {
+            abilityTracker.removeCooldown(id);
+        }
+    }
+
+    public int getTimer(ResourceLocation id) {
+        return abilityTracker.getCooldownTicks(id);
+    }
+
+    public void printActiveCooldowns() {
+        String msg = "All active cooldowns:";
+
+        getPlayer().sendMessage(new StringTextComponent(msg));
+        abilityTracker.iterateActive((abilityId, current) -> {
+            String name = abilityId.toString();
+            int max = abilityTracker.getMaxCooldownTicks(abilityId);
+            ITextComponent line = new StringTextComponent(String.format("%s: %d / %d", name, current, max));
+            getPlayer().sendMessage(line);
+        });
+    }
+
+    public void resetAllCooldowns() {
+        abilityTracker.removeAll();
+    }
+
+
     public void serialize(CompoundNBT nbt) {
+        abilityTracker.serialize(nbt);
         nbt.putFloat("mana", mana.get());
     }
 
     public void deserialize(CompoundNBT nbt) {
+        abilityTracker.deserialize(nbt);
         // TODO: activate persona here
         if (nbt.contains("mana")) {
             setMana(nbt.getFloat("mana"));
