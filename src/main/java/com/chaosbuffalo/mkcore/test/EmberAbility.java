@@ -41,28 +41,13 @@ public class EmberAbility extends PlayerAbility {
     }
 
     @Override
-    public int getCooldown(int currentRank) {
-        return 6 - 2 * currentRank;
-    }
-
-    @Override
     public Targeting.TargetType getTargetType() {
         return Targeting.TargetType.ALL;
     }
 
     @Override
-    public float getManaCost(int currentRank) {
-        return 4 + currentRank * 2;
-    }
-
-    @Override
     public float getDistance(int currentRank) {
         return 25.0f;
-    }
-
-    @Override
-    public int getCastTime(int currentRank) {
-        return GameConstants.TICKS_PER_SECOND / 2;
     }
 
     @Override

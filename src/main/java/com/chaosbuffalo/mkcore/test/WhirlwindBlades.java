@@ -1,6 +1,5 @@
 package com.chaosbuffalo.mkcore.test;
 
-import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.CastState;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
@@ -41,18 +40,8 @@ public class WhirlwindBlades extends PlayerAbility {
     }
 
     @Override
-    public int getCooldown(int currentRank) {
-        return 25 - 5 * currentRank;
-    }
-
-    @Override
     public Targeting.TargetType getTargetType() {
         return Targeting.TargetType.ENEMY;
-    }
-
-    @Override
-    public float getManaCost(int currentRank) {
-        return 4 + 2 * currentRank;
     }
 
     @Override
@@ -77,17 +66,12 @@ public class WhirlwindBlades extends PlayerAbility {
     }
 
     @Override
-    public int getCastTime(int currentRank) {
-        return currentRank * GameConstants.TICKS_PER_SECOND * 3;
-    }
-
-    @Override
     public void continueCast(PlayerEntity entity, IMKPlayerData data, World theWorld, int castTimeLeft, CastState state) {
         super.continueCast(entity, data, theWorld, castTimeLeft, state);
         int tickSpeed = 6;
         if (castTimeLeft % tickSpeed == 0) {
             int level = data.getAbilityRank(getAbilityId());
-            int totalDuration = getCastTime(level);
+            int totalDuration = getCastTime(1);
             int count = (totalDuration - castTimeLeft) / tickSpeed;
             float baseAmount = level > 1 ? 0.10f : 0.15f;
             float scaling = count * baseAmount;

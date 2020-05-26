@@ -41,11 +41,6 @@ public class NotoriousDOT extends PlayerToggleAbility {
     }
 
     @Override
-    public int getCooldown(int currentRank) {
-        return 5;
-    }
-
-    @Override
     public Effect getToggleEffect() {
         return NotoriousDOTSongPotion.INSTANCE;
     }
@@ -53,11 +48,6 @@ public class NotoriousDOT extends PlayerToggleAbility {
     @Override
     public Targeting.TargetType getTargetType() {
         return Targeting.TargetType.SELF;
-    }
-
-    @Override
-    public float getManaCost(int currentRank) {
-        return currentRank;
     }
 
     @Override

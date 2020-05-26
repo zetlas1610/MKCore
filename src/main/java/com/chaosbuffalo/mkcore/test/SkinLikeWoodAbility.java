@@ -37,19 +37,10 @@ public class SkinLikeWoodAbility extends PlayerToggleAbility {
         super(MKCore.makeRL("ability.skin_like_wood"));
     }
 
-    @Override
-    public int getCooldown(int currentRank) {
-        return 4 - currentRank;
-    }
 
     @Override
     public Targeting.TargetType getTargetType() {
         return Targeting.TargetType.SELF;
-    }
-
-    @Override
-    public float getManaCost(int currentRank) {
-        return 3 - currentRank;
     }
 
     @Override

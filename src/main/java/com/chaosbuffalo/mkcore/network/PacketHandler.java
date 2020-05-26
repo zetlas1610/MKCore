@@ -39,6 +39,8 @@ public class PacketHandler {
                 PlayerStartCastPacket::new, PlayerStartCastPacket::handle);
         networkChannel.registerMessage(id++, ParticleEffectSpawnPacket.class, ParticleEffectSpawnPacket::toBytes,
                 ParticleEffectSpawnPacket::new, ParticleEffectSpawnPacket::handle);
+        networkChannel.registerMessage(id++, PlayerAbilitiesSyncPacket.class, PlayerAbilitiesSyncPacket::toBytes,
+                PlayerAbilitiesSyncPacket::new, PlayerAbilitiesSyncPacket::handle);
     }
 
     public static <T> void sendMessageToServer(T msg) {
