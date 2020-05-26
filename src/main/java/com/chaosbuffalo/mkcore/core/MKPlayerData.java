@@ -12,11 +12,8 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
 
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class MKPlayerData implements IMKPlayerData {
@@ -57,14 +54,6 @@ public class MKPlayerData implements IMKPlayerData {
         player.getAttribute(PlayerAttributes.COOLDOWN).applyModifier(mod3);
 
         knowledge.learnAbility(EmberAbility.INSTANCE);
-
-        List<ResourceLocation> hotbar = Arrays.asList(
-                MKCore.makeRL("ability.ember"),
-                MKCore.makeRL("ability.skin_like_wood"),
-                MKCore.makeRL("ability.fire_armor"),
-                MKCore.makeRL("ability.notorious_dot"),
-                MKCore.makeRL("ability.whirlwind_blades"));
-        knowledge.setActionBar(hotbar);
     }
 
     private void registerAttributes() {
@@ -124,7 +113,6 @@ public class MKPlayerData implements IMKPlayerData {
 
     @Override
     public void update() {
-//        abilityTracker.tick();
         getStats().tick();
         getAbilityExecutor().tick();
 

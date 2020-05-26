@@ -1,6 +1,5 @@
 package com.chaosbuffalo.mkcore.core;
 
-import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
@@ -9,7 +8,6 @@ import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
 import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -23,33 +21,23 @@ public class PlayerKnowledge implements ISyncObject {
     private final MKPlayerData playerData;
 
     private final Map<ResourceLocation, PlayerAbilityInfo> abilityInfoMap = new HashMap<>();
-    private List<ResourceLocation> hotbar = NonNullList.withSize(GameConstants.ACTION_BAR_SIZE, MKCoreRegistry.INVALID_ABILITY);
+    private final PlayerActionBar actionBar;
     private final KnownAbilityUpdater abilityUpdater = new KnownAbilityUpdater();
 
     private final CompositeUpdater privateUpdater = new CompositeUpdater(abilityUpdater);
 
     public PlayerKnowledge(MKPlayerData playerData) {
         this.playerData = playerData;
+        actionBar = new PlayerActionBar(this);
+        privateUpdater.add(actionBar);
     }
 
     private PlayerEntity getPlayer() {
         return playerData.getPlayer();
     }
 
-    public void setActionBar(List<ResourceLocation> actionBar) {
-        this.hotbar = actionBar;
-    }
-
-    public int getActionBarSize() {
-        // TODO: expandable
-        return GameConstants.CLASS_ACTION_BAR_SIZE;
-    }
-
-    public ResourceLocation getAbilityInSlot(int index) {
-        if (index < hotbar.size()) {
-            return hotbar.get(index);
-        }
-        return MKCoreRegistry.INVALID_ABILITY;
+    public PlayerActionBar getActionBar() {
+        return actionBar;
     }
 
     @Nullable
@@ -66,6 +54,8 @@ public class PlayerKnowledge implements ISyncObject {
 
         if (!info.upgrade())
             return;
+
+        actionBar.tryPlaceOnBar(abilityId);
 
         abilityInfoMap.put(abilityId, info);
         abilityUpdater.markDirty(info);
@@ -84,6 +74,7 @@ public class PlayerKnowledge implements ISyncObject {
         abilityUpdater.markDirty(info);
         // FIXME: ugly
         playerData.getAbilityExecutor().onAbilityUnlearned(info.getAbility());
+        actionBar.onAbilityUnlearned(info.getAbility());
     }
 
     @Override

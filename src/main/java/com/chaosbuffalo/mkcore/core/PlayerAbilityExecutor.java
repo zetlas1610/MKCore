@@ -37,7 +37,7 @@ public class PlayerAbilityExecutor {
     }
 
     public void executeHotBarAbility(int slot) {
-        ResourceLocation abilityId = playerData.getKnowledge().getAbilityInSlot(slot);
+        ResourceLocation abilityId = playerData.getKnowledge().getActionBar().getAbilityInSlot(slot);
         if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
             return;
 
@@ -275,7 +275,7 @@ public class PlayerAbilityExecutor {
 
     private void rebuildActiveToggleMap() {
         for (int i = 0; i < GameConstants.ACTION_BAR_SIZE; i++) {
-            ResourceLocation abilityId = playerData.getKnowledge().getAbilityInSlot(i);
+            ResourceLocation abilityId = playerData.getKnowledge().getActionBar().getAbilityInSlot(i);
             PlayerAbility ability = MKCoreRegistry.getAbility(abilityId);
             if (ability instanceof PlayerToggleAbility && playerData.getPlayer() != null) {
                 PlayerToggleAbility toggle = (PlayerToggleAbility) ability;
