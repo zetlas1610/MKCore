@@ -1,6 +1,7 @@
 package com.chaosbuffalo.mkcore.abilities;
 
 import com.chaosbuffalo.mkcore.GameConstants;
+import com.chaosbuffalo.mkcore.abilities.attributes.IAbilityAttribute;
 import com.chaosbuffalo.mkcore.core.IMKPlayerData;
 import com.chaosbuffalo.mkcore.utils.RayTraceUtils;
 import com.chaosbuffalo.targeting_api.Targeting;
@@ -21,6 +22,8 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -38,6 +41,7 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
     private int castTime;
     private int cooldown;
     private float manaCost;
+    private final List<IAbilityAttribute<?>> attributes;
 
 
     public PlayerAbility(String domain, String id) {
@@ -49,6 +53,21 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         this.cooldown = GameConstants.TICKS_PER_SECOND;
         this.castTime = 0;
         this.manaCost = 1;
+        this.attributes = new ArrayList<>();
+    }
+
+    public List<IAbilityAttribute<?>> getAttributes() {
+        return attributes;
+    }
+
+    public PlayerAbility addAttribute(IAbilityAttribute<?> attr){
+        attributes.add(attr);
+        return this;
+    }
+
+    public PlayerAbility addAttributes(IAbilityAttribute<?>... attrs){
+        attributes.addAll(Arrays.asList(attrs));
+        return this;
     }
 
     public ResourceLocation getAbilityId() {
@@ -147,6 +166,13 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         tag.putInt("cooldown", getCooldown());
         tag.putInt("castTime", getCastTime());
         tag.putFloat("manaCost", getManaCost());
+        if (getAttributes().size() > 0){
+            CompoundNBT attributes = new CompoundNBT();
+            for (IAbilityAttribute<?> attr : getAttributes()){
+                attributes.put(attr.getName(), attr.serialize());
+            }
+            tag.put("attributes", attributes);
+        }
         return tag;
     }
 
@@ -160,6 +186,15 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         if (nbt.contains("manaCost")) {
             setManaCost(nbt.getFloat("manaCost"));
         }
+        if (nbt.contains("attributes")){
+            CompoundNBT attributes = nbt.getCompound("attributes");
+            for (IAbilityAttribute<?> attr : getAttributes()){
+                if (attributes.contains(attr.getName())){
+                    attr.deserialize(attributes.getCompound(attr.getName()));
+                }
+            }
+        }
+
     }
 
     public void readFromDataPack(JsonObject obj) {
@@ -171,6 +206,14 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         }
         if (obj.has("castTime")) {
             setCastTime(obj.get("castTime").getAsInt());
+        }
+        if (obj.has("attributes")){
+            JsonObject attributes = obj.getAsJsonObject("attributes");
+            for (IAbilityAttribute<?> attr : getAttributes()){
+                if (attributes.has(attr.getName())){
+                    attr.readFromDataPack(attributes.getAsJsonObject(attr.getName()));
+                }
+            }
         }
     }
 

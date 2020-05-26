@@ -4,6 +4,7 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.CastState;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import com.chaosbuffalo.mkcore.abilities.SingleTargetCastState;
+import com.chaosbuffalo.mkcore.abilities.attributes.FloatAttribute;
 import com.chaosbuffalo.mkcore.core.IMKPlayerData;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
@@ -23,6 +24,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class EmberAbility extends PlayerAbility {
     public static final EmberAbility INSTANCE = new EmberAbility();
+    private final FloatAttribute damage;
 
     @SubscribeEvent
     public static void register(RegistryEvent.Register<PlayerAbility> event) {
@@ -37,6 +39,8 @@ public class EmberAbility extends PlayerAbility {
 
     private EmberAbility() {
         super(MKCore.makeRL("ability.ember"));
+        damage = new FloatAttribute("damage", 6.0f);
+        addAttribute(damage);
     }
 
     @Override
@@ -77,7 +81,7 @@ public class EmberAbility extends PlayerAbility {
             int level = 1;
             targetEntity.setFire(BASE_DURATION + level * DURATION_SCALE);
 //            targetEntity.attackEntityFrom(MKDamageSource.causeIndirectMagicDamage(getAbilityId(), entity, entity), BASE_DAMAGE + level * DAMAGE_SCALE);
-            targetEntity.attackEntityFrom(DamageSource.causeIndirectMagicDamage(entity, entity), BASE_DAMAGE + level * DAMAGE_SCALE);
+            targetEntity.attackEntityFrom(DamageSource.causeIndirectMagicDamage(entity, entity), damage.getValue());
 //            AbilityUtils.playSoundAtServerEntity(targetEntity, ModSounds.spell_fire_6, SoundCategory.PLAYERS);
             Vec3d lookVec = entity.getLookVec();
             PacketHandler.sendToTracking(
