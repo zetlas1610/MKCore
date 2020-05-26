@@ -40,18 +40,8 @@ public class FireArmor extends PlayerAbility {
     }
 
     @Override
-    public int getCooldown(int currentRank) {
-        return 150 - currentRank * 15;
-    }
-
-    @Override
     public Targeting.TargetType getTargetType() {
         return Targeting.TargetType.ALL;
-    }
-
-    @Override
-    public float getManaCost(int currentRank) {
-        return 16 - currentRank * 4;
     }
 
     @Override
@@ -69,11 +59,6 @@ public class FireArmor extends PlayerAbility {
 //    public SoundEvent getSpellCompleteSoundEvent() {
 //        return ModSounds.spell_buff_5;
 //    }
-
-    @Override
-    public int getCastTime(int currentRank) {
-        return GameConstants.TICKS_PER_SECOND - 5 * (currentRank - 1);
-    }
 
     @Override
     public void endCast(PlayerEntity entity, IMKPlayerData data, World theWorld, CastState state) {

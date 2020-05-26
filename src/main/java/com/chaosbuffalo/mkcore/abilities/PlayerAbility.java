@@ -4,11 +4,13 @@ import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.core.IMKPlayerData;
 import com.chaosbuffalo.mkcore.utils.RayTraceUtils;
 import com.chaosbuffalo.targeting_api.Targeting;
+import com.google.gson.JsonObject;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.EntityRayTraceResult;
@@ -33,12 +35,20 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
 
     private final ResourceLocation abilityId;
 
+    private int castTime;
+    private int cooldown;
+    private float manaCost;
+
+
     public PlayerAbility(String domain, String id) {
         this(new ResourceLocation(domain, id));
     }
 
     public PlayerAbility(ResourceLocation abilityId) {
         this.abilityId = abilityId;
+        this.cooldown = GameConstants.TICKS_PER_SECOND;
+        this.castTime = 0;
+        this.manaCost = 1;
     }
 
     public ResourceLocation getAbilityId() {
@@ -74,18 +84,30 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         return new CastState(castTime);
     }
 
-    public int getCastTime(int currentRank) {
-        return 0;
+    public int getCastTime() {
+        return castTime;
+    }
+
+    public PlayerAbility setCastTime(int newCastTime){
+        castTime = newCastTime;
+        return this;
     }
 
     public float getDistance(int currentRank) {
         return 1.0f;
     }
 
-    public abstract int getCooldown(int currentRank);
+    public int getCooldown(){
+        return cooldown;
+    }
 
-    public int getCooldownTicks(int currentRank) {
-        return getCooldown(currentRank) * GameConstants.TICKS_PER_SECOND;
+    public PlayerAbility setCooldown(int cooldown){
+        this.cooldown = cooldown;
+        return this;
+    }
+
+    public int getCooldownTicks() {
+        return getCooldown() * GameConstants.TICKS_PER_SECOND;
     }
 
     public AbilityType getType() {
@@ -102,7 +124,14 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         return Targeting.isValidTarget(getTargetType(), caster, target, !canSelfCast());
     }
 
-    public abstract float getManaCost(int currentRank);
+    public float getManaCost(){
+        return manaCost;
+    }
+
+    public PlayerAbility setManaCost(float newCost){
+        manaCost = newCost;
+        return this;
+    }
 
     public abstract int getRequiredLevel(int currentRank);
 
@@ -114,6 +143,38 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         return !player.isCasting() &&
                 player.getMana() >= player.getAbilityManaCost(abilityId) &&
                 player.getCurrentAbilityCooldown(abilityId) == 0;
+    }
+
+    public CompoundNBT serialize(){
+        CompoundNBT tag = new CompoundNBT();
+        tag.putInt("cooldown", getCooldown());
+        tag.putInt("castTime", getCastTime());
+        tag.putFloat("manaCost", getManaCost());
+        return tag;
+    }
+
+    public void deserialize(CompoundNBT nbt){
+        if (nbt.contains("cooldown")){
+            setCooldown(nbt.getInt("cooldown"));
+        }
+        if (nbt.contains("castTime")){
+            setCastTime(nbt.getInt("castTime"));
+        }
+        if (nbt.contains("manaCost")){
+            setManaCost(nbt.getFloat("manaCost"));
+        }
+    }
+
+    public void readFromDataPack(JsonObject obj){
+        if (obj.has("cooldown")){
+            setCooldown(obj.get("cooldown").getAsInt());
+        }
+        if (obj.has("manaCost")){
+            setManaCost(obj.get("manaCost").getAsFloat());
+        }
+        if (obj.has("castTime")){
+            setCastTime(obj.get("castTime").getAsInt());
+        }
     }
 
     @Nullable

@@ -1,5 +1,6 @@
 package com.chaosbuffalo.mkcore;
 
+import com.chaosbuffalo.mkcore.abilities.AbilityManager;
 import com.chaosbuffalo.mkcore.client.gui.MKOverlay;
 import com.chaosbuffalo.mkcore.command.MKCommand;
 import com.chaosbuffalo.mkcore.core.IMKPlayerData;
@@ -26,6 +27,7 @@ public class MKCore {
     public static final String MOD_ID = "mkcore";
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger();
+    private AbilityManager abilityManager;
 
     public static MKCore INSTANCE;
 
@@ -51,6 +53,8 @@ public class MKCore {
     @SubscribeEvent
     public void serverStart(final FMLServerAboutToStartEvent event) {
         // some preinit code
+        abilityManager = new AbilityManager(event.getServer());
+        event.getServer().getResourceManager().addReloadListener(abilityManager);
         LOGGER.info("HELLO FROM ABOUTTOSTART");
     }
 
