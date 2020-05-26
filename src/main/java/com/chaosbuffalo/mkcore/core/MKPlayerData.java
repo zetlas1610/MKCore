@@ -6,6 +6,7 @@ import com.chaosbuffalo.mkcore.network.PlayerDataSyncPacket;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncRequestPacket;
 import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
 import com.chaosbuffalo.mkcore.sync.ISyncObject;
+import com.chaosbuffalo.mkcore.sync.UpdateEngine;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,21 +23,22 @@ public class MKPlayerData implements IMKPlayerData {
     private PlayerAbilityExecutor abilityExecutor;
     private PlayerKnowledge knowledge;
     private PlayerStatsModule stats;
-    private final CompositeUpdater publicUpdater = new CompositeUpdater();
-    private final CompositeUpdater privateUpdater = new CompositeUpdater();
+    private UpdateEngine updateEngine;
     private final Set<String> spellTag = new HashSet<>();
 
     public MKPlayerData() {
+
     }
 
     @Override
     public void attach(PlayerEntity newPlayer) {
         player = newPlayer;
+        updateEngine = new UpdateEngine(this);
         knowledge = new PlayerKnowledge(this);
         abilityExecutor = new PlayerAbilityExecutor(this);
         stats = new PlayerStatsModule(this);
-        publicUpdater.add(stats);
-        privateUpdater.add(knowledge);
+        updateEngine.addPublic(stats);
+        updateEngine.addPrivate(knowledge);
 
         registerAttributes();
         if (isServerSide())
@@ -93,6 +95,10 @@ public class MKPlayerData implements IMKPlayerData {
         return stats;
     }
 
+    public UpdateEngine getUpdateEngine() {
+        return updateEngine;
+    }
+
     @Override
     public void clone(IMKPlayerData previous, boolean death) {
         MKCore.LOGGER.info("onDeath!");
@@ -131,62 +137,20 @@ public class MKPlayerData implements IMKPlayerData {
             return;
         }
 
-        if (publicUpdater.isDirty()) {
-            PlayerDataSyncPacket packet = getUpdateMessage(false);
-            MKCore.LOGGER.info("sending public dirty update for {}", player);
-            PacketHandler.sendToTrackingAndSelf(packet, (ServerPlayerEntity) player);
-        }
-
-        if (privateUpdater.isDirty()) {
-            PlayerDataSyncPacket packet = getUpdateMessage(true);
-            MKCore.LOGGER.info("sending private dirty update for {}", player);
-            PacketHandler.sendMessage(packet, (ServerPlayerEntity) player);
-        }
+        updateEngine.syncUpdates();
     }
 
     public void fullSyncTo(ServerPlayerEntity otherPlayer) {
         MKCore.LOGGER.info("Full public sync {} -> {}", player, otherPlayer);
-        PlayerDataSyncPacket packet = getFullSyncMessage(false);
-        PacketHandler.sendMessage(packet, otherPlayer);
+        updateEngine.publicFullSync(otherPlayer);
     }
 
     public void initialSync() {
         MKCore.LOGGER.info("Sending initial sync for {}", player);
         if (isServerSide()) {
-            fullSyncTo((ServerPlayerEntity) player);
             getStats().sync();
-            PlayerDataSyncPacket packet = getFullSyncMessage(true);
-            PacketHandler.sendMessage(packet, (ServerPlayerEntity) player);
+            updateEngine.syncFull();
             readyForUpdates = true;
-        }
-    }
-
-    private PlayerDataSyncPacket getUpdateMessage(boolean privateUpdate) {
-        ISyncObject updater = privateUpdate ? privateUpdater : publicUpdater;
-        return new PlayerDataSyncPacket(this, player.getUniqueID(), updater, false, privateUpdate);
-    }
-
-    private PlayerDataSyncPacket getFullSyncMessage(boolean privateUpdate) {
-        ISyncObject updater = privateUpdate ? privateUpdater : publicUpdater;
-        return new PlayerDataSyncPacket(this, player.getUniqueID(), updater, true, privateUpdate);
-    }
-
-
-    public void serializeClientUpdate(CompoundNBT updateTag, boolean fullSync) {
-//        MKCore.LOGGER.info("serializeClientUpdate {} {}", mana.get(), fullSync);
-        if (fullSync) {
-            publicUpdater.serializeFull(updateTag);
-        } else {
-            publicUpdater.serializeUpdate(updateTag);
-        }
-    }
-
-    public void deserializeClientUpdate(CompoundNBT updateTag, boolean privateUpdate) {
-        MKCore.LOGGER.info("deserializeClientUpdatePre private:{}", privateUpdate);
-        if (privateUpdate) {
-            privateUpdater.deserializeUpdate(updateTag);
-        } else {
-            publicUpdater.deserializeUpdate(updateTag);
         }
     }
 
@@ -195,14 +159,12 @@ public class MKPlayerData implements IMKPlayerData {
 //        MKCore.LOGGER.info("serialize({})", mana.get());
         getStats().serialize(nbt);
         getKnowledge().serialize(nbt);
-//        abilityTracker.serialize(nbt);
     }
 
     @Override
     public void deserialize(CompoundNBT nbt) {
         getKnowledge().deserialize(nbt);
         getStats().deserialize(nbt);
-//        abilityTracker.deserialize(nbt);
 
 //        MKCore.LOGGER.info("deserialize({})", mana.get());
     }
