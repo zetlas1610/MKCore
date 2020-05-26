@@ -28,7 +28,13 @@ public class StatCommand {
                 .then(createSimpleFloatStat("health", PlayerStatsModule::getHealth, PlayerStatsModule::setHealth))
                 .then(createAttributeStat("manaregen", PlayerAttributes.MANA_REGEN))
                 .then(createAttributeStat("maxmana", PlayerAttributes.MAX_MANA))
-                .then(createAttributeStat("cdr", PlayerAttributes.COOLDOWN));
+                .then(createAttributeStat("cdr", PlayerAttributes.COOLDOWN))
+                .then(createAttributeStat("melee_crit", PlayerAttributes.MELEE_CRIT))
+                .then(createAttributeStat("magic_damage", PlayerAttributes.MAGIC_ATTACK_DAMAGE))
+                .then(createAttributeStat("melee_crit_damage", PlayerAttributes.MELEE_CRITICAL_DAMAGE))
+                .then(createAttributeStat("spell_crit", PlayerAttributes.SPELL_CRIT))
+                .then(createAttributeStat("spell_crit_damage", PlayerAttributes.SPELL_CRITICAL_DAMAGE))
+                .then(createAttributeStat("heal_bonus", PlayerAttributes.HEAL_BONUS));
     }
 
     static ArgumentBuilder<CommandSource, ?> createSimpleFloatStat(String name, Function<PlayerStatsModule, Float> getter, BiConsumer<PlayerStatsModule, Float> setter) {
