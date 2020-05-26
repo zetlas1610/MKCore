@@ -65,4 +65,10 @@ public class PacketHandler {
         PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player)
                 .send(PacketHandler.getNetworkChannel().toVanillaPacket(msg, NetworkDirection.PLAY_TO_CLIENT));
     }
+
+    public static <T> void sendToAll(T msg) {
+        PacketDistributor.ALL.noArg().send(
+                PacketHandler.getNetworkChannel().toVanillaPacket(msg, NetworkDirection.PLAY_TO_CLIENT));
+
+    }
 }

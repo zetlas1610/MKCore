@@ -8,7 +8,7 @@ public abstract class AbilityAttribute<T> implements IAbilityAttribute<T> {
     private T currentValue;
     private final String name;
 
-    public AbilityAttribute(String name, T defaultValue){
+    public AbilityAttribute(String name, T defaultValue) {
         currentValue = defaultValue;
         this.name = name;
     }

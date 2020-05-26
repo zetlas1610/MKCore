@@ -5,16 +5,14 @@ import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncPacket;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncRequestPacket;
 import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
+import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
 
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class MKPlayerData implements IMKPlayerData {
@@ -25,6 +23,7 @@ public class MKPlayerData implements IMKPlayerData {
     private PlayerKnowledge knowledge;
     private PlayerStatsModule stats;
     private final CompositeUpdater publicUpdater = new CompositeUpdater();
+    private final CompositeUpdater privateUpdater = new CompositeUpdater();
     private final Set<String> spellTag = new HashSet<>();
 
     public MKPlayerData() {
@@ -37,9 +36,11 @@ public class MKPlayerData implements IMKPlayerData {
         abilityExecutor = new PlayerAbilityExecutor(this);
         stats = new PlayerStatsModule(this);
         publicUpdater.add(stats);
-        registerAttributes();
+        privateUpdater.add(knowledge);
 
-        setupFakeStats();
+        registerAttributes();
+        if (isServerSide())
+            setupFakeStats();
     }
 
     void setupFakeStats() {
@@ -51,14 +52,6 @@ public class MKPlayerData implements IMKPlayerData {
 
         AttributeModifier mod3 = new AttributeModifier("test cdr", 0.1, AttributeModifier.Operation.ADDITION).setSaved(false);
         player.getAttribute(PlayerAttributes.COOLDOWN).applyModifier(mod3);
-
-        List<ResourceLocation> hotbar = Arrays.asList(
-                MKCore.makeRL("ability.ember"),
-                MKCore.makeRL("ability.skin_like_wood"),
-                MKCore.makeRL("ability.fire_armor"),
-                MKCore.makeRL("ability.notorious_dot"),
-                MKCore.makeRL("ability.whirlwind_blades"));
-        knowledge.setHotBar(hotbar);
     }
 
     private void registerAttributes() {
@@ -119,7 +112,6 @@ public class MKPlayerData implements IMKPlayerData {
 
     @Override
     public void update() {
-//        abilityTracker.tick();
         getStats().tick();
         getAbilityExecutor().tick();
 
@@ -139,40 +131,44 @@ public class MKPlayerData implements IMKPlayerData {
             return;
         }
 
-        if (isDirty()) {
-            PlayerDataSyncPacket packet = getUpdateMessage();
-            if (packet != null) {
-                MKCore.LOGGER.info("sending dirty update for {}", player);
-                PacketHandler.sendToTrackingAndSelf(packet, (ServerPlayerEntity) player);
-            }
+        if (publicUpdater.isDirty()) {
+            PlayerDataSyncPacket packet = getUpdateMessage(false);
+            MKCore.LOGGER.info("sending public dirty update for {}", player);
+            PacketHandler.sendToTrackingAndSelf(packet, (ServerPlayerEntity) player);
+        }
+
+        if (privateUpdater.isDirty()) {
+            PlayerDataSyncPacket packet = getUpdateMessage(true);
+            MKCore.LOGGER.info("sending private dirty update for {}", player);
+            PacketHandler.sendMessage(packet, (ServerPlayerEntity) player);
         }
     }
 
     public void fullSyncTo(ServerPlayerEntity otherPlayer) {
-        MKCore.LOGGER.info("need full sync to {}", otherPlayer);
-        PlayerDataSyncPacket packet = getFullSyncMessage();
+        MKCore.LOGGER.info("Full public sync {} -> {}", player, otherPlayer);
+        PlayerDataSyncPacket packet = getFullSyncMessage(false);
         PacketHandler.sendMessage(packet, otherPlayer);
     }
 
     public void initialSync() {
-        MKCore.LOGGER.info("initial sync");
+        MKCore.LOGGER.info("Sending initial sync for {}", player);
         if (isServerSide()) {
             fullSyncTo((ServerPlayerEntity) player);
             getStats().sync();
+            PlayerDataSyncPacket packet = getFullSyncMessage(true);
+            PacketHandler.sendMessage(packet, (ServerPlayerEntity) player);
             readyForUpdates = true;
         }
     }
 
-    private boolean isDirty() {
-        return publicUpdater.isDirty();
+    private PlayerDataSyncPacket getUpdateMessage(boolean privateUpdate) {
+        ISyncObject updater = privateUpdate ? privateUpdater : publicUpdater;
+        return new PlayerDataSyncPacket(this, player.getUniqueID(), updater, false, privateUpdate);
     }
 
-    private PlayerDataSyncPacket getUpdateMessage() {
-        return isDirty() ? new PlayerDataSyncPacket(this, player.getUniqueID(), false) : null;
-    }
-
-    private PlayerDataSyncPacket getFullSyncMessage() {
-        return new PlayerDataSyncPacket(this, player.getUniqueID(), true);
+    private PlayerDataSyncPacket getFullSyncMessage(boolean privateUpdate) {
+        ISyncObject updater = privateUpdate ? privateUpdater : publicUpdater;
+        return new PlayerDataSyncPacket(this, player.getUniqueID(), updater, true, privateUpdate);
     }
 
 
@@ -185,36 +181,41 @@ public class MKPlayerData implements IMKPlayerData {
         }
     }
 
-    public void deserializeClientUpdate(CompoundNBT updateTag) {
-//        MKCore.LOGGER.info("deserializeClientUpdatePre {}", mana.get());
-        publicUpdater.deserializeUpdate(updateTag);
-//        MKCore.LOGGER.info("deserializeClientUpdatePost - {}", mana.get());
+    public void deserializeClientUpdate(CompoundNBT updateTag, boolean privateUpdate) {
+        MKCore.LOGGER.info("deserializeClientUpdatePre private:{}", privateUpdate);
+        if (privateUpdate) {
+            privateUpdater.deserializeUpdate(updateTag);
+        } else {
+            publicUpdater.deserializeUpdate(updateTag);
+        }
     }
 
     @Override
     public void serialize(CompoundNBT nbt) {
 //        MKCore.LOGGER.info("serialize({})", mana.get());
         getStats().serialize(nbt);
+        getKnowledge().serialize(nbt);
 //        abilityTracker.serialize(nbt);
     }
 
     @Override
     public void deserialize(CompoundNBT nbt) {
+        getKnowledge().deserialize(nbt);
         getStats().deserialize(nbt);
 //        abilityTracker.deserialize(nbt);
 
 //        MKCore.LOGGER.info("deserialize({})", mana.get());
     }
 
-    public void addSpellTag(String tag){
+    public void addSpellTag(String tag) {
         spellTag.add(tag);
     }
 
-    public void removeSpellTag(String tag){
+    public void removeSpellTag(String tag) {
         spellTag.remove(tag);
     }
 
-    public boolean hasSpellTag(String tag){
+    public boolean hasSpellTag(String tag) {
         return spellTag.contains(tag);
     }
 }

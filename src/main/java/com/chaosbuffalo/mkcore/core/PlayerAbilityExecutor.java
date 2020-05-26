@@ -37,7 +37,7 @@ public class PlayerAbilityExecutor {
     }
 
     public void executeHotBarAbility(int slot) {
-        ResourceLocation abilityId = playerData.getKnowledge().getAbilityInSlot(slot);
+        ResourceLocation abilityId = playerData.getKnowledge().getActionBar().getAbilityInSlot(slot);
         if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
             return;
 
@@ -163,6 +163,10 @@ public class PlayerAbilityExecutor {
         MinecraftForge.EVENT_BUS.post(new PlayerAbilityEvent.Completed(playerData, info));
     }
 
+    public void onAbilityUnlearned(PlayerAbility ability) {
+        updateToggleAbility(ability);
+    }
+
     static abstract class PlayerCastingState {
         boolean started = false;
         int castTicks;
@@ -271,7 +275,7 @@ public class PlayerAbilityExecutor {
 
     private void rebuildActiveToggleMap() {
         for (int i = 0; i < GameConstants.ACTION_BAR_SIZE; i++) {
-            ResourceLocation abilityId = playerData.getKnowledge().getAbilityInSlot(i);
+            ResourceLocation abilityId = playerData.getKnowledge().getActionBar().getAbilityInSlot(i);
             PlayerAbility ability = MKCoreRegistry.getAbility(abilityId);
             if (ability instanceof PlayerToggleAbility && playerData.getPlayer() != null) {
                 PlayerToggleAbility toggle = (PlayerToggleAbility) ability;
@@ -282,20 +286,22 @@ public class PlayerAbilityExecutor {
     }
 
     private void updateToggleAbility(PlayerAbility ability) {
+        if (!(ability instanceof PlayerToggleAbility)) {
+            return;
+        }
+        PlayerToggleAbility toggle = (PlayerToggleAbility) ability;
+
         PlayerEntity player = playerData.getPlayer();
-        if (ability instanceof PlayerToggleAbility && player != null) {
-            PlayerToggleAbility toggle = (PlayerToggleAbility) ability;
-            PlayerAbilityInfo info = playerData.getKnowledge().getAbilityInfo(ability.getAbilityId());
-            if (info != null && info.isCurrentlyKnown()) {
-                // If this is a toggle ability we must re-apply the effect to make sure it's working at the proper rank
-                if (player.isPotionActive(toggle.getToggleEffect())) {
-                    toggle.removeEffect(player, playerData, player.getEntityWorld());
-                    toggle.applyEffect(player, playerData, player.getEntityWorld());
-                }
-            } else {
-                // Unlearning, remove the effect
+        PlayerAbilityInfo info = playerData.getKnowledge().getAbilityInfo(ability.getAbilityId());
+        if (info != null && info.isCurrentlyKnown()) {
+            // If this is a toggle ability we must re-apply the effect to make sure it's working at the proper rank
+            if (player.isPotionActive(toggle.getToggleEffect())) {
                 toggle.removeEffect(player, playerData, player.getEntityWorld());
+                toggle.applyEffect(player, playerData, player.getEntityWorld());
             }
+        } else {
+            // Unlearning, remove the effect
+            toggle.removeEffect(player, playerData, player.getEntityWorld());
         }
     }
 

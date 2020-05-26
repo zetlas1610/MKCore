@@ -162,8 +162,7 @@ public class PlayerStatsModule implements ISyncObject {
             return 0.0f;
         }
         float manaCost = abilityInfo.getAbility().getManaCost();
-//        return PlayerFormulas.applyManaCostReduction(this, ); TODO: formulas
-        return manaCost;
+        return PlayerFormulas.applyManaCostReduction(playerData, manaCost);
     }
 
     public boolean canActivateAbility(PlayerAbility ability) {

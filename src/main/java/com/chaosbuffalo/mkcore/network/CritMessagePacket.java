@@ -85,7 +85,7 @@ public class CritMessagePacket {
         }
     }
 
-    public void handle(Supplier<NetworkEvent.Context> supplier){
+    public void handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             Style messageStyle = new Style();

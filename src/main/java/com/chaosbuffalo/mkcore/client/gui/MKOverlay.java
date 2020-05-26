@@ -69,7 +69,7 @@ public class MKOverlay {
             return;
         }
         PlayerAbility ability = info.getAbility();
-        if (ability.getCastTime() == 0){
+        if (ability.getCastTime() == 0) {
             return;
         }
         int height = mc.getMainWindow().getScaledHeight();
@@ -112,7 +112,7 @@ public class MKOverlay {
         PlayerAbilityExecutor executor = data.getAbilityExecutor();
 
         for (int i = 0; i < slotCount; i++) {
-            ResourceLocation abilityId = data.getKnowledge().getAbilityInSlot(i);
+            ResourceLocation abilityId = data.getKnowledge().getActionBar().getAbilityInSlot(i);
             if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
                 continue;
 
@@ -173,7 +173,7 @@ public class MKOverlay {
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             drawMana(cap);
             drawCastBar(cap);
-            int slotCount = cap.getKnowledge().getActionBarSize();
+            int slotCount = cap.getKnowledge().getActionBar().getCurrentSize();
             drawBarSlots(slotCount);
             drawAbilities(cap, slotCount, event.getPartialTicks());
         });
