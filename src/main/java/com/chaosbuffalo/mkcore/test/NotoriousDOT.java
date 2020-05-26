@@ -51,13 +51,8 @@ public class NotoriousDOT extends PlayerToggleAbility {
     }
 
     @Override
-    public float getDistance(int currentRank) {
-        return 3.0f + currentRank * 3.0f;
-    }
-
-    @Override
-    public int getRequiredLevel(int currentRank) {
-        return currentRank * 2;
+    public float getDistance() {
+        return 6f;
     }
 
     @Override
@@ -74,7 +69,7 @@ public class NotoriousDOT extends PlayerToggleAbility {
     @Override
     public void applyEffect(PlayerEntity entity, IMKPlayerData pData, World theWorld) {
         super.applyEffect(entity, pData, theWorld);
-        int level = pData.getAbilityRank(getAbilityId());
+        int level = 1;
         entity.addPotionEffect(NotoriousDOTSongPotion.Create(entity).setTarget(entity)
                 .toPotionEffect(BASE_DURATION, level));
 //        AbilityUtils.playSoundAtServerEntity(entity, ModSounds.spell_shadow_9, SoundCategory.PLAYERS);

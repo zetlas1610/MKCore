@@ -43,10 +43,6 @@ public class PlayerKnowledge {
         this.hotbar = hotBar;
     }
 
-    public int getAbilityRank(ResourceLocation abilityId) {
-        return 1;
-    }
-
     @Nullable
     public PlayerAbilityInfo getAbilityInfo(ResourceLocation abilityId) {
         // TODO: player knowledge

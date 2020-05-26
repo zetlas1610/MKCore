@@ -45,16 +45,11 @@ public class WhirlwindBlades extends PlayerAbility {
     }
 
     @Override
-    public float getDistance(int currentRank) {
-        return 3.0f + currentRank * 1.0f;
+    public float getDistance() {
+        return 4f;
     }
 
-    @Override
-    public int getRequiredLevel(int currentRank) {
-        return 6 + currentRank * 2;
-    }
-
-//    @Override
+    //    @Override
 //    public SoundEvent getCastingSoundEvent() {
 //        return ModSounds.spell_whirlwind_1;
 //    }
@@ -70,8 +65,8 @@ public class WhirlwindBlades extends PlayerAbility {
         super.continueCast(entity, data, theWorld, castTimeLeft, state);
         int tickSpeed = 6;
         if (castTimeLeft % tickSpeed == 0) {
-            int level = data.getAbilityRank(getAbilityId());
-            int totalDuration = getCastTime(1);
+            int level = 1;
+            int totalDuration = getCastTime();
             int count = (totalDuration - castTimeLeft) / tickSpeed;
             float baseAmount = level > 1 ? 0.10f : 0.15f;
             float scaling = count * baseAmount;
@@ -91,7 +86,7 @@ public class WhirlwindBlades extends PlayerAbility {
 //                    .spellCast(SoundPotion.Create(entity, ModSounds.spell_shadow_2, SoundCategory.PLAYERS),
 //                            1, getTargetType())
                     .instant()
-                    .color(16409620).radius(getDistance(level), true)
+                    .color(16409620).radius(getDistance(), true)
                     .particle(ParticleTypes.CRIT)
                     .spawn();
 

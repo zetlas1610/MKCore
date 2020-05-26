@@ -138,7 +138,7 @@ public class PlayerAbilityExecutor {
         float manaCost = playerData.getStats().getAbilityManaCost(ability.getAbilityId());
         playerData.consumeMana(manaCost);
 
-        int castTime = ability.getCastTime(info.getRank());
+        int castTime = ability.getCastTime();
         CastState state = startCast(info, castTime);
         if (castTime > 0) {
             return state;
@@ -152,7 +152,7 @@ public class PlayerAbilityExecutor {
         // Finish the cast
         ability.endCast(getPlayer(), playerData, getPlayer().getEntityWorld(), castState);
 
-        int cooldown = ability.getCooldownTicks(info.getRank());
+        int cooldown = ability.getCooldownTicks();
         cooldown = PlayerFormulas.applyCooldownReduction(playerData, cooldown);
         setCooldown(info.getId(), cooldown);
 //        SoundEvent sound = ability.getSpellCompleteSoundEvent();

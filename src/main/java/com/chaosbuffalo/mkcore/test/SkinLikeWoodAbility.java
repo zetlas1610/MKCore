@@ -44,18 +44,13 @@ public class SkinLikeWoodAbility extends PlayerToggleAbility {
     }
 
     @Override
-    public float getDistance(int currentRank) {
+    public float getDistance() {
         return 1.0f;
     }
 
     @Override
     public Effect getToggleEffect() {
         return SkinLikeWoodPotion.INSTANCE;
-    }
-
-    @Override
-    public int getRequiredLevel(int currentRank) {
-        return currentRank * 2;
     }
 
     @Nullable
@@ -67,7 +62,7 @@ public class SkinLikeWoodAbility extends PlayerToggleAbility {
     @Override
     public void applyEffect(PlayerEntity entity, IMKPlayerData pData, World theWorld) {
         super.applyEffect(entity, pData, theWorld);
-        int level = pData.getAbilityRank(getAbilityId());
+        int level = 1;
 //        AbilityUtils.playSoundAtServerEntity(entity, ModSounds.spell_earth_7, SoundCategory.PLAYERS);
         // What to do for each target hit
         entity.addPotionEffect(SkinLikeWoodPotion.Create(entity).setTarget(entity).toPotionEffect(BASE_DURATION, level));

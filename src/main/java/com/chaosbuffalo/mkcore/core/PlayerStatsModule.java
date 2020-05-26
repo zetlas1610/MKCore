@@ -123,7 +123,7 @@ public class PlayerStatsModule implements ISyncObject {
     }
 
     public int getAbilityCooldown(PlayerAbility ability) {
-        int ticks = ability.getCooldownTicks(playerData.getAbilityRank(ability.getAbilityId()));
+        int ticks = ability.getCooldownTicks();
         ticks = PlayerFormulas.applyCooldownReduction(playerData, ticks);
         return ticks;
     }
@@ -133,7 +133,7 @@ public class PlayerStatsModule implements ISyncObject {
         if (abilityInfo == null) {
             return 0.0f;
         }
-        float manaCost = abilityInfo.getAbility().getManaCost(abilityInfo.getRank());
+        float manaCost = abilityInfo.getAbility().getManaCost();
 //        return PlayerFormulas.applyManaCostReduction(this, ); TODO: formulas
         return manaCost;
     }

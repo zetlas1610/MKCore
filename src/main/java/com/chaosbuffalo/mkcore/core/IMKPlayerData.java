@@ -4,7 +4,6 @@ import com.chaosbuffalo.mkcore.abilities.CastState;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
 
 public interface IMKPlayerData {
 
@@ -20,10 +19,6 @@ public interface IMKPlayerData {
 
     default boolean consumeMana(float amount) {
         return getStats().consumeMana(amount);
-    }
-
-    default int getAbilityRank(ResourceLocation abilityId) {
-        return getKnowledge().getAbilityRank(abilityId);
     }
 
     default CastState startAbility(PlayerAbility ability) {

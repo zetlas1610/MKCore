@@ -45,16 +45,11 @@ public class FireArmor extends PlayerAbility {
     }
 
     @Override
-    public float getDistance(int currentRank) {
-        return 10.0f + 2.0f * currentRank;
+    public float getDistance() {
+        return 12f;
     }
 
-    @Override
-    public int getRequiredLevel(int currentRank) {
-        return 4 + currentRank * 2;
-    }
-
-//    @Nullable
+    //    @Nullable
 //    @Override
 //    public SoundEvent getSpellCompleteSoundEvent() {
 //        return ModSounds.spell_buff_5;
@@ -63,7 +58,7 @@ public class FireArmor extends PlayerAbility {
     @Override
     public void endCast(PlayerEntity entity, IMKPlayerData data, World theWorld, CastState state) {
         super.endCast(entity, data, theWorld, state);
-        int level = data.getAbilityRank(getAbilityId());
+        int level = 1;
 
         // What to do for each target hit
         int duration = (BASE_DURATION + DURATION_SCALE * level) * GameConstants.TICKS_PER_SECOND;
@@ -88,7 +83,7 @@ public class FireArmor extends PlayerAbility {
 //                        1, getTargetType())
                 .instant()
                 .particle(ParticleTypes.DRIPPING_LAVA)
-                .color(16762905).radius(getDistance(level), true)
+                .color(16762905).radius(getDistance(), true)
                 .spawn();
 
         Vec3d lookVec = entity.getLookVec();

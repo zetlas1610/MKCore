@@ -45,7 +45,7 @@ public class EmberAbility extends PlayerAbility {
     }
 
     @Override
-    public float getDistance(int currentRank) {
+    public float getDistance() {
         return 25.0f;
     }
 
@@ -66,11 +66,6 @@ public class EmberAbility extends PlayerAbility {
 //    }
 
     @Override
-    public int getRequiredLevel(int currentRank) {
-        return currentRank * 2;
-    }
-
-    @Override
     public void endCast(PlayerEntity entity, IMKPlayerData data, World theWorld, CastState state) {
         super.endCast(entity, data, theWorld, state);
         SingleTargetCastState singleTargetState = (SingleTargetCastState) state;
@@ -79,7 +74,7 @@ public class EmberAbility extends PlayerAbility {
         }
 
         singleTargetState.getTarget().ifPresent(targetEntity -> {
-            int level = data.getAbilityRank(getAbilityId());
+            int level = 1;
             targetEntity.setFire(BASE_DURATION + level * DURATION_SCALE);
 //            targetEntity.attackEntityFrom(MKDamageSource.causeIndirectMagicDamage(getAbilityId(), entity, entity), BASE_DAMAGE + level * DAMAGE_SCALE);
             targetEntity.attackEntityFrom(DamageSource.causeIndirectMagicDamage(entity, entity), BASE_DAMAGE + level * DAMAGE_SCALE);
@@ -98,8 +93,8 @@ public class EmberAbility extends PlayerAbility {
     @Override
     public void execute(PlayerEntity entity, IMKPlayerData pData, World theWorld) {
         MKCore.LOGGER.info("ember execute");
-        int level = pData.getAbilityRank(getAbilityId());
-        LivingEntity targetEntity = getSingleLivingTarget(entity, getDistance(level));
+        int level = 1;
+        LivingEntity targetEntity = getSingleLivingTarget(entity, getDistance());
         MKCore.LOGGER.info("ember target {}", targetEntity);
         if (targetEntity != null) {
             CastState state = pData.startAbility(this);

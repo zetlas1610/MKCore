@@ -13,7 +13,7 @@ public class GameConstants {
     public static final int ACTION_BAR_INVALID_SLOT = -1;
 
     public static final int MAX_CLASS_LEVEL = 10;
-    public static final int MAX_ABILITY_RANK = 2;
+    public static final int MAX_ABILITY_RANK = 1;
 
     public static final int TICKS_PER_SECOND = 20;
 
