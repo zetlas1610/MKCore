@@ -3,6 +3,9 @@ package com.chaosbuffalo.mkcore.command;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
+import com.chaosbuffalo.mkcore.abilities.PlayerAbilityInfo;
+import com.chaosbuffalo.mkcore.core.PlayerKnownAbilities;
+import com.chaosbuffalo.mkcore.utils.TextUtils;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -11,6 +14,8 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
+
+import java.util.Collection;
 
 public class AbilityCommand {
 
@@ -22,20 +27,18 @@ public class AbilityCommand {
                 .then(Commands.literal("unlearn")
                         .then(Commands.argument("ability", AbilityIdArgument.ability())
                                 .executes(AbilityCommand::unlearnAbility)))
+                .then(Commands.literal("list")
+                        .executes(AbilityCommand::listAbilities))
                 ;
     }
 
     static int learnAbility(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
         ServerPlayerEntity player = ctx.getSource().asPlayer();
         ResourceLocation abilityId = ctx.getArgument("ability", ResourceLocation.class);
-        MKCore.LOGGER.info("command parsed abilityid {}", abilityId);
 
         PlayerAbility ability = MKCoreRegistry.getAbility(abilityId);
         if (ability != null) {
-            MKCore.getPlayer(player).ifPresent(cap -> {
-                MKCore.LOGGER.info("trying to learn {}", abilityId);
-                cap.getKnowledge().learnAbility(ability);
-            });
+            MKCore.getPlayer(player).ifPresent(cap -> cap.getKnowledge().learnAbility(ability));
         }
 
         return Command.SINGLE_SUCCESS;
@@ -44,11 +47,25 @@ public class AbilityCommand {
     static int unlearnAbility(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
         ServerPlayerEntity player = ctx.getSource().asPlayer();
         ResourceLocation abilityId = ctx.getArgument("ability", ResourceLocation.class);
-        MKCore.LOGGER.info("command parsed abilityid {}", abilityId);
+
+        MKCore.getPlayer(player).ifPresent(cap -> cap.getKnowledge().unlearnAbility(abilityId));
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    static int listAbilities(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
+        ServerPlayerEntity player = ctx.getSource().asPlayer();
+
 
         MKCore.getPlayer(player).ifPresent(cap -> {
-            MKCore.LOGGER.info("trying to unlearn {}", abilityId);
-            cap.getKnowledge().unlearnAbility(abilityId);
+            PlayerKnownAbilities knownAbilities = cap.getKnowledge().getKnownAbilities();
+            Collection<PlayerAbilityInfo> abilities = knownAbilities.getAbilities();
+            if (abilities.size() > 0) {
+                TextUtils.sendPlayerChatMessage(player, "Known Abilities");
+                abilities.forEach(info -> TextUtils.sendPlayerChatMessage(player, String.format("%s: %b", info.getId(), info.isCurrentlyKnown())));
+            } else {
+                TextUtils.sendPlayerChatMessage(player, "No known abilities");
+            }
         });
 
         return Command.SINGLE_SUCCESS;

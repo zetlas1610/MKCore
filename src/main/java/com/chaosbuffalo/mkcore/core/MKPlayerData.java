@@ -6,7 +6,6 @@ import com.chaosbuffalo.mkcore.network.PlayerDataSyncPacket;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncRequestPacket;
 import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
 import com.chaosbuffalo.mkcore.sync.ISyncObject;
-import com.chaosbuffalo.mkcore.test.EmberAbility;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
@@ -40,7 +39,8 @@ public class MKPlayerData implements IMKPlayerData {
         privateUpdater.add(knowledge);
 
         registerAttributes();
-        setupFakeStats();
+        if (isServerSide())
+            setupFakeStats();
     }
 
     void setupFakeStats() {
@@ -52,8 +52,6 @@ public class MKPlayerData implements IMKPlayerData {
 
         AttributeModifier mod3 = new AttributeModifier("test cdr", 0.1, AttributeModifier.Operation.ADDITION).setSaved(false);
         player.getAttribute(PlayerAttributes.COOLDOWN).applyModifier(mod3);
-
-        knowledge.learnAbility(EmberAbility.INSTANCE);
     }
 
     private void registerAttributes() {
@@ -146,16 +144,18 @@ public class MKPlayerData implements IMKPlayerData {
     }
 
     public void fullSyncTo(ServerPlayerEntity otherPlayer) {
-        MKCore.LOGGER.info("need full sync to {}", otherPlayer);
-        PlayerDataSyncPacket packet = getFullPublicSyncMessage();
+        MKCore.LOGGER.info("Full public sync {} -> {}", player, otherPlayer);
+        PlayerDataSyncPacket packet = getFullSyncMessage(false);
         PacketHandler.sendMessage(packet, otherPlayer);
     }
 
     public void initialSync() {
-        MKCore.LOGGER.info("initial sync");
+        MKCore.LOGGER.info("Sending initial sync for {}", player);
         if (isServerSide()) {
             fullSyncTo((ServerPlayerEntity) player);
             getStats().sync();
+            PlayerDataSyncPacket packet = getFullSyncMessage(true);
+            PacketHandler.sendMessage(packet, (ServerPlayerEntity) player);
             readyForUpdates = true;
         }
     }
@@ -165,8 +165,9 @@ public class MKPlayerData implements IMKPlayerData {
         return new PlayerDataSyncPacket(this, player.getUniqueID(), updater, false, privateUpdate);
     }
 
-    private PlayerDataSyncPacket getFullPublicSyncMessage() {
-        return new PlayerDataSyncPacket(this, player.getUniqueID(), publicUpdater, true, false);
+    private PlayerDataSyncPacket getFullSyncMessage(boolean privateUpdate) {
+        ISyncObject updater = privateUpdate ? privateUpdater : publicUpdater;
+        return new PlayerDataSyncPacket(this, player.getUniqueID(), updater, true, privateUpdate);
     }
 
 
@@ -192,26 +193,28 @@ public class MKPlayerData implements IMKPlayerData {
     public void serialize(CompoundNBT nbt) {
 //        MKCore.LOGGER.info("serialize({})", mana.get());
         getStats().serialize(nbt);
+        getKnowledge().serialize(nbt);
 //        abilityTracker.serialize(nbt);
     }
 
     @Override
     public void deserialize(CompoundNBT nbt) {
+        getKnowledge().deserialize(nbt);
         getStats().deserialize(nbt);
 //        abilityTracker.deserialize(nbt);
 
 //        MKCore.LOGGER.info("deserialize({})", mana.get());
     }
 
-    public void addSpellTag(String tag){
+    public void addSpellTag(String tag) {
         spellTag.add(tag);
     }
 
-    public void removeSpellTag(String tag){
+    public void removeSpellTag(String tag) {
         spellTag.remove(tag);
     }
 
-    public boolean hasSpellTag(String tag){
+    public boolean hasSpellTag(String tag) {
         return spellTag.contains(tag);
     }
 }

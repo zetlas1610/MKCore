@@ -12,7 +12,8 @@ public class MKCommand {
                 .then(StatCommand.register())
                 .then(CooldownCommand.register())
                 .then(AbilityCommand.register())
-                .then(EffectCommand.register());
+                .then(EffectCommand.register())
+                .then(InfoCommand.register());
         dispatcher.register(builder);
     }
 

@@ -72,13 +72,12 @@ public class ClientEventHandler {
             return;
 
         MKCore.getPlayer(player).ifPresent(pData -> {
-            MKCore.LOGGER.info("sending execute ability {}", slot);
-
             ResourceLocation abilityId = pData.getKnowledge().getActionBar().getAbilityInSlot(slot);
             PlayerAbility ability = MKCoreRegistry.getAbility(abilityId);
             if (ability == null || !ability.meetsRequirements(pData))
                 return;
 
+            MKCore.LOGGER.info("sending execute ability {}", slot);
             PacketHandler.sendMessageToServer(new ExecuteActiveAbilityPacket(slot));
             startGlobalCooldown();
         });

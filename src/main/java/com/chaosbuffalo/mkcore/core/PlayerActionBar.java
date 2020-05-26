@@ -9,17 +9,19 @@ import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
 public class PlayerActionBar implements ISyncObject {
 
     private final PlayerKnowledge knowledge;
-    private final List<ResourceLocation> hotbar = NonNullList.withSize(GameConstants.ACTION_BAR_SIZE, MKCoreRegistry.INVALID_ABILITY);
+    private final List<ResourceLocation> abilities = NonNullList.withSize(GameConstants.ACTION_BAR_SIZE, MKCoreRegistry.INVALID_ABILITY);
     private final HotBarUpdater hotBarUpdater = new HotBarUpdater(this);
 
 
@@ -34,22 +36,22 @@ public class PlayerActionBar implements ISyncObject {
 
 
     public int getSlotForAbility(ResourceLocation abilityId) {
-        int slot = hotbar.indexOf(abilityId);
+        int slot = abilities.indexOf(abilityId);
         if (slot == -1)
             return GameConstants.ACTION_BAR_INVALID_SLOT;
         return slot;
     }
 
     public ResourceLocation getAbilityInSlot(int slot) {
-        if (slot < hotbar.size()) {
-            return hotbar.get(slot);
+        if (slot < abilities.size()) {
+            return abilities.get(slot);
         }
         return MKCoreRegistry.INVALID_ABILITY;
     }
 
     public void setAbilityInSlot(int index, ResourceLocation abilityId) {
-        if (index < hotbar.size()) {
-            hotbar.set(index, abilityId);
+        if (index < abilities.size()) {
+            abilities.set(index, abilityId);
             hotBarUpdater.setDirty(index);
         }
     }
@@ -113,10 +115,18 @@ public class PlayerActionBar implements ISyncObject {
         hotBarUpdater.serializeFull(tag);
     }
 
+    public void serialize(CompoundNBT tag) {
+        hotBarUpdater.serialize(tag);
+    }
+
+    public void deserialize(CompoundNBT tag) {
+        hotBarUpdater.deserialize(tag);
+        abilities.forEach(this::checkHotBar);
+    }
 
     static class HotBarUpdater extends ListUpdater {
         public HotBarUpdater(PlayerActionBar actionBar) {
-            super(() -> actionBar.hotbar, "hotbar");
+            super(() -> actionBar.abilities, "hotbar");
         }
     }
 
@@ -182,6 +192,28 @@ public class PlayerActionBar implements ISyncObject {
                 list.add(i, makeEntry(i, fullList.get(i)));
             }
             tag.put(name, list);
+        }
+
+        public void serialize(CompoundNBT tag) {
+            writeNBTAbilityArray(tag, name, parent.get());
+        }
+
+        public void deserialize(CompoundNBT tag) {
+            parseNBTAbilityList(tag, name, parent.get());
+        }
+
+        private void writeNBTAbilityArray(CompoundNBT tag, String name, Collection<ResourceLocation> array) {
+            ListNBT list = new ListNBT();
+            array.forEach(r -> list.add(StringNBT.valueOf(r.toString())));
+            tag.put(name, list);
+        }
+
+        private void parseNBTAbilityList(CompoundNBT tag, String name, List<ResourceLocation> output) {
+            ListNBT list = tag.getList(name, Constants.NBT.TAG_STRING);
+            for (int i = 0; i < list.size(); i++) {
+                ResourceLocation id = new ResourceLocation(list.getString(i));
+                output.set(i, id);
+            }
         }
     }
 }
