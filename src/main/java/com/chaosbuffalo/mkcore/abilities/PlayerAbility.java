@@ -88,7 +88,7 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         return castTime;
     }
 
-    public PlayerAbility setCastTime(int newCastTime){
+    public PlayerAbility setCastTime(int newCastTime) {
         castTime = newCastTime;
         return this;
     }
@@ -97,11 +97,11 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         return 1.0f;
     }
 
-    public int getCooldown(int rank){
+    public int getCooldown(int rank) {
         return cooldown;
     }
 
-    public PlayerAbility setCooldown(int cooldown){
+    public PlayerAbility setCooldown(int cooldown) {
         this.cooldown = cooldown;
         return this;
     }
@@ -124,11 +124,11 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         return Targeting.isValidTarget(getTargetType(), caster, target, !canSelfCast());
     }
 
-    public float getManaCost(int rank){
+    public float getManaCost(int rank) {
         return manaCost;
     }
 
-    public PlayerAbility setManaCost(float newCost){
+    public PlayerAbility setManaCost(float newCost) {
         manaCost = newCost;
         return this;
     }
@@ -144,7 +144,7 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
                 player.getStats().canActivateAbility(this);
     }
 
-    public CompoundNBT serialize(){
+    public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
         tag.putInt("cooldown", getCooldown(1));
         tag.putInt("castTime", getCastTime(1));
@@ -152,26 +152,26 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         return tag;
     }
 
-    public void deserialize(CompoundNBT nbt){
-        if (nbt.contains("cooldown")){
+    public void deserialize(CompoundNBT nbt) {
+        if (nbt.contains("cooldown")) {
             setCooldown(nbt.getInt("cooldown"));
         }
-        if (nbt.contains("castTime")){
+        if (nbt.contains("castTime")) {
             setCastTime(nbt.getInt("castTime"));
         }
-        if (nbt.contains("manaCost")){
+        if (nbt.contains("manaCost")) {
             setManaCost(nbt.getFloat("manaCost"));
         }
     }
 
-    public void readFromDataPack(JsonObject obj){
-        if (obj.has("cooldown")){
+    public void readFromDataPack(JsonObject obj) {
+        if (obj.has("cooldown")) {
             setCooldown(obj.get("cooldown").getAsInt());
         }
-        if (obj.has("manaCost")){
+        if (obj.has("manaCost")) {
             setManaCost(obj.get("manaCost").getAsFloat());
         }
-        if (obj.has("castTime")){
+        if (obj.has("castTime")) {
             setCastTime(obj.get("castTime").getAsInt());
         }
     }

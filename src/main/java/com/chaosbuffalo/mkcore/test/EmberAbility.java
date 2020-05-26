@@ -1,6 +1,5 @@
 package com.chaosbuffalo.mkcore.test;
 
-import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.CastState;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;

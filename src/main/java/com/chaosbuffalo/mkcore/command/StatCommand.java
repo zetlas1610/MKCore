@@ -1,7 +1,6 @@
 package com.chaosbuffalo.mkcore.command;
 
 import com.chaosbuffalo.mkcore.Capabilities;
-import com.chaosbuffalo.mkcore.core.IMKPlayerData;
 import com.chaosbuffalo.mkcore.core.PlayerAttributes;
 import com.chaosbuffalo.mkcore.core.PlayerStatsModule;
 import com.chaosbuffalo.mkcore.utils.TextUtils;
