@@ -61,9 +61,9 @@ public class MKPlayerData implements IMKPlayerData {
         attributes.registerAttribute(MKAttributes.MANA_REGEN);
         attributes.registerAttribute(MKAttributes.COOLDOWN);
         attributes.registerAttribute(MKAttributes.MELEE_CRIT);
-        attributes.registerAttribute(MKAttributes.MELEE_CRITICAL_DAMAGE);
+        attributes.registerAttribute(MKAttributes.MELEE_CRIT_MULTIPLIER);
         attributes.registerAttribute(MKAttributes.SPELL_CRIT);
-        attributes.registerAttribute(MKAttributes.SPELL_CRITICAL_DAMAGE);
+        attributes.registerAttribute(MKAttributes.SPELL_CRIT_MULTIPLIER);
         attributes.registerAttribute(MKAttributes.HEAL_BONUS);
         for (MKDamageType damageType : MKCoreRegistry.DAMAGE_TYPES.getValues()){
             damageType.addAttributes(attributes);

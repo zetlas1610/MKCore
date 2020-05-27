@@ -41,11 +41,11 @@ public class PlayerStatsModule implements ISyncObject {
     }
 
     public float getSpellCritDamage() {
-        return (float) getPlayer().getAttribute(MKAttributes.SPELL_CRITICAL_DAMAGE).getValue();
+        return (float) getPlayer().getAttribute(MKAttributes.SPELL_CRIT_MULTIPLIER).getValue();
     }
 
     public float getMeleeCritDamage() {
-        return (float) getPlayer().getAttribute(MKAttributes.MELEE_CRITICAL_DAMAGE).getValue();
+        return (float) getPlayer().getAttribute(MKAttributes.MELEE_CRIT_MULTIPLIER).getValue();
     }
 
     public float getHealBonus() {
@@ -149,7 +149,7 @@ public class PlayerStatsModule implements ISyncObject {
 
     public int getAbilityCooldown(PlayerAbility ability) {
         int ticks = ability.getCooldownTicks();
-        ticks = PlayerFormulas.applyCooldownReduction(playerData, ticks);
+        ticks = MKCombatFormulas.applyCooldownReduction(playerData, ticks);
         return ticks;
     }
 
@@ -159,7 +159,7 @@ public class PlayerStatsModule implements ISyncObject {
             return 0.0f;
         }
         float manaCost = abilityInfo.getAbility().getManaCost();
-        return PlayerFormulas.applyManaCostReduction(playerData, manaCost);
+        return MKCombatFormulas.applyManaCostReduction(playerData, manaCost);
     }
 
     public boolean canActivateAbility(PlayerAbility ability) {

@@ -9,7 +9,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 
-public class PlayerFormulas {
+public class MKCombatFormulas {
 
     public static int applyCooldownReduction(IMKPlayerData playerData, int originalCooldownTicks) {
         final float MAX_COOLDOWN = 2.0f; // Maximum cooldown rate improvement is 200%
@@ -17,14 +17,6 @@ public class PlayerFormulas {
         float mod = MAX_COOLDOWN - cdrValue;
         float newTicks = mod * originalCooldownTicks;
         return (int) newTicks;
-    }
-
-    public static float scaleDamage(LivingEntity source, MKDamageType damageType, float damageIn, float modifierScaling){
-        return damageType.scaleDamage(source, damageIn, modifierScaling);
-    }
-
-    public static float applyDamageResistance(LivingEntity target, MKDamageType damageType, float damageIn){
-        return damageType.applyResistance(target, damageIn);
     }
 
     public static float scaleMagicDamage(IMKPlayerData playerData, float originalDamage, float modifierScaling) {
@@ -37,7 +29,6 @@ public class PlayerFormulas {
         return originalDamage - mod;
     }
 
-
     public static float applyManaCostReduction(IMKPlayerData playerData, float originalCost) {
         return originalCost;
     }
@@ -47,12 +38,16 @@ public class PlayerFormulas {
 //        return amount * mod;
 //    }
 
-    public static float getMeleeCritChanceForItem(IMKPlayerData data, ServerPlayerEntity player, ItemStack item) {
-        return data.getStats().getMeleeCritChance() + ItemUtils.getCritChanceForItem(item);
+    public static float getCritChanceForItem(ItemStack item) {
+        return ItemUtils.getCritChanceForItem(item);
     }
 
     public static float getRangedCritChanceForEntity(IMKPlayerData data, ServerPlayerEntity player, Entity entity) {
         return EntityUtils.ENTITY_CRIT.getChance(entity);
+    }
+
+    public static boolean checkCrit(LivingEntity entity, float chance) {
+        return entity.getRNG().nextFloat() >= 1.0f - chance;
     }
 
 //    public static int applyBuffDurationBonus(IPlayerData data, int duration) {

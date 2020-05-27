@@ -30,9 +30,9 @@ public class StatCommand {
                 .then(createAttributeStat("maxmana", MKAttributes.MAX_MANA))
                 .then(createAttributeStat("cdr", MKAttributes.COOLDOWN))
                 .then(createAttributeStat("melee_crit", MKAttributes.MELEE_CRIT))
-                .then(createAttributeStat("melee_crit_damage", MKAttributes.MELEE_CRITICAL_DAMAGE))
+                .then(createAttributeStat("melee_crit_multiplier", MKAttributes.MELEE_CRIT_MULTIPLIER))
                 .then(createAttributeStat("spell_crit", MKAttributes.SPELL_CRIT))
-                .then(createAttributeStat("spell_crit_damage", MKAttributes.SPELL_CRITICAL_DAMAGE))
+                .then(createAttributeStat("spell_crit_multiplier", MKAttributes.SPELL_CRIT_MULTIPLIER))
                 .then(createAttributeStat("heal_bonus", MKAttributes.HEAL_BONUS))
                 .then(createAttributeStat("arcane_damage", MKAttributes.ARCANE_DAMAGE))
                 .then(createAttributeStat("arcane_resist", MKAttributes.ARCANE_RESISTANCE))
@@ -40,14 +40,16 @@ public class StatCommand {
                 .then(createAttributeStat("fire_resist", MKAttributes.FIRE_RESISTANCE))
                 .then(createAttributeStat("frost_damage", MKAttributes.FROST_DAMAGE))
                 .then(createAttributeStat("frost_resist", MKAttributes.FROST_RESISTANCE))
-                .then(createAttributeStat("electric_damage", MKAttributes.NATURE_DAMAGE))
-                .then(createAttributeStat("electric_resist", MKAttributes.NATURE_RESISTANCE))
+                .then(createAttributeStat("nature_damage", MKAttributes.NATURE_DAMAGE))
+                .then(createAttributeStat("nature_resist", MKAttributes.NATURE_RESISTANCE))
                 .then(createAttributeStat("holy_damage", MKAttributes.HOLY_DAMAGE))
                 .then(createAttributeStat("holy_resist", MKAttributes.HOLY_RESISTANCE))
                 .then(createAttributeStat("shadow_damage", MKAttributes.SHADOW_DAMAGE))
                 .then(createAttributeStat("shadow_resist", MKAttributes.SHADOW_RESISTANCE))
                 .then(createAttributeStat("poison_damage", MKAttributes.POISON_DAMAGE))
-                .then(createAttributeStat("poison_resist", MKAttributes.POISON_RESISTANCE));
+                .then(createAttributeStat("poison_resist", MKAttributes.POISON_RESISTANCE))
+                .then(createAttributeStat("elemental_damage", MKAttributes.ELEMENTAL_DAMAGE))
+                .then(createAttributeStat("elemental_resist", MKAttributes.ELEMENTAL_RESISTANCE));
     }
 
     static ArgumentBuilder<CommandSource, ?> createSimpleFloatStat(String name, Function<PlayerStatsModule, Float> getter, BiConsumer<PlayerStatsModule, Float> setter) {

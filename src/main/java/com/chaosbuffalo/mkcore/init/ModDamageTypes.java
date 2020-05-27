@@ -37,23 +37,29 @@ public class ModDamageTypes {
     @ObjectHolder("damage.melee")
     public static MKDamageType MeleeDamage;
 
+    @ObjectHolder("damage.elemental")
+    public static MKDamageType ElementalDamage;
+
 
     @SubscribeEvent
     public static void registerDamageTypes(RegistryEvent.Register<MKDamageType> evt) {
         evt.getRegistry().register(new MKDamageType(MKCore.makeRL("damage.fire"), MKAttributes.FIRE_DAMAGE,
-                MKAttributes.FIRE_RESISTANCE));
+                MKAttributes.FIRE_RESISTANCE, MKAttributes.SPELL_CRIT, MKAttributes.SPELL_CRIT_MULTIPLIER));
         evt.getRegistry().register(new MKDamageType(MKCore.makeRL("damage.frost"), MKAttributes.FROST_DAMAGE,
-                MKAttributes.FROST_RESISTANCE));
+                MKAttributes.FROST_RESISTANCE, MKAttributes.SPELL_CRIT, MKAttributes.SPELL_CRIT_MULTIPLIER));
         evt.getRegistry().register(new MKDamageType(MKCore.makeRL("damage.holy"), MKAttributes.HOLY_DAMAGE,
-                MKAttributes.HOLY_RESISTANCE).setCritMultiplier(2.0f));
+                MKAttributes.HOLY_RESISTANCE, MKAttributes.SPELL_CRIT, MKAttributes.SPELL_CRIT_MULTIPLIER)
+                .setCritMultiplier(2.0f));
         evt.getRegistry().register(new MKDamageType(MKCore.makeRL("damage.poison"), MKAttributes.POISON_DAMAGE,
-                MKAttributes.POISON_RESISTANCE));
+                MKAttributes.POISON_RESISTANCE, MKAttributes.SPELL_CRIT, MKAttributes.SPELL_CRIT_MULTIPLIER));
         evt.getRegistry().register(new MKDamageType(MKCore.makeRL("damage.shadow"), MKAttributes.SHADOW_DAMAGE,
-                MKAttributes.SHADOW_RESISTANCE));
+                MKAttributes.SHADOW_RESISTANCE, MKAttributes.SPELL_CRIT, MKAttributes.SPELL_CRIT_MULTIPLIER));
         evt.getRegistry().register(new MKDamageType(MKCore.makeRL("damage.arcane"), MKAttributes.ARCANE_DAMAGE,
-                MKAttributes.ARCANE_RESISTANCE));
+                MKAttributes.ARCANE_RESISTANCE, MKAttributes.SPELL_CRIT, MKAttributes.SPELL_CRIT_MULTIPLIER));
         evt.getRegistry().register(new MKDamageType(MKCore.makeRL("damage.nature"), MKAttributes.NATURE_DAMAGE,
-                MKAttributes.NATURE_RESISTANCE));
+                MKAttributes.NATURE_RESISTANCE, MKAttributes.SPELL_CRIT, MKAttributes.SPELL_CRIT_MULTIPLIER));
         evt.getRegistry().register(new MeleeDamageType(MKCore.makeRL("damage.melee")));
+        evt.getRegistry().register(new MKDamageType(MKCore.makeRL("damage.elemental"), MKAttributes.ELEMENTAL_DAMAGE,
+                MKAttributes.ELEMENTAL_RESISTANCE, MKAttributes.SPELL_CRIT, MKAttributes.SPELL_CRIT_MULTIPLIER));
     }
 }

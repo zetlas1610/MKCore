@@ -3,8 +3,10 @@ package com.chaosbuffalo.mkcore.network;
 import com.chaosbuffalo.mkcore.MKConfig;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
+import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -18,23 +20,18 @@ import java.util.function.Supplier;
 
 public class CritMessagePacket {
     public enum CritType {
-        INDIRECT_MAGIC_CRIT,
         MELEE_CRIT,
-        SPELL_CRIT,
-        INDIRECT_CRIT,
-        PROJECTILE_CRIT,
-        HOLY_DAMAGE_CRIT
+        MK_CRIT,
+        PROJECTILE_CRIT
     }
 
-    private int targetId;
-    private UUID sourceUUID;
+    private final int targetId;
+    private final UUID sourceUUID;
     private ResourceLocation abilityName;
-    private float critDamage;
-    private CritType type;
+    private ResourceLocation damageType;
+    private final float critDamage;
+    private final CritType type;
     private int projectileId;
-
-    public CritMessagePacket() {
-    }
 
     public CritMessagePacket(int targetId, UUID sourceUUID, float critDamage, CritType type) {
         this.targetId = targetId;
@@ -43,12 +40,14 @@ public class CritMessagePacket {
         this.type = type;
     }
 
-    public CritMessagePacket(int targetId, UUID sourceUUID, float critDamage, ResourceLocation abilityName) {
+    public CritMessagePacket(int targetId, UUID sourceUUID, float critDamage, ResourceLocation abilityName,
+                             MKDamageType damageType) {
         this.targetId = targetId;
         this.sourceUUID = sourceUUID;
         this.critDamage = critDamage;
-        this.type = CritType.SPELL_CRIT;
+        this.type = CritType.MK_CRIT;
         this.abilityName = abilityName;
+        this.damageType = damageType.getRegistryName();
     }
 
     public CritMessagePacket(int targetId, UUID sourceUUID, float critDamage, int projectileId) {
@@ -64,8 +63,9 @@ public class CritMessagePacket {
         this.targetId = pb.readInt();
         this.sourceUUID = pb.readUniqueId();
         this.critDamage = pb.readFloat();
-        if (type == CritType.SPELL_CRIT) {
+        if (type == CritType.MK_CRIT) {
             this.abilityName = pb.readResourceLocation();
+            this.damageType = pb.readResourceLocation();
         }
         if (type == CritType.PROJECTILE_CRIT) {
             this.projectileId = pb.readInt();
@@ -77,8 +77,9 @@ public class CritMessagePacket {
         pb.writeInt(targetId);
         pb.writeUniqueId(sourceUUID);
         pb.writeFloat(critDamage);
-        if (type == CritType.SPELL_CRIT) {
+        if (type == CritType.MK_CRIT) {
             pb.writeResourceLocation(this.abilityName);
+            pb.writeResourceLocation(this.damageType);
         }
         if (type == CritType.PROJECTILE_CRIT) {
             pb.writeInt(this.projectileId);
@@ -90,6 +91,9 @@ public class CritMessagePacket {
         ctx.enqueueWork(() -> {
             Style messageStyle = new Style();
             PlayerEntity player = Minecraft.getInstance().player;
+            if (player == null){
+                return;
+            }
             boolean isSelf = player.getUniqueID().equals(sourceUUID);
             PlayerEntity playerSource = player.getEntityWorld().getPlayerByUuid(sourceUUID);
             Entity target = player.getEntityWorld().getEntityByID(targetId);
@@ -108,86 +112,32 @@ public class CritMessagePacket {
             }
             switch (type) {
                 case MELEE_CRIT:
-                case INDIRECT_CRIT:
-                    messageStyle.setColor(
-                            type == CritType.MELEE_CRIT ? TextFormatting.DARK_RED : TextFormatting.GOLD
-                    );
+                    messageStyle.setColor(TextFormatting.DARK_RED);
                     if (isSelf) {
                         player.sendMessage(new StringTextComponent(
                                 String.format("You just crit %s with %s for %s",
-                                        target.getDisplayName().getUnformattedComponentText(),
-                                        playerSource.getHeldItemMainhand().getDisplayName(),
-                                        Integer.toString(Math.round(critDamage))))
+                                        target.getDisplayName().getFormattedText(),
+                                        playerSource.getHeldItemMainhand().getDisplayName().getFormattedText(),
+                                        Math.round(critDamage)))
                                 .setStyle(messageStyle));
                     } else {
                         player.sendMessage(new StringTextComponent(
                                 String.format("%s just crit %s with %s for %s",
-                                        playerSource.getDisplayName().getUnformattedComponentText(),
-                                        target.getDisplayName().getUnformattedComponentText(),
-                                        playerSource.getHeldItemMainhand().getDisplayName(),
+                                        playerSource.getDisplayName().getFormattedText(),
+                                        target.getDisplayName().getFormattedText(),
+                                        playerSource.getHeldItemMainhand().getDisplayName().getFormattedText(),
                                         Math.round(critDamage))
                         ).setStyle(messageStyle));
                     }
                     break;
-                case INDIRECT_MAGIC_CRIT:
-                    messageStyle.setColor(TextFormatting.BLUE);
-                    if (isSelf) {
-                        player.sendMessage(new StringTextComponent(
-                                String.format("Your magic spell just crit %s for %s",
-                                        target.getDisplayName().getUnformattedComponentText(),
-                                        Math.round(critDamage)))
-                                .setStyle(messageStyle));
-                    } else {
-                        player.sendMessage(new StringTextComponent(
-                                String.format("%s's magic spell just crit %s for %s",
-                                        playerSource.getDisplayName().getUnformattedComponentText(),
-                                        target.getDisplayName().getUnformattedComponentText(),
-                                        Math.round(critDamage)))
-                                .setStyle(messageStyle));
-                    }
-                    break;
-                case HOLY_DAMAGE_CRIT:
-                    messageStyle.setColor(TextFormatting.RED);
-                    if (isSelf) {
-                        player.sendMessage(new StringTextComponent(
-                                String.format("Your holy aura just crit %s for %s",
-                                        target.getDisplayName().getUnformattedComponentText(),
-                                        Math.round(critDamage)))
-                                .setStyle(messageStyle));
-                    } else {
-                        player.sendMessage(new StringTextComponent(
-                                String.format("%s's holy aura just crit %s for %s",
-                                        playerSource.getDisplayName().getUnformattedComponentText(),
-                                        target.getDisplayName().getUnformattedComponentText(),
-                                        Integer.toString(Math.round(critDamage))))
-                                .setStyle(messageStyle));
-                    }
-                    break;
-                case SPELL_CRIT:
+                case MK_CRIT:
                     messageStyle.setColor(TextFormatting.AQUA);
                     PlayerAbility ability = MKCoreRegistry.getAbility(abilityName);
-                    if (ability == null) {
+                    MKDamageType mkDamageType = MKCoreRegistry.getDamageType(damageType);
+                    if (ability == null || mkDamageType == null) {
                         break;
                     }
-                    if (isSelf) {
-                        player.sendMessage(new StringTextComponent(
-                                String.format("Your %s spell just crit %s for %s",
-                                        ability.getAbilityName(),
-                                        target.getDisplayName().getUnformattedComponentText(),
-                                        Math.round(critDamage)))
-                                .setStyle(messageStyle)
-                        );
-
-                    } else {
-                        player.sendMessage(new StringTextComponent(
-                                String.format("%s's %s spell just crit %s for %s",
-                                        playerSource.getDisplayName().getUnformattedComponentText(),
-                                        ability.getAbilityName(),
-                                        target.getDisplayName().getUnformattedComponentText(),
-                                        Math.round(critDamage)))
-                                .setStyle(messageStyle)
-                        );
-                    }
+                    player.sendMessage(mkDamageType.getCritMessage(playerSource, (LivingEntity) target, critDamage, ability, isSelf));
                     break;
                 case PROJECTILE_CRIT:
                     Entity projectile = player.getEntityWorld().getEntityByID(projectileId);

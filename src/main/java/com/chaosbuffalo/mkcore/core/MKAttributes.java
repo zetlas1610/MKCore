@@ -20,12 +20,12 @@ public class MKAttributes {
             .setDescription("Spell Critical Chance")
             .setShouldWatch(true);
 
-    public static final RangedAttribute SPELL_CRITICAL_DAMAGE = (RangedAttribute) new RangedAttribute(null, "mk.spell_crit_damage", 1.5, 0.0, 10.0)
-            .setDescription("Spell Critical Damage")
+    public static final RangedAttribute SPELL_CRIT_MULTIPLIER = (RangedAttribute) new RangedAttribute(null, "mk.spell_crit_multiplier", 1.5, 0.0, 10.0)
+            .setDescription("Spell Critical Multiplier")
             .setShouldWatch(true);
 
-    public static final RangedAttribute MELEE_CRITICAL_DAMAGE = (RangedAttribute) new RangedAttribute(null, "mk.melee_crit_damage", 0.0, 0.0, 10.0)
-            .setDescription("Melee Critical Damage")
+    public static final RangedAttribute MELEE_CRIT_MULTIPLIER = (RangedAttribute) new RangedAttribute(null, "mk.melee_crit_multiplier", 0.0, 0.0, 10.0)
+            .setDescription("Melee Critical Multiplier")
             .setShouldWatch(true);
 
     // Everyone Attributes
@@ -41,6 +41,14 @@ public class MKAttributes {
             .setDescription("Heal Bonus Amount")
             .setShouldWatch(true);
 
+    public static final RangedAttribute ELEMENTAL_RESISTANCE = (RangedAttribute) new RangedAttribute(null, "mk.elemental_resistance", 0, -1.0, 1.0)
+            .setDescription("Elemental Resistance")
+            .setShouldWatch(true);
+
+    public static final RangedAttribute ELEMENTAL_DAMAGE = (RangedAttribute) new RangedAttribute(null, "mk.elemental_damage", 0, 0, 2048)
+            .setDescription("Elemental Damage")
+            .setShouldWatch(true);
+
     public static final RangedAttribute ARCANE_RESISTANCE = (RangedAttribute) new RangedAttribute(null, "mk.arcane_resistance", 0, -1.0, 1.0)
             .setDescription("Arcane Resistance")
             .setShouldWatch(true);
@@ -49,19 +57,19 @@ public class MKAttributes {
             .setDescription("Arcane Damage")
             .setShouldWatch(true);
 
-    public static final RangedAttribute FIRE_RESISTANCE = (RangedAttribute) new RangedAttribute(null, "mk.fire_resistance", 0, -1.0, 1.0)
+    public static final RangedAttribute FIRE_RESISTANCE = (RangedAttribute) new RangedAttribute(ELEMENTAL_RESISTANCE, "mk.fire_resistance", 0, -1.0, 1.0)
             .setDescription("Fire Resistance")
             .setShouldWatch(true);
 
-    public static final RangedAttribute FIRE_DAMAGE = (RangedAttribute) new RangedAttribute(null, "mk.fire_damage", 0, 0, 2048)
+    public static final RangedAttribute FIRE_DAMAGE = (RangedAttribute) new RangedAttribute(ELEMENTAL_DAMAGE, "mk.fire_damage", 0, 0, 2048)
             .setDescription("Fire Damage")
             .setShouldWatch(true);
 
-    public static final RangedAttribute FROST_RESISTANCE = (RangedAttribute) new RangedAttribute(null, "mk.frost_resistance", 0, -1.0, 1.0)
+    public static final RangedAttribute FROST_RESISTANCE = (RangedAttribute) new RangedAttribute(ELEMENTAL_RESISTANCE, "mk.frost_resistance", 0, -1.0, 1.0)
             .setDescription("Frost Resistance")
             .setShouldWatch(true);
 
-    public static final RangedAttribute FROST_DAMAGE = (RangedAttribute) new RangedAttribute(null, "mk.frost_damage", 0, 0, 2048)
+    public static final RangedAttribute FROST_DAMAGE = (RangedAttribute) new RangedAttribute(ELEMENTAL_DAMAGE, "mk.frost_damage", 0, 0, 2048)
             .setDescription("Frost Damage")
             .setShouldWatch(true);
 
@@ -81,11 +89,11 @@ public class MKAttributes {
             .setDescription("Holy Damage")
             .setShouldWatch(true);
 
-    public static final RangedAttribute NATURE_RESISTANCE = (RangedAttribute) new RangedAttribute(null, "mk.nature_resistance", 0, -1.0, 1.0)
+    public static final RangedAttribute NATURE_RESISTANCE = (RangedAttribute) new RangedAttribute(ELEMENTAL_RESISTANCE, "mk.nature_resistance", 0, -1.0, 1.0)
             .setDescription("Nature Resistance")
             .setShouldWatch(true);
 
-    public static final RangedAttribute NATURE_DAMAGE = (RangedAttribute) new RangedAttribute(null, "mk.nature_damage", 0, 0, 2048)
+    public static final RangedAttribute NATURE_DAMAGE = (RangedAttribute) new RangedAttribute(ELEMENTAL_DAMAGE, "mk.nature_damage", 0, 0, 2048)
             .setDescription("Nature Damage")
             .setShouldWatch(true);
 
