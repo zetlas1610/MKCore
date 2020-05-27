@@ -22,13 +22,6 @@ public abstract class SpellPotionBase extends Effect {
         setRegistryName(name);
     }
 
-    public SpellPotionBase finish() {
-        // This method is called from the registry callback, so our mod is the active mod
-        // The single parameter overload of setRegistryName uses the domain of the active mod automatically
-//        setRegistryName(getName()); TODO: check if this is still required since setPotionName is gone
-        return this;
-    }
-
     protected SpellPotionBase(EffectType typeIn, int liquidColorIn) {
         super(typeIn, liquidColorIn);
     }

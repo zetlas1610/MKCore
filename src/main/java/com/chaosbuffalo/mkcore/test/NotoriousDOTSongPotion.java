@@ -22,7 +22,7 @@ public class NotoriousDOTSongPotion extends SongApplicator {
 
     @SubscribeEvent
     public static void register(RegistryEvent.Register<Effect> event) {
-        event.getRegistry().register(INSTANCE.finish());
+        event.getRegistry().register(INSTANCE);
     }
 
     public static SpellCast Create(Entity source) {
