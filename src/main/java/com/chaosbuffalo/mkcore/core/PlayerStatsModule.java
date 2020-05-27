@@ -3,6 +3,7 @@ package com.chaosbuffalo.mkcore.core;
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbilityInfo;
+import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
 import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
 import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import com.chaosbuffalo.mkcore.sync.SyncFloat;
@@ -28,32 +29,56 @@ public class PlayerStatsModule implements ISyncObject {
         playerData.getUpdateEngine().addPrivate(abilityTracker);
     }
 
+    public float getCritChanceForDamageType(MKDamageType damageType){
+        return damageType.getCritChance(getPlayer(), null);
+    }
+
+    public float getCritMultiplierForDamageType(MKDamageType damageType){
+        return damageType.getCritMultiplier(getPlayer(), null);
+    }
+
+    public float getDamageTypeBonus(MKDamageType damageType){
+        return (float) getPlayer().getAttribute(damageType.getDamageAttribute()).getValue();
+    }
+
+    public float getDamageMultiplierForDamageType(MKDamageType damageType){
+        float originalValue = 10.0f;
+        float scaled = damageType.applyDamage(getPlayer(), null, originalValue, 1.0f);
+        return scaled / originalValue;
+    }
+
+    public float getArmorMultiplierForDamageType(MKDamageType damageType){
+        float originalValue = 10.0f;
+        float scaled = damageType.applyResistance(getPlayer(), originalValue);
+        return scaled / originalValue;
+    }
+
     public float getMeleeCritChance() {
-        return (float) getPlayer().getAttribute(PlayerAttributes.MELEE_CRIT).getValue();
+        return (float) getPlayer().getAttribute(MKAttributes.MELEE_CRIT).getValue();
     }
 
     public float getSpellCritChance() {
-        return (float) getPlayer().getAttribute(PlayerAttributes.SPELL_CRIT).getValue();
+        return (float) getPlayer().getAttribute(MKAttributes.SPELL_CRIT).getValue();
     }
 
     public float getMagicArmor() {
-        return (float) getPlayer().getAttribute(PlayerAttributes.MAGIC_ARMOR).getValue();
+        return (float) getPlayer().getAttribute(MKAttributes.ARCANE_RESISTANCE).getValue();
     }
 
     public float getSpellCritDamage() {
-        return (float) getPlayer().getAttribute(PlayerAttributes.SPELL_CRITICAL_DAMAGE).getValue();
+        return (float) getPlayer().getAttribute(MKAttributes.SPELL_CRIT_MULTIPLIER).getValue();
     }
 
     public float getMeleeCritDamage() {
-        return (float) getPlayer().getAttribute(PlayerAttributes.MELEE_CRITICAL_DAMAGE).getValue();
+        return (float) getPlayer().getAttribute(MKAttributes.MELEE_CRIT_MULTIPLIER).getValue();
     }
 
     public float getHealBonus() {
-        return (float) getPlayer().getAttribute(PlayerAttributes.HEAL_BONUS).getValue();
+        return (float) getPlayer().getAttribute(MKAttributes.HEAL_BONUS).getValue();
     }
 
     public float getMagicDamageBonus() {
-        return (float) getPlayer().getAttribute(PlayerAttributes.MAGIC_ATTACK_DAMAGE).getValue();
+        return (float) getPlayer().getAttribute(MKAttributes.ARCANE_DAMAGE).getValue();
     }
 
     private PlayerEntity getPlayer() {
@@ -86,16 +111,16 @@ public class PlayerStatsModule implements ISyncObject {
     }
 
     public float getMaxMana() {
-        return (float) getPlayer().getAttribute(PlayerAttributes.MAX_MANA).getValue();
+        return (float) getPlayer().getAttribute(MKAttributes.MAX_MANA).getValue();
     }
 
     public void setMaxMana(float max) {
-        getPlayer().getAttribute(PlayerAttributes.MAX_MANA).setBaseValue(max);
+        getPlayer().getAttribute(MKAttributes.MAX_MANA).setBaseValue(max);
         setMana(getMana()); // Refresh the mana to account for the updated maximum
     }
 
     public float getManaRegenRate() {
-        return (float) getPlayer().getAttribute(PlayerAttributes.MANA_REGEN).getValue();
+        return (float) getPlayer().getAttribute(MKAttributes.MANA_REGEN).getValue();
     }
 
     public void tick() {
@@ -149,7 +174,7 @@ public class PlayerStatsModule implements ISyncObject {
 
     public int getAbilityCooldown(PlayerAbility ability) {
         int ticks = ability.getCooldownTicks();
-        ticks = PlayerFormulas.applyCooldownReduction(playerData, ticks);
+        ticks = MKCombatFormulas.applyCooldownReduction(playerData, ticks);
         return ticks;
     }
 
@@ -159,7 +184,7 @@ public class PlayerStatsModule implements ISyncObject {
             return 0.0f;
         }
         float manaCost = abilityInfo.getAbility().getManaCost();
-        return PlayerFormulas.applyManaCostReduction(playerData, manaCost);
+        return MKCombatFormulas.applyManaCostReduction(playerData, manaCost);
     }
 
     public boolean canActivateAbility(PlayerAbility ability) {

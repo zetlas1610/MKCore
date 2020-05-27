@@ -4,6 +4,7 @@ import com.chaosbuffalo.mkcore.MKCore;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nonnull;
 import java.util.function.Supplier;
