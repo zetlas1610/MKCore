@@ -81,12 +81,12 @@ public class MKAttributes {
             .setDescription("Holy Damage")
             .setShouldWatch(true);
 
-    public static final RangedAttribute ELECTRIC_RESISTANCE = (RangedAttribute) new RangedAttribute(null, "mk.electric_resistance", 0, -1.0, 1.0)
-            .setDescription("Electric Resistance")
+    public static final RangedAttribute NATURE_RESISTANCE = (RangedAttribute) new RangedAttribute(null, "mk.nature_resistance", 0, -1.0, 1.0)
+            .setDescription("Nature Resistance")
             .setShouldWatch(true);
 
-    public static final RangedAttribute ELECTRIC_DAMAGE = (RangedAttribute) new RangedAttribute(null, "mk.electric_damage", 0, 0, 2048)
-            .setDescription("Electric Damage")
+    public static final RangedAttribute NATURE_DAMAGE = (RangedAttribute) new RangedAttribute(null, "mk.nature_damage", 0, 0, 2048)
+            .setDescription("Nature Damage")
             .setShouldWatch(true);
 
     public static final RangedAttribute POISON_RESISTANCE = (RangedAttribute) new RangedAttribute(null, "mk.poison_resistance", 0, -1.0, 1.0)

@@ -31,8 +31,8 @@ public class ModDamageTypes {
     @ObjectHolder("damage.arcane")
     public static MKDamageType ArcaneDamage;
 
-    @ObjectHolder("damage.electric")
-    public static MKDamageType ElectricDamage;
+    @ObjectHolder("damage.nature")
+    public static MKDamageType NatureDamage;
 
     @ObjectHolder("damage.melee")
     public static MKDamageType MeleeDamage;
@@ -52,8 +52,8 @@ public class ModDamageTypes {
                 MKAttributes.SHADOW_RESISTANCE));
         evt.getRegistry().register(new MKDamageType(MKCore.makeRL("damage.arcane"), MKAttributes.ARCANE_DAMAGE,
                 MKAttributes.ARCANE_RESISTANCE));
-        evt.getRegistry().register(new MKDamageType(MKCore.makeRL("damage.electric"), MKAttributes.ELECTRIC_DAMAGE,
-                MKAttributes.ELECTRIC_RESISTANCE));
+        evt.getRegistry().register(new MKDamageType(MKCore.makeRL("damage.nature"), MKAttributes.NATURE_DAMAGE,
+                MKAttributes.NATURE_RESISTANCE));
         evt.getRegistry().register(new MeleeDamageType(MKCore.makeRL("damage.melee")));
     }
 }
