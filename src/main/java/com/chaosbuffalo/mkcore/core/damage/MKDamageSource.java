@@ -34,11 +34,11 @@ public class MKDamageSource extends IndirectEntityDamageSource {
         return this;
     }
 
-    public MKDamageType getMKDamageType(){
+    public MKDamageType getMKDamageType() {
         return damageType;
     }
 
-    public boolean isMeleeDamage(){
+    public boolean isMeleeDamage() {
         return damageType.equals(ModDamageTypes.MeleeDamage);
     }
 
@@ -52,8 +52,8 @@ public class MKDamageSource extends IndirectEntityDamageSource {
     }
 
     public static MKDamageSource causeAbilityDamage(MKDamageType damageType, ResourceLocation abilityId, Entity source,
-                                                    @Nullable Entity indirectEntityIn){
-        if (damageType.equals(ModDamageTypes.MeleeDamage)){
+                                                    @Nullable Entity indirectEntityIn) {
+        if (damageType.equals(ModDamageTypes.MeleeDamage)) {
             return causeMeleeDamage(abilityId, source, indirectEntityIn);
         }
         return (MKDamageSource) new MKDamageSource(abilityId, damageType, source, indirectEntityIn)
@@ -61,7 +61,7 @@ public class MKDamageSource extends IndirectEntityDamageSource {
     }
 
     public static MKDamageSource causeAbilityDamage(MKDamageType damageType, ResourceLocation abilityId, Entity source,
-                                                    @Nullable Entity indirectEntityIn, float modifierScaling){
+                                                    @Nullable Entity indirectEntityIn, float modifierScaling) {
         return causeAbilityDamage(damageType, abilityId, source, indirectEntityIn)
                 .setModifierScaling(modifierScaling);
     }

@@ -91,7 +91,7 @@ public class CritMessagePacket {
         ctx.enqueueWork(() -> {
             Style messageStyle = new Style();
             PlayerEntity player = Minecraft.getInstance().player;
-            if (player == null){
+            if (player == null) {
                 return;
             }
             boolean isSelf = player.getUniqueID().equals(sourceUUID);

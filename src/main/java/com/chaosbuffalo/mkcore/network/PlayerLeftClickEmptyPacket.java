@@ -1,9 +1,6 @@
 package com.chaosbuffalo.mkcore.network;
 
-import com.chaosbuffalo.mkcore.Capabilities;
-import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.events.ServerSideLeftClickEmpty;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.MinecraftForge;

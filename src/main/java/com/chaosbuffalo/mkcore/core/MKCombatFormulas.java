@@ -1,7 +1,5 @@
 package com.chaosbuffalo.mkcore.core;
 
-import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
-import com.chaosbuffalo.mkcore.init.ModDamageTypes;
 import com.chaosbuffalo.mkcore.utils.EntityUtils;
 import com.chaosbuffalo.mkcore.utils.ItemUtils;
 import net.minecraft.entity.Entity;
@@ -19,7 +17,6 @@ public class MKCombatFormulas {
         return (int) newTicks;
     }
 
-    
 
     public static float applyManaCostReduction(IMKPlayerData playerData, float originalCost) {
         return originalCost;

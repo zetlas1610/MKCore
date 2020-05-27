@@ -22,7 +22,7 @@ public class MKDamageType extends ForgeRegistryEntry<MKDamageType> {
 
     public MKDamageType(ResourceLocation name, RangedAttribute damageAttribute,
                         RangedAttribute resistanceAttribute, RangedAttribute critAttribute,
-                        RangedAttribute critMultiplierAttribute){
+                        RangedAttribute critMultiplierAttribute) {
         setRegistryName(name);
         this.damageAttribute = damageAttribute;
         this.resistanceAttribute = resistanceAttribute;
@@ -31,13 +31,13 @@ public class MKDamageType extends ForgeRegistryEntry<MKDamageType> {
         this.critMultiplier = 1.0f;
     }
 
-    public MKDamageType setCritMultiplier(float value){
+    public MKDamageType setCritMultiplier(float value) {
         this.critMultiplier = value;
         return this;
     }
 
 
-    public void addAttributes(AbstractAttributeMap attributeMap){
+    public void addAttributes(AbstractAttributeMap attributeMap) {
         attributeMap.registerAttribute(getDamageAttribute());
         attributeMap.registerAttribute(getResistanceAttribute());
     }
@@ -46,18 +46,20 @@ public class MKDamageType extends ForgeRegistryEntry<MKDamageType> {
         return damageAttribute;
     }
 
-    public float applyDamage(LivingEntity source, LivingEntity target, float originalDamage, float modifierScaling){
+    public float applyDamage(LivingEntity source, LivingEntity target, float originalDamage, float modifierScaling) {
         return (float) (originalDamage + source.getAttribute(getDamageAttribute()).getValue() * modifierScaling);
     }
 
-    public RangedAttribute getCritChanceAttribute() { return critAttribute; }
+    public RangedAttribute getCritChanceAttribute() {
+        return critAttribute;
+    }
 
     public ITextComponent getCritMessage(LivingEntity source, LivingEntity target, float damage,
-                                         PlayerAbility ability, boolean isSelf){
+                                         PlayerAbility ability, boolean isSelf) {
         Style messageStyle = new Style();
         messageStyle.setColor(TextFormatting.AQUA);
         String msg;
-        if (isSelf){
+        if (isSelf) {
             msg = String.format("Your %s spell just crit %s for %s",
                     ability.getAbilityName(),
                     target.getDisplayName().getFormattedText(),
@@ -72,7 +74,7 @@ public class MKDamageType extends ForgeRegistryEntry<MKDamageType> {
         return new StringTextComponent(msg).setStyle(messageStyle);
     }
 
-    public float applyResistance(LivingEntity target, float originalDamage){
+    public float applyResistance(LivingEntity target, float originalDamage) {
         return (float) (originalDamage - (originalDamage * target.getAttribute(getResistanceAttribute()).getValue()));
 
     }
@@ -81,7 +83,7 @@ public class MKDamageType extends ForgeRegistryEntry<MKDamageType> {
         return critMultiplierAttribute;
     }
 
-    public boolean rollCrit(LivingEntity source, LivingEntity target){
+    public boolean rollCrit(LivingEntity source, LivingEntity target) {
         float critChance = getCritChance(source, target);
         return MKCombatFormulas.checkCrit(source, critChance);
     }
@@ -90,15 +92,15 @@ public class MKDamageType extends ForgeRegistryEntry<MKDamageType> {
         return originalDamage * getCritMultiplier(source, target);
     }
 
-    public float getCritMultiplier(LivingEntity source, LivingEntity target){
+    public float getCritMultiplier(LivingEntity source, LivingEntity target) {
         return (float) source.getAttribute(getCritMultiplierAttribute()).getValue();
     }
 
-    public float getCritChance(LivingEntity source, LivingEntity target){
+    public float getCritChance(LivingEntity source, LivingEntity target) {
         return (float) source.getAttribute(getCritChanceAttribute()).getValue() * critMultiplier;
     }
 
-    public RangedAttribute getResistanceAttribute(){
+    public RangedAttribute getResistanceAttribute() {
         return resistanceAttribute;
     }
 }

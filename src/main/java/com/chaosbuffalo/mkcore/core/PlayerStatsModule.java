@@ -29,25 +29,25 @@ public class PlayerStatsModule implements ISyncObject {
         playerData.getUpdateEngine().addPrivate(abilityTracker);
     }
 
-    public float getCritChanceForDamageType(MKDamageType damageType){
+    public float getCritChanceForDamageType(MKDamageType damageType) {
         return damageType.getCritChance(getPlayer(), null);
     }
 
-    public float getCritMultiplierForDamageType(MKDamageType damageType){
+    public float getCritMultiplierForDamageType(MKDamageType damageType) {
         return damageType.getCritMultiplier(getPlayer(), null);
     }
 
-    public float getDamageTypeBonus(MKDamageType damageType){
+    public float getDamageTypeBonus(MKDamageType damageType) {
         return (float) getPlayer().getAttribute(damageType.getDamageAttribute()).getValue();
     }
 
-    public float getDamageMultiplierForDamageType(MKDamageType damageType){
+    public float getDamageMultiplierForDamageType(MKDamageType damageType) {
         float originalValue = 10.0f;
         float scaled = damageType.applyDamage(getPlayer(), null, originalValue, 1.0f);
         return scaled / originalValue;
     }
 
-    public float getArmorMultiplierForDamageType(MKDamageType damageType){
+    public float getArmorMultiplierForDamageType(MKDamageType damageType) {
         float originalValue = 10.0f;
         float scaled = damageType.applyResistance(getPlayer(), originalValue);
         return scaled / originalValue;
