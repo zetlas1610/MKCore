@@ -1,6 +1,7 @@
 package com.chaosbuffalo.mkcore.core;
 
 import com.chaosbuffalo.mkcore.core.damage.DamageType;
+import com.chaosbuffalo.mkcore.init.ModDamageTypes;
 import com.chaosbuffalo.mkcore.utils.EntityUtils;
 import com.chaosbuffalo.mkcore.utils.ItemUtils;
 import net.minecraft.entity.Entity;
@@ -27,12 +28,12 @@ public class PlayerFormulas {
     }
 
     public static float scaleMagicDamage(IMKPlayerData playerData, float originalDamage, float modifierScaling) {
-        float mod = playerData.getStats().getMagicDamageBonus();
+        float mod = ModDamageTypes.ArcaneDamage.scaleDamage(playerData.getPlayer(), originalDamage, modifierScaling);
         return originalDamage + mod * modifierScaling;
     }
 
     public static float applyMagicArmor(IMKPlayerData playerData, float originalDamage) {
-        float mod = playerData.getStats().getMagicArmor();
+        float mod = ModDamageTypes.ArcaneDamage.applyResistance(playerData.getPlayer(), originalDamage);
         return originalDamage - mod;
     }
 

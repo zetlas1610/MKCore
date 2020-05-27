@@ -291,6 +291,9 @@ public class SpellTriggers {
                 float newDamage = PlayerFormulas.applyMagicArmor(targetData, event.getAmount());
                 MKCore.LOGGER.debug("Magic armor reducing damage from {} to {}", event.getAmount(), newDamage);
                 event.setAmount(newDamage);
+            } else if (isMKDamage(source)){
+                MKDamageSource mkDamageSource = (MKDamageSource) source;
+                event.setAmount(mkDamageSource.getMKDamageType().applyResistance(livingTarget, event.getAmount()));
             }
 
             entityHurtPlayerPostTriggers.forEach(f -> f.apply(event, source, livingTarget, targetData));
