@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkcore.command;
 
 import com.chaosbuffalo.mkcore.Capabilities;
-import com.chaosbuffalo.mkcore.core.PlayerAttributes;
+import com.chaosbuffalo.mkcore.core.MKAttributes;
 import com.chaosbuffalo.mkcore.core.PlayerStatsModule;
 import com.chaosbuffalo.mkcore.utils.TextUtils;
 import com.mojang.brigadier.Command;
@@ -26,16 +26,28 @@ public class StatCommand {
         return Commands.literal("stat")
                 .then(createSimpleFloatStat("mana", PlayerStatsModule::getMana, PlayerStatsModule::setMana))
                 .then(createSimpleFloatStat("health", PlayerStatsModule::getHealth, PlayerStatsModule::setHealth))
-                .then(createAttributeStat("manaregen", PlayerAttributes.MANA_REGEN))
-                .then(createAttributeStat("maxmana", PlayerAttributes.MAX_MANA))
-                .then(createAttributeStat("cdr", PlayerAttributes.COOLDOWN))
-                .then(createAttributeStat("melee_crit", PlayerAttributes.MELEE_CRIT))
-                .then(createAttributeStat("magic_damage", PlayerAttributes.MAGIC_ATTACK_DAMAGE))
-                .then(createAttributeStat("melee_crit_damage", PlayerAttributes.MELEE_CRITICAL_DAMAGE))
-                .then(createAttributeStat("spell_crit", PlayerAttributes.SPELL_CRIT))
-                .then(createAttributeStat("spell_crit_damage", PlayerAttributes.SPELL_CRITICAL_DAMAGE))
-                .then(createAttributeStat("heal_bonus", PlayerAttributes.HEAL_BONUS))
-                .then(createAttributeStat("magic_armor", PlayerAttributes.MAGIC_ARMOR));
+                .then(createAttributeStat("manaregen", MKAttributes.MANA_REGEN))
+                .then(createAttributeStat("maxmana", MKAttributes.MAX_MANA))
+                .then(createAttributeStat("cdr", MKAttributes.COOLDOWN))
+                .then(createAttributeStat("melee_crit", MKAttributes.MELEE_CRIT))
+                .then(createAttributeStat("melee_crit_damage", MKAttributes.MELEE_CRITICAL_DAMAGE))
+                .then(createAttributeStat("spell_crit", MKAttributes.SPELL_CRIT))
+                .then(createAttributeStat("spell_crit_damage", MKAttributes.SPELL_CRITICAL_DAMAGE))
+                .then(createAttributeStat("heal_bonus", MKAttributes.HEAL_BONUS))
+                .then(createAttributeStat("arcane_damage", MKAttributes.ARCANE_DAMAGE))
+                .then(createAttributeStat("arcane_resist", MKAttributes.ARCANE_RESISTANCE))
+                .then(createAttributeStat("fire_damage", MKAttributes.FIRE_DAMAGE))
+                .then(createAttributeStat("fire_resist", MKAttributes.FIRE_RESISTANCE))
+                .then(createAttributeStat("frost_damage", MKAttributes.FROST_DAMAGE))
+                .then(createAttributeStat("frost_resist", MKAttributes.FROST_RESISTANCE))
+                .then(createAttributeStat("electric_damage", MKAttributes.ELECTRIC_DAMAGE))
+                .then(createAttributeStat("electric_resist", MKAttributes.ELECTRIC_RESISTANCE))
+                .then(createAttributeStat("holy_damage", MKAttributes.HOLY_DAMAGE))
+                .then(createAttributeStat("holy_resist", MKAttributes.HOLY_RESISTANCE))
+                .then(createAttributeStat("shadow_damage", MKAttributes.SHADOW_DAMAGE))
+                .then(createAttributeStat("shadow_resist", MKAttributes.SHADOW_RESISTANCE))
+                .then(createAttributeStat("poison_damage", MKAttributes.POISON_DAMAGE))
+                .then(createAttributeStat("poison_resist", MKAttributes.POISON_RESISTANCE));
     }
 
     static ArgumentBuilder<CommandSource, ?> createSimpleFloatStat(String name, Function<PlayerStatsModule, Float> getter, BiConsumer<PlayerStatsModule, Float> setter) {

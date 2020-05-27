@@ -28,31 +28,31 @@ public class PlayerStatsModule implements ISyncObject {
     }
 
     public float getMeleeCritChance() {
-        return (float) getPlayer().getAttribute(PlayerAttributes.MELEE_CRIT).getValue();
+        return (float) getPlayer().getAttribute(MKAttributes.MELEE_CRIT).getValue();
     }
 
     public float getSpellCritChance() {
-        return (float) getPlayer().getAttribute(PlayerAttributes.SPELL_CRIT).getValue();
+        return (float) getPlayer().getAttribute(MKAttributes.SPELL_CRIT).getValue();
     }
 
     public float getMagicArmor() {
-        return (float) getPlayer().getAttribute(PlayerAttributes.MAGIC_ARMOR).getValue();
+        return (float) getPlayer().getAttribute(MKAttributes.ARCANE_RESISTANCE).getValue();
     }
 
     public float getSpellCritDamage() {
-        return (float) getPlayer().getAttribute(PlayerAttributes.SPELL_CRITICAL_DAMAGE).getValue();
+        return (float) getPlayer().getAttribute(MKAttributes.SPELL_CRITICAL_DAMAGE).getValue();
     }
 
     public float getMeleeCritDamage() {
-        return (float) getPlayer().getAttribute(PlayerAttributes.MELEE_CRITICAL_DAMAGE).getValue();
+        return (float) getPlayer().getAttribute(MKAttributes.MELEE_CRITICAL_DAMAGE).getValue();
     }
 
     public float getHealBonus() {
-        return (float) getPlayer().getAttribute(PlayerAttributes.HEAL_BONUS).getValue();
+        return (float) getPlayer().getAttribute(MKAttributes.HEAL_BONUS).getValue();
     }
 
     public float getMagicDamageBonus() {
-        return (float) getPlayer().getAttribute(PlayerAttributes.MAGIC_ATTACK_DAMAGE).getValue();
+        return (float) getPlayer().getAttribute(MKAttributes.ARCANE_DAMAGE).getValue();
     }
 
     private PlayerEntity getPlayer() {
@@ -85,16 +85,16 @@ public class PlayerStatsModule implements ISyncObject {
     }
 
     public float getMaxMana() {
-        return (float) getPlayer().getAttribute(PlayerAttributes.MAX_MANA).getValue();
+        return (float) getPlayer().getAttribute(MKAttributes.MAX_MANA).getValue();
     }
 
     public void setMaxMana(float max) {
-        getPlayer().getAttribute(PlayerAttributes.MAX_MANA).setBaseValue(max);
+        getPlayer().getAttribute(MKAttributes.MAX_MANA).setBaseValue(max);
         setMana(getMana()); // Refresh the mana to account for the updated maximum
     }
 
     public float getManaRegenRate() {
-        return (float) getPlayer().getAttribute(PlayerAttributes.MANA_REGEN).getValue();
+        return (float) getPlayer().getAttribute(MKAttributes.MANA_REGEN).getValue();
     }
 
     public void sync() {

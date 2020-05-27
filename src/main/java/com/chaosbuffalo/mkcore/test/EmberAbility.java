@@ -6,7 +6,9 @@ import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import com.chaosbuffalo.mkcore.abilities.SingleTargetCastState;
 import com.chaosbuffalo.mkcore.abilities.attributes.FloatAttribute;
 import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.core.damage.MKDamageSource;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
+import com.chaosbuffalo.mkcore.init.ModDamageTypes;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.targeting_api.Targeting;
@@ -80,7 +82,8 @@ public class EmberAbility extends PlayerAbility {
             int level = 1;
             targetEntity.setFire(BASE_DURATION + level * DURATION_SCALE);
 //            targetEntity.attackEntityFrom(MKDamageSource.causeIndirectMagicDamage(getAbilityId(), entity, entity), BASE_DAMAGE + level * DAMAGE_SCALE);
-            targetEntity.attackEntityFrom(DamageSource.causeIndirectMagicDamage(entity, entity), damage.getValue());
+            targetEntity.attackEntityFrom(MKDamageSource.causeAbilityDamage(ModDamageTypes.FireDamage,
+                    getAbilityId(), entity, entity), damage.getValue());
 //            AbilityUtils.playSoundAtServerEntity(targetEntity, ModSounds.spell_fire_6, SoundCategory.PLAYERS);
             Vec3d lookVec = entity.getLookVec();
             PacketHandler.sendToTracking(

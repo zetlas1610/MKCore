@@ -1,8 +1,10 @@
 package com.chaosbuffalo.mkcore.core;
 
+import com.chaosbuffalo.mkcore.core.damage.DamageType;
 import com.chaosbuffalo.mkcore.utils.EntityUtils;
 import com.chaosbuffalo.mkcore.utils.ItemUtils;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 
@@ -10,10 +12,18 @@ public class PlayerFormulas {
 
     public static int applyCooldownReduction(IMKPlayerData playerData, int originalCooldownTicks) {
         final float MAX_COOLDOWN = 2.0f; // Maximum cooldown rate improvement is 200%
-        float cdrValue = (float) playerData.getPlayer().getAttribute(PlayerAttributes.COOLDOWN).getValue();
+        float cdrValue = (float) playerData.getPlayer().getAttribute(MKAttributes.COOLDOWN).getValue();
         float mod = MAX_COOLDOWN - cdrValue;
         float newTicks = mod * originalCooldownTicks;
         return (int) newTicks;
+    }
+
+    public static float scaleDamage(LivingEntity source, DamageType damageType, float damageIn, float modifierScaling){
+        return damageType.scaleDamage(source, damageIn, modifierScaling);
+    }
+
+    public static float applyDamageResistance(LivingEntity target, DamageType damageType, float damageIn){
+        return damageType.applyResistance(target, damageIn);
     }
 
     public static float scaleMagicDamage(IMKPlayerData playerData, float originalDamage, float modifierScaling) {

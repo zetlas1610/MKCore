@@ -1,6 +1,8 @@
 package com.chaosbuffalo.mkcore.core;
 
 import com.chaosbuffalo.mkcore.MKCore;
+import com.chaosbuffalo.mkcore.MKCoreRegistry;
+import com.chaosbuffalo.mkcore.core.damage.DamageType;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncPacket;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncRequestPacket;
@@ -44,13 +46,13 @@ public class MKPlayerData implements IMKPlayerData {
 
     void setupFakeStats() {
         AttributeModifier mod = new AttributeModifier("test max mana", 20, AttributeModifier.Operation.ADDITION).setSaved(false);
-        player.getAttribute(PlayerAttributes.MAX_MANA).applyModifier(mod);
+        player.getAttribute(MKAttributes.MAX_MANA).applyModifier(mod);
 
         AttributeModifier mod2 = new AttributeModifier("test mana regen", 1, AttributeModifier.Operation.ADDITION).setSaved(false);
-        player.getAttribute(PlayerAttributes.MANA_REGEN).applyModifier(mod2);
+        player.getAttribute(MKAttributes.MANA_REGEN).applyModifier(mod2);
 
         AttributeModifier mod3 = new AttributeModifier("test cdr", 0.1, AttributeModifier.Operation.ADDITION).setSaved(false);
-        player.getAttribute(PlayerAttributes.COOLDOWN).applyModifier(mod3);
+        player.getAttribute(MKAttributes.COOLDOWN).applyModifier(mod3);
 
         List<ResourceLocation> hotbar = Arrays.asList(
                 MKCore.makeRL("ability.ember"),
@@ -63,16 +65,22 @@ public class MKPlayerData implements IMKPlayerData {
 
     private void registerAttributes() {
         AbstractAttributeMap attributes = player.getAttributes();
-        attributes.registerAttribute(PlayerAttributes.MAX_MANA);
-        attributes.registerAttribute(PlayerAttributes.MANA_REGEN);
-        attributes.registerAttribute(PlayerAttributes.COOLDOWN);
-        attributes.registerAttribute(PlayerAttributes.MELEE_CRIT);
-        attributes.registerAttribute(PlayerAttributes.MAGIC_ATTACK_DAMAGE);
-        attributes.registerAttribute(PlayerAttributes.MELEE_CRITICAL_DAMAGE);
-        attributes.registerAttribute(PlayerAttributes.SPELL_CRIT);
-        attributes.registerAttribute(PlayerAttributes.SPELL_CRITICAL_DAMAGE);
-        attributes.registerAttribute(PlayerAttributes.HEAL_BONUS);
-        attributes.registerAttribute(PlayerAttributes.MAGIC_ARMOR);
+        attributes.registerAttribute(MKAttributes.MAX_MANA);
+        attributes.registerAttribute(MKAttributes.MANA_REGEN);
+        attributes.registerAttribute(MKAttributes.COOLDOWN);
+        attributes.registerAttribute(MKAttributes.MELEE_CRIT);
+        attributes.registerAttribute(MKAttributes.MELEE_CRITICAL_DAMAGE);
+        attributes.registerAttribute(MKAttributes.SPELL_CRIT);
+        attributes.registerAttribute(MKAttributes.SPELL_CRITICAL_DAMAGE);
+        attributes.registerAttribute(MKAttributes.HEAL_BONUS);
+        for (DamageType damageType : MKCoreRegistry.DAMAGE_TYPES.getValues()){
+            if (damageType.getDamageAttribute() != null){
+                attributes.registerAttribute(damageType.getDamageAttribute());
+            }
+            if (damageType.getResistanceAttribute() != null){
+                attributes.registerAttribute(damageType.getResistanceAttribute());
+            }
+        }
     }
 
     public void onJoinWorld() {

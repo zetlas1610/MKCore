@@ -5,11 +5,12 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import com.chaosbuffalo.mkcore.core.IMKPlayerData;
-import com.chaosbuffalo.mkcore.core.MKDamageSource;
+import com.chaosbuffalo.mkcore.core.damage.MKDamageSource;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.core.PlayerFormulas;
 import com.chaosbuffalo.mkcore.events.ServerSideLeftClickEmpty;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
+import com.chaosbuffalo.mkcore.init.ModDamageTypes;
 import com.chaosbuffalo.mkcore.network.CritMessagePacket;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
@@ -17,8 +18,6 @@ import com.chaosbuffalo.mkcore.utils.EntityUtils;
 import com.chaosbuffalo.mkcore.utils.ItemUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -38,18 +37,18 @@ import java.util.Map;
 public class SpellTriggers {
 
 
-    public static boolean isMKUltraAbilityDamage(DamageSource source) {
+    public static boolean isMKDamage(DamageSource source) {
         return source instanceof MKDamageSource;
     }
 
-    public static boolean isPlayerPhysicalDamage(DamageSource source) {
+    public static boolean isMinecraftPhysicalDamage(DamageSource source) {
         return (!source.isFireDamage() && !source.isExplosion() && !source.isMagicDamage() &&
                 source.getDamageType().equals("player"));
     }
 
     public static boolean isMeleeDamage(DamageSource source) {
-        return isPlayerPhysicalDamage(source) ||
-                (source instanceof MKDamageSource && ((MKDamageSource) source).isMeleeAbility());
+        return isMinecraftPhysicalDamage(source) ||
+                (source instanceof MKDamageSource && ((MKDamageSource) source).isMeleeDamage());
     }
 
     public static boolean isProjectileDamage(DamageSource source) {
@@ -135,29 +134,20 @@ public class SpellTriggers {
                                               LivingEntity livingTarget, ServerPlayerEntity playerSource,
                                               IMKPlayerData sourceData) {
             if (source.isMagicDamage()) {
-                float scaleFactor = 1.0f;
-                if (isMKUltraAbilityDamage(source)){
-                    MKDamageSource mkSource = (MKDamageSource) source;
-                    scaleFactor = mkSource.getModifierScaling();
-                }
-                float newDamage = PlayerFormulas.scaleMagicDamage(sourceData, event.getAmount(), scaleFactor);
+                float newDamage = PlayerFormulas.scaleMagicDamage(sourceData, event.getAmount(), 1.0f);
                 event.setAmount(newDamage);
-            }
-
-            if (isMKUltraAbilityDamage(source)) {
+            } else if (isMKDamage(source)){
                 MKDamageSource mkSource = (MKDamageSource) source;
-                // Handle 'melee damage' abilities
-                if (mkSource.isMeleeAbility()) {
-                    handleMelee(event, source, livingTarget, playerSource, sourceData, false);
+                if (mkSource.isMeleeDamage()){
+                    handleMKMelee(event, mkSource, livingTarget, playerSource, sourceData);
                 } else {
-                    // Handle the generic magic damage potions
                     handleMagic(event, livingTarget, playerSource, sourceData, mkSource);
                 }
             }
 
             // If this is a weapon swing
-            if (isPlayerPhysicalDamage(source)) {
-                handleMelee(event, source, livingTarget, playerSource, sourceData, true);
+            if (isMinecraftPhysicalDamage(source)) {
+                handleVanillaMelee(event, source, livingTarget, playerSource, sourceData);
             }
 
             if (isProjectileDamage(source)) {
@@ -178,7 +168,11 @@ public class SpellTriggers {
                                         IMKPlayerData sourceData, MKDamageSource mkSource) {
 
             float spellCritchance = sourceData.getStats().getSpellCritChance();
-            if (mkSource.isHolyDamage()) {
+            boolean isHolyDamage = mkSource.getMKDamageType().equals(ModDamageTypes.HolyDamage);
+            event.setAmount(mkSource.getMKDamageType().scaleDamage(playerSource, event.getAmount(),
+                    mkSource.getModifierScaling()));
+
+            if (isHolyDamage) {
                 spellCritchance *= 2.0f;
             }
             if (checkCrit(playerSource, spellCritchance)) {
@@ -186,10 +180,7 @@ public class SpellTriggers {
                 event.setAmount(newDamage);
 
                 CritMessagePacket packet;
-                if (mkSource.isIndirectMagic()) {
-                    packet = new CritMessagePacket(livingTarget.getEntityId(), playerSource.getUniqueID(),
-                            newDamage, CritMessagePacket.CritType.INDIRECT_MAGIC_CRIT);
-                } else if (mkSource.isHolyDamage()) {
+                if (isHolyDamage) {
                     packet = new CritMessagePacket(livingTarget.getEntityId(), playerSource.getUniqueID(),
                             newDamage, CritMessagePacket.CritType.HOLY_DAMAGE_CRIT);
                 } else {
@@ -228,31 +219,40 @@ public class SpellTriggers {
             }
         }
 
-        private static void handleMelee(LivingHurtEvent event, DamageSource source, LivingEntity livingTarget,
-                                        ServerPlayerEntity playerSource, IMKPlayerData sourceData, boolean isDirect) {
+        private static void handleMKMelee(LivingHurtEvent event, MKDamageSource source, LivingEntity livingTarget,
+                                          ServerPlayerEntity playerSource, IMKPlayerData sourceData){
             ItemStack mainHand = playerSource.getHeldItemMainhand();
             float critChance = PlayerFormulas.getMeleeCritChanceForItem(sourceData, playerSource, mainHand);
-            if (!isDirect) {
-                IAttributeInstance atkDmg = playerSource.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
-                double amount = atkDmg.getValue();
-                if (isMKUltraAbilityDamage(source)){
-                    MKDamageSource mkSource = (MKDamageSource) source;
-                    amount *= mkSource.getModifierScaling();
-                }
-                event.setAmount((float) (event.getAmount() +
-                        amount * playerSource.world.rand.nextDouble()));
-            }
+            double amount = source.getMKDamageType().scaleDamage(playerSource, 0, source.getModifierScaling());
+            event.setAmount((float) (event.getAmount() +
+                    amount * playerSource.world.rand.nextDouble()));
             if (checkCrit(playerSource, critChance)) {
                 float critMultiplier = ItemUtils.getCritDamageForItem(mainHand);
                 critMultiplier += sourceData.getStats().getMeleeCritDamage();
                 float newDamage = event.getAmount() * critMultiplier;
                 event.setAmount(newDamage);
-                CritMessagePacket.CritType type = isDirect ?
-                        CritMessagePacket.CritType.MELEE_CRIT :
-                        CritMessagePacket.CritType.INDIRECT_CRIT;
-
+                CritMessagePacket.CritType type = CritMessagePacket.CritType.INDIRECT_CRIT;
                 sendCritPacket(livingTarget, playerSource,
                         new CritMessagePacket(livingTarget.getEntityId(), playerSource.getUniqueID(), newDamage, type));
+            }
+            if (!startTrigger(playerSource, MELEE_TAG))
+                return;
+            playerHurtEntityMeleeTriggers.forEach(f -> f.apply(event, source, livingTarget, playerSource, sourceData));
+            endTrigger(playerSource, MELEE_TAG);
+        }
+
+        private static void handleVanillaMelee(LivingHurtEvent event, DamageSource source, LivingEntity livingTarget,
+                                               ServerPlayerEntity playerSource, IMKPlayerData sourceData) {
+            ItemStack mainHand = playerSource.getHeldItemMainhand();
+            float critChance = PlayerFormulas.getMeleeCritChanceForItem(sourceData, playerSource, mainHand);
+            if (checkCrit(playerSource, critChance)) {
+                float critMultiplier = ItemUtils.getCritDamageForItem(mainHand);
+                critMultiplier += sourceData.getStats().getMeleeCritDamage();
+                float newDamage = event.getAmount() * critMultiplier;
+                event.setAmount(newDamage);
+                sendCritPacket(livingTarget, playerSource,
+                        new CritMessagePacket(livingTarget.getEntityId(), playerSource.getUniqueID(), newDamage,
+                                CritMessagePacket.CritType.MELEE_CRIT));
             }
 
             if (!startTrigger(playerSource, MELEE_TAG))
