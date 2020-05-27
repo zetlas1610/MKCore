@@ -2,10 +2,7 @@ package com.chaosbuffalo.mkcore.core;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
-import com.chaosbuffalo.mkcore.network.PlayerDataSyncPacket;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncRequestPacket;
-import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
-import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import com.chaosbuffalo.mkcore.sync.UpdateEngine;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -142,14 +139,13 @@ public class MKPlayerData implements IMKPlayerData {
 
     public void fullSyncTo(ServerPlayerEntity otherPlayer) {
         MKCore.LOGGER.info("Full public sync {} -> {}", player, otherPlayer);
-        updateEngine.publicFullSync(otherPlayer);
+        updateEngine.sendAll(otherPlayer);
     }
 
     public void initialSync() {
         MKCore.LOGGER.info("Sending initial sync for {}", player);
         if (isServerSide()) {
-            getStats().sync();
-            updateEngine.syncFull();
+            updateEngine.sendAll((ServerPlayerEntity) player);
             readyForUpdates = true;
         }
     }

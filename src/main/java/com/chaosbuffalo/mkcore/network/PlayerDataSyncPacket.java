@@ -1,7 +1,6 @@
 package com.chaosbuffalo.mkcore.network;
 
 import com.chaosbuffalo.mkcore.Capabilities;
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
@@ -35,7 +34,7 @@ public class PlayerDataSyncPacket {
         buffer.writeUniqueId(targetUUID);
         buffer.writeBoolean(privateUpdate);
         buffer.writeCompoundTag(updateTag);
-        MKCore.LOGGER.info("sync toBytes {}", updateTag);
+//        MKCore.LOGGER.info("sync toBytes priv:{} {}", privateUpdate, updateTag);
     }
 
     public void handle(Supplier<NetworkEvent.Context> supplier) {
@@ -56,5 +55,9 @@ public class PlayerDataSyncPacket {
             });
         });
         ctx.setPacketHandled(true);
+    }
+
+    public String toString() {
+        return String.format("[priv: %b, tag: %s]", privateUpdate, updateTag);
     }
 }

@@ -1,19 +1,16 @@
 package com.chaosbuffalo.mkcore.core;
 
-import com.chaosbuffalo.mkcore.network.AbilityCooldownPacket;
-import com.chaosbuffalo.mkcore.network.PacketHandler;
+import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 
-public class AbilityTracker {
+public class AbilityTracker implements ISyncObject {
 
     private int ticks;
     private final Map<ResourceLocation, Cooldown> cooldowns = new HashMap<>();
@@ -140,6 +137,7 @@ public class AbilityTracker {
     static class AbilityTrackerServer extends AbilityTracker {
 
         private final ServerPlayerEntity player;
+        private final List<ResourceLocation> dirty = new ArrayList<>();
 
         public AbilityTrackerServer(ServerPlayerEntity player) {
             this.player = player;
@@ -148,13 +146,31 @@ public class AbilityTracker {
         @Override
         protected void notifyOnSet(ResourceLocation id, int ticksIn) {
             super.notifyOnSet(id, ticksIn);
-            PacketHandler.sendMessage(new AbilityCooldownPacket(id, ticksIn), player);
+            dirty.add(id);
         }
 
         @Override
         protected void notifyOnRemove(ResourceLocation id) {
             super.notifyOnRemove(id);
-            PacketHandler.sendMessage(new AbilityCooldownPacket(id, 0), player);
+            dirty.add(id);
+        }
+
+        @Override
+        public boolean isDirty() {
+            return dirty.size() > 0;
+        }
+
+        @Override
+        public void serializeUpdate(CompoundNBT tag) {
+            CompoundNBT root = new CompoundNBT();
+            dirty.forEach(id -> root.putInt(id.toString(), getCooldownTicks(id)));
+            tag.put("cooldowns", root);
+            dirty.clear();
+        }
+
+        @Override
+        public void serializeFull(CompoundNBT tag) {
+            serialize(tag);
         }
 
         @Override
@@ -169,5 +185,25 @@ public class AbilityTracker {
         } else {
             return new AbilityTracker();
         }
+    }
+
+    @Override
+    public boolean isDirty() {
+        return false;
+    }
+
+    @Override
+    public void deserializeUpdate(CompoundNBT tag) {
+        deserialize(tag);
+    }
+
+    @Override
+    public void serializeUpdate(CompoundNBT tag) {
+
+    }
+
+    @Override
+    public void serializeFull(CompoundNBT tag) {
+
     }
 }
