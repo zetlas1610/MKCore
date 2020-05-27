@@ -26,8 +26,7 @@ public class MeleeDamageType extends MKDamageType {
 
     @Override
     public float scaleDamage(LivingEntity source, LivingEntity target, float originalDamage, float modifierScaling) {
-        return (float) (originalDamage + ((source.getAttribute(getDamageAttribute()).getValue() * modifierScaling)
-                * source.getRNG().nextDouble()));
+        return (float) (originalDamage + (source.getAttribute(getDamageAttribute()).getValue() * modifierScaling));
     }
 
     @Override

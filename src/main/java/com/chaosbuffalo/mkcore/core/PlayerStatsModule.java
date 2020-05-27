@@ -3,6 +3,7 @@ package com.chaosbuffalo.mkcore.core;
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbilityInfo;
+import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
 import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
 import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import com.chaosbuffalo.mkcore.sync.SyncFloat;
@@ -26,6 +27,30 @@ public class PlayerStatsModule implements ISyncObject {
         regenTime = 0f;
         abilityTracker = AbilityTracker.getTracker(playerData.getPlayer());
         playerData.getUpdateEngine().addPrivate(abilityTracker);
+    }
+
+    public float getCritChanceForDamageType(MKDamageType damageType){
+        return damageType.getCritChance(getPlayer(), null);
+    }
+
+    public float getCritMultiplierForDamageType(MKDamageType damageType){
+        return damageType.getCritMultiplier(getPlayer(), null);
+    }
+
+    public float getDamageTypeBonus(MKDamageType damageType){
+        return (float) getPlayer().getAttribute(damageType.getDamageAttribute()).getValue();
+    }
+
+    public float getDamageMultiplierForDamageType(MKDamageType damageType){
+        float originalValue = 10.0f;
+        float scaled = damageType.scaleDamage(getPlayer(), null, originalValue, 1.0f);
+        return scaled / originalValue;
+    }
+
+    public float getArmorMultiplierForDamageType(MKDamageType damageType){
+        float originalValue = 10.0f;
+        float scaled = damageType.applyResistance(getPlayer(), originalValue);
+        return scaled / originalValue;
     }
 
     public float getMeleeCritChance() {

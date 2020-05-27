@@ -50,7 +50,7 @@ public class MKDamageType extends ForgeRegistryEntry<MKDamageType> {
         return (float) (originalDamage + source.getAttribute(getDamageAttribute()).getValue() * modifierScaling);
     }
 
-    public RangedAttribute getCritChance() { return critAttribute; }
+    public RangedAttribute getCritChanceAttribute() { return critAttribute; }
 
     public ITextComponent getCritMessage(LivingEntity source, LivingEntity target, float damage,
                                          PlayerAbility ability, boolean isSelf){
@@ -95,7 +95,7 @@ public class MKDamageType extends ForgeRegistryEntry<MKDamageType> {
     }
 
     public float getCritChance(LivingEntity source, LivingEntity target){
-        return (float) source.getAttribute(getCritChance()).getValue() * critMultiplier;
+        return (float) source.getAttribute(getCritChanceAttribute()).getValue() * critMultiplier;
     }
 
     public RangedAttribute getResistanceAttribute(){
