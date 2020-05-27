@@ -45,11 +45,6 @@ public class SpellTriggers {
                 source.getDamageType().equals("player"));
     }
 
-    public static boolean isMeleeDamage(DamageSource source) {
-        return isMinecraftPhysicalDamage(source) ||
-                (source instanceof MKDamageSource && ((MKDamageSource) source).isMeleeDamage());
-    }
-
     public static boolean isProjectileDamage(DamageSource source) {
         return source.isProjectile();
     }
@@ -274,7 +269,6 @@ public class SpellTriggers {
     private static void sendCritPacket(LivingEntity livingTarget, ServerPlayerEntity playerSource,
                                        CritMessagePacket packet) {
         PacketHandler.sendToTrackingAndSelf(packet, playerSource);
-
         Vec3d lookVec = livingTarget.getLookVec();
         PacketHandler.sendToTracking(
                 new ParticleEffectSpawnPacket(
