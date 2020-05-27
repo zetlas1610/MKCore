@@ -153,10 +153,6 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         return this;
     }
 
-    public int getMaxRank() {
-        return GameConstants.MAX_ABILITY_RANK;
-    }
-
     public boolean meetsRequirements(IMKPlayerData player) {
         return player.getAbilityExecutor().canActivateAbility(this) &&
                 player.getStats().canActivateAbility(this);

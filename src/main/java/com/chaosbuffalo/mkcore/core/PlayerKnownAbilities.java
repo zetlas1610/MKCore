@@ -36,12 +36,17 @@ public class PlayerKnownAbilities implements ISyncObject {
         PlayerAbilityInfo info = getAbilityInfo(ability.getAbilityId());
         if (info == null) {
             info = ability.createAbilityInfo();
+        } else if (info.isCurrentlyKnown()) {
+            MKCore.LOGGER.warn("Player {} tried to learn already-known ability {}", knowledge.getPlayer(), ability.getAbilityId());
+            return true;
         }
 
-        if (!info.upgrade()) {
-            MKCore.LOGGER.info("PlayerKnownAbilities.learn({}) - failed to upgrade", ability.getAbilityId());
+        if (info == null) {
+            MKCore.LOGGER.error("Failed to create PlayerAbilityInfo for ability {} for player {}", ability.getAbilityId(), knowledge.getPlayer());
             return false;
         }
+
+        info.setKnown(true);
 
         abilityInfoMap.put(ability.getAbilityId(), info);
         markDirty(info);
@@ -56,8 +61,7 @@ public class PlayerKnownAbilities implements ISyncObject {
             return false;
         }
 
-        if (!info.downgrade())
-            return false;
+        info.setKnown(false);
 
         markDirty(info);
         return true;
