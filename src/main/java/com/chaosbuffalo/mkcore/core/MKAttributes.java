@@ -10,19 +10,23 @@ public class MKAttributes {
 
     public static final RangedAttribute MANA_REGEN = (RangedAttribute) new RangedAttribute(null, "mk.mana_regen", 0, 0, 1024)
             .setDescription("Mana Regen")
-            .setShouldWatch(true);
+            .setShouldWatch(false);
 
     public static final RangedAttribute MELEE_CRIT = (RangedAttribute) new RangedAttribute(null, "mk.melee_crit_chance", 0.00, 0.0, 1.0)
-            .setDescription("Melee Critical Chance");
+            .setDescription("Melee Critical Chance")
+            .setShouldWatch(false);
 
     public static final RangedAttribute SPELL_CRIT = (RangedAttribute) new RangedAttribute(null, "mk.spell_crit_chance", 0.1, 0.0, 1.0)
-            .setDescription("Spell Critical Chance");
+            .setDescription("Spell Critical Chance")
+            .setShouldWatch(false);
 
     public static final RangedAttribute SPELL_CRIT_MULTIPLIER = (RangedAttribute) new RangedAttribute(null, "mk.spell_crit_multiplier", 1.5, 0.0, 10.0)
-            .setDescription("Spell Critical Multiplier");
+            .setDescription("Spell Critical Multiplier")
+            .setShouldWatch(false);
 
     public static final RangedAttribute MELEE_CRIT_MULTIPLIER = (RangedAttribute) new RangedAttribute(null, "mk.melee_crit_multiplier", 0.0, 0.0, 10.0)
-            .setDescription("Melee Critical Multiplier");
+            .setDescription("Melee Critical Multiplier")
+            .setShouldWatch(false);
 
     // Everyone Attributes
 
@@ -35,51 +39,68 @@ public class MKAttributes {
     public static final RangedAttribute HEAL_BONUS = (RangedAttribute) new RangedAttribute(null, "mk.heal_bonus", 1.0, 0.0, 2.0)
             .setDescription("Heal Bonus Amount");
 
+
     public static final RangedAttribute ELEMENTAL_RESISTANCE = (RangedAttribute) new RangedAttribute(null, "mk.elemental_resistance", 0, -1.0, 1.0)
-            .setDescription("Elemental Resistance");
+            .setDescription("Elemental Resistance")
+            .setShouldWatch(false);
 
     public static final RangedAttribute ELEMENTAL_DAMAGE = (RangedAttribute) new RangedAttribute(null, "mk.elemental_damage", 0, 0, 2048)
-            .setDescription("Elemental Damage");
+            .setDescription("Elemental Damage")
+            .setShouldWatch(false);
 
     public static final RangedAttribute ARCANE_RESISTANCE = (RangedAttribute) new RangedAttribute(null, "mk.arcane_resistance", 0, -1.0, 1.0)
-            .setDescription("Arcane Resistance");
+            .setDescription("Arcane Resistance")
+            .setShouldWatch(false);
 
     public static final RangedAttribute ARCANE_DAMAGE = (RangedAttribute) new RangedAttribute(null, "mk.arcane_damage", 0, 0, 2048)
-            .setDescription("Arcane Damage");
+            .setDescription("Arcane Damage")
+            .setShouldWatch(false);
 
     public static final RangedAttribute FIRE_RESISTANCE = (RangedAttribute) new RangedAttribute(ELEMENTAL_RESISTANCE, "mk.fire_resistance", 0, -1.0, 1.0)
-            .setDescription("Fire Resistance");
+            .setDescription("Fire Resistance")
+            .setShouldWatch(false);
 
     public static final RangedAttribute FIRE_DAMAGE = (RangedAttribute) new RangedAttribute(ELEMENTAL_DAMAGE, "mk.fire_damage", 0, 0, 2048)
-            .setDescription("Fire Damage");
+            .setDescription("Fire Damage")
+            .setShouldWatch(false);
 
     public static final RangedAttribute FROST_RESISTANCE = (RangedAttribute) new RangedAttribute(ELEMENTAL_RESISTANCE, "mk.frost_resistance", 0, -1.0, 1.0)
-            .setDescription("Frost Resistance");
+            .setDescription("Frost Resistance")
+            .setShouldWatch(false);
 
     public static final RangedAttribute FROST_DAMAGE = (RangedAttribute) new RangedAttribute(ELEMENTAL_DAMAGE, "mk.frost_damage", 0, 0, 2048)
-            .setDescription("Frost Damage");
+            .setDescription("Frost Damage")
+            .setShouldWatch(false);
 
     public static final RangedAttribute SHADOW_RESISTANCE = (RangedAttribute) new RangedAttribute(null, "mk.shadow_resistance", 0, -1.0, 1.0)
-            .setDescription("Shadow Resistance");
+            .setDescription("Shadow Resistance")
+            .setShouldWatch(false);
 
     public static final RangedAttribute SHADOW_DAMAGE = (RangedAttribute) new RangedAttribute(null, "mk.shadow_damage", 0, 0, 2048)
-            .setDescription("Shadow Damage");
+            .setDescription("Shadow Damage")
+            .setShouldWatch(false);
 
     public static final RangedAttribute HOLY_RESISTANCE = (RangedAttribute) new RangedAttribute(null, "mk.holy_resistance", 0, -1.0, 1.0)
-            .setDescription("Holy Resistance");
+            .setDescription("Holy Resistance")
+            .setShouldWatch(false);
 
     public static final RangedAttribute HOLY_DAMAGE = (RangedAttribute) new RangedAttribute(null, "mk.holy_damage", 0, 0, 2048)
-            .setDescription("Holy Damage");
+            .setDescription("Holy Damage")
+            .setShouldWatch(false);
 
     public static final RangedAttribute NATURE_RESISTANCE = (RangedAttribute) new RangedAttribute(ELEMENTAL_RESISTANCE, "mk.nature_resistance", 0, -1.0, 1.0)
-            .setDescription("Nature Resistance");
+            .setDescription("Nature Resistance")
+            .setShouldWatch(false);
 
     public static final RangedAttribute NATURE_DAMAGE = (RangedAttribute) new RangedAttribute(ELEMENTAL_DAMAGE, "mk.nature_damage", 0, 0, 2048)
-            .setDescription("Nature Damage");
+            .setDescription("Nature Damage")
+            .setShouldWatch(false);
 
     public static final RangedAttribute POISON_RESISTANCE = (RangedAttribute) new RangedAttribute(null, "mk.poison_resistance", 0, -1.0, 1.0)
-            .setDescription("Poison Resistance");
+            .setDescription("Poison Resistance")
+            .setShouldWatch(false);
 
     public static final RangedAttribute POISON_DAMAGE = (RangedAttribute) new RangedAttribute(null, "mk.poison_damage", 0, 0, 2048)
-            .setDescription("Poison Damage");
+            .setDescription("Poison Damage")
+            .setShouldWatch(false);
 }
