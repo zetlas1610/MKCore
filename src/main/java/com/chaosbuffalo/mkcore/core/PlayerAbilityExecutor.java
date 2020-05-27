@@ -7,12 +7,16 @@ import com.chaosbuffalo.mkcore.abilities.CastState;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbilityInfo;
 import com.chaosbuffalo.mkcore.abilities.PlayerToggleAbility;
+import com.chaosbuffalo.mkcore.client.sound.MovingSoundCasting;
 import com.chaosbuffalo.mkcore.events.PlayerAbilityEvent;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerStartCastPacket;
+import com.chaosbuffalo.mkcore.utils.SoundUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -155,10 +159,10 @@ public class PlayerAbilityExecutor {
         int cooldown = ability.getCooldownTicks();
         cooldown = PlayerFormulas.applyCooldownReduction(playerData, cooldown);
         setCooldown(info.getId(), cooldown);
-//        SoundEvent sound = ability.getSpellCompleteSoundEvent();
-//        if (sound != null) {
-//            AbilityUtils.playSoundAtServerEntity(player, sound, SoundCategory.PLAYERS);
-//        }
+        SoundEvent sound = ability.getSpellCompleteSoundEvent();
+        if (sound != null) {
+            SoundUtils.playSoundAtEntity(getPlayer(), sound, SoundCategory.PLAYERS);
+        }
         clearCastingAbility();
         MinecraftForge.EVENT_BUS.post(new PlayerAbilityEvent.Completed(playerData, info));
     }
@@ -240,7 +244,7 @@ public class PlayerAbilityExecutor {
     }
 
     static class ClientCastingState extends PlayerCastingState {
-        //        MovingSoundCasting sound; TODO: sound
+        MovingSoundCasting sound;
         boolean playing = false;
 
         public ClientCastingState(PlayerAbilityExecutor executor, PlayerAbility ability, int castTicks) {
@@ -251,9 +255,8 @@ public class PlayerAbilityExecutor {
         void begin() {
             SoundEvent event = ability.getCastingSoundEvent();
             if (event != null) {
-                // TODO: sound
-//                sound = new MovingSoundCasting(playerData.player, event, SoundCategory.PLAYERS, castTicks);
-//                Minecraft.getMinecraft().getSoundHandler().playSound(sound);
+                sound = new MovingSoundCasting(executor.getPlayer(), event, SoundCategory.PLAYERS, castTicks);
+                Minecraft.getInstance().getSoundHandler().play(sound);
                 playing = true;
             }
         }
@@ -265,11 +268,10 @@ public class PlayerAbilityExecutor {
 
         @Override
         void finish() {
-            // TODO: sound
-//            if (playing && sound != null) {
-//                Minecraft.getInstance().getSoundHandler().stopSound(sound);
-//                playing = false;
-//            }
+            if (playing && sound != null) {
+                Minecraft.getInstance().getSoundHandler().stop(sound);
+                playing = false;
+            }
         }
     }
 
