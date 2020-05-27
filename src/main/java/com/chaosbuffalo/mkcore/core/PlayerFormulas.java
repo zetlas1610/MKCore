@@ -20,11 +20,11 @@ public class PlayerFormulas {
         float mod = playerData.getStats().getMagicDamageBonus();
         return originalDamage + mod * modifierScaling;
     }
-//
-//    public static float applyMagicArmor(IPlayerData playerData, float originalDamage) {
-//        float mod = playerData.getMagicArmor();
-//        return originalDamage - mod;
-//    }
+
+    public static float applyMagicArmor(IMKPlayerData playerData, float originalDamage) {
+        float mod = playerData.getStats().getMagicArmor();
+        return originalDamage - mod;
+    }
 
 
     public static float applyManaCostReduction(IMKPlayerData playerData, float originalCost) {

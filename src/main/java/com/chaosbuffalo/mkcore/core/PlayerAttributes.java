@@ -41,4 +41,8 @@ public class PlayerAttributes {
     public static final RangedAttribute MELEE_CRITICAL_DAMAGE = (RangedAttribute) new RangedAttribute(null, "mk.melee_crit_damage", 0.0, 0.0, 10.0)
             .setDescription("Melee Critical Damage")
             .setShouldWatch(true);
+
+    public static final RangedAttribute MAGIC_ARMOR = (RangedAttribute) new RangedAttribute(null, "mk.magic_armor", 0, 0, 64)
+            .setDescription("Magic Armor")
+            .setShouldWatch(true);
 }

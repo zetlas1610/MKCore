@@ -43,6 +43,8 @@ public class PacketHandler {
                 PlayerAbilitiesSyncPacket::new, PlayerAbilitiesSyncPacket::handle);
         networkChannel.registerMessage(id++, CritMessagePacket.class, CritMessagePacket::toBytes,
                 CritMessagePacket::new, CritMessagePacket::handle);
+        networkChannel.registerMessage(id++, PlayerLeftClickEmptyPacket.class, PlayerLeftClickEmptyPacket::toBytes,
+                PlayerLeftClickEmptyPacket::new, PlayerLeftClickEmptyPacket::handle);
     }
 
     public static <T> void sendMessageToServer(T msg) {
