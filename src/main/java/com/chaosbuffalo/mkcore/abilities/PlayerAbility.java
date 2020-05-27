@@ -3,6 +3,7 @@ package com.chaosbuffalo.mkcore.abilities;
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.abilities.attributes.IAbilityAttribute;
 import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.mkcore.utils.RayTraceUtils;
 import com.chaosbuffalo.targeting_api.Targeting;
 import com.google.gson.JsonObject;
@@ -215,14 +216,12 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
 
     @Nullable
     public SoundEvent getCastingSoundEvent() {
-//        return ModSounds.casting_general;
-        return null;
+        return ModSounds.casting_general;
     }
 
     @Nullable
     public SoundEvent getSpellCompleteSoundEvent() {
-//        return ModSounds.spell_cast_3;
-        return null;
+        return ModSounds.spell_cast_3;
     }
 
     public abstract void execute(PlayerEntity entity, IMKPlayerData data, World theWorld);

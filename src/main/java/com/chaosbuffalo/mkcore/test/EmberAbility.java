@@ -12,15 +12,19 @@ import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.init.ModDamageTypes;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
+import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.targeting_api.Targeting;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+
+import javax.annotation.Nullable;
 
 
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -54,16 +58,16 @@ public class EmberAbility extends PlayerAbility {
         return new SingleTargetCastState(castTime);
     }
 
-//    @Nullable
-//    @Override
-//    public SoundEvent getSpellCompleteSoundEvent() {
-//        return ModSounds.spell_cast_7;
-//    }
-//
-//    @Override
-//    public SoundEvent getCastingSoundEvent() {
-//        return ModSounds.casting_fire;
-//    }
+    @Nullable
+    @Override
+    public SoundEvent getSpellCompleteSoundEvent() {
+        return ModSounds.spell_cast_7;
+    }
+
+    @Override
+    public SoundEvent getCastingSoundEvent() {
+        return ModSounds.casting_fire;
+    }
 
     @Override
     public void endCast(PlayerEntity entity, IMKPlayerData data, World theWorld, CastState state) {
