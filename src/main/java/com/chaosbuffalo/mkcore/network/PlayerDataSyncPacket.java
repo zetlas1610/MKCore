@@ -15,24 +15,26 @@ import java.util.function.Supplier;
 public class PlayerDataSyncPacket {
 
     private final UUID targetUUID;
+    private final boolean privateUpdate;
     private final CompoundNBT updateTag;
 
-    public PlayerDataSyncPacket(MKPlayerData player, UUID targetUUID, boolean fullSync) {
+    public PlayerDataSyncPacket(UUID targetUUID, CompoundNBT updateTag, boolean privateUpdate) {
         this.targetUUID = targetUUID;
-        updateTag = new CompoundNBT();
-        player.serializeClientUpdate(updateTag, fullSync);
+        this.privateUpdate = privateUpdate;
+        this.updateTag = updateTag;
     }
-
 
     public PlayerDataSyncPacket(PacketBuffer buffer) {
         targetUUID = buffer.readUniqueId();
+        privateUpdate = buffer.readBoolean();
         updateTag = buffer.readCompoundTag();
     }
 
     public void toBytes(PacketBuffer buffer) {
         buffer.writeUniqueId(targetUUID);
+        buffer.writeBoolean(privateUpdate);
         buffer.writeCompoundTag(updateTag);
-//        MKCore.LOGGER.info("sync toBytes {}", updateTag);
+//        MKCore.LOGGER.info("sync toBytes priv:{} {}", privateUpdate, updateTag);
     }
 
     public void handle(Supplier<NetworkEvent.Context> supplier) {
@@ -48,10 +50,14 @@ public class PlayerDataSyncPacket {
 
             entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap -> {
                 if (cap instanceof MKPlayerData) {
-                    ((MKPlayerData) cap).deserializeClientUpdate(updateTag);
+                    ((MKPlayerData) cap).getUpdateEngine().deserializeUpdate(updateTag, privateUpdate);
                 }
             });
         });
         ctx.setPacketHandled(true);
+    }
+
+    public String toString() {
+        return String.format("[priv: %b, tag: %s]", privateUpdate, updateTag);
     }
 }

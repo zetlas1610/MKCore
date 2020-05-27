@@ -29,7 +29,7 @@ public class FireArmor extends PlayerAbility {
 
     @SubscribeEvent
     public static void register(RegistryEvent.Register<PlayerAbility> event) {
-        event.getRegistry().register(INSTANCE.setRegistryName(INSTANCE.getAbilityId()));
+        event.getRegistry().register(INSTANCE);
     }
 
     public static int BASE_DURATION = 60;

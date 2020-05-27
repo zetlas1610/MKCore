@@ -23,8 +23,9 @@ public class PlayerStatsModule implements ISyncObject {
 
     public PlayerStatsModule(MKPlayerData playerData) {
         this.playerData = playerData;
-        abilityTracker = AbilityTracker.getTracker(playerData.getPlayer());
         regenTime = 0f;
+        abilityTracker = AbilityTracker.getTracker(playerData.getPlayer());
+        playerData.getUpdateEngine().addPrivate(abilityTracker);
     }
 
     public float getMeleeCritChance() {
@@ -97,10 +98,6 @@ public class PlayerStatsModule implements ISyncObject {
         return (float) getPlayer().getAttribute(MKAttributes.MANA_REGEN).getValue();
     }
 
-    public void sync() {
-        abilityTracker.sync();
-    }
-
     public void tick() {
         abilityTracker.tick();
 
@@ -162,8 +159,7 @@ public class PlayerStatsModule implements ISyncObject {
             return 0.0f;
         }
         float manaCost = abilityInfo.getAbility().getManaCost();
-//        return PlayerFormulas.applyManaCostReduction(this, ); TODO: formulas
-        return manaCost;
+        return PlayerFormulas.applyManaCostReduction(playerData, manaCost);
     }
 
     public boolean canActivateAbility(PlayerAbility ability) {

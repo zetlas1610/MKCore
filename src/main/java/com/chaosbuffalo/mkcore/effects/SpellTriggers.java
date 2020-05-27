@@ -58,15 +58,15 @@ public class SpellTriggers {
     private static boolean startTrigger(Entity source, String tag) {
         if (source instanceof PlayerEntity) {
 //            Log.info("startTrigger - %s", tag);
-           return source.getCapability(Capabilities.PLAYER_CAPABILITY).map((iData) -> {
-               MKPlayerData mkData = (MKPlayerData) iData;
-               if (mkData.hasSpellTag(tag)) {
+            return source.getCapability(Capabilities.PLAYER_CAPABILITY).map(iData -> {
+                MKPlayerData mkData = (MKPlayerData) iData;
+                if (mkData.hasSpellTag(tag)) {
 //                Log.info("startTrigger - BLOCKING %s", tag);
-                   return false;
-               }
-               mkData.addSpellTag(tag);
-               return true;
-           }).orElse(true);
+                    return false;
+                }
+                mkData.addSpellTag(tag);
+                return true;
+            }).orElse(true);
 
         }
         return true;
@@ -75,7 +75,7 @@ public class SpellTriggers {
     private static void endTrigger(Entity source, String tag) {
         if (source instanceof PlayerEntity) {
 //            Log.info("endTrigger - %s", tag);
-            source.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent((iData) -> {
+            source.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(iData -> {
                 MKPlayerData mkData = (MKPlayerData) iData;
                 mkData.removeSpellTag(tag);
             });
@@ -182,7 +182,7 @@ public class SpellTriggers {
                             newDamage, CritMessagePacket.CritType.HOLY_DAMAGE_CRIT);
                 } else {
                     PlayerAbility ability = MKCoreRegistry.getAbility(mkSource.getAbilityId());
-                    if (ability != null){
+                    if (ability != null) {
                         packet = new CritMessagePacket(livingTarget.getEntityId(), playerSource.getUniqueID(),
                                 newDamage, ability.getAbilityId());
                     } else {

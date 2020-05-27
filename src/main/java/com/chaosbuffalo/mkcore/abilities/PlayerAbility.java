@@ -36,8 +36,6 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         Ultimate
     }
 
-    private final ResourceLocation abilityId;
-
     private int castTime;
     private int cooldown;
     private float manaCost;
@@ -49,7 +47,7 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
     }
 
     public PlayerAbility(ResourceLocation abilityId) {
-        this.abilityId = abilityId;
+        setRegistryName(abilityId);
         this.cooldown = GameConstants.TICKS_PER_SECOND;
         this.castTime = 0;
         this.manaCost = 1;
@@ -60,18 +58,18 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         return attributes;
     }
 
-    public PlayerAbility addAttribute(IAbilityAttribute<?> attr){
+    public PlayerAbility addAttribute(IAbilityAttribute<?> attr) {
         attributes.add(attr);
         return this;
     }
 
-    public PlayerAbility addAttributes(IAbilityAttribute<?>... attrs){
+    public PlayerAbility addAttributes(IAbilityAttribute<?>... attrs) {
         attributes.addAll(Arrays.asList(attrs));
         return this;
     }
 
     public ResourceLocation getAbilityId() {
-        return abilityId;
+        return getRegistryName();
     }
 
     public PlayerAbilityInfo createAbilityInfo() {
@@ -84,14 +82,17 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
     }
 
     public String getAbilityDescription() {
+        ResourceLocation abilityId = getRegistryName();
         return I18n.format(String.format("%s.%s.description", abilityId.getNamespace(), abilityId.getPath()));
     }
 
     public String getTranslationKey() {
+        ResourceLocation abilityId = getRegistryName();
         return String.format("%s.%s.name", abilityId.getNamespace(), abilityId.getPath());
     }
 
     public ResourceLocation getAbilityIcon() {
+        ResourceLocation abilityId = getRegistryName();
         return new ResourceLocation(abilityId.getNamespace(), String.format("textures/class/abilities/%s.png", abilityId.getPath().split(Pattern.quote("."))[1]));
     }
 
@@ -152,10 +153,6 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         return this;
     }
 
-    public int getMaxRank() {
-        return GameConstants.MAX_ABILITY_RANK;
-    }
-
     public boolean meetsRequirements(IMKPlayerData player) {
         return player.getAbilityExecutor().canActivateAbility(this) &&
                 player.getStats().canActivateAbility(this);
@@ -166,9 +163,9 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         tag.putInt("cooldown", getCooldown());
         tag.putInt("castTime", getCastTime());
         tag.putFloat("manaCost", getManaCost());
-        if (getAttributes().size() > 0){
+        if (getAttributes().size() > 0) {
             CompoundNBT attributes = new CompoundNBT();
-            for (IAbilityAttribute<?> attr : getAttributes()){
+            for (IAbilityAttribute<?> attr : getAttributes()) {
                 attributes.put(attr.getName(), attr.serialize());
             }
             tag.put("attributes", attributes);
@@ -186,15 +183,14 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         if (nbt.contains("manaCost")) {
             setManaCost(nbt.getFloat("manaCost"));
         }
-        if (nbt.contains("attributes")){
+        if (nbt.contains("attributes")) {
             CompoundNBT attributes = nbt.getCompound("attributes");
-            for (IAbilityAttribute<?> attr : getAttributes()){
-                if (attributes.contains(attr.getName())){
+            for (IAbilityAttribute<?> attr : getAttributes()) {
+                if (attributes.contains(attr.getName())) {
                     attr.deserialize(attributes.getCompound(attr.getName()));
                 }
             }
         }
-
     }
 
     public void readFromDataPack(JsonObject obj) {
@@ -207,10 +203,10 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         if (obj.has("castTime")) {
             setCastTime(obj.get("castTime").getAsInt());
         }
-        if (obj.has("attributes")){
+        if (obj.has("attributes")) {
             JsonObject attributes = obj.getAsJsonObject("attributes");
-            for (IAbilityAttribute<?> attr : getAttributes()){
-                if (attributes.has(attr.getName())){
+            for (IAbilityAttribute<?> attr : getAttributes()) {
+                if (attributes.has(attr.getName())) {
                     attr.readFromDataPack(attributes.getAsJsonObject(attr.getName()));
                 }
             }

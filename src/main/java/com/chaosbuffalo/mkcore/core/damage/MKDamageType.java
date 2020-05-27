@@ -1,6 +1,7 @@
 package com.chaosbuffalo.mkcore.core.damage;
 
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.util.ResourceLocation;
@@ -22,6 +23,11 @@ public class MKDamageType extends ForgeRegistryEntry<MKDamageType> {
     public MKDamageType setCritMultiplier(float value){
         this.critMultiplier = value;
         return this;
+    }
+
+    public void addAttributes(AbstractAttributeMap attributeMap){
+        attributeMap.registerAttribute(getDamageAttribute());
+        attributeMap.registerAttribute(getResistanceAttribute());
     }
 
     public RangedAttribute getDamageAttribute() {
