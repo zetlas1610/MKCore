@@ -25,11 +25,6 @@ public class MeleeDamageType extends MKDamageType {
     }
 
     @Override
-    public float scaleDamage(LivingEntity source, LivingEntity target, float originalDamage, float modifierScaling) {
-        return (float) (originalDamage + (source.getAttribute(getDamageAttribute()).getValue() * modifierScaling));
-    }
-
-    @Override
     public ITextComponent getCritMessage(LivingEntity source, LivingEntity target, float damage,
                                          PlayerAbility ability, boolean isSelf){
         Style messageStyle = new Style();

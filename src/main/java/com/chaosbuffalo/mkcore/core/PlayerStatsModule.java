@@ -43,7 +43,7 @@ public class PlayerStatsModule implements ISyncObject {
 
     public float getDamageMultiplierForDamageType(MKDamageType damageType){
         float originalValue = 10.0f;
-        float scaled = damageType.scaleDamage(getPlayer(), null, originalValue, 1.0f);
+        float scaled = damageType.applyDamage(getPlayer(), null, originalValue, 1.0f);
         return scaled / originalValue;
     }
 

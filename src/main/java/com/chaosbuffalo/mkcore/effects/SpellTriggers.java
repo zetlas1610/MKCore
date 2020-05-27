@@ -162,10 +162,10 @@ public class SpellTriggers {
                                                    ServerPlayerEntity playerSource, IMKPlayerData sourceData,
                                                    MKDamageSource source, String typeTag,
                                                    List<PlayerHurtEntityTrigger> playerHurtTriggers) {
-            event.setAmount(source.getMKDamageType().scaleDamage(playerSource, livingTarget, event.getAmount(),
+            event.setAmount(source.getMKDamageType().applyDamage(playerSource, livingTarget, event.getAmount(),
                     source.getModifierScaling()));
-            if (source.getMKDamageType().shouldCrit(playerSource, livingTarget)){
-                float newDamage = source.getMKDamageType().applyCrit(playerSource, livingTarget, event.getAmount());
+            if (source.getMKDamageType().rollCrit(playerSource, livingTarget)){
+                float newDamage = source.getMKDamageType().applyCritDamage(playerSource, livingTarget, event.getAmount());
                 event.setAmount(newDamage);
                 PlayerAbility ability = MKCoreRegistry.getAbility(source.getAbilityId());
                 ResourceLocation abilityName;

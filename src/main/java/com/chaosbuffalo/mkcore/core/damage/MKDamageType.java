@@ -46,7 +46,7 @@ public class MKDamageType extends ForgeRegistryEntry<MKDamageType> {
         return damageAttribute;
     }
 
-    public float scaleDamage(LivingEntity source, LivingEntity target, float originalDamage, float modifierScaling){
+    public float applyDamage(LivingEntity source, LivingEntity target, float originalDamage, float modifierScaling){
         return (float) (originalDamage + source.getAttribute(getDamageAttribute()).getValue() * modifierScaling);
     }
 
@@ -81,12 +81,12 @@ public class MKDamageType extends ForgeRegistryEntry<MKDamageType> {
         return critMultiplierAttribute;
     }
 
-    public boolean shouldCrit(LivingEntity source, LivingEntity target){
+    public boolean rollCrit(LivingEntity source, LivingEntity target){
         float critChance = getCritChance(source, target);
         return MKCombatFormulas.checkCrit(source, critChance);
     }
 
-    public float applyCrit(LivingEntity source, LivingEntity target, float originalDamage) {
+    public float applyCritDamage(LivingEntity source, LivingEntity target, float originalDamage) {
         return originalDamage * getCritMultiplier(source, target);
     }
 
