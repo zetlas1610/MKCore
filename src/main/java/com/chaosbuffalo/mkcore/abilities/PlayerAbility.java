@@ -36,8 +36,6 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         Ultimate
     }
 
-    private final ResourceLocation abilityId;
-
     private int castTime;
     private int cooldown;
     private float manaCost;
@@ -49,7 +47,7 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
     }
 
     public PlayerAbility(ResourceLocation abilityId) {
-        this.abilityId = abilityId;
+        setRegistryName(abilityId);
         this.cooldown = GameConstants.TICKS_PER_SECOND;
         this.castTime = 0;
         this.manaCost = 1;
@@ -71,7 +69,7 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
     }
 
     public ResourceLocation getAbilityId() {
-        return abilityId;
+        return getRegistryName();
     }
 
     public PlayerAbilityInfo createAbilityInfo() {
@@ -84,14 +82,17 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
     }
 
     public String getAbilityDescription() {
+        ResourceLocation abilityId = getRegistryName();
         return I18n.format(String.format("%s.%s.description", abilityId.getNamespace(), abilityId.getPath()));
     }
 
     public String getTranslationKey() {
+        ResourceLocation abilityId = getRegistryName();
         return String.format("%s.%s.name", abilityId.getNamespace(), abilityId.getPath());
     }
 
     public ResourceLocation getAbilityIcon() {
+        ResourceLocation abilityId = getRegistryName();
         return new ResourceLocation(abilityId.getNamespace(), String.format("textures/class/abilities/%s.png", abilityId.getPath().split(Pattern.quote("."))[1]));
     }
 
@@ -194,7 +195,6 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
                 }
             }
         }
-
     }
 
     public void readFromDataPack(JsonObject obj) {

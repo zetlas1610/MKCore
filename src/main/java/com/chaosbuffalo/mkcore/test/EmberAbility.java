@@ -30,7 +30,7 @@ public class EmberAbility extends PlayerAbility {
 
     @SubscribeEvent
     public static void register(RegistryEvent.Register<PlayerAbility> event) {
-        event.getRegistry().register(INSTANCE.setRegistryName(INSTANCE.getAbilityId()));
+        event.getRegistry().register(INSTANCE);
     }
 
     private EmberAbility() {

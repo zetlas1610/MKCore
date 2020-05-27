@@ -29,7 +29,7 @@ public class NotoriousDOT extends PlayerToggleAbility {
 
     @SubscribeEvent
     public static void register(RegistryEvent.Register<PlayerAbility> event) {
-        event.getRegistry().register(INSTANCE.setRegistryName(INSTANCE.getAbilityId()));
+        event.getRegistry().register(INSTANCE);
     }
 
     public static float BASE_DAMAGE = 1.0f;
