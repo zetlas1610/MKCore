@@ -45,7 +45,7 @@ public class ModDamageTypes {
         evt.getRegistry().register(new MKDamageType(MKCore.makeRL("damage.frost"), MKAttributes.FROST_DAMAGE,
                 MKAttributes.FROST_RESISTANCE));
         evt.getRegistry().register(new MKDamageType(MKCore.makeRL("damage.holy"), MKAttributes.HOLY_DAMAGE,
-                MKAttributes.HOLY_RESISTANCE));
+                MKAttributes.HOLY_RESISTANCE).setCritMultiplier(2.0f));
         evt.getRegistry().register(new MKDamageType(MKCore.makeRL("damage.poison"), MKAttributes.POISON_DAMAGE,
                 MKAttributes.POISON_RESISTANCE));
         evt.getRegistry().register(new MKDamageType(MKCore.makeRL("damage.shadow"), MKAttributes.SHADOW_DAMAGE,

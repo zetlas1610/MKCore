@@ -171,10 +171,7 @@ public class SpellTriggers {
             boolean isHolyDamage = mkSource.getMKDamageType().equals(ModDamageTypes.HolyDamage);
             event.setAmount(mkSource.getMKDamageType().scaleDamage(playerSource, event.getAmount(),
                     mkSource.getModifierScaling()));
-
-            if (isHolyDamage) {
-                spellCritchance *= 2.0f;
-            }
+            spellCritchance = mkSource.getMKDamageType().adjustCritChance(livingTarget, spellCritchance);
             if (checkCrit(playerSource, spellCritchance)) {
                 float newDamage = event.getAmount() * sourceData.getStats().getSpellCritDamage();
                 event.setAmount(newDamage);
