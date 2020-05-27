@@ -1,7 +1,6 @@
 package com.chaosbuffalo.mkcore.effects;
 
 import com.chaosbuffalo.mkcore.Capabilities;
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import com.chaosbuffalo.mkcore.core.IMKPlayerData;
@@ -17,7 +16,6 @@ import com.chaosbuffalo.mkcore.utils.EntityUtils;
 import com.chaosbuffalo.mkcore.utils.ItemUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -134,15 +132,12 @@ public class SpellTriggers {
         public static void onPlayerHurtEntity(LivingHurtEvent event, DamageSource source,
                                               LivingEntity livingTarget, ServerPlayerEntity playerSource,
                                               IMKPlayerData sourceData) {
-            if (source.isMagicDamage()) {
-                float newDamage = MKCombatFormulas.scaleMagicDamage(sourceData, event.getAmount(), 1.0f);
-                event.setAmount(newDamage);
-            } else if (isMKDamage(source)){
+           if (isMKDamage(source)){
                 MKDamageSource mkSource = (MKDamageSource) source;
                 if (mkSource.isMeleeDamage()){
                     handleMKMelee(event, mkSource, livingTarget, playerSource, sourceData);
                 } else {
-                    handleMKAbility(event, livingTarget, playerSource, sourceData, mkSource);
+                    handleMKAbility(event, mkSource, livingTarget, playerSource, sourceData);
                 }
             }
 
@@ -161,8 +156,9 @@ public class SpellTriggers {
             endTrigger(playerSource, POST_TAG);
         }
 
-        private static void handleMKAbility(LivingHurtEvent event, LivingEntity livingTarget, ServerPlayerEntity playerSource,
-                                            IMKPlayerData sourceData, MKDamageSource source) {
+        private static void handleMKAbility(LivingHurtEvent event, MKDamageSource source, LivingEntity livingTarget,
+                                            ServerPlayerEntity playerSource,
+                                            IMKPlayerData sourceData) {
             calculateAbilityDamage(event, livingTarget, playerSource, sourceData, source,
                     MAGIC_TAG, playerHurtEntityMagicTriggers);
         }
@@ -171,7 +167,7 @@ public class SpellTriggers {
                                                    ServerPlayerEntity playerSource, IMKPlayerData sourceData,
                                                    MKDamageSource source, String typeTag,
                                                    List<PlayerHurtEntityTrigger> playerHurtTriggers) {
-            event.setAmount(source.getMKDamageType().scaleDamage(playerSource, event.getAmount(),
+            event.setAmount(source.getMKDamageType().scaleDamage(playerSource, livingTarget, event.getAmount(),
                     source.getModifierScaling()));
             if (source.getMKDamageType().shouldCrit(playerSource, livingTarget)){
                 float newDamage = source.getMKDamageType().applyCrit(playerSource, livingTarget, event.getAmount());
@@ -263,16 +259,11 @@ public class SpellTriggers {
                 return;
             entityHurtPlayerPreTriggers.forEach(f -> f.apply(event, source, livingTarget, targetData));
 
-            if (source.isMagicDamage()) {
-                float newDamage = MKCombatFormulas.applyMagicArmor(targetData, event.getAmount());
-                MKCore.LOGGER.debug("Magic armor reducing damage from {} to {}", event.getAmount(), newDamage);
-                event.setAmount(newDamage);
-            } else if (isMKDamage(source)){
+            if (isMKDamage(source)){
                 MKDamageSource mkDamageSource = (MKDamageSource) source;
-                if (!mkDamageSource.isMeleeDamage()){
+                if (mkDamageSource.isUnblockable()){
                     event.setAmount(mkDamageSource.getMKDamageType().applyResistance(livingTarget, event.getAmount()));
                 }
-
             }
 
             entityHurtPlayerPostTriggers.forEach(f -> f.apply(event, source, livingTarget, targetData));

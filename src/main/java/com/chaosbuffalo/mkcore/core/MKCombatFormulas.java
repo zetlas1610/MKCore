@@ -19,15 +19,7 @@ public class MKCombatFormulas {
         return (int) newTicks;
     }
 
-    public static float scaleMagicDamage(IMKPlayerData playerData, float originalDamage, float modifierScaling) {
-        float mod = ModDamageTypes.ArcaneDamage.scaleDamage(playerData.getPlayer(), originalDamage, modifierScaling);
-        return originalDamage + mod * modifierScaling;
-    }
-
-    public static float applyMagicArmor(IMKPlayerData playerData, float originalDamage) {
-        float mod = ModDamageTypes.ArcaneDamage.applyResistance(playerData.getPlayer(), originalDamage);
-        return originalDamage - mod;
-    }
+    
 
     public static float applyManaCostReduction(IMKPlayerData playerData, float originalCost) {
         return originalCost;

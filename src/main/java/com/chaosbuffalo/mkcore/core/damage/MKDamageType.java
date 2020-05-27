@@ -47,7 +47,7 @@ public class MKDamageType extends ForgeRegistryEntry<MKDamageType> {
         return damageAttribute;
     }
 
-    public float scaleDamage(LivingEntity source, float originalDamage, float modifierScaling){
+    public float scaleDamage(LivingEntity source, LivingEntity target, float originalDamage, float modifierScaling){
         return (float) (originalDamage + source.getAttribute(getDamageAttribute()).getValue() * modifierScaling);
     }
 
