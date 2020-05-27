@@ -5,14 +5,17 @@ import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import com.chaosbuffalo.mkcore.abilities.PlayerToggleAbility;
 import com.chaosbuffalo.mkcore.core.IMKPlayerData;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
+import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
+import com.chaosbuffalo.mkcore.utils.SoundUtils;
 import com.chaosbuffalo.targeting_api.Targeting;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.Effect;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -72,7 +75,7 @@ public class NotoriousDOT extends PlayerToggleAbility {
         int level = 1;
         entity.addPotionEffect(NotoriousDOTSongPotion.Create(entity).setTarget(entity)
                 .toPotionEffect(BASE_DURATION, level));
-//        AbilityUtils.playSoundAtServerEntity(entity, ModSounds.spell_shadow_9, SoundCategory.PLAYERS);
+        SoundUtils.playSoundAtEntity(entity, ModSounds.spell_shadow_9, SoundCategory.PLAYERS);
         Vec3d lookVec = entity.getLookVec();
         PacketHandler.sendToTrackingAndSelf(
                 new ParticleEffectSpawnPacket(

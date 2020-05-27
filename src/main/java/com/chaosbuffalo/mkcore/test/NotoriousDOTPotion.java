@@ -6,6 +6,8 @@ import com.chaosbuffalo.mkcore.core.IMKPlayerData;
 import com.chaosbuffalo.mkcore.effects.AreaEffectBuilder;
 import com.chaosbuffalo.mkcore.effects.SongEffect;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
+import com.chaosbuffalo.mkcore.init.ModSounds;
+import com.chaosbuffalo.mkcore.utils.SoundUtils;
 import com.chaosbuffalo.targeting_api.Targeting;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,6 +16,7 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -34,10 +37,9 @@ public class NotoriousDOTPotion extends SongEffect {
 
     @Override
     public AreaEffectBuilder prepareAreaEffect(PlayerEntity source, IMKPlayerData playerData, int level, AreaEffectBuilder builder) {
-        builder.spellCast(AbilityMagicDamage.Create(source, NotoriousDOT.BASE_DAMAGE, NotoriousDOT.DAMAGE_SCALE, 0.6f),
-                level, Targeting.TargetType.ALL, true);
-//        builder.effect(DamageSource.causeIndirectMagicDamage(source, source))
-//        AbilityUtils.playSoundAtServerEntity(source, ModSounds.spell_shadow_9, SoundCategory.PLAYERS);
+        SpellCast damage = AbilityMagicDamage.Create(source, NotoriousDOT.BASE_DAMAGE, NotoriousDOT.DAMAGE_SCALE, 0.6f);
+        builder.spellCast(damage, level, Targeting.TargetType.ALL, true);
+        SoundUtils.playSoundAtEntity(source, ModSounds.spell_shadow_9, SoundCategory.PLAYERS);
         return builder;
     }
 

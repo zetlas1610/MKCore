@@ -5,13 +5,16 @@ import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
 import com.chaosbuffalo.mkcore.abilities.PlayerToggleAbility;
 import com.chaosbuffalo.mkcore.core.IMKPlayerData;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
+import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
+import com.chaosbuffalo.mkcore.utils.SoundUtils;
 import com.chaosbuffalo.targeting_api.Targeting;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.Effect;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -63,7 +66,7 @@ public class SkinLikeWoodAbility extends PlayerToggleAbility {
     public void applyEffect(PlayerEntity entity, IMKPlayerData pData, World theWorld) {
         super.applyEffect(entity, pData, theWorld);
         int level = 1;
-//        AbilityUtils.playSoundAtServerEntity(entity, ModSounds.spell_earth_7, SoundCategory.PLAYERS);
+        SoundUtils.playSoundAtEntity(entity, ModSounds.spell_earth_7, SoundCategory.PLAYERS);
         // What to do for each target hit
         entity.addPotionEffect(SkinLikeWoodPotion.Create(entity).setTarget(entity).toPotionEffect(BASE_DURATION, level));
         Vec3d lookVec = entity.getLookVec();
