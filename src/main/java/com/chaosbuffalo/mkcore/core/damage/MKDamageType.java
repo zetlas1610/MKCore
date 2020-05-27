@@ -7,11 +7,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 
-public class DamageType extends ForgeRegistryEntry<DamageType> {
+public class MKDamageType extends ForgeRegistryEntry<MKDamageType> {
     private final RangedAttribute damageAttribute;
     private final RangedAttribute resistanceAttribute;
 
-    public DamageType(ResourceLocation name, RangedAttribute damageAttribute, RangedAttribute resistanceAttribute){
+    public MKDamageType(ResourceLocation name, RangedAttribute damageAttribute, RangedAttribute resistanceAttribute){
         setRegistryName(name);
         this.damageAttribute = damageAttribute;
         this.resistanceAttribute = resistanceAttribute;

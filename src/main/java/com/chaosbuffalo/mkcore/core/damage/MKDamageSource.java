@@ -11,13 +11,13 @@ public class MKDamageSource extends IndirectEntityDamageSource {
     private final ResourceLocation abilityId;
     private float modifierScaling;
     private boolean suppressTriggers;
-    private final DamageType damageType;
+    private final MKDamageType damageType;
 
     public ResourceLocation getAbilityId() {
         return abilityId;
     }
 
-    public MKDamageSource(ResourceLocation abilityId, DamageType damageTypeIn,
+    public MKDamageSource(ResourceLocation abilityId, MKDamageType damageTypeIn,
                           Entity source, @Nullable Entity indirectEntityIn) {
         super(damageTypeIn.getRegistryName().toString(), source, indirectEntityIn);
         this.abilityId = abilityId;
@@ -34,7 +34,7 @@ public class MKDamageSource extends IndirectEntityDamageSource {
         return this;
     }
 
-    public DamageType getMKDamageType(){
+    public MKDamageType getMKDamageType(){
         return damageType;
     }
 
@@ -51,7 +51,7 @@ public class MKDamageSource extends IndirectEntityDamageSource {
         return this;
     }
 
-    public static MKDamageSource causeAbilityDamage(DamageType damageType, ResourceLocation abilityId, Entity source,
+    public static MKDamageSource causeAbilityDamage(MKDamageType damageType, ResourceLocation abilityId, Entity source,
                                                     @Nullable Entity indirectEntityIn){
         if (damageType.equals(ModDamageTypes.MeleeDamage)){
             return causeMeleeDamage(abilityId, source, indirectEntityIn);
@@ -60,7 +60,7 @@ public class MKDamageSource extends IndirectEntityDamageSource {
                 .setDamageBypassesArmor();
     }
 
-    public static MKDamageSource causeAbilityDamage(DamageType damageType, ResourceLocation abilityId, Entity source,
+    public static MKDamageSource causeAbilityDamage(MKDamageType damageType, ResourceLocation abilityId, Entity source,
                                                     @Nullable Entity indirectEntityIn, float modifierScaling){
         return causeAbilityDamage(damageType, abilityId, source, indirectEntityIn)
                 .setModifierScaling(modifierScaling);

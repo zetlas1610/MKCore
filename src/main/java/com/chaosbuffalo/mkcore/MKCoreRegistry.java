@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkcore;
 
 import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
-import com.chaosbuffalo.mkcore.core.damage.DamageType;
+import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
 import net.minecraft.block.Block;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -17,7 +17,7 @@ public class MKCoreRegistry {
     public static ResourceLocation INVALID_CLASS = new ResourceLocation(MKCore.MOD_ID, "class.invalid");
     public static ResourceLocation INVALID_ABILITY = new ResourceLocation(MKCore.MOD_ID, "ability.invalid");
     public static IForgeRegistry<PlayerAbility> ABILITIES = null;
-    public static IForgeRegistry<DamageType> DAMAGE_TYPES = null;
+    public static IForgeRegistry<MKDamageType> DAMAGE_TYPES = null;
 
 
     @Nullable
@@ -26,7 +26,7 @@ public class MKCoreRegistry {
     }
 
     @Nullable
-    public static DamageType getDamageType(ResourceLocation damageTypeId) { return DAMAGE_TYPES.getValue(damageTypeId); }
+    public static MKDamageType getDamageType(ResourceLocation damageTypeId) { return DAMAGE_TYPES.getValue(damageTypeId); }
 
     @SubscribeEvent
     public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
@@ -41,9 +41,9 @@ public class MKCoreRegistry {
                 .setType(PlayerAbility.class)
                 .setIDRange(0, Integer.MAX_VALUE - 1)
                 .create();
-        DAMAGE_TYPES = new RegistryBuilder<DamageType>()
+        DAMAGE_TYPES = new RegistryBuilder<MKDamageType>()
                 .setName(MKCore.makeRL("damage_types"))
-                .setType(DamageType.class)
+                .setType(MKDamageType.class)
                 .setIDRange(0, Integer.MAX_VALUE -1)
                 .create();
     }

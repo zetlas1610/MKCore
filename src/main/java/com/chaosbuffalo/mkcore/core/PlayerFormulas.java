@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.core;
 
-import com.chaosbuffalo.mkcore.core.damage.DamageType;
+import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
 import com.chaosbuffalo.mkcore.init.ModDamageTypes;
 import com.chaosbuffalo.mkcore.utils.EntityUtils;
 import com.chaosbuffalo.mkcore.utils.ItemUtils;
@@ -19,11 +19,11 @@ public class PlayerFormulas {
         return (int) newTicks;
     }
 
-    public static float scaleDamage(LivingEntity source, DamageType damageType, float damageIn, float modifierScaling){
+    public static float scaleDamage(LivingEntity source, MKDamageType damageType, float damageIn, float modifierScaling){
         return damageType.scaleDamage(source, damageIn, modifierScaling);
     }
 
-    public static float applyDamageResistance(LivingEntity target, DamageType damageType, float damageIn){
+    public static float applyDamageResistance(LivingEntity target, MKDamageType damageType, float damageIn){
         return damageType.applyResistance(target, damageIn);
     }
 

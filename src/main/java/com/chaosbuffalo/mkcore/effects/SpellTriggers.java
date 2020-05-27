@@ -293,7 +293,10 @@ public class SpellTriggers {
                 event.setAmount(newDamage);
             } else if (isMKDamage(source)){
                 MKDamageSource mkDamageSource = (MKDamageSource) source;
-                event.setAmount(mkDamageSource.getMKDamageType().applyResistance(livingTarget, event.getAmount()));
+                if (!mkDamageSource.isMeleeDamage()){
+                    event.setAmount(mkDamageSource.getMKDamageType().applyResistance(livingTarget, event.getAmount()));
+                }
+
             }
 
             entityHurtPlayerPostTriggers.forEach(f -> f.apply(event, source, livingTarget, targetData));

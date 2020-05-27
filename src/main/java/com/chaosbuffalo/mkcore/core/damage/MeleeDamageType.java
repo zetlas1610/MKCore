@@ -5,7 +5,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.util.CombatRules;
 import net.minecraft.util.ResourceLocation;
 
-public class MeleeDamageType extends DamageType {
+public class MeleeDamageType extends MKDamageType {
 
     public MeleeDamageType(ResourceLocation name){
         super(name, null, null);
@@ -19,7 +19,10 @@ public class MeleeDamageType extends DamageType {
 
     @Override
     public float applyResistance(LivingEntity target, float originalDamage) {
-        return CombatRules.getDamageAfterAbsorb(originalDamage, target.getTotalArmorValue(),
-                (float) target.getAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getValue());
+        return originalDamage;
+        // if we did want to calculate the real damage absorb of armor, we could use the below
+        // but melee damage will have this applied as part of LivingEntity
+//        return CombatRules.getDamageAfterAbsorb(originalDamage, target.getTotalArmorValue(),
+//                (float) target.getAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getValue());
     }
 }

@@ -2,7 +2,7 @@ package com.chaosbuffalo.mkcore.core;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
-import com.chaosbuffalo.mkcore.core.damage.DamageType;
+import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncPacket;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncRequestPacket;
@@ -73,7 +73,7 @@ public class MKPlayerData implements IMKPlayerData {
         attributes.registerAttribute(MKAttributes.SPELL_CRIT);
         attributes.registerAttribute(MKAttributes.SPELL_CRITICAL_DAMAGE);
         attributes.registerAttribute(MKAttributes.HEAL_BONUS);
-        for (DamageType damageType : MKCoreRegistry.DAMAGE_TYPES.getValues()){
+        for (MKDamageType damageType : MKCoreRegistry.DAMAGE_TYPES.getValues()){
             if (damageType.getDamageAttribute() != null){
                 attributes.registerAttribute(damageType.getDamageAttribute());
             }
