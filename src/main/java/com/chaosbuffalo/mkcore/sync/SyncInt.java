@@ -6,6 +6,7 @@ public class SyncInt implements ISyncObject {
     String name;
     private int value;
     private boolean dirty;
+    private ISyncNotifier parentNotifier = ISyncNotifier.NONE;
 
     public SyncInt(String name, int value) {
         this.name = name;
@@ -15,6 +16,7 @@ public class SyncInt implements ISyncObject {
     public void set(int value) {
         this.value = value;
         this.dirty = true;
+        parentNotifier.markDirty(this);
     }
 
     public void add(int value) {
@@ -23,6 +25,11 @@ public class SyncInt implements ISyncObject {
 
     public int get() {
         return value;
+    }
+
+    @Override
+    public void setNotifier(ISyncNotifier notifier) {
+        parentNotifier = notifier;
     }
 
     @Override

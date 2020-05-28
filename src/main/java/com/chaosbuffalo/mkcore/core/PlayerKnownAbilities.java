@@ -4,6 +4,7 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
+import com.chaosbuffalo.mkcore.sync.ISyncNotifier;
 import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -17,6 +18,7 @@ public class PlayerKnownAbilities implements ISyncObject {
     private final PlayerKnowledge knowledge;
     private final Map<ResourceLocation, MKAbilityInfo> abilityInfoMap = new HashMap<>();
     private final List<MKAbilityInfo> dirtyList = new ArrayList<>();
+    private ISyncNotifier parentNotifier = ISyncNotifier.NONE;
 
     public PlayerKnownAbilities(PlayerKnowledge knowledge) {
         this.knowledge = knowledge;
@@ -74,6 +76,12 @@ public class PlayerKnownAbilities implements ISyncObject {
 
     public void markDirty(MKAbilityInfo info) {
         dirtyList.add(info);
+        parentNotifier.markDirty(this);
+    }
+
+    @Override
+    public void setNotifier(ISyncNotifier notifier) {
+        parentNotifier = notifier;
     }
 
     @Override

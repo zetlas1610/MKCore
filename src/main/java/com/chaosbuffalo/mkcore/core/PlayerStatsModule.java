@@ -5,6 +5,7 @@ import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
 import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
+import com.chaosbuffalo.mkcore.sync.ISyncNotifier;
 import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import com.chaosbuffalo.mkcore.sync.SyncFloat;
 import net.minecraft.entity.LivingEntity;
@@ -245,6 +246,11 @@ public class PlayerStatsModule implements ISyncObject, IStatsModule {
         }
     }
 
+
+    @Override
+    public void setNotifier(ISyncNotifier notifier) {
+        publicUpdater.setNotifier(notifier);
+    }
 
     @Override
     public boolean isDirty() {

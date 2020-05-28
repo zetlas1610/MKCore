@@ -4,6 +4,7 @@ import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
+import com.chaosbuffalo.mkcore.sync.ISyncNotifier;
 import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
@@ -18,7 +19,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class PlayerActionBar implements ISyncObject {
+public class PlayerActionBar extends PlayerSyncBase {
 
     private final PlayerKnowledge knowledge;
     private final List<ResourceLocation> abilities = NonNullList.withSize(GameConstants.ACTION_BAR_SIZE, MKCoreRegistry.INVALID_ABILITY);
@@ -27,6 +28,7 @@ public class PlayerActionBar implements ISyncObject {
 
     public PlayerActionBar(PlayerKnowledge knowledge) {
         this.knowledge = knowledge;
+        addSyncChild(hotBarUpdater);
     }
 
     public int getCurrentSize() {
@@ -95,26 +97,6 @@ public class PlayerActionBar implements ISyncObject {
         }
     }
 
-    @Override
-    public boolean isDirty() {
-        return hotBarUpdater.isDirty();
-    }
-
-    @Override
-    public void deserializeUpdate(CompoundNBT tag) {
-        hotBarUpdater.deserializeUpdate(tag);
-    }
-
-    @Override
-    public void serializeUpdate(CompoundNBT tag) {
-        hotBarUpdater.serializeUpdate(tag);
-    }
-
-    @Override
-    public void serializeFull(CompoundNBT tag) {
-        hotBarUpdater.serializeFull(tag);
-    }
-
     public void serialize(CompoundNBT tag) {
         hotBarUpdater.serialize(tag);
     }
@@ -134,6 +116,7 @@ public class PlayerActionBar implements ISyncObject {
         private final Supplier<List<ResourceLocation>> parent;
         private final String name;
         private final IntSet dirtyEntries = new IntOpenHashSet();
+        private ISyncNotifier parentNotifier = ISyncNotifier.NONE;
 
         public ListUpdater(Supplier<List<ResourceLocation>> list, String name) {
             this.parent = list;
@@ -149,6 +132,12 @@ public class PlayerActionBar implements ISyncObject {
 
         void setDirty(int index) {
             dirtyEntries.add(index);
+            parentNotifier.markDirty(this);
+        }
+
+        @Override
+        public void setNotifier(ISyncNotifier notifier) {
+            parentNotifier = notifier;
         }
 
         @Override
