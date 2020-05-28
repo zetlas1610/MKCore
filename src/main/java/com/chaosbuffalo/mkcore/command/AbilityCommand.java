@@ -2,8 +2,8 @@ package com.chaosbuffalo.mkcore.command;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
-import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
-import com.chaosbuffalo.mkcore.abilities.PlayerAbilityInfo;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.core.PlayerKnownAbilities;
 import com.chaosbuffalo.mkcore.utils.TextUtils;
 import com.mojang.brigadier.Command;
@@ -36,7 +36,7 @@ public class AbilityCommand {
         ServerPlayerEntity player = ctx.getSource().asPlayer();
         ResourceLocation abilityId = ctx.getArgument("ability", ResourceLocation.class);
 
-        PlayerAbility ability = MKCoreRegistry.getAbility(abilityId);
+        MKAbility ability = MKCoreRegistry.getAbility(abilityId);
         if (ability != null) {
             MKCore.getPlayer(player).ifPresent(cap -> cap.getKnowledge().learnAbility(ability));
         }
@@ -59,7 +59,7 @@ public class AbilityCommand {
 
         MKCore.getPlayer(player).ifPresent(cap -> {
             PlayerKnownAbilities knownAbilities = cap.getKnowledge().getKnownAbilities();
-            Collection<PlayerAbilityInfo> abilities = knownAbilities.getAbilities();
+            Collection<MKAbilityInfo> abilities = knownAbilities.getAbilities();
             if (abilities.size() > 0) {
                 TextUtils.sendPlayerChatMessage(player, "Known Abilities");
                 abilities.forEach(info -> TextUtils.sendPlayerChatMessage(player, String.format("%s: %b", info.getId(), info.isCurrentlyKnown())));

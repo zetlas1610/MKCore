@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore;
 
-import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.network.ExecuteActiveAbilityPacket;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import net.minecraft.client.Minecraft;
@@ -73,7 +73,7 @@ public class ClientEventHandler {
 
         MKCore.getPlayer(player).ifPresent(pData -> {
             ResourceLocation abilityId = pData.getKnowledge().getActionBar().getAbilityInSlot(slot);
-            PlayerAbility ability = MKCoreRegistry.getAbility(abilityId);
+            MKAbility ability = MKCoreRegistry.getAbility(abilityId);
             if (ability == null || !ability.meetsRequirements(pData))
                 return;
 

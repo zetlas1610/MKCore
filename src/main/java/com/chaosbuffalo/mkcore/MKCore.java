@@ -3,7 +3,7 @@ package com.chaosbuffalo.mkcore;
 import com.chaosbuffalo.mkcore.abilities.AbilityManager;
 import com.chaosbuffalo.mkcore.client.gui.MKOverlay;
 import com.chaosbuffalo.mkcore.command.MKCommand;
-import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
@@ -77,7 +77,7 @@ public class MKCore {
         return new ResourceLocation(MKCore.MOD_ID, path);
     }
 
-    public static LazyOptional<IMKPlayerData> getPlayer(PlayerEntity playerEntity) {
+    public static LazyOptional<IMKEntityData> getPlayer(PlayerEntity playerEntity) {
         return playerEntity.getCapability(Capabilities.PLAYER_CAPABILITY);
     }
 }

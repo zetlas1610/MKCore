@@ -15,7 +15,7 @@ import net.minecraft.nbt.CompoundNBT;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MKPlayerData implements IMKPlayerData {
+public class MKPlayerData implements IMKEntityData<PlayerEntity> {
 
     private PlayerEntity player;
     private boolean readyForUpdates = false;
@@ -91,7 +91,7 @@ public class MKPlayerData implements IMKPlayerData {
     }
 
     @Override
-    public PlayerStatsModule getStats() {
+    public IStatsModule<PlayerEntity> getStats() {
         return stats;
     }
 
@@ -100,7 +100,7 @@ public class MKPlayerData implements IMKPlayerData {
     }
 
     @Override
-    public void clone(IMKPlayerData previous, boolean death) {
+    public void clone(IMKEntityData previous, boolean death) {
         MKCore.LOGGER.info("onDeath!");
 
         CompoundNBT tag = new CompoundNBT();

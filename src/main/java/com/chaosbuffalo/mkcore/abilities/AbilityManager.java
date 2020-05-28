@@ -70,7 +70,7 @@ public class AbilityManager extends JsonReloadListener {
         MKCore.LOGGER.info("Parsing Ability Json for {}", loc);
         ResourceLocation abilityLoc = new ResourceLocation(loc.getNamespace(),
                 "ability." + loc.getPath());
-        PlayerAbility ability = MKCoreRegistry.getAbility(abilityLoc);
+        MKAbility ability = MKCoreRegistry.getAbility(abilityLoc);
         if (ability == null) {
             MKCore.LOGGER.warn("Failed to parse ability data for : {}", abilityLoc);
             return false;

@@ -1,11 +1,12 @@
 package com.chaosbuffalo.mkcore.core;
 
 import com.chaosbuffalo.mkcore.abilities.CastState;
-import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 
-public interface IMKPlayerData {
+public interface IMKEntityData<T extends LivingEntity> {
 
     void attach(PlayerEntity player);
 
@@ -15,17 +16,17 @@ public interface IMKPlayerData {
 
     PlayerKnowledge getKnowledge();
 
-    PlayerStatsModule getStats();
+    IStatsModule<T> getStats();
 
     default boolean consumeMana(float amount) {
         return getStats().consumeMana(amount);
     }
 
-    default CastState startAbility(PlayerAbility ability) {
+    default CastState startAbility(MKAbility ability) {
         return getAbilityExecutor().startAbility(ability);
     }
 
-    void clone(IMKPlayerData previous, boolean death);
+    void clone(IMKEntityData<T> previous, boolean death);
 
     void update();
 

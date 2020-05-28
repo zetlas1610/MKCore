@@ -2,8 +2,8 @@ package com.chaosbuffalo.mkcore.test;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.CastState;
-import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
-import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.effects.AreaEffectBuilder;
 import com.chaosbuffalo.mkcore.effects.ParticlePotion;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
@@ -11,7 +11,7 @@ import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.targeting_api.Targeting;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundEvent;
@@ -24,11 +24,11 @@ import net.minecraftforge.fml.common.Mod;
 import javax.annotation.Nullable;
 
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class WhirlwindBlades extends PlayerAbility {
+public class WhirlwindBlades extends MKAbility {
     public static WhirlwindBlades INSTANCE = new WhirlwindBlades();
 
     @SubscribeEvent
-    public static void register(RegistryEvent.Register<PlayerAbility> event) {
+    public static void register(RegistryEvent.Register<MKAbility> event) {
         event.getRegistry().register(INSTANCE);
     }
 
@@ -61,7 +61,7 @@ public class WhirlwindBlades extends PlayerAbility {
     }
 
     @Override
-    public void continueCast(PlayerEntity entity, IMKPlayerData data, World theWorld, int castTimeLeft, CastState state) {
+    public void continueCast(LivingEntity entity, IMKEntityData<?> data, World theWorld, int castTimeLeft, CastState state) {
         super.continueCast(entity, data, theWorld, castTimeLeft, state);
         int tickSpeed = 6;
         if (castTimeLeft % tickSpeed == 0) {
@@ -102,7 +102,7 @@ public class WhirlwindBlades extends PlayerAbility {
     }
 
     @Override
-    public void execute(PlayerEntity entity, IMKPlayerData pData, World theWorld) {
-        pData.startAbility(this);
+    public void execute(LivingEntity entity, IMKEntityData<?> entityData, World theWorld) {
+        entityData.startAbility(this);
     }
 }

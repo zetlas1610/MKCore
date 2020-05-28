@@ -2,7 +2,7 @@ package com.chaosbuffalo.mkcore.network;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
-import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -18,9 +18,9 @@ public class PlayerAbilitiesSyncPacket {
     private final Map<ResourceLocation, CompoundNBT> data;
 
 
-    public PlayerAbilitiesSyncPacket(Collection<PlayerAbility> abilities) {
+    public PlayerAbilitiesSyncPacket(Collection<MKAbility> abilities) {
         data = new HashMap<>();
-        for (PlayerAbility ability : abilities) {
+        for (MKAbility ability : abilities) {
             data.put(ability.getRegistryName(), ability.serialize());
         }
     }
@@ -48,7 +48,7 @@ public class PlayerAbilitiesSyncPacket {
         MKCore.LOGGER.info("Handling player abilities update packet");
         ctx.enqueueWork(() -> {
             for (Entry<ResourceLocation, CompoundNBT> abilityData : data.entrySet()) {
-                PlayerAbility ability = MKCoreRegistry.ABILITIES.getValue(abilityData.getKey());
+                MKAbility ability = MKCoreRegistry.ABILITIES.getValue(abilityData.getKey());
                 if (ability != null) {
                     MKCore.LOGGER.info("Updating ability with server data: {}", abilityData.getKey());
                     ability.deserialize(abilityData.getValue());

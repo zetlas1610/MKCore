@@ -2,8 +2,8 @@ package com.chaosbuffalo.mkcore.core;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
-import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
-import com.chaosbuffalo.mkcore.abilities.PlayerAbilityInfo;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
 import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import net.minecraft.entity.player.PlayerEntity;
@@ -42,11 +42,11 @@ public class PlayerKnowledge implements ISyncObject {
     }
 
     @Nullable
-    public PlayerAbilityInfo getAbilityInfo(ResourceLocation abilityId) {
+    public MKAbilityInfo getAbilityInfo(ResourceLocation abilityId) {
         return knownAbilities.getAbilityInfo(abilityId);
     }
 
-    public void learnAbility(PlayerAbility ability) {
+    public void learnAbility(MKAbility ability) {
         if (knownAbilities.learn(ability)) {
             actionBar.tryPlaceOnBar(ability.getAbilityId());
         } else {
@@ -55,7 +55,7 @@ public class PlayerKnowledge implements ISyncObject {
     }
 
     public void unlearnAbility(ResourceLocation abilityId) {
-        PlayerAbility ability = MKCoreRegistry.getAbility(abilityId);
+        MKAbility ability = MKCoreRegistry.getAbility(abilityId);
         if (ability == null) {
             MKCore.LOGGER.warn("{} tried to unlearn ability not in registry: {}", getPlayer(), abilityId);
             return;

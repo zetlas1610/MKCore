@@ -1,7 +1,5 @@
 package com.chaosbuffalo.mkcore.core;
 
-import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
-import com.chaosbuffalo.mkcore.init.ModDamageTypes;
 import com.chaosbuffalo.mkcore.utils.EntityUtils;
 import com.chaosbuffalo.mkcore.utils.ItemUtils;
 import net.minecraft.entity.Entity;
@@ -11,7 +9,7 @@ import net.minecraft.item.ItemStack;
 
 public class MKCombatFormulas {
 
-    public static int applyCooldownReduction(IMKPlayerData playerData, int originalCooldownTicks) {
+    public static int applyCooldownReduction(IMKEntityData playerData, int originalCooldownTicks) {
         final float MAX_COOLDOWN = 2.0f; // Maximum cooldown rate improvement is 200%
         float cdrValue = (float) playerData.getPlayer().getAttribute(MKAttributes.COOLDOWN).getValue();
         float mod = MAX_COOLDOWN - cdrValue;
@@ -21,7 +19,7 @@ public class MKCombatFormulas {
 
     
 
-    public static float applyManaCostReduction(IMKPlayerData playerData, float originalCost) {
+    public static float applyManaCostReduction(IMKEntityData playerData, float originalCost) {
         return originalCost;
     }
 
@@ -34,7 +32,7 @@ public class MKCombatFormulas {
         return ItemUtils.getCritChanceForItem(item);
     }
 
-    public static float getRangedCritChanceForEntity(IMKPlayerData data, ServerPlayerEntity player, Entity entity) {
+    public static float getRangedCritChanceForEntity(IMKEntityData data, ServerPlayerEntity player, Entity entity) {
         return EntityUtils.ENTITY_CRIT.getChance(entity);
     }
 

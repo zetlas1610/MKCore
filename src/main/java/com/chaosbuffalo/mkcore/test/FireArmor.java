@@ -3,8 +3,8 @@ package com.chaosbuffalo.mkcore.test;
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.CastState;
-import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
-import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.effects.AreaEffectBuilder;
 import com.chaosbuffalo.mkcore.effects.ParticlePotion;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
@@ -12,7 +12,7 @@ import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.targeting_api.Targeting;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
@@ -24,11 +24,11 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class FireArmor extends PlayerAbility {
+public class FireArmor extends MKAbility {
     public static final FireArmor INSTANCE = new FireArmor();
 
     @SubscribeEvent
-    public static void register(RegistryEvent.Register<PlayerAbility> event) {
+    public static void register(RegistryEvent.Register<MKAbility> event) {
         event.getRegistry().register(INSTANCE);
     }
 
@@ -56,7 +56,7 @@ public class FireArmor extends PlayerAbility {
 //    }
 
     @Override
-    public void endCast(PlayerEntity entity, IMKPlayerData data, World theWorld, CastState state) {
+    public void endCast(LivingEntity entity, IMKEntityData<?> data, World theWorld, CastState state) {
         super.endCast(entity, data, theWorld, state);
         int level = 1;
 
@@ -98,7 +98,7 @@ public class FireArmor extends PlayerAbility {
     }
 
     @Override
-    public void execute(PlayerEntity entity, IMKPlayerData pData, World theWorld) {
-        pData.startAbility(this);
+    public void execute(LivingEntity entity, IMKEntityData<?> entityData, World theWorld) {
+        entityData.startAbility(this);
     }
 }

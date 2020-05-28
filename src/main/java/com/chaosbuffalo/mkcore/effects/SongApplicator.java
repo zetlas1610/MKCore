@@ -2,8 +2,8 @@ package com.chaosbuffalo.mkcore.effects;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
-import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
-import com.chaosbuffalo.mkcore.abilities.PlayerToggleAbility;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.abilities.MKToggleAbility;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
@@ -35,7 +35,7 @@ public abstract class SongApplicator extends SongPotionBase {
         if (source instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) source;
             MKCore.getPlayer(player).ifPresent(pData -> {
-                PlayerAbility ability = MKCoreRegistry.getAbility(PlayerToggleAbility.getToggleAbilityIdForPotion(this));
+                MKAbility ability = MKCoreRegistry.getAbility(MKToggleAbility.getToggleAbilityIdForPotion(this));
                 if (ability == null)
                     return;
 

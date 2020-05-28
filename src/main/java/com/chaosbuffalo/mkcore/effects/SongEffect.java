@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkcore.effects;
 
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,7 +14,7 @@ public abstract class SongEffect extends SongPotionBase {
         super(period, true, typeIn, liquidColorIn);
     }
 
-    public AreaEffectBuilder prepareAreaEffect(PlayerEntity source, IMKPlayerData playerData, int level, AreaEffectBuilder builder) {
+    public AreaEffectBuilder prepareAreaEffect(PlayerEntity source, IMKEntityData playerData, int level, AreaEffectBuilder builder) {
         return builder;
     }
 

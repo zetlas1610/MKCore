@@ -2,8 +2,8 @@ package com.chaosbuffalo.mkcore.core;
 
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
-import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
-import com.chaosbuffalo.mkcore.abilities.PlayerAbilityInfo;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
@@ -80,14 +80,14 @@ public class PlayerActionBar implements ISyncObject {
         return slot;
     }
 
-    public void onAbilityUnlearned(PlayerAbility ability) {
+    public void onAbilityUnlearned(MKAbility ability) {
         removeFromHotBar(ability.getAbilityId());
     }
 
     private void checkHotBar(ResourceLocation abilityId) {
         if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
             return;
-        PlayerAbilityInfo info = knowledge.getAbilityInfo(abilityId);
+        MKAbilityInfo info = knowledge.getAbilityInfo(abilityId);
         if (info == null)
             return;
         if (!info.isCurrentlyKnown()) {

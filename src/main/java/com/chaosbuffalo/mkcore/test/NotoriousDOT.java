@@ -1,13 +1,14 @@
 package com.chaosbuffalo.mkcore.test;
 
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
-import com.chaosbuffalo.mkcore.abilities.PlayerToggleAbility;
-import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.abilities.MKToggleAbility;
+import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.targeting_api.Targeting;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.ParticleTypes;
@@ -23,12 +24,12 @@ import net.minecraftforge.fml.common.Mod;
 import javax.annotation.Nullable;
 
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class NotoriousDOT extends PlayerToggleAbility {
+public class NotoriousDOT extends MKToggleAbility {
     public static final NotoriousDOT INSTANCE = new NotoriousDOT();
     public static ResourceLocation TOGGLE_GROUP = MKCore.makeRL("toggle_group.skald");
 
     @SubscribeEvent
-    public static void register(RegistryEvent.Register<PlayerAbility> event) {
+    public static void register(RegistryEvent.Register<MKAbility> event) {
         event.getRegistry().register(INSTANCE);
     }
 
@@ -67,8 +68,8 @@ public class NotoriousDOT extends PlayerToggleAbility {
     }
 
     @Override
-    public void applyEffect(PlayerEntity entity, IMKPlayerData pData, World theWorld) {
-        super.applyEffect(entity, pData, theWorld);
+    public void applyEffect(LivingEntity entity, IMKEntityData<?> entityData, World theWorld) {
+        super.applyEffect(entity, entityData, theWorld);
         int level = 1;
         entity.addPotionEffect(NotoriousDOTSongPotion.Create(entity).setTarget(entity)
                 .toPotionEffect(BASE_DURATION, level));

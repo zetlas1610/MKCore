@@ -2,8 +2,8 @@ package com.chaosbuffalo.mkcore.core;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
-import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
-import com.chaosbuffalo.mkcore.abilities.PlayerAbilityInfo;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -15,25 +15,25 @@ import java.util.*;
 
 public class PlayerKnownAbilities implements ISyncObject {
     private final PlayerKnowledge knowledge;
-    private final Map<ResourceLocation, PlayerAbilityInfo> abilityInfoMap = new HashMap<>();
-    private final List<PlayerAbilityInfo> dirtyList = new ArrayList<>();
+    private final Map<ResourceLocation, MKAbilityInfo> abilityInfoMap = new HashMap<>();
+    private final List<MKAbilityInfo> dirtyList = new ArrayList<>();
 
     public PlayerKnownAbilities(PlayerKnowledge knowledge) {
         this.knowledge = knowledge;
     }
 
     @Nullable
-    public PlayerAbilityInfo getAbilityInfo(ResourceLocation abilityId) {
+    public MKAbilityInfo getAbilityInfo(ResourceLocation abilityId) {
         return abilityInfoMap.get(abilityId);
     }
 
-    public Collection<PlayerAbilityInfo> getAbilities() {
+    public Collection<MKAbilityInfo> getAbilities() {
         return Collections.unmodifiableCollection(abilityInfoMap.values());
     }
 
 
-    public boolean learn(PlayerAbility ability) {
-        PlayerAbilityInfo info = getAbilityInfo(ability.getAbilityId());
+    public boolean learn(MKAbility ability) {
+        MKAbilityInfo info = getAbilityInfo(ability.getAbilityId());
         if (info == null) {
             info = ability.createAbilityInfo();
         } else if (info.isCurrentlyKnown()) {
@@ -55,7 +55,7 @@ public class PlayerKnownAbilities implements ISyncObject {
 
 
     public boolean unlearn(ResourceLocation abilityId) {
-        PlayerAbilityInfo info = getAbilityInfo(abilityId);
+        MKAbilityInfo info = getAbilityInfo(abilityId);
         if (info == null) {
             MKCore.LOGGER.error("{} tried to unlearn unknown ability {}", knowledge.getPlayer(), abilityId);
             return false;
@@ -72,7 +72,7 @@ public class PlayerKnownAbilities implements ISyncObject {
     }
 
 
-    public void markDirty(PlayerAbilityInfo info) {
+    public void markDirty(MKAbilityInfo info) {
         dirtyList.add(info);
     }
 
@@ -88,8 +88,8 @@ public class PlayerKnownAbilities implements ISyncObject {
 
             for (String id : abilities.keySet()) {
                 ResourceLocation abilityId = new ResourceLocation(id);
-                PlayerAbilityInfo current = abilityInfoMap.computeIfAbsent(abilityId, newAbilityId -> {
-                    PlayerAbility ability = MKCoreRegistry.getAbility(newAbilityId);
+                MKAbilityInfo current = abilityInfoMap.computeIfAbsent(abilityId, newAbilityId -> {
+                    MKAbility ability = MKCoreRegistry.getAbility(newAbilityId);
                     if (ability == null)
                         return null;
 
@@ -110,7 +110,7 @@ public class PlayerKnownAbilities implements ISyncObject {
     public void serializeUpdate(CompoundNBT tag) {
         if (dirtyList.size() > 0) {
             CompoundNBT abilities = new CompoundNBT();
-            for (PlayerAbilityInfo info : dirtyList) {
+            for (MKAbilityInfo info : dirtyList) {
                 CompoundNBT ability = new CompoundNBT();
                 info.serialize(ability);
                 abilities.put(info.getId().toString(), ability);
@@ -124,7 +124,7 @@ public class PlayerKnownAbilities implements ISyncObject {
     @Override
     public void serializeFull(CompoundNBT tag) {
         CompoundNBT abilities = new CompoundNBT();
-        for (PlayerAbilityInfo info : abilityInfoMap.values()) {
+        for (MKAbilityInfo info : abilityInfoMap.values()) {
             CompoundNBT ability = new CompoundNBT();
             info.serialize(ability);
             abilities.put(info.getId().toString(), ability);
@@ -135,7 +135,7 @@ public class PlayerKnownAbilities implements ISyncObject {
 
     public void serialize(CompoundNBT tag) {
         ListNBT tagList = new ListNBT();
-        for (PlayerAbilityInfo info : abilityInfoMap.values()) {
+        for (MKAbilityInfo info : abilityInfoMap.values()) {
             CompoundNBT sk = new CompoundNBT();
             info.serialize(sk);
             tagList.add(sk);
@@ -150,12 +150,12 @@ public class PlayerKnownAbilities implements ISyncObject {
             for (int i = 0; i < tagList.size(); i++) {
                 CompoundNBT abilityTag = tagList.getCompound(i);
                 ResourceLocation abilityId = new ResourceLocation(abilityTag.getString("id"));
-                PlayerAbility ability = MKCoreRegistry.getAbility(abilityId);
+                MKAbility ability = MKCoreRegistry.getAbility(abilityId);
                 if (ability == null) {
                     continue;
                 }
 
-                PlayerAbilityInfo info = ability.createAbilityInfo();
+                MKAbilityInfo info = ability.createAbilityInfo();
                 if (info.deserialize(abilityTag))
                     abilityInfoMap.put(abilityId, info);
             }

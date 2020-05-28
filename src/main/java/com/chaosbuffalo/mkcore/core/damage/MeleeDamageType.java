@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.core.damage;
 
-import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.MKAttributes;
 import com.chaosbuffalo.mkcore.core.MKCombatFormulas;
 import com.chaosbuffalo.mkcore.utils.ItemUtils;
@@ -26,7 +26,7 @@ public class MeleeDamageType extends MKDamageType {
 
     @Override
     public ITextComponent getCritMessage(LivingEntity source, LivingEntity target, float damage,
-                                         PlayerAbility ability, boolean isSelf){
+                                         MKAbility ability, boolean isSelf){
         Style messageStyle = new Style();
         messageStyle.setColor(TextFormatting.GOLD);
         String msg;

@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore;
 
-import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
 import net.minecraft.block.Block;
 import net.minecraft.util.ResourceLocation;
@@ -16,12 +16,12 @@ import javax.annotation.Nullable;
 public class MKCoreRegistry {
     public static ResourceLocation INVALID_CLASS = new ResourceLocation(MKCore.MOD_ID, "class.invalid");
     public static ResourceLocation INVALID_ABILITY = new ResourceLocation(MKCore.MOD_ID, "ability.invalid");
-    public static IForgeRegistry<PlayerAbility> ABILITIES = null;
+    public static IForgeRegistry<MKAbility> ABILITIES = null;
     public static IForgeRegistry<MKDamageType> DAMAGE_TYPES = null;
 
 
     @Nullable
-    public static PlayerAbility getAbility(ResourceLocation abilityId) {
+    public static MKAbility getAbility(ResourceLocation abilityId) {
         return ABILITIES.getValue(abilityId);
     }
 
@@ -36,9 +36,9 @@ public class MKCoreRegistry {
 
     @SubscribeEvent
     public static void createRegistries(RegistryEvent.NewRegistry event) {
-        ABILITIES = new RegistryBuilder<PlayerAbility>()
+        ABILITIES = new RegistryBuilder<MKAbility>()
                 .setName(MKCore.makeRL("abilities"))
-                .setType(PlayerAbility.class)
+                .setType(MKAbility.class)
                 .setIDRange(0, Integer.MAX_VALUE - 1)
                 .create();
         DAMAGE_TYPES = new RegistryBuilder<MKDamageType>()

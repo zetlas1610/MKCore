@@ -4,16 +4,16 @@ import com.chaosbuffalo.mkcore.MKCore;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 
-public class PlayerAbilityInfo {
-    private final PlayerAbility ability;
+public class MKAbilityInfo {
+    private final MKAbility ability;
     private boolean known;
 
-    public PlayerAbilityInfo(PlayerAbility ability) {
+    public MKAbilityInfo(MKAbility ability) {
         this.ability = ability;
         known = false;
     }
 
-    public PlayerAbility getAbility() {
+    public MKAbility getAbility() {
         return ability;
     }
 
