@@ -325,7 +325,8 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
 
     @Override
     public void writeAdditional(CompoundNBT compound) {
-        compound.putShort("life", (short)this.ticksInGround);
+        compound.putInt("ticksInGround", this.ticksInGround);
+        compound.putInt("ticksInAir", this.ticksInAir);
         if (this.inBlockState != null) {
             compound.put("inBlockState", NBTUtil.writeBlockState(this.inBlockState));
         }
@@ -344,7 +345,8 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
     }
 
     public void readAdditional(CompoundNBT compound) {
-        this.ticksInGround = compound.getShort("life");
+        this.ticksInGround = compound.getInt("ticksInGround");
+        this.ticksInAir = compound.getInt("ticksInAir");
         if (compound.contains("inBlockState", 10)) {
             this.inBlockState = NBTUtil.readBlockState(compound.getCompound("inBlockState"));
         }
