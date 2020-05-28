@@ -31,80 +31,76 @@ public class PlayerStatsModule implements ISyncObject, IStatsModule<PlayerEntity
 
     @Override
     public float getCritChanceForDamageType(MKDamageType damageType){
-        return damageType.getCritChance(getPlayer(), null);
+        return damageType.getCritChance(getEntity(), null);
     }
 
     @Override
     public float getCritMultiplierForDamageType(MKDamageType damageType){
-        return damageType.getCritMultiplier(getPlayer(), null);
+        return damageType.getCritMultiplier(getEntity(), null);
     }
 
     @Override
     public float getDamageTypeBonus(MKDamageType damageType){
-        return (float) getPlayer().getAttribute(damageType.getDamageAttribute()).getValue();
+        return (float) getEntity().getAttribute(damageType.getDamageAttribute()).getValue();
     }
 
     @Override
     public float getDamageMultiplierForDamageType(MKDamageType damageType){
         float originalValue = 10.0f;
-        float scaled = damageType.applyDamage(getPlayer(), null, originalValue, 1.0f);
+        float scaled = damageType.applyDamage(getEntity(), null, originalValue, 1.0f);
         return scaled / originalValue;
     }
 
     @Override
     public float getArmorMultiplierForDamageType(MKDamageType damageType){
         float originalValue = 10.0f;
-        float scaled = damageType.applyResistance(getPlayer(), originalValue);
+        float scaled = damageType.applyResistance(getEntity(), originalValue);
         return scaled / originalValue;
     }
 
     @Override
     public float getMeleeCritChance() {
-        return (float) getPlayer().getAttribute(MKAttributes.MELEE_CRIT).getValue();
+        return (float) getEntity().getAttribute(MKAttributes.MELEE_CRIT).getValue();
     }
 
     @Override
     public float getSpellCritChance() {
-        return (float) getPlayer().getAttribute(MKAttributes.SPELL_CRIT).getValue();
+        return (float) getEntity().getAttribute(MKAttributes.SPELL_CRIT).getValue();
     }
 
     @Override
     public float getSpellCritDamage() {
-        return (float) getPlayer().getAttribute(MKAttributes.SPELL_CRIT_MULTIPLIER).getValue();
+        return (float) getEntity().getAttribute(MKAttributes.SPELL_CRIT_MULTIPLIER).getValue();
     }
 
     @Override
     public float getMeleeCritDamage() {
-        return (float) getPlayer().getAttribute(MKAttributes.MELEE_CRIT_MULTIPLIER).getValue();
+        return (float) getEntity().getAttribute(MKAttributes.MELEE_CRIT_MULTIPLIER).getValue();
     }
 
     @Override
     public float getHealBonus() {
-        return (float) getPlayer().getAttribute(MKAttributes.HEAL_BONUS).getValue();
+        return (float) getEntity().getAttribute(MKAttributes.HEAL_BONUS).getValue();
     }
 
-
-    private PlayerEntity getPlayer() {
-        return playerData.getPlayer();
-    }
 
     private boolean isServerSide() {
-        return getPlayer() instanceof ServerPlayerEntity;
+        return getEntity() instanceof ServerPlayerEntity;
     }
 
     @Override
     public float getHealth() {
-        return getPlayer().getHealth();
+        return getEntity().getHealth();
     }
 
     @Override
     public void setHealth(float value) {
-        getPlayer().setHealth(value);
+        getEntity().setHealth(value);
     }
 
     @Override
     public float getMaxHealth() {
-        return getPlayer().getMaxHealth();
+        return getEntity().getMaxHealth();
     }
 
     @Override
@@ -120,18 +116,18 @@ public class PlayerStatsModule implements ISyncObject, IStatsModule<PlayerEntity
 
     @Override
     public float getMaxMana() {
-        return (float) getPlayer().getAttribute(MKAttributes.MAX_MANA).getValue();
+        return (float) getEntity().getAttribute(MKAttributes.MAX_MANA).getValue();
     }
 
     @Override
     public void setMaxMana(float max) {
-        getPlayer().getAttribute(MKAttributes.MAX_MANA).setBaseValue(max);
+        getEntity().getAttribute(MKAttributes.MAX_MANA).setBaseValue(max);
         setMana(getMana()); // Refresh the mana to account for the updated maximum
     }
 
     @Override
     public float getManaRegenRate() {
-        return (float) getPlayer().getAttribute(MKAttributes.MANA_REGEN).getValue();
+        return (float) getEntity().getAttribute(MKAttributes.MANA_REGEN).getValue();
     }
 
     @Override
@@ -230,12 +226,12 @@ public class PlayerStatsModule implements ISyncObject, IStatsModule<PlayerEntity
     public void printActiveCooldowns() {
         String msg = "All active cooldowns:";
 
-        getPlayer().sendMessage(new StringTextComponent(msg));
+        getEntity().sendMessage(new StringTextComponent(msg));
         abilityTracker.iterateActive((abilityId, current) -> {
             String name = abilityId.toString();
             int max = abilityTracker.getMaxCooldownTicks(abilityId);
             ITextComponent line = new StringTextComponent(String.format("%s: %d / %d", name, current, max));
-            getPlayer().sendMessage(line);
+            getEntity().sendMessage(line);
         });
     }
 
