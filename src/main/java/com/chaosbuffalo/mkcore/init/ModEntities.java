@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkcore.init;
 
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.entities.EntityMKAreaEffect;
+import com.chaosbuffalo.mkcore.entities.MKAreaEffectEntity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraftforge.event.RegistryEvent;
@@ -13,7 +13,7 @@ public class ModEntities {
 
     @SubscribeEvent
     public static void registerEntities(RegistryEvent.Register<EntityType<?>> evt) {
-        evt.getRegistry().register(EntityType.Builder.<EntityMKAreaEffect>create(EntityMKAreaEffect::new, EntityClassification.MISC)
+        evt.getRegistry().register(EntityType.Builder.<MKAreaEffectEntity>create(MKAreaEffectEntity::new, EntityClassification.MISC)
                 .immuneToFire()
                 .size(0, 0)
                 .setTrackingRange(64)

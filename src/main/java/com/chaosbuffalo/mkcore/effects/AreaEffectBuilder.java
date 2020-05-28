@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkcore.effects;
 
 
-import com.chaosbuffalo.mkcore.entities.EntityMKAreaEffect;
+import com.chaosbuffalo.mkcore.entities.MKAreaEffectEntity;
 import com.chaosbuffalo.targeting_api.Targeting;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -11,10 +11,10 @@ import net.minecraft.util.math.AxisAlignedBB;
 
 public class AreaEffectBuilder {
 
-    private final EntityMKAreaEffect areaEffectCloud;
+    private final MKAreaEffectEntity areaEffectCloud;
 
     private AreaEffectBuilder(LivingEntity caster, Entity center) {
-        areaEffectCloud = new EntityMKAreaEffect(center.getEntityWorld(), center.getPosX(), center.getPosY(), center.getPosZ());
+        areaEffectCloud = new MKAreaEffectEntity(center.getEntityWorld(), center.getPosX(), center.getPosY(), center.getPosZ());
         areaEffectCloud.setOwner(caster);
     }
 
@@ -90,7 +90,7 @@ public class AreaEffectBuilder {
     }
 
     public AreaEffectBuilder particle(IParticleData particleType) {
-        areaEffectCloud.setParticle(particleType);
+        areaEffectCloud.setParticleData(particleType);
         return this;
     }
 
@@ -100,7 +100,7 @@ public class AreaEffectBuilder {
     }
 
     public AreaEffectBuilder period(int ticksBetweenApplication) {
-        areaEffectCloud.setReapplicationDelay(ticksBetweenApplication);
+        areaEffectCloud.setPeriod(ticksBetweenApplication);
         return this;
     }
 

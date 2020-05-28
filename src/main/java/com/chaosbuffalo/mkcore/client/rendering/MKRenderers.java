@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkcore.client.rendering;
 
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.entities.EntityMKAreaEffect;
+import com.chaosbuffalo.mkcore.entities.MKAreaEffectEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -13,8 +13,6 @@ public class MKRenderers {
 
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent evt) {
-//        registeredModels = true;
-
-        RenderingRegistry.registerEntityRenderingHandler(EntityMKAreaEffect.TYPE, EntityMKAreaEffectRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(MKAreaEffectEntity.TYPE, EntityMKAreaEffectRenderer::new);
     }
 }
