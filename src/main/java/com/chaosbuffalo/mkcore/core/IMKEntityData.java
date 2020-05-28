@@ -8,9 +8,9 @@ import net.minecraft.nbt.CompoundNBT;
 
 public interface IMKEntityData<T extends LivingEntity> {
 
-    void attach(PlayerEntity player);
+    void attach(T player);
 
-    PlayerEntity getPlayer();
+    T getPlayer();
 
     PlayerAbilityExecutor getAbilityExecutor();
 

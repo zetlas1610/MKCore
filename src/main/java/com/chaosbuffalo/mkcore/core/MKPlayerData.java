@@ -100,7 +100,7 @@ public class MKPlayerData implements IMKEntityData<PlayerEntity> {
     }
 
     @Override
-    public void clone(IMKEntityData previous, boolean death) {
+    public void clone(IMKEntityData<PlayerEntity> previous, boolean death) {
         MKCore.LOGGER.info("onDeath!");
 
         CompoundNBT tag = new CompoundNBT();
@@ -108,6 +108,7 @@ public class MKPlayerData implements IMKEntityData<PlayerEntity> {
         deserialize(tag);
     }
 
+    @Override
     public PlayerEntity getPlayer() {
         return player;
     }
