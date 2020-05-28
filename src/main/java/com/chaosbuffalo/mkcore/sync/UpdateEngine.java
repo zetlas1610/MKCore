@@ -11,6 +11,7 @@ import net.minecraft.nbt.CompoundNBT;
 public class UpdateEngine {
     private final MKPlayerData playerData;
     private final PlayerEntity player;
+    private boolean readyForUpdates = false;
     private final CompositeUpdater publicUpdater = new CompositeUpdater();
     private final CompositeUpdater privateUpdater = new CompositeUpdater();
 
@@ -34,6 +35,11 @@ public class UpdateEngine {
     public void syncUpdates() {
         if (!isServerSide())
             return;
+
+        if (!readyForUpdates) {
+//            MKCore.LOGGER.info("deferring update because client not ready");
+            return;
+        }
 
         if (publicUpdater.isDirty()) {
             PlayerDataSyncPacket packet = getUpdateMessage(false);
@@ -62,6 +68,7 @@ public class UpdateEngine {
         boolean privateUpdate = player == otherPlayer;
         if (privateUpdate) {
             privateUpdater.serializeFull(tag);
+            readyForUpdates = true;
         }
         PlayerDataSyncPacket packet = new PlayerDataSyncPacket(player.getUniqueID(), tag, privateUpdate);
         MKCore.LOGGER.info("sending full sync {} for {} to {}", packet, player, otherPlayer);

@@ -19,7 +19,6 @@ import java.util.Set;
 public class MKPlayerData implements IMKEntityData {
 
     private PlayerEntity player;
-    private boolean readyForUpdates = false;
     private PlayerAbilityExecutor abilityExecutor;
     private PlayerKnowledge knowledge;
     private PlayerStatsModule stats;
@@ -133,11 +132,6 @@ public class MKPlayerData implements IMKEntityData {
     }
 
     private void syncState() {
-        if (!readyForUpdates) {
-//            MKCore.LOGGER.info("deferring update because client not ready");
-            return;
-        }
-
         updateEngine.syncUpdates();
     }
 
@@ -150,7 +144,6 @@ public class MKPlayerData implements IMKEntityData {
         MKCore.LOGGER.info("Sending initial sync for {}", player);
         if (isServerSide()) {
             updateEngine.sendAll((ServerPlayerEntity) player);
-            readyForUpdates = true;
         }
     }
 
