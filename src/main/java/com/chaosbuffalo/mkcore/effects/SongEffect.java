@@ -14,7 +14,8 @@ public abstract class SongEffect extends SongPotionBase {
         super(period, true, typeIn, liquidColorIn);
     }
 
-    public AreaEffectBuilder prepareAreaEffect(PlayerEntity source, IMKEntityData playerData, int level, AreaEffectBuilder builder) {
+    public AreaEffectBuilder prepareAreaEffect(PlayerEntity source, IMKEntityData<?> entityData, int level,
+                                               AreaEffectBuilder builder) {
         return builder;
     }
 
@@ -33,7 +34,6 @@ public abstract class SongEffect extends SongPotionBase {
                 if (!pData.consumeMana(amplifier)) {
                     player.removePotionEffect(this);
                 }
-
                 AreaEffectBuilder builder = AreaEffectBuilder.Create(player, player)
                         .instant()
                         .particle(getSongParticle())
@@ -41,6 +41,8 @@ public abstract class SongEffect extends SongPotionBase {
                         .radius(getSongDistance(amplifier), true);
                 prepareAreaEffect(player, pData, amplifier, builder).spawn();
             });
+        } else if (source instanceof LivingEntity){
+
         }
     }
 }

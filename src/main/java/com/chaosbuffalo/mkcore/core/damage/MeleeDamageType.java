@@ -18,7 +18,7 @@ import net.minecraft.util.text.TextFormatting;
 
 public class MeleeDamageType extends MKDamageType {
 
-    public MeleeDamageType(ResourceLocation name){
+    public MeleeDamageType(ResourceLocation name) {
         super(name, (RangedAttribute) SharedMonsterAttributes.ATTACK_DAMAGE,
                 (RangedAttribute) SharedMonsterAttributes.ARMOR_TOUGHNESS, MKAttributes.MELEE_CRIT,
                 MKAttributes.MELEE_CRIT_MULTIPLIER);
@@ -30,7 +30,7 @@ public class MeleeDamageType extends MKDamageType {
         Style messageStyle = new Style();
         messageStyle.setColor(TextFormatting.GOLD);
         String msg;
-        if (isSelf){
+        if (isSelf) {
             msg = String.format("You just crit %s with %s for %s",
                     target.getDisplayName().getFormattedText(),
                     source.getHeldItemMainhand().getDisplayName().getFormattedText(),

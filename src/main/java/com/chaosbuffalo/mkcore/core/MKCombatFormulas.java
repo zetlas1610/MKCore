@@ -17,7 +17,6 @@ public class MKCombatFormulas {
         return (int) newTicks;
     }
 
-    
 
     public static float applyManaCostReduction(IMKEntityData playerData, float originalCost) {
         return originalCost;

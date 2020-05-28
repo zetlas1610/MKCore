@@ -26,7 +26,9 @@ public class MKCoreRegistry {
     }
 
     @Nullable
-    public static MKDamageType getDamageType(ResourceLocation damageTypeId) { return DAMAGE_TYPES.getValue(damageTypeId); }
+    public static MKDamageType getDamageType(ResourceLocation damageTypeId) {
+        return DAMAGE_TYPES.getValue(damageTypeId);
+    }
 
     @SubscribeEvent
     public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
@@ -44,7 +46,7 @@ public class MKCoreRegistry {
         DAMAGE_TYPES = new RegistryBuilder<MKDamageType>()
                 .setName(MKCore.makeRL("damage_types"))
                 .setType(MKDamageType.class)
-                .setIDRange(0, Integer.MAX_VALUE -1)
+                .setIDRange(0, Integer.MAX_VALUE - 1)
                 .create();
     }
 }
