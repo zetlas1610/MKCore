@@ -1,21 +1,21 @@
 package com.chaosbuffalo.mkcore.entities;
 
 import com.chaosbuffalo.targeting_api.Targeting;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.BushBlock;
-import net.minecraft.block.LeavesBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.IPacket;
 import net.minecraft.util.EntityPredicates;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
@@ -32,7 +32,6 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
     @Nullable
     private BlockState inBlockState;
     protected boolean inGround;
-    public int throwableShake;
 
     public UUID shootingEntity;
 
@@ -51,6 +50,20 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
 
     public BaseProjectileEntity(EntityType<?> entityTypeIn, World worldIn) {
         super(entityTypeIn, worldIn);
+        this.inBlockState = null;
+        this.inGround = false;
+        this.setDeathTime(100);
+        this.setDoGroundProc(false);
+        this.setGroundProcTime(20);
+        this.setAirProcTime(20);
+        this.setDoAirProc(false);
+        this.setAmplifier(0);
+        graphicalEffectTickInterval = 5;
+        setup();
+    }
+
+    public void setup(){
+
     }
 
     @Override
@@ -64,8 +77,6 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
         return false;
     }
 
-    protected void entityInit() {
-    }
 
     public int getAmplifier() {
         return this.amplifier;
@@ -151,23 +162,13 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
     }
 
     @Override
-    protected void readAdditional(CompoundNBT compound) {
-
-    }
-
-    @Override
-    protected void writeAdditional(CompoundNBT compound) {
-
-    }
-
-    @Override
     public IPacket<?> createSpawnPacket() {
         return null;
     }
 
     public void shoot(Entity source, float rotationPitchIn, float rotationYawIn,
                       float pitchOffset, float velocity, float inaccuracy) {
-        float x = -MathHelper.sin(rotationYawIn * ONE_DEGREE) * MathHelper.cos(rotationPitchIn * ONE_DEGREE;
+        float x = -MathHelper.sin(rotationYawIn * ONE_DEGREE) * MathHelper.cos(rotationPitchIn * ONE_DEGREE);
         float y = -MathHelper.sin((rotationPitchIn + pitchOffset) * ONE_DEGREE);
         float z = MathHelper.cos(rotationYawIn * ONE_DEGREE) * MathHelper.cos(rotationPitchIn * ONE_DEGREE);
         this.shoot(x, y, z, velocity, inaccuracy);
@@ -204,9 +205,9 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
         if (!blockstate.isAir(this.world, blockpos)) {
             VoxelShape voxelshape = blockstate.getCollisionShape(this.world, blockpos);
             if (!voxelshape.isEmpty()) {
-                Vec3d vec3d1 = this.getPositionVec();
+                Vec3d entityPos = this.getPositionVec();
                 for(AxisAlignedBB axisalignedbb : voxelshape.toBoundingBoxList()) {
-                    if (axisalignedbb.offset(blockpos).contains(vec3d1)) {
+                    if (axisalignedbb.offset(blockpos).contains(entityPos)) {
                         return true;
                     }
                 }
@@ -323,6 +324,47 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
     }
 
     @Override
+    public void writeAdditional(CompoundNBT compound) {
+        compound.putShort("life", (short)this.ticksInGround);
+        if (this.inBlockState != null) {
+            compound.put("inBlockState", NBTUtil.writeBlockState(this.inBlockState));
+        }
+
+        compound.putBoolean("inGround", this.inGround);
+        if (this.shootingEntity != null) {
+            compound.putUniqueId("OwnerUUID", this.shootingEntity);
+        }
+
+        compound.putBoolean("doAirProc", this.getDoAirProc());
+        compound.putBoolean("doGroundProc", this.getDoGroundProc());
+        compound.putInt("airProcTime", this.getAirProcTime());
+        compound.putInt("groundProcTime", this.getGroundProcTime());
+        compound.putInt("deathTime", this.getDeathTime());
+        compound.putInt("amplifier", this.getAmplifier());
+    }
+
+    public void readAdditional(CompoundNBT compound) {
+        this.ticksInGround = compound.getShort("life");
+        if (compound.contains("inBlockState", 10)) {
+            this.inBlockState = NBTUtil.readBlockState(compound.getCompound("inBlockState"));
+        }
+
+        this.inGround = compound.getBoolean("inGround");
+
+
+        if (compound.hasUniqueId("OwnerUUID")) {
+            this.shootingEntity = compound.getUniqueId("OwnerUUID");
+        }
+
+        this.setDoAirProc(compound.getBoolean("doAirProc"));
+        this.setDoGroundProc(compound.getBoolean("doGroundProc"));
+        this.setAirProcTime(compound.getInt("airProcTime"));
+        this.setGroundProcTime(compound.getInt("groundProcTime"));
+        this.setDeathTime(compound.getInt("deathTime"));
+        this.setAmplifier(compound.getInt("amplifier"));
+    }
+
+    @Override
     public void tick() {
         this.lastTickPosX = this.getPosX();
         this.lastTickPosY = this.getPosY();
@@ -395,7 +437,6 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
                 if (target instanceof PlayerEntity && shooter instanceof PlayerEntity &&
                         !((PlayerEntity) shooter).canAttackPlayer((PlayerEntity) target)) {
                     trace = null;
-                    entityRayTrace = null;
                 }
             }
 
