@@ -22,7 +22,7 @@ public class SyncObject<T> implements ISyncObject {
     public void set(T value) {
         this.value = value;
         this.dirty = true;
-        parentNotifier.markDirty(this);
+        parentNotifier.notifyUpdate(this);
     }
 
     public T get() {

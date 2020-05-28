@@ -12,16 +12,17 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
 
-public class PlayerActionBar extends PlayerSyncBase {
+public class PlayerActionBar extends PlayerSyncComponent {
 
-    private final PlayerKnowledge knowledge;
+    private final MKPlayerData playerData;
     private final List<ResourceLocation> abilities = NonNullList.withSize(GameConstants.ACTION_BAR_SIZE, MKCoreRegistry.INVALID_ABILITY);
     private final SyncListUpdater<ResourceLocation> hotBarUpdater =
             new SyncListUpdater<>("hotbar", () -> abilities, id -> StringNBT.valueOf(id.toString()), nbt -> new ResourceLocation(nbt.getString()));
 
-    public PlayerActionBar(PlayerKnowledge knowledge) {
-        this.knowledge = knowledge;
-        addSyncChild(hotBarUpdater);
+    public PlayerActionBar(MKPlayerData playerData) {
+        super();
+        this.playerData = playerData;
+        addPrivate(hotBarUpdater);
     }
 
     public int getCurrentSize() {
@@ -82,7 +83,7 @@ public class PlayerActionBar extends PlayerSyncBase {
     private void checkHotBar(ResourceLocation abilityId) {
         if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
             return;
-        MKAbilityInfo info = knowledge.getAbilityInfo(abilityId);
+        MKAbilityInfo info = playerData.getKnowledge().getAbilityInfo(abilityId);
         if (info == null)
             return;
         if (!info.isCurrentlyKnown()) {

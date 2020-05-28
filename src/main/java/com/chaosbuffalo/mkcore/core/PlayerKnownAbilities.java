@@ -16,16 +16,19 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PlayerKnownAbilities extends PlayerSyncBase {
-    private final PlayerKnowledge knowledge;
+
+public class PlayerKnownAbilities extends PlayerSyncComponent {
+    private final MKPlayerData playerData;
     private final Map<ResourceLocation, MKAbilityInfo> abilityInfoMap = new HashMap<>();
-    private final SyncMapUpdater<ResourceLocation, MKAbilityInfo> mapUpdater =
+
+    private final SyncMapUpdater<ResourceLocation, MKAbilityInfo> abilityUpdater =
             new SyncMapUpdater<>("knownAbilities", () -> abilityInfoMap, ResourceLocation::toString,
                     ResourceLocation::new, PlayerKnownAbilities::createAbilityInfo);
 
-    public PlayerKnownAbilities(PlayerKnowledge knowledge) {
-        this.knowledge = knowledge;
-        addSyncChild(mapUpdater);
+    public PlayerKnownAbilities(MKPlayerData playerData) {
+        super();
+        this.playerData = playerData;
+        addPrivate(abilityUpdater);
     }
 
     @Nullable
@@ -43,12 +46,12 @@ public class PlayerKnownAbilities extends PlayerSyncBase {
         if (info == null) {
             info = ability.createAbilityInfo();
         } else if (info.isCurrentlyKnown()) {
-            MKCore.LOGGER.warn("Player {} tried to learn already-known ability {}", knowledge.getPlayer(), ability.getAbilityId());
+            MKCore.LOGGER.warn("Player {} tried to learn already-known ability {}", playerData.getEntity(), ability.getAbilityId());
             return true;
         }
 
         if (info == null) {
-            MKCore.LOGGER.error("Failed to create PlayerAbilityInfo for ability {} for player {}", ability.getAbilityId(), knowledge.getPlayer());
+            MKCore.LOGGER.error("Failed to create PlayerAbilityInfo for ability {} for player {}", ability.getAbilityId(), playerData.getEntity());
             return false;
         }
 
@@ -63,7 +66,7 @@ public class PlayerKnownAbilities extends PlayerSyncBase {
     public boolean unlearn(ResourceLocation abilityId) {
         MKAbilityInfo info = getAbilityInfo(abilityId);
         if (info == null) {
-            MKCore.LOGGER.error("{} tried to unlearn unknown ability {}", knowledge.getPlayer(), abilityId);
+            MKCore.LOGGER.error("{} tried to unlearn unknown ability {}", playerData.getEntity(), abilityId);
             return false;
         }
 
@@ -78,7 +81,7 @@ public class PlayerKnownAbilities extends PlayerSyncBase {
     }
 
     public void markDirty(MKAbilityInfo info) {
-        mapUpdater.markDirty(info.getId());
+        abilityUpdater.markDirty(info.getId());
     }
 
     public void serialize(CompoundNBT tag) {

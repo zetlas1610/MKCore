@@ -35,7 +35,7 @@ public class SyncListUpdater<T> implements ISyncObject {
 
     public void setDirty(int index) {
         dirtyEntries.add(index);
-        parentNotifier.markDirty(this);
+        parentNotifier.notifyUpdate(this);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkcore.sync;
 
 public interface ISyncNotifier {
-    void markDirty(ISyncObject syncObject);
+    void notifyUpdate(ISyncObject syncObject);
 
 
     ISyncNotifier NONE = syncObject -> {

@@ -16,7 +16,7 @@ public class SyncFloat implements ISyncObject {
     public void set(float value) {
         this.value = value;
         this.dirty = true;
-        parentNotifier.markDirty(this);
+        parentNotifier.notifyUpdate(this);
     }
 
     public void add(float value) {

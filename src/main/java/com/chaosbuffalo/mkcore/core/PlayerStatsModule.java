@@ -4,9 +4,6 @@ import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
-import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
-import com.chaosbuffalo.mkcore.sync.ISyncNotifier;
-import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import com.chaosbuffalo.mkcore.sync.SyncFloat;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -17,18 +14,20 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
-public class PlayerStatsModule implements ISyncObject, IStatsModule {
+
+public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModule {
     private final MKPlayerData playerData;
     private float regenTime;
     private final AbilityTracker abilityTracker;
     private final SyncFloat mana = new SyncFloat("mana", 0f);
-    private final CompositeUpdater publicUpdater = new CompositeUpdater(mana);
 
     public PlayerStatsModule(MKPlayerData playerData) {
+        super();
         this.playerData = playerData;
         regenTime = 0f;
+        addPublic(mana);
         abilityTracker = AbilityTracker.getTracker(playerData.getEntity());
-        playerData.getUpdateEngine().addPrivate(abilityTracker);
+        addPrivate(abilityTracker);
     }
 
     public float getCritChanceForDamageType(MKDamageType damageType){
@@ -245,32 +244,4 @@ public class PlayerStatsModule implements ISyncObject, IStatsModule {
             setMana(nbt.getFloat("mana"));
         }
     }
-
-
-    @Override
-    public void setNotifier(ISyncNotifier notifier) {
-        publicUpdater.setNotifier(notifier);
-    }
-
-    @Override
-    public boolean isDirty() {
-        return publicUpdater.isDirty();
-    }
-
-    @Override
-    public void deserializeUpdate(CompoundNBT tag) {
-        publicUpdater.deserializeUpdate(tag);
-    }
-
-    @Override
-    public void serializeUpdate(CompoundNBT tag) {
-        publicUpdater.serializeUpdate(tag);
-    }
-
-    @Override
-    public void serializeFull(CompoundNBT tag) {
-        publicUpdater.serializeFull(tag);
-    }
-
-
 }

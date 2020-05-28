@@ -12,8 +12,8 @@ public class UpdateEngine {
     private final MKPlayerData playerData;
     private final PlayerEntity player;
     private boolean readyForUpdates = false;
-    private final CompositeUpdater publicUpdater = new CompositeUpdater();
-    private final CompositeUpdater privateUpdater = new CompositeUpdater();
+    private final SyncGroup publicUpdater = new SyncGroup();
+    private final SyncGroup privateUpdater = new SyncGroup();
 
     public UpdateEngine(MKPlayerData playerEntity) {
         this.playerData = playerEntity;
@@ -28,8 +28,16 @@ public class UpdateEngine {
         publicUpdater.add(syncObject);
     }
 
+    public void removePublic(ISyncObject syncObject) {
+        publicUpdater.remove(syncObject);
+    }
+
     public void addPrivate(ISyncObject syncObject) {
         privateUpdater.add(syncObject);
+    }
+
+    public void removePrivate(ISyncObject syncObject) {
+        privateUpdater.remove(syncObject);
     }
 
     public void syncUpdates() {

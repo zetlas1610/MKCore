@@ -149,14 +149,14 @@ public class AbilityTracker implements ISyncObject {
         protected void notifyOnSet(ResourceLocation id, int ticksIn) {
             super.notifyOnSet(id, ticksIn);
             dirty.add(id);
-            parentNotifier.markDirty(this);
+            parentNotifier.notifyUpdate(this);
         }
 
         @Override
         protected void notifyOnRemove(ResourceLocation id) {
             super.notifyOnRemove(id);
             dirty.add(id);
-            parentNotifier.markDirty(this);
+            parentNotifier.notifyUpdate(this);
         }
 
         @Override

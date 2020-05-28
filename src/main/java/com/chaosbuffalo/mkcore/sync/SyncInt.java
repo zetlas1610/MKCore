@@ -16,7 +16,7 @@ public class SyncInt implements ISyncObject {
     public void set(int value) {
         this.value = value;
         this.dirty = true;
-        parentNotifier.markDirty(this);
+        parentNotifier.notifyUpdate(this);
     }
 
     public void add(int value) {

@@ -4,15 +4,13 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
-import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
-import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 
-public class PlayerKnowledge extends PlayerSyncBase {
+public class PlayerKnowledge extends PlayerSyncComponent {
 
     private final MKPlayerData playerData;
 
@@ -20,11 +18,12 @@ public class PlayerKnowledge extends PlayerSyncBase {
     private final PlayerKnownAbilities knownAbilities;
 
     public PlayerKnowledge(MKPlayerData playerData) {
+        super();
         this.playerData = playerData;
-        actionBar = new PlayerActionBar(this);
-        knownAbilities = new PlayerKnownAbilities(this);
-        addSyncChild(actionBar);
-        addSyncChild(knownAbilities);
+        actionBar = new PlayerActionBar(playerData);
+        knownAbilities = new PlayerKnownAbilities(playerData);
+        addChild(actionBar);
+        addChild(knownAbilities);
     }
 
     PlayerEntity getPlayer() {

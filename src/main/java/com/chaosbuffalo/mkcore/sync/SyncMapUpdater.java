@@ -29,7 +29,7 @@ public class SyncMapUpdater<K, V extends IMKSerializable<CompoundNBT>> implement
 
     public void markDirty(K key) {
         dirty.add(key);
-        parentNotifier.markDirty(this);
+        parentNotifier.notifyUpdate(this);
     }
 
 

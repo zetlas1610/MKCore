@@ -41,8 +41,9 @@ public class MKPlayerData implements IMKEntityData {
         knowledge = new PlayerKnowledge(this);
         abilityExecutor = new PlayerAbilityExecutor(this);
         stats = new PlayerStatsModule(this);
-        updateEngine.addPublic(stats);
-        updateEngine.addPrivate(knowledge);
+
+        knowledge.attach(updateEngine);
+        stats.attach(updateEngine);
 
         registerAttributes();
         if (isServerSide())
