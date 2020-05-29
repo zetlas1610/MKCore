@@ -56,9 +56,7 @@ public class PlayerAbilityExecutor {
         if (playerData.getStats().getCurrentAbilityCooldown(abilityId) == 0) {
 
             MKAbility ability = info.getAbility();
-            if (ability != null &&
-                    ability.meetsRequirements(playerData) &&
-                    !MinecraftForge.EVENT_BUS.post(new PlayerAbilityEvent.StartCasting(playerData, info))) {
+            if (ability.meetsRequirements(playerData) && !MinecraftForge.EVENT_BUS.post(new PlayerAbilityEvent.StartCasting(playerData, info))) {
                 ability.execute(getPlayer(), playerData, getPlayer().getEntityWorld());
             }
         }

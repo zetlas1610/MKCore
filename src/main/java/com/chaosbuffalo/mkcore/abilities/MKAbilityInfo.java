@@ -5,6 +5,8 @@ import com.chaosbuffalo.mkcore.sync.IMKSerializable;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nonnull;
+
 
 public class MKAbilityInfo implements IMKSerializable<CompoundNBT> {
     private final MKAbility ability;
@@ -15,6 +17,7 @@ public class MKAbilityInfo implements IMKSerializable<CompoundNBT> {
         known = false;
     }
 
+    @Nonnull
     public MKAbility getAbility() {
         return ability;
     }

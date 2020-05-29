@@ -121,8 +121,6 @@ public class MKOverlay {
                 continue;
 
             MKAbility ability = info.getAbility();
-            if (ability == null)
-                continue;
 
             float manaCost = data.getStats().getAbilityManaCost(abilityId);
             if (!executor.isCasting() && data.getStats().getMana() >= manaCost) {
