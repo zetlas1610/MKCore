@@ -32,7 +32,7 @@ public class Capabilities {
     }
 
     public static void registerCapabilities() {
-        CapabilityManager.INSTANCE.register(MKPlayerData.class, new MKPlayerDataStorage(), MKPlayerData::new);
+        CapabilityManager.INSTANCE.register(MKPlayerData.class, new MKDataStorage<>(), MKPlayerData::new);
         MinecraftForge.EVENT_BUS.register(Capabilities.class);
     }
 
@@ -44,12 +44,8 @@ public class Capabilities {
         }
     }
 
-    public static class MKPlayerDataStorage extends MKDataStorage<MKPlayerData> {
 
-    }
-
-
-    public abstract static class MKDataStorage<T extends IMKEntityData> implements Capability.IStorage<T> {
+    public static class MKDataStorage<T extends IMKEntityData> implements Capability.IStorage<T> {
 
         @Nullable
         @Override
