@@ -6,7 +6,6 @@ import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncRequestPacket;
 import com.chaosbuffalo.mkcore.sync.UpdateEngine;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
@@ -31,7 +30,7 @@ public class MKPlayerData implements IMKEntityData {
 
 
     @Override
-    public PlayerStatsModule getStats(){
+    public PlayerStatsModule getStats() {
         return stats;
     }
 

@@ -3,7 +3,6 @@ package com.chaosbuffalo.mkcore;
 import com.chaosbuffalo.mkcore.abilities.AbilityManager;
 import com.chaosbuffalo.mkcore.client.gui.MKOverlay;
 import com.chaosbuffalo.mkcore.command.MKCommand;
-import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import net.minecraft.entity.player.PlayerEntity;

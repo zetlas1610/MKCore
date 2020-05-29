@@ -55,7 +55,7 @@ public class MKDamageType extends ForgeRegistryEntry<MKDamageType> {
     }
 
     public ITextComponent getCritMessage(LivingEntity source, LivingEntity target, float damage,
-                                         MKAbility ability, boolean isSelf){
+                                         MKAbility ability, boolean isSelf) {
         Style messageStyle = new Style();
         messageStyle.setColor(TextFormatting.AQUA);
         String msg;

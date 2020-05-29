@@ -1,6 +1,5 @@
 package com.chaosbuffalo.mkcore.events;
 
-import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.eventbus.api.Event;
