@@ -2,10 +2,10 @@ package com.chaosbuffalo.mkcore.abilities;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.client.gui.MKOverlay;
-import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
-public abstract class PlayerToggleAbility extends PlayerAbility {
+public abstract class MKToggleAbility extends MKAbility {
 
     private static final Map<Effect, ResourceLocation> toggleAbilityMap = new IdentityHashMap<>();
     private static final ResourceLocation TOGGLE_EFFECT = MKCore.makeRL("textures/class/abilities/ability_toggle.png");
@@ -22,11 +22,11 @@ public abstract class PlayerToggleAbility extends PlayerAbility {
         return toggleAbilityMap.get(potion);
     }
 
-    public PlayerToggleAbility(String domain, String id) {
+    public MKToggleAbility(String domain, String id) {
         this(new ResourceLocation(domain, id));
     }
 
-    public PlayerToggleAbility(ResourceLocation abilityId) {
+    public MKToggleAbility(ResourceLocation abilityId) {
         super(abilityId);
         toggleAbilityMap.put(getToggleEffect(), abilityId);
     }
@@ -42,22 +42,22 @@ public abstract class PlayerToggleAbility extends PlayerAbility {
         return AbilityType.Active;
     }
 
-    public void applyEffect(PlayerEntity entity, IMKPlayerData pData, World theWorld) {
-        pData.getAbilityExecutor().setToggleGroupAbility(getToggleGroupId(), this);
+    public void applyEffect(LivingEntity entity, IMKEntityData entityData, World theWorld) {
+        entityData.getAbilityExecutor().setToggleGroupAbility(getToggleGroupId(), this);
     }
 
-    public void removeEffect(PlayerEntity entity, IMKPlayerData pData, World theWorld) {
-        pData.getAbilityExecutor().clearToggleGroupAbility(getToggleGroupId());
+    public void removeEffect(LivingEntity entity, IMKEntityData entityData, World theWorld) {
+        entityData.getAbilityExecutor().clearToggleGroupAbility(getToggleGroupId());
         entity.removePotionEffect(getToggleEffect());
     }
 
     @Override
-    public void execute(PlayerEntity entity, IMKPlayerData pData, World theWorld) {
-        pData.startAbility(this);
+    public void execute(LivingEntity entity, IMKEntityData entityData, World theWorld) {
+        entityData.startAbility(this);
         if (entity.getActivePotionEffect(getToggleEffect()) != null) {
-            removeEffect(entity, pData, theWorld);
+            removeEffect(entity, entityData, theWorld);
         } else {
-            applyEffect(entity, pData, theWorld);
+            applyEffect(entity, entityData, theWorld);
         }
     }
 

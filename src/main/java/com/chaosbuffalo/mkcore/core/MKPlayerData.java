@@ -6,6 +6,7 @@ import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncRequestPacket;
 import com.chaosbuffalo.mkcore.sync.UpdateEngine;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,7 +16,7 @@ import net.minecraft.nbt.CompoundNBT;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MKPlayerData implements IMKPlayerData {
+public class MKPlayerData implements IMKEntityData {
 
     private PlayerEntity player;
     private boolean readyForUpdates = false;
@@ -29,7 +30,12 @@ public class MKPlayerData implements IMKPlayerData {
 
     }
 
+
     @Override
+    public PlayerStatsModule getStats(){
+        return stats;
+    }
+
     public void attach(PlayerEntity newPlayer) {
         player = newPlayer;
         updateEngine = new UpdateEngine(this);
@@ -90,17 +96,12 @@ public class MKPlayerData implements IMKPlayerData {
         return knowledge;
     }
 
-    @Override
-    public PlayerStatsModule getStats() {
-        return stats;
-    }
 
     public UpdateEngine getUpdateEngine() {
         return updateEngine;
     }
 
-    @Override
-    public void clone(IMKPlayerData previous, boolean death) {
+    public void clone(IMKEntityData previous, boolean death) {
         MKCore.LOGGER.info("onDeath!");
 
         CompoundNBT tag = new CompoundNBT();
@@ -108,7 +109,8 @@ public class MKPlayerData implements IMKPlayerData {
         deserialize(tag);
     }
 
-    public PlayerEntity getPlayer() {
+    @Override
+    public PlayerEntity getEntity() {
         return player;
     }
 
@@ -116,7 +118,6 @@ public class MKPlayerData implements IMKPlayerData {
         return player instanceof ServerPlayerEntity;
     }
 
-    @Override
     public void update() {
         getStats().tick();
         getAbilityExecutor().tick();

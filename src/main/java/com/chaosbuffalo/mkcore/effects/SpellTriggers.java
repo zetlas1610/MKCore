@@ -2,11 +2,11 @@ package com.chaosbuffalo.mkcore.effects;
 
 import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
-import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
-import com.chaosbuffalo.mkcore.core.IMKPlayerData;
-import com.chaosbuffalo.mkcore.core.MKCombatFormulas;
-import com.chaosbuffalo.mkcore.core.MKPlayerData;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageSource;
+import com.chaosbuffalo.mkcore.core.MKPlayerData;
+import com.chaosbuffalo.mkcore.core.MKCombatFormulas;
 import com.chaosbuffalo.mkcore.events.ServerSideLeftClickEmpty;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.network.CritMessagePacket;
@@ -102,7 +102,7 @@ public class SpellTriggers {
         @FunctionalInterface
         public interface PlayerHurtEntityTrigger {
             void apply(LivingHurtEvent event, DamageSource source, LivingEntity livingTarget,
-                       ServerPlayerEntity playerSource, IMKPlayerData sourceData);
+                       ServerPlayerEntity playerSource, IMKEntityData sourceData);
         }
 
         private static final String MELEE_TAG = "PLAYER_HURT_ENTITY.melee";
@@ -126,8 +126,8 @@ public class SpellTriggers {
 
         public static void onPlayerHurtEntity(LivingHurtEvent event, DamageSource source,
                                               LivingEntity livingTarget, ServerPlayerEntity playerSource,
-                                              IMKPlayerData sourceData) {
-            if (isMKDamage(source)) {
+                                              IMKEntityData sourceData) {
+           if (isMKDamage(source)){
                 MKDamageSource mkSource = (MKDamageSource) source;
                 if (mkSource.isMeleeDamage()) {
                     handleMKMelee(event, mkSource, livingTarget, playerSource, sourceData);
@@ -153,13 +153,13 @@ public class SpellTriggers {
 
         private static void handleMKAbility(LivingHurtEvent event, MKDamageSource source, LivingEntity livingTarget,
                                             ServerPlayerEntity playerSource,
-                                            IMKPlayerData sourceData) {
+                                            IMKEntityData sourceData) {
             calculateAbilityDamage(event, livingTarget, playerSource, sourceData, source,
                     MAGIC_TAG, playerHurtEntityMagicTriggers);
         }
 
         private static void calculateAbilityDamage(LivingHurtEvent event, LivingEntity livingTarget,
-                                                   ServerPlayerEntity playerSource, IMKPlayerData sourceData,
+                                                   ServerPlayerEntity playerSource, IMKEntityData sourceData,
                                                    MKDamageSource source, String typeTag,
                                                    List<PlayerHurtEntityTrigger> playerHurtTriggers) {
             event.setAmount(source.getMKDamageType().applyDamage(playerSource, livingTarget, event.getAmount(),
@@ -167,7 +167,7 @@ public class SpellTriggers {
             if (source.getMKDamageType().rollCrit(playerSource, livingTarget)) {
                 float newDamage = source.getMKDamageType().applyCritDamage(playerSource, livingTarget, event.getAmount());
                 event.setAmount(newDamage);
-                PlayerAbility ability = MKCoreRegistry.getAbility(source.getAbilityId());
+                MKAbility ability = MKCoreRegistry.getAbility(source.getAbilityId());
                 ResourceLocation abilityName;
                 if (ability != null) {
                     abilityName = ability.getRegistryName();
@@ -186,7 +186,7 @@ public class SpellTriggers {
         }
 
         private static void handleProjectile(LivingHurtEvent event, DamageSource source, LivingEntity livingTarget,
-                                             ServerPlayerEntity playerSource, IMKPlayerData sourceData) {
+                                             ServerPlayerEntity playerSource, IMKEntityData sourceData) {
             if (source.getImmediateSource() != null &&
                     MKCombatFormulas.checkCrit(playerSource, MKCombatFormulas.getRangedCritChanceForEntity(sourceData,
                             playerSource, source.getImmediateSource()))) {
@@ -203,24 +203,30 @@ public class SpellTriggers {
         }
 
         private static void handleMKMelee(LivingHurtEvent event, MKDamageSource source, LivingEntity livingTarget,
-                                          ServerPlayerEntity playerSource, IMKPlayerData sourceData) {
+                                          ServerPlayerEntity playerSource, IMKEntityData sourceData){
+
             calculateAbilityDamage(event, livingTarget, playerSource, sourceData, source,
                     MELEE_TAG, playerHurtEntityMeleeTriggers);
         }
 
         private static void handleVanillaMelee(LivingHurtEvent event, DamageSource source, LivingEntity livingTarget,
-                                               ServerPlayerEntity playerSource, IMKPlayerData sourceData) {
+                                               ServerPlayerEntity playerSource, IMKEntityData sourceData) {
             ItemStack mainHand = playerSource.getHeldItemMainhand();
             float critChance = MKCombatFormulas.getCritChanceForItem(mainHand);
-            if (MKCombatFormulas.checkCrit(playerSource, critChance + sourceData.getStats().getMeleeCritChance())) {
-                float critMultiplier = ItemUtils.getCritDamageForItem(mainHand);
-                critMultiplier += sourceData.getStats().getMeleeCritDamage();
-                float newDamage = event.getAmount() * critMultiplier;
-                event.setAmount(newDamage);
-                sendCritPacket(livingTarget, playerSource,
-                        new CritMessagePacket(livingTarget.getEntityId(), playerSource.getUniqueID(), newDamage,
-                                CritMessagePacket.CritType.MELEE_CRIT));
+            if (sourceData instanceof MKPlayerData){
+                MKPlayerData playerData = (MKPlayerData) sourceData;
+                if (MKCombatFormulas.checkCrit(playerSource,
+                        critChance + playerData.getStats().getMeleeCritChance())) {
+                    float critMultiplier = ItemUtils.getCritDamageForItem(mainHand);
+                    critMultiplier += playerData.getStats().getMeleeCritDamage();
+                    float newDamage = event.getAmount() * critMultiplier;
+                    event.setAmount(newDamage);
+                    sendCritPacket(livingTarget, playerSource,
+                            new CritMessagePacket(livingTarget.getEntityId(), playerSource.getUniqueID(), newDamage,
+                                    CritMessagePacket.CritType.MELEE_CRIT));
+                }
             }
+
 
             if (!startTrigger(playerSource, MELEE_TAG))
                 return;
@@ -233,7 +239,7 @@ public class SpellTriggers {
         @FunctionalInterface
         public interface EntityHurtPlayerTrigger {
             void apply(LivingHurtEvent event, DamageSource source, PlayerEntity livingTarget,
-                       IMKPlayerData targetData);
+                       IMKEntityData targetData);
         }
 
         private static final String TAG = ENTITY_HURT_PLAYER.class.getName();
@@ -249,7 +255,7 @@ public class SpellTriggers {
         }
 
         public static void onEntityHurtPlayer(LivingHurtEvent event, DamageSource source, PlayerEntity livingTarget,
-                                              IMKPlayerData targetData) {
+                                              IMKEntityData targetData) {
             if (!startTrigger(livingTarget, TAG))
                 return;
             entityHurtPlayerPreTriggers.forEach(f -> f.apply(event, source, livingTarget, targetData));
@@ -417,14 +423,14 @@ public class SpellTriggers {
 
         @FunctionalInterface
         public interface PlayerEquipmentChangeTrigger {
-            void apply(LivingEquipmentChangeEvent event, IMKPlayerData data, PlayerEntity player);
+            void apply(LivingEquipmentChangeEvent event, IMKEntityData data, PlayerEntity player);
         }
 
         public static void register(SpellPotionBase potion, PlayerEquipmentChangeTrigger trigger) {
             triggers.put(potion, trigger);
         }
 
-        public static void onEquipmentChange(LivingEquipmentChangeEvent event, IMKPlayerData data, PlayerEntity player) {
+        public static void onEquipmentChange(LivingEquipmentChangeEvent event, IMKEntityData data, PlayerEntity player) {
             if (!startTrigger(player, TAG))
                 return;
             triggers.forEach((spellPotionBase, trigger) -> {

@@ -1,21 +1,22 @@
 package com.chaosbuffalo.mkcore.events;
 
-import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.core.IMKEntityData;
+import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.eventbus.api.Event;
 
 public class PlayerDataEvent extends Event {
-    private final IMKPlayerData data;
+    private final MKPlayerData data;
 
-    protected PlayerDataEvent(IMKPlayerData data) {
+    protected PlayerDataEvent(MKPlayerData data) {
         this.data = data;
     }
 
     public PlayerEntity getPlayer() {
-        return getPlayerData().getPlayer();
+        return getPlayerData().getEntity();
     }
 
-    public IMKPlayerData getPlayerData() {
+    public MKPlayerData getPlayerData() {
         return data;
     }
 }

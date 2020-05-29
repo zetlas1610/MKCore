@@ -2,7 +2,7 @@ package com.chaosbuffalo.mkcore.network;
 
 import com.chaosbuffalo.mkcore.MKConfig;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
-import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -132,7 +132,7 @@ public class CritMessagePacket {
                     break;
                 case MK_CRIT:
                     messageStyle.setColor(TextFormatting.AQUA);
-                    PlayerAbility ability = MKCoreRegistry.getAbility(abilityName);
+                    MKAbility ability = MKCoreRegistry.getAbility(abilityName);
                     MKDamageType mkDamageType = MKCoreRegistry.getDamageType(damageType);
                     if (ability == null || mkDamageType == null) {
                         break;

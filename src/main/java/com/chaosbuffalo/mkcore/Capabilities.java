@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore;
 
-import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,15 +24,15 @@ public class Capabilities {
 
     public static ResourceLocation PLAYER_CAP_ID = MKCore.makeRL("player_data");
 
-    @CapabilityInject(IMKPlayerData.class)
-    public static final Capability<IMKPlayerData> PLAYER_CAPABILITY;
+    @CapabilityInject(MKPlayerData.class)
+    public static final Capability<MKPlayerData> PLAYER_CAPABILITY;
 
     static {
         PLAYER_CAPABILITY = null;
     }
 
     public static void registerCapabilities() {
-        CapabilityManager.INSTANCE.register(IMKPlayerData.class, new PlayerDataStorage(), MKPlayerData::new);
+        CapabilityManager.INSTANCE.register(MKPlayerData.class, new MKDataStorage<>(), MKPlayerData::new);
         MinecraftForge.EVENT_BUS.register(Capabilities.class);
     }
 
@@ -45,17 +45,18 @@ public class Capabilities {
     }
 
 
-    public static class PlayerDataStorage implements Capability.IStorage<IMKPlayerData> {
+    public static class MKDataStorage<T extends IMKEntityData> implements Capability.IStorage<T> {
 
+        @Nullable
         @Override
-        public CompoundNBT writeNBT(Capability<IMKPlayerData> capability, IMKPlayerData instance, Direction side) {
+        public INBT writeNBT(Capability<T> capability, T instance, Direction side) {
             CompoundNBT tag = new CompoundNBT();
             instance.serialize(tag);
             return tag;
         }
 
         @Override
-        public void readNBT(Capability<IMKPlayerData> capability, IMKPlayerData instance, Direction side, INBT nbt) {
+        public void readNBT(Capability<T> capability, T instance, Direction side, INBT nbt) {
             if (nbt instanceof CompoundNBT && instance != null) {
                 CompoundNBT tag = (CompoundNBT) nbt;
                 instance.deserialize(tag);
@@ -64,7 +65,7 @@ public class Capabilities {
     }
 
     public static class PlayerDataProvider implements ICapabilitySerializable<CompoundNBT> {
-        private final IMKPlayerData playerHandler;
+        private final MKPlayerData playerHandler;
 
         public PlayerDataProvider(PlayerEntity playerEntity) {
             playerHandler = Capabilities.PLAYER_CAPABILITY.getDefaultInstance();

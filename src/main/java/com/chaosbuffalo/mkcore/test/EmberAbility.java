@@ -2,11 +2,11 @@ package com.chaosbuffalo.mkcore.test;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.CastState;
-import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.SingleTargetCastState;
 import com.chaosbuffalo.mkcore.abilities.attributes.FloatAttribute;
 import com.chaosbuffalo.mkcore.abilities.attributes.IntAttribute;
-import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageSource;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.init.ModDamageTypes;
@@ -16,7 +16,6 @@ import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkcore.utils.SoundUtils;
 import com.chaosbuffalo.targeting_api.Targeting;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -30,13 +29,13 @@ import javax.annotation.Nullable;
 
 
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class EmberAbility extends PlayerAbility {
+public class EmberAbility extends MKAbility {
     public static final EmberAbility INSTANCE = new EmberAbility();
     protected final FloatAttribute damage = new FloatAttribute("damage", 6.0f);
     protected final IntAttribute burnTime = new IntAttribute("burnTime", 5);
 
     @SubscribeEvent
-    public static void register(RegistryEvent.Register<PlayerAbility> event) {
+    public static void register(RegistryEvent.Register<MKAbility> event) {
         event.getRegistry().register(INSTANCE);
     }
 
@@ -72,7 +71,7 @@ public class EmberAbility extends PlayerAbility {
     }
 
     @Override
-    public void endCast(PlayerEntity entity, IMKPlayerData data, World theWorld, CastState state) {
+    public void endCast(LivingEntity entity, IMKEntityData data, World theWorld, CastState state) {
         super.endCast(entity, data, theWorld, state);
         SingleTargetCastState singleTargetState = (SingleTargetCastState) state;
         if (singleTargetState == null) {
@@ -99,7 +98,7 @@ public class EmberAbility extends PlayerAbility {
     }
 
     @Override
-    public void execute(PlayerEntity entity, IMKPlayerData pData, World theWorld) {
+    public void execute(LivingEntity entity, IMKEntityData pData, World theWorld) {
         LivingEntity targetEntity = getSingleLivingTarget(entity, getDistance());
         if (targetEntity != null) {
             CastState state = pData.startAbility(this);

@@ -5,9 +5,9 @@ import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.ClientEventHandler;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
-import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
-import com.chaosbuffalo.mkcore.abilities.PlayerAbilityInfo;
-import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
+import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.core.PlayerAbilityExecutor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -38,7 +38,7 @@ public class MKOverlay {
         mc = Minecraft.getInstance();
     }
 
-    private void drawMana(IMKPlayerData data) {
+    private void drawMana(MKPlayerData data) {
         int height = mc.getMainWindow().getScaledHeight();
 
         mc.getTextureManager().bindTexture(barTexture);
@@ -59,16 +59,16 @@ public class MKOverlay {
         }
     }
 
-    private void drawCastBar(IMKPlayerData data) {
+    private void drawCastBar(MKPlayerData data) {
         PlayerAbilityExecutor executor = data.getAbilityExecutor();
         if (!executor.isCasting()) {
             return;
         }
-        PlayerAbilityInfo info = data.getKnowledge().getAbilityInfo(executor.getCastingAbility());
+        MKAbilityInfo info = data.getKnowledge().getAbilityInfo(executor.getCastingAbility());
         if (info == null || !info.isCurrentlyKnown()) {
             return;
         }
-        PlayerAbility ability = info.getAbility();
+        MKAbility ability = info.getAbility();
         if (ability.getCastTime() == 0) {
             return;
         }
@@ -100,7 +100,7 @@ public class MKOverlay {
         }
     }
 
-    private void drawAbilities(IMKPlayerData data, int slotCount, float partialTicks) {
+    private void drawAbilities(MKPlayerData data, int slotCount, float partialTicks) {
         RenderSystem.disableLighting();
 
         final int slotAbilityOffsetX = 1;
@@ -116,11 +116,11 @@ public class MKOverlay {
             if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
                 continue;
 
-            PlayerAbilityInfo info = data.getKnowledge().getAbilityInfo(abilityId);
+            MKAbilityInfo info = data.getKnowledge().getAbilityInfo(abilityId);
             if (info == null || !info.isCurrentlyKnown())
                 continue;
 
-            PlayerAbility ability = info.getAbility();
+            MKAbility ability = info.getAbility();
             if (ability == null)
                 continue;
 

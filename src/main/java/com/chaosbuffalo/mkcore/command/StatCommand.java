@@ -66,7 +66,8 @@ public class StatCommand {
                 playerEntity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap -> {
                     TextUtils.sendPlayerChatMessage(playerEntity, String.format("Setting %s to %f", name, value));
                     setter.accept(cap.getStats(), value);
-                    TextUtils.sendPlayerChatMessage(playerEntity, String.format("%s is now %f", name, getter.apply(cap.getStats())));
+                    TextUtils.sendPlayerChatMessage(playerEntity, String.format("%s is now %f",
+                            name, getter.apply(cap.getStats())));
                 });
                 return Command.SINGLE_SUCCESS;
             };

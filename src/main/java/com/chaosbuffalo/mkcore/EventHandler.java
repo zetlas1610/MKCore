@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore;
 
-import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,7 +19,7 @@ public class EventHandler {
         LivingEntity living = event.getEntityLiving();
 
         if (living instanceof PlayerEntity) {
-            living.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(IMKPlayerData::update);
+            living.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(MKPlayerData::update);
         }
     }
 

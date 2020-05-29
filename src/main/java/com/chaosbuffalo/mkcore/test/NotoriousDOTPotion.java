@@ -2,7 +2,7 @@ package com.chaosbuffalo.mkcore.test;
 
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.effects.AreaEffectBuilder;
 import com.chaosbuffalo.mkcore.effects.SongEffect;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
@@ -36,7 +36,8 @@ public class NotoriousDOTPotion extends SongEffect {
     }
 
     @Override
-    public AreaEffectBuilder prepareAreaEffect(PlayerEntity source, IMKPlayerData playerData, int level, AreaEffectBuilder builder) {
+    public AreaEffectBuilder prepareAreaEffect(PlayerEntity source, IMKEntityData entityData,
+                                               int level, AreaEffectBuilder builder) {
         SpellCast damage = AbilityMagicDamage.Create(source, NotoriousDOT.BASE_DAMAGE, NotoriousDOT.DAMAGE_SCALE, 0.6f);
         builder.spellCast(damage, level, Targeting.TargetType.ALL, true);
         SoundUtils.playSoundAtEntity(source, ModSounds.spell_shadow_9, SoundCategory.PLAYERS);

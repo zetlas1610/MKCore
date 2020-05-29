@@ -1,12 +1,13 @@
 package com.chaosbuffalo.mkcore.core;
 
 import com.chaosbuffalo.mkcore.GameConstants;
-import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
-import com.chaosbuffalo.mkcore.abilities.PlayerAbilityInfo;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
 import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
 import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import com.chaosbuffalo.mkcore.sync.SyncFloat;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -15,7 +16,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
-public class PlayerStatsModule implements ISyncObject {
+public class PlayerStatsModule implements ISyncObject, IStatsModule {
     private final MKPlayerData playerData;
     private float regenTime;
     private final AbilityTracker abilityTracker;
@@ -25,80 +26,75 @@ public class PlayerStatsModule implements ISyncObject {
     public PlayerStatsModule(MKPlayerData playerData) {
         this.playerData = playerData;
         regenTime = 0f;
-        abilityTracker = AbilityTracker.getTracker(playerData.getPlayer());
+        abilityTracker = AbilityTracker.getTracker(playerData.getEntity());
         playerData.getUpdateEngine().addPrivate(abilityTracker);
     }
 
-    public float getCritChanceForDamageType(MKDamageType damageType) {
-        return damageType.getCritChance(getPlayer(), null);
+    public float getCritChanceForDamageType(MKDamageType damageType){
+        return damageType.getCritChance(getEntity(), null);
     }
 
-    public float getCritMultiplierForDamageType(MKDamageType damageType) {
-        return damageType.getCritMultiplier(getPlayer(), null);
+    public float getCritMultiplierForDamageType(MKDamageType damageType){
+        return damageType.getCritMultiplier(getEntity(), null);
     }
 
-    public float getDamageTypeBonus(MKDamageType damageType) {
-        return (float) getPlayer().getAttribute(damageType.getDamageAttribute()).getValue();
+    @Override
+    public float getDamageTypeBonus(MKDamageType damageType){
+        return (float) getEntity().getAttribute(damageType.getDamageAttribute()).getValue();
     }
 
-    public float getDamageMultiplierForDamageType(MKDamageType damageType) {
+    public float getDamageMultiplierForDamageType(MKDamageType damageType){
         float originalValue = 10.0f;
-        float scaled = damageType.applyDamage(getPlayer(), null, originalValue, 1.0f);
+        float scaled = damageType.applyDamage(getEntity(), null, originalValue, 1.0f);
         return scaled / originalValue;
     }
 
-    public float getArmorMultiplierForDamageType(MKDamageType damageType) {
+
+    public float getArmorMultiplierForDamageType(MKDamageType damageType){
         float originalValue = 10.0f;
-        float scaled = damageType.applyResistance(getPlayer(), originalValue);
+        float scaled = damageType.applyResistance(getEntity(), originalValue);
         return scaled / originalValue;
     }
 
     public float getMeleeCritChance() {
-        return (float) getPlayer().getAttribute(MKAttributes.MELEE_CRIT).getValue();
+        return (float) getEntity().getAttribute(MKAttributes.MELEE_CRIT).getValue();
     }
 
     public float getSpellCritChance() {
-        return (float) getPlayer().getAttribute(MKAttributes.SPELL_CRIT).getValue();
-    }
-
-    public float getMagicArmor() {
-        return (float) getPlayer().getAttribute(MKAttributes.ARCANE_RESISTANCE).getValue();
+        return (float) getEntity().getAttribute(MKAttributes.SPELL_CRIT).getValue();
     }
 
     public float getSpellCritDamage() {
-        return (float) getPlayer().getAttribute(MKAttributes.SPELL_CRIT_MULTIPLIER).getValue();
+        return (float) getEntity().getAttribute(MKAttributes.SPELL_CRIT_MULTIPLIER).getValue();
     }
 
     public float getMeleeCritDamage() {
-        return (float) getPlayer().getAttribute(MKAttributes.MELEE_CRIT_MULTIPLIER).getValue();
+        return (float) getEntity().getAttribute(MKAttributes.MELEE_CRIT_MULTIPLIER).getValue();
     }
 
+    @Override
     public float getHealBonus() {
-        return (float) getPlayer().getAttribute(MKAttributes.HEAL_BONUS).getValue();
+        return (float) getEntity().getAttribute(MKAttributes.HEAL_BONUS).getValue();
     }
 
-    public float getMagicDamageBonus() {
-        return (float) getPlayer().getAttribute(MKAttributes.ARCANE_DAMAGE).getValue();
-    }
-
-    private PlayerEntity getPlayer() {
-        return playerData.getPlayer();
-    }
 
     private boolean isServerSide() {
-        return getPlayer() instanceof ServerPlayerEntity;
+        return getEntity() instanceof ServerPlayerEntity;
     }
 
+    @Override
     public float getHealth() {
-        return getPlayer().getHealth();
+        return getEntity().getHealth();
     }
 
+    @Override
     public void setHealth(float value) {
-        getPlayer().setHealth(value);
+        getEntity().setHealth(value);
     }
 
+    @Override
     public float getMaxHealth() {
-        return getPlayer().getMaxHealth();
+        return getEntity().getMaxHealth();
     }
 
     public float getMana() {
@@ -111,16 +107,16 @@ public class PlayerStatsModule implements ISyncObject {
     }
 
     public float getMaxMana() {
-        return (float) getPlayer().getAttribute(MKAttributes.MAX_MANA).getValue();
+        return (float) getEntity().getAttribute(MKAttributes.MAX_MANA).getValue();
     }
 
     public void setMaxMana(float max) {
-        getPlayer().getAttribute(MKAttributes.MAX_MANA).setBaseValue(max);
+        getEntity().getAttribute(MKAttributes.MAX_MANA).setBaseValue(max);
         setMana(getMana()); // Refresh the mana to account for the updated maximum
     }
 
     public float getManaRegenRate() {
-        return (float) getPlayer().getAttribute(MKAttributes.MANA_REGEN).getValue();
+        return (float) getEntity().getAttribute(MKAttributes.MANA_REGEN).getValue();
     }
 
     public void tick() {
@@ -155,6 +151,7 @@ public class PlayerStatsModule implements ISyncObject {
         setMana(getMana() + value);
     }
 
+    @Override
     public boolean consumeMana(float amount) {
         if (getMana() >= amount) {
             setMana(getMana() - amount);
@@ -163,23 +160,26 @@ public class PlayerStatsModule implements ISyncObject {
         return false;
     }
 
+    @Override
     public int getCurrentAbilityCooldown(ResourceLocation abilityId) {
-        PlayerAbilityInfo abilityInfo = playerData.getKnowledge().getAbilityInfo(abilityId);
+        MKAbilityInfo abilityInfo = playerData.getKnowledge().getAbilityInfo(abilityId);
         return abilityInfo != null ? abilityTracker.getCooldownTicks(abilityId) : GameConstants.ACTION_BAR_INVALID_COOLDOWN;
     }
 
-    public float getActiveCooldownPercent(PlayerAbilityInfo abilityInfo, float partialTicks) {
+    @Override
+    public float getActiveCooldownPercent(MKAbilityInfo abilityInfo, float partialTicks) {
         return abilityInfo != null ? abilityTracker.getCooldown(abilityInfo.getId(), partialTicks) : 0.0f;
     }
 
-    public int getAbilityCooldown(PlayerAbility ability) {
+    @Override
+    public int getAbilityCooldown(MKAbility ability) {
         int ticks = ability.getCooldownTicks();
         ticks = MKCombatFormulas.applyCooldownReduction(playerData, ticks);
         return ticks;
     }
 
     public float getAbilityManaCost(ResourceLocation abilityId) {
-        PlayerAbilityInfo abilityInfo = playerData.getKnowledge().getAbilityInfo(abilityId);
+        MKAbilityInfo abilityInfo = playerData.getKnowledge().getAbilityInfo(abilityId);
         if (abilityInfo == null) {
             return 0.0f;
         }
@@ -187,12 +187,14 @@ public class PlayerStatsModule implements ISyncObject {
         return MKCombatFormulas.applyManaCostReduction(playerData, manaCost);
     }
 
-    public boolean canActivateAbility(PlayerAbility ability) {
+    @Override
+    public boolean canActivateAbility(MKAbility ability) {
         ResourceLocation abilityId = ability.getAbilityId();
         return getMana() >= getAbilityManaCost(abilityId) &&
                 getCurrentAbilityCooldown(abilityId) == 0;
     }
 
+    @Override
     public void setTimer(ResourceLocation id, int cooldown) {
         if (cooldown > 0) {
             abilityTracker.setCooldown(id, cooldown);
@@ -201,6 +203,7 @@ public class PlayerStatsModule implements ISyncObject {
         }
     }
 
+    @Override
     public int getTimer(ResourceLocation id) {
         return abilityTracker.getCooldownTicks(id);
     }
@@ -208,25 +211,32 @@ public class PlayerStatsModule implements ISyncObject {
     public void printActiveCooldowns() {
         String msg = "All active cooldowns:";
 
-        getPlayer().sendMessage(new StringTextComponent(msg));
+        getEntity().sendMessage(new StringTextComponent(msg));
         abilityTracker.iterateActive((abilityId, current) -> {
             String name = abilityId.toString();
             int max = abilityTracker.getMaxCooldownTicks(abilityId);
             ITextComponent line = new StringTextComponent(String.format("%s: %d / %d", name, current, max));
-            getPlayer().sendMessage(line);
+            getEntity().sendMessage(line);
         });
     }
 
+    @Override
     public void resetAllCooldowns() {
         abilityTracker.removeAll();
     }
 
+    private PlayerEntity getEntity() {
+        return playerData.getEntity();
+    }
 
+
+    @Override
     public void serialize(CompoundNBT nbt) {
         abilityTracker.serialize(nbt);
         nbt.putFloat("mana", mana.get());
     }
 
+    @Override
     public void deserialize(CompoundNBT nbt) {
         abilityTracker.deserialize(nbt);
         // TODO: activate persona here

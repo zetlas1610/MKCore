@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkcore.effects;
 
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,7 +14,8 @@ public abstract class SongEffect extends SongPotionBase {
         super(period, true, typeIn, liquidColorIn);
     }
 
-    public AreaEffectBuilder prepareAreaEffect(PlayerEntity source, IMKPlayerData playerData, int level, AreaEffectBuilder builder) {
+    public AreaEffectBuilder prepareAreaEffect(PlayerEntity source, IMKEntityData entityData, int level,
+                                               AreaEffectBuilder builder) {
         return builder;
     }
 
@@ -26,14 +27,12 @@ public abstract class SongEffect extends SongPotionBase {
 
     @Override
     public void doEffect(Entity source, Entity indirectSource, LivingEntity target, int amplifier, SpellCast cast) {
-
         if (source instanceof PlayerEntity) {
             MKCore.getPlayer((PlayerEntity) source).ifPresent(pData -> {
-                PlayerEntity player = pData.getPlayer();
-                if (!pData.consumeMana(amplifier)) {
+                PlayerEntity player = pData.getEntity();
+                if (!pData.getStats().consumeMana(amplifier)) {
                     player.removePotionEffect(this);
                 }
-
                 AreaEffectBuilder builder = AreaEffectBuilder.Create(player, player)
                         .instant()
                         .particle(getSongParticle())
@@ -41,6 +40,8 @@ public abstract class SongEffect extends SongPotionBase {
                         .radius(getSongDistance(amplifier), true);
                 prepareAreaEffect(player, pData, amplifier, builder).spawn();
             });
+        } else if (source instanceof LivingEntity){
+
         }
     }
 }

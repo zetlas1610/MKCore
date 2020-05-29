@@ -2,7 +2,7 @@ package com.chaosbuffalo.mkcore.abilities;
 
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.abilities.attributes.IAbilityAttribute;
-import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.mkcore.utils.RayTraceUtils;
 import com.chaosbuffalo.targeting_api.Targeting;
@@ -11,7 +11,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -28,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
+public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
 
     public enum AbilityType {
         Active,
@@ -43,11 +42,11 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
     private final List<IAbilityAttribute<?>> attributes;
 
 
-    public PlayerAbility(String domain, String id) {
+    public MKAbility(String domain, String id) {
         this(new ResourceLocation(domain, id));
     }
 
-    public PlayerAbility(ResourceLocation abilityId) {
+    public MKAbility(ResourceLocation abilityId) {
         setRegistryName(abilityId);
         this.cooldown = GameConstants.TICKS_PER_SECOND;
         this.castTime = 0;
@@ -59,12 +58,12 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         return attributes;
     }
 
-    public PlayerAbility addAttribute(IAbilityAttribute<?> attr) {
+    public MKAbility addAttribute(IAbilityAttribute<?> attr) {
         attributes.add(attr);
         return this;
     }
 
-    public PlayerAbility addAttributes(IAbilityAttribute<?>... attrs) {
+    public MKAbility addAttributes(IAbilityAttribute<?>... attrs) {
         attributes.addAll(Arrays.asList(attrs));
         return this;
     }
@@ -73,8 +72,8 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         return getRegistryName();
     }
 
-    public PlayerAbilityInfo createAbilityInfo() {
-        return new PlayerAbilityInfo(this);
+    public MKAbilityInfo createAbilityInfo() {
+        return new MKAbilityInfo(this);
     }
 
 
@@ -109,7 +108,7 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         return castTime;
     }
 
-    public PlayerAbility setCastTime(int newCastTime) {
+    public MKAbility setCastTime(int newCastTime) {
         castTime = newCastTime;
         return this;
     }
@@ -122,7 +121,7 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         return cooldown;
     }
 
-    public PlayerAbility setCooldown(int cooldown) {
+    public MKAbility setCooldown(int cooldown) {
         this.cooldown = cooldown;
         return this;
     }
@@ -149,14 +148,14 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         return manaCost;
     }
 
-    public PlayerAbility setManaCost(float newCost) {
+    public MKAbility setManaCost(float newCost) {
         manaCost = newCost;
         return this;
     }
 
-    public boolean meetsRequirements(IMKPlayerData player) {
-        return player.getAbilityExecutor().canActivateAbility(this) &&
-                player.getStats().canActivateAbility(this);
+    public boolean meetsRequirements(IMKEntityData entityData) {
+        return entityData.getAbilityExecutor().canActivateAbility(this) &&
+                entityData.getStats().canActivateAbility(this);
     }
 
     public CompoundNBT serialize() {
@@ -224,15 +223,15 @@ public abstract class PlayerAbility extends ForgeRegistryEntry<PlayerAbility> {
         return ModSounds.spell_cast_3;
     }
 
-    public abstract void execute(PlayerEntity entity, IMKPlayerData data, World theWorld);
+    public abstract void execute(LivingEntity entity, IMKEntityData data, World theWorld);
 
-    public void continueCast(PlayerEntity entity, IMKPlayerData data, World theWorld, int castTimeLeft, CastState state) {
+    public void continueCast(LivingEntity entity, IMKEntityData data, World theWorld, int castTimeLeft, CastState state) {
     }
 
-    public void continueCastClient(PlayerEntity entity, IMKPlayerData data, World theWorld, int castTimeLeft) {
+    public void continueCastClient(LivingEntity entity, IMKEntityData data, World theWorld, int castTimeLeft) {
     }
 
-    public void endCast(PlayerEntity entity, IMKPlayerData data, World theWorld, CastState state) {
+    public void endCast(LivingEntity entity, IMKEntityData data, World theWorld, CastState state) {
     }
 
     protected LivingEntity getSingleLivingTarget(LivingEntity caster, float distance) {

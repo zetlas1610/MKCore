@@ -1,16 +1,16 @@
 package com.chaosbuffalo.mkcore.test;
 
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
-import com.chaosbuffalo.mkcore.abilities.PlayerToggleAbility;
-import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.abilities.MKToggleAbility;
+import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkcore.utils.SoundUtils;
 import com.chaosbuffalo.targeting_api.Targeting;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.Effect;
@@ -25,11 +25,11 @@ import net.minecraftforge.fml.common.Mod;
 import javax.annotation.Nullable;
 
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class SkinLikeWoodAbility extends PlayerToggleAbility {
+public class SkinLikeWoodAbility extends MKToggleAbility {
     public static final SkinLikeWoodAbility INSTANCE = new SkinLikeWoodAbility();
 
     @SubscribeEvent
-    public static void register(RegistryEvent.Register<PlayerAbility> event) {
+    public static void register(RegistryEvent.Register<MKAbility> event) {
         event.getRegistry().register(INSTANCE);
     }
 
@@ -63,8 +63,8 @@ public class SkinLikeWoodAbility extends PlayerToggleAbility {
     }
 
     @Override
-    public void applyEffect(PlayerEntity entity, IMKPlayerData pData, World theWorld) {
-        super.applyEffect(entity, pData, theWorld);
+    public void applyEffect(LivingEntity entity, IMKEntityData entityData, World theWorld) {
+        super.applyEffect(entity, entityData, theWorld);
         int level = 1;
         SoundUtils.playSoundAtEntity(entity, ModSounds.spell_earth_7, SoundCategory.PLAYERS);
         // What to do for each target hit

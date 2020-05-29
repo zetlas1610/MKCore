@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkcore.test;
 
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.core.IMKPlayerData;
+import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.effects.PassiveEffect;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
 import net.minecraft.entity.Entity;
@@ -52,10 +52,10 @@ public class SkinLikeWoodPotion extends PassiveEffect {
         return false;
     }
 
-    private void playerHurtPreScale(LivingHurtEvent event, DamageSource source, PlayerEntity livingTarget, IMKPlayerData targetData) {
+    private void playerHurtPreScale(LivingHurtEvent event, DamageSource source, PlayerEntity livingTarget, IMKEntityData targetData) {
 
         if (livingTarget.isPotionActive(SkinLikeWoodPotion.INSTANCE)) {
-            if (!targetData.consumeMana(1)) {
+            if (!targetData.getStats().consumeMana(1)) {
                 livingTarget.removePotionEffect(SkinLikeWoodPotion.INSTANCE);
             }
         }

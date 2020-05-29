@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.core.damage;
 
-import com.chaosbuffalo.mkcore.abilities.PlayerAbility;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.MKCombatFormulas;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
@@ -55,7 +55,7 @@ public class MKDamageType extends ForgeRegistryEntry<MKDamageType> {
     }
 
     public ITextComponent getCritMessage(LivingEntity source, LivingEntity target, float damage,
-                                         PlayerAbility ability, boolean isSelf) {
+                                         MKAbility ability, boolean isSelf){
         Style messageStyle = new Style();
         messageStyle.setColor(TextFormatting.AQUA);
         String msg;
