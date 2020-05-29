@@ -19,8 +19,6 @@ public interface IStatsModule {
 
     float getMaxHealth();
 
-    void tick();
-
     default boolean consumeMana(float amount){
         return true;
     }
@@ -37,11 +35,7 @@ public interface IStatsModule {
 
     int getTimer(ResourceLocation id);
 
-    void printActiveCooldowns();
-
     void resetAllCooldowns();
-
-    LivingEntity getEntity();
 
     void serialize(CompoundNBT nbt);
 

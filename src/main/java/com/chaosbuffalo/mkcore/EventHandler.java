@@ -19,7 +19,7 @@ public class EventHandler {
         LivingEntity living = event.getEntityLiving();
 
         if (living instanceof PlayerEntity) {
-            living.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(IMKEntityData::update);
+            living.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(MKPlayerData::update);
         }
     }
 

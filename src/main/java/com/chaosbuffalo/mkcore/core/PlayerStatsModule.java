@@ -119,7 +119,6 @@ public class PlayerStatsModule implements ISyncObject, IStatsModule {
         return (float) getEntity().getAttribute(MKAttributes.MANA_REGEN).getValue();
     }
 
-    @Override
     public void tick() {
         abilityTracker.tick();
 
@@ -209,7 +208,6 @@ public class PlayerStatsModule implements ISyncObject, IStatsModule {
         return abilityTracker.getCooldownTicks(id);
     }
 
-    @Override
     public void printActiveCooldowns() {
         String msg = "All active cooldowns:";
 
@@ -227,8 +225,7 @@ public class PlayerStatsModule implements ISyncObject, IStatsModule {
         abilityTracker.removeAll();
     }
 
-    @Override
-    public PlayerEntity getEntity() {
+    private PlayerEntity getEntity() {
         return playerData.getEntity();
     }
 

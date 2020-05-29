@@ -101,18 +101,12 @@ public class MKPlayerData implements IMKEntityData {
         return updateEngine;
     }
 
-    @Override
     public void clone(IMKEntityData previous, boolean death) {
         MKCore.LOGGER.info("onDeath!");
 
         CompoundNBT tag = new CompoundNBT();
         previous.serialize(tag);
         deserialize(tag);
-    }
-
-    @Override
-    public void attach(LivingEntity entity) {
-        attach((PlayerEntity) entity);
     }
 
     @Override
@@ -124,7 +118,6 @@ public class MKPlayerData implements IMKEntityData {
         return player instanceof ServerPlayerEntity;
     }
 
-    @Override
     public void update() {
         getStats().tick();
         getAbilityExecutor().tick();

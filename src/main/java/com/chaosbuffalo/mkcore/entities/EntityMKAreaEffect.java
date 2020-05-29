@@ -30,7 +30,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-
 // This class exists mostly because EntityAreaEffectCloud has all its members marked as private and many have no getters
 public class EntityMKAreaEffect extends Entity {
     @ObjectHolder(MKCore.MOD_ID + ":mk_area_effect")

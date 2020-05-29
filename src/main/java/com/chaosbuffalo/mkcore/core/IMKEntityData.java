@@ -7,8 +7,6 @@ import net.minecraft.nbt.CompoundNBT;
 
 public interface IMKEntityData {
 
-    void attach(LivingEntity entity);
-
     LivingEntity getEntity();
 
     PlayerAbilityExecutor getAbilityExecutor();
@@ -17,15 +15,9 @@ public interface IMKEntityData {
 
     IStatsModule getStats();
 
-
-
     default CastState startAbility(MKAbility ability) {
         return getAbilityExecutor().startAbility(ability);
     }
-
-    void clone(IMKEntityData previous, boolean death);
-
-    void update();
 
     void serialize(CompoundNBT nbt);
 
