@@ -6,6 +6,7 @@ public class SyncFloat implements ISyncObject {
     String name;
     private float value;
     private boolean dirty;
+    private ISyncNotifier parentNotifier = ISyncNotifier.NONE;
 
     public SyncFloat(String name, float value) {
         this.name = name;
@@ -15,6 +16,7 @@ public class SyncFloat implements ISyncObject {
     public void set(float value) {
         this.value = value;
         this.dirty = true;
+        parentNotifier.notifyUpdate(this);
     }
 
     public void add(float value) {
@@ -23,6 +25,11 @@ public class SyncFloat implements ISyncObject {
 
     public float get() {
         return value;
+    }
+
+    @Override
+    public void setNotifier(ISyncNotifier notifier) {
+        parentNotifier = notifier;
     }
 
     @Override

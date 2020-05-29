@@ -19,7 +19,6 @@ import java.util.Set;
 public class MKPlayerData implements IMKEntityData {
 
     private PlayerEntity player;
-    private boolean readyForUpdates = false;
     private PlayerAbilityExecutor abilityExecutor;
     private PlayerKnowledge knowledge;
     private PlayerStatsModule stats;
@@ -42,8 +41,9 @@ public class MKPlayerData implements IMKEntityData {
         knowledge = new PlayerKnowledge(this);
         abilityExecutor = new PlayerAbilityExecutor(this);
         stats = new PlayerStatsModule(this);
-        updateEngine.addPublic(stats);
-        updateEngine.addPrivate(knowledge);
+
+        knowledge.attach(updateEngine);
+        stats.attach(updateEngine);
 
         registerAttributes();
         if (isServerSide())
@@ -133,11 +133,6 @@ public class MKPlayerData implements IMKEntityData {
     }
 
     private void syncState() {
-        if (!readyForUpdates) {
-//            MKCore.LOGGER.info("deferring update because client not ready");
-            return;
-        }
-
         updateEngine.syncUpdates();
     }
 
@@ -150,13 +145,11 @@ public class MKPlayerData implements IMKEntityData {
         MKCore.LOGGER.info("Sending initial sync for {}", player);
         if (isServerSide()) {
             updateEngine.sendAll((ServerPlayerEntity) player);
-            readyForUpdates = true;
         }
     }
 
     @Override
     public void serialize(CompoundNBT nbt) {
-//        MKCore.LOGGER.info("serialize({})", mana.get());
         getStats().serialize(nbt);
         getKnowledge().serialize(nbt);
     }
@@ -165,8 +158,6 @@ public class MKPlayerData implements IMKEntityData {
     public void deserialize(CompoundNBT nbt) {
         getKnowledge().deserialize(nbt);
         getStats().deserialize(nbt);
-
-//        MKCore.LOGGER.info("deserialize({})", mana.get());
     }
 
     public void addSpellTag(String tag) {
