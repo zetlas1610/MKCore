@@ -63,7 +63,7 @@ public class SkinLikeWoodAbility extends MKToggleAbility {
     }
 
     @Override
-    public void applyEffect(LivingEntity entity, IMKEntityData<?> entityData, World theWorld) {
+    public void applyEffect(LivingEntity entity, IMKEntityData entityData, World theWorld) {
         super.applyEffect(entity, entityData, theWorld);
         int level = 1;
         SoundUtils.playSoundAtEntity(entity, ModSounds.spell_earth_7, SoundCategory.PLAYERS);

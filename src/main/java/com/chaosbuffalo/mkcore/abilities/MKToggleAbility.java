@@ -42,17 +42,17 @@ public abstract class MKToggleAbility extends MKAbility {
         return AbilityType.Active;
     }
 
-    public void applyEffect(LivingEntity entity, IMKEntityData<?> entityData, World theWorld) {
+    public void applyEffect(LivingEntity entity, IMKEntityData entityData, World theWorld) {
         entityData.getAbilityExecutor().setToggleGroupAbility(getToggleGroupId(), this);
     }
 
-    public void removeEffect(LivingEntity entity, IMKEntityData<?> entityData, World theWorld) {
+    public void removeEffect(LivingEntity entity, IMKEntityData entityData, World theWorld) {
         entityData.getAbilityExecutor().clearToggleGroupAbility(getToggleGroupId());
         entity.removePotionEffect(getToggleEffect());
     }
 
     @Override
-    public void execute(LivingEntity entity, IMKEntityData<?> entityData, World theWorld) {
+    public void execute(LivingEntity entity, IMKEntityData entityData, World theWorld) {
         entityData.startAbility(this);
         if (entity.getActivePotionEffect(getToggleEffect()) != null) {
             removeEffect(entity, entityData, theWorld);

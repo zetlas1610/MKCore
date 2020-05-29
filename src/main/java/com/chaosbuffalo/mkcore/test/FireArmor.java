@@ -56,7 +56,7 @@ public class FireArmor extends MKAbility {
 //    }
 
     @Override
-    public void endCast(LivingEntity entity, IMKEntityData<?> data, World theWorld, CastState state) {
+    public void endCast(LivingEntity entity, IMKEntityData data, World theWorld, CastState state) {
         super.endCast(entity, data, theWorld, state);
         int level = 1;
 
@@ -98,7 +98,7 @@ public class FireArmor extends MKAbility {
     }
 
     @Override
-    public void execute(LivingEntity entity, IMKEntityData<?> entityData, World theWorld) {
+    public void execute(LivingEntity entity, IMKEntityData entityData, World theWorld) {
         entityData.startAbility(this);
     }
 }

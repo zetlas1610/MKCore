@@ -14,7 +14,7 @@ public abstract class SongEffect extends SongPotionBase {
         super(period, true, typeIn, liquidColorIn);
     }
 
-    public AreaEffectBuilder prepareAreaEffect(PlayerEntity source, IMKEntityData<?> entityData, int level,
+    public AreaEffectBuilder prepareAreaEffect(PlayerEntity source, IMKEntityData entityData, int level,
                                                AreaEffectBuilder builder) {
         return builder;
     }

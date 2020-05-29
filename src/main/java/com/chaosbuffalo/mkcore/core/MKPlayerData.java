@@ -6,6 +6,7 @@ import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncRequestPacket;
 import com.chaosbuffalo.mkcore.sync.UpdateEngine;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,7 +16,7 @@ import net.minecraft.nbt.CompoundNBT;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MKPlayerData implements IMKEntityData<PlayerEntity> {
+public class MKPlayerData implements IMKEntityData {
 
     private PlayerEntity player;
     private boolean readyForUpdates = false;
@@ -30,6 +31,14 @@ public class MKPlayerData implements IMKEntityData<PlayerEntity> {
     }
 
     @Override
+    public boolean consumeMana(float amount) {
+        return getPlayerStats().consumeMana(amount);
+    }
+
+    public PlayerStatsModule getPlayerStats(){
+        return stats;
+    }
+
     public void attach(PlayerEntity newPlayer) {
         player = newPlayer;
         updateEngine = new UpdateEngine(this);
@@ -91,7 +100,7 @@ public class MKPlayerData implements IMKEntityData<PlayerEntity> {
     }
 
     @Override
-    public IStatsModule<PlayerEntity> getStats() {
+    public IStatsModule getStats() {
         return stats;
     }
 
@@ -100,7 +109,7 @@ public class MKPlayerData implements IMKEntityData<PlayerEntity> {
     }
 
     @Override
-    public void clone(IMKEntityData<PlayerEntity> previous, boolean death) {
+    public void clone(IMKEntityData previous, boolean death) {
         MKCore.LOGGER.info("onDeath!");
 
         CompoundNBT tag = new CompoundNBT();
@@ -109,7 +118,17 @@ public class MKPlayerData implements IMKEntityData<PlayerEntity> {
     }
 
     @Override
+    public void attach(LivingEntity entity) {
+        attach((PlayerEntity) entity);
+    }
+
     public PlayerEntity getPlayer() {
+        return player;
+    }
+
+
+    @Override
+    public LivingEntity getEntity() {
         return player;
     }
 

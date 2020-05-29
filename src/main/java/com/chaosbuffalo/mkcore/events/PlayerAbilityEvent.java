@@ -2,13 +2,13 @@ package com.chaosbuffalo.mkcore.events;
 
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
-import com.chaosbuffalo.mkcore.core.IMKEntityData;
+import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import net.minecraftforge.eventbus.api.Cancelable;
 
 public class PlayerAbilityEvent extends PlayerDataEvent {
     private final MKAbilityInfo abilityInfo;
 
-    private PlayerAbilityEvent(IMKEntityData data, MKAbilityInfo abilityInfo) {
+    private PlayerAbilityEvent(MKPlayerData data, MKAbilityInfo abilityInfo) {
         super(data);
         this.abilityInfo = abilityInfo;
     }
@@ -23,7 +23,7 @@ public class PlayerAbilityEvent extends PlayerDataEvent {
 
     public static class Completed extends PlayerAbilityEvent {
 
-        public Completed(IMKEntityData data, MKAbilityInfo abilityInfo) {
+        public Completed(MKPlayerData data, MKAbilityInfo abilityInfo) {
             super(data, abilityInfo);
         }
     }
@@ -31,7 +31,7 @@ public class PlayerAbilityEvent extends PlayerDataEvent {
     @Cancelable
     public static class StartCasting extends PlayerAbilityEvent {
 
-        public StartCasting(IMKEntityData data, MKAbilityInfo abilityInfo) {
+        public StartCasting(MKPlayerData data, MKAbilityInfo abilityInfo) {
             super(data, abilityInfo);
         }
     }

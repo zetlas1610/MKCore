@@ -24,15 +24,15 @@ public class Capabilities {
 
     public static ResourceLocation PLAYER_CAP_ID = MKCore.makeRL("player_data");
 
-    @CapabilityInject(IMKEntityData.class)
-    public static final Capability<IMKEntityData<?>> PLAYER_CAPABILITY;
+    @CapabilityInject(MKPlayerData.class)
+    public static final Capability<MKPlayerData> PLAYER_CAPABILITY;
 
     static {
         PLAYER_CAPABILITY = null;
     }
 
     public static void registerCapabilities() {
-        CapabilityManager.INSTANCE.register(IMKEntityData.class, new MKDataStorage(), MKPlayerData::new);
+        CapabilityManager.INSTANCE.register(MKPlayerData.class, new MKPlayerDataStorage(), MKPlayerData::new);
         MinecraftForge.EVENT_BUS.register(Capabilities.class);
     }
 
@@ -44,19 +44,23 @@ public class Capabilities {
         }
     }
 
+    public static class MKPlayerDataStorage extends MKDataStorage<MKPlayerData> {
 
-    public static class MKDataStorage implements Capability.IStorage<IMKEntityData> {
+    }
+
+
+    public abstract static class MKDataStorage<T extends IMKEntityData> implements Capability.IStorage<T> {
 
         @Nullable
         @Override
-        public INBT writeNBT(Capability<IMKEntityData> capability, IMKEntityData instance, Direction side) {
+        public INBT writeNBT(Capability<T> capability, T instance, Direction side) {
             CompoundNBT tag = new CompoundNBT();
             instance.serialize(tag);
             return tag;
         }
 
         @Override
-        public void readNBT(Capability<IMKEntityData> capability, IMKEntityData instance, Direction side, INBT nbt) {
+        public void readNBT(Capability<T> capability, T instance, Direction side, INBT nbt) {
             if (nbt instanceof CompoundNBT && instance != null) {
                 CompoundNBT tag = (CompoundNBT) nbt;
                 instance.deserialize(tag);
@@ -68,7 +72,7 @@ public class Capabilities {
         private final MKPlayerData playerHandler;
 
         public PlayerDataProvider(PlayerEntity playerEntity) {
-            playerHandler = (MKPlayerData) Capabilities.PLAYER_CAPABILITY.getDefaultInstance();
+            playerHandler = Capabilities.PLAYER_CAPABILITY.getDefaultInstance();
             if (playerHandler != null) {
                 playerHandler.attach(playerEntity);
             }

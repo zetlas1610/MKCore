@@ -11,7 +11,6 @@ import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkcore.utils.SoundUtils;
 import com.chaosbuffalo.targeting_api.Targeting;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.Effect;
@@ -71,7 +70,7 @@ public class NotoriousDOT extends MKToggleAbility {
     }
 
     @Override
-    public void applyEffect(LivingEntity entity, IMKEntityData<?> entityData, World theWorld) {
+    public void applyEffect(LivingEntity entity, IMKEntityData entityData, World theWorld) {
         super.applyEffect(entity, entityData, theWorld);
         int level = 1;
         entity.addPotionEffect(NotoriousDOTSongPotion.Create(entity).setTarget(entity)

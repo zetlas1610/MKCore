@@ -36,7 +36,7 @@ public class NotoriousDOTPotion extends SongEffect {
     }
 
     @Override
-    public AreaEffectBuilder prepareAreaEffect(PlayerEntity source, IMKEntityData<?> entityData,
+    public AreaEffectBuilder prepareAreaEffect(PlayerEntity source, IMKEntityData entityData,
                                                int level, AreaEffectBuilder builder) {
         SpellCast damage = AbilityMagicDamage.Create(source, NotoriousDOT.BASE_DAMAGE, NotoriousDOT.DAMAGE_SCALE, 0.6f);
         builder.spellCast(damage, level, Targeting.TargetType.ALL, true);

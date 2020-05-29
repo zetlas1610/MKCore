@@ -139,7 +139,7 @@ public class PlayerAbilityExecutor {
             return null;
         }
 
-        float manaCost = playerData.getStats().getAbilityManaCost(ability.getAbilityId());
+        float manaCost = playerData.getPlayerStats().getAbilityManaCost(ability.getAbilityId());
         playerData.consumeMana(manaCost);
 
         int castTime = ability.getCastTime();
@@ -279,9 +279,9 @@ public class PlayerAbilityExecutor {
         for (int i = 0; i < GameConstants.ACTION_BAR_SIZE; i++) {
             ResourceLocation abilityId = playerData.getKnowledge().getActionBar().getAbilityInSlot(i);
             MKAbility ability = MKCoreRegistry.getAbility(abilityId);
-            if (ability instanceof MKToggleAbility && playerData.getPlayer() != null) {
+            if (ability instanceof MKToggleAbility && playerData.getEntity() != null) {
                 MKToggleAbility toggle = (MKToggleAbility) ability;
-                if (playerData.getPlayer().isPotionActive(toggle.getToggleEffect()))
+                if (playerData.getEntity().isPotionActive(toggle.getToggleEffect()))
                     setToggleGroupAbility(toggle.getToggleGroupId(), toggle);
             }
         }

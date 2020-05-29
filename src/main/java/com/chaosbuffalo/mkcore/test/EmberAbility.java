@@ -71,7 +71,7 @@ public class EmberAbility extends MKAbility {
     }
 
     @Override
-    public void endCast(LivingEntity entity, IMKEntityData<?> data, World theWorld, CastState state) {
+    public void endCast(LivingEntity entity, IMKEntityData data, World theWorld, CastState state) {
         super.endCast(entity, data, theWorld, state);
         SingleTargetCastState singleTargetState = (SingleTargetCastState) state;
         if (singleTargetState == null) {

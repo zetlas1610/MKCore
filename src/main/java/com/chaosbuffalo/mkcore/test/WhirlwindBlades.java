@@ -61,7 +61,7 @@ public class WhirlwindBlades extends MKAbility {
     }
 
     @Override
-    public void continueCast(LivingEntity entity, IMKEntityData<?> data, World theWorld, int castTimeLeft, CastState state) {
+    public void continueCast(LivingEntity entity, IMKEntityData data, World theWorld, int castTimeLeft, CastState state) {
         super.continueCast(entity, data, theWorld, castTimeLeft, state);
         int tickSpeed = 6;
         if (castTimeLeft % tickSpeed == 0) {
@@ -102,7 +102,7 @@ public class WhirlwindBlades extends MKAbility {
     }
 
     @Override
-    public void execute(LivingEntity entity, IMKEntityData<?> entityData, World theWorld) {
+    public void execute(LivingEntity entity, IMKEntityData entityData, World theWorld) {
         entityData.startAbility(this);
     }
 }

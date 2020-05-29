@@ -7,6 +7,7 @@ import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
 import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
 import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import com.chaosbuffalo.mkcore.sync.SyncFloat;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -15,7 +16,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
-public class PlayerStatsModule implements ISyncObject, IStatsModule<PlayerEntity> {
+public class PlayerStatsModule implements ISyncObject, IStatsModule {
     private final MKPlayerData playerData;
     private float regenTime;
     private final AbilityTracker abilityTracker;
@@ -29,12 +30,10 @@ public class PlayerStatsModule implements ISyncObject, IStatsModule<PlayerEntity
         playerData.getUpdateEngine().addPrivate(abilityTracker);
     }
 
-    @Override
     public float getCritChanceForDamageType(MKDamageType damageType){
         return damageType.getCritChance(getEntity(), null);
     }
 
-    @Override
     public float getCritMultiplierForDamageType(MKDamageType damageType){
         return damageType.getCritMultiplier(getEntity(), null);
     }
@@ -58,22 +57,18 @@ public class PlayerStatsModule implements ISyncObject, IStatsModule<PlayerEntity
         return scaled / originalValue;
     }
 
-    @Override
     public float getMeleeCritChance() {
         return (float) getEntity().getAttribute(MKAttributes.MELEE_CRIT).getValue();
     }
 
-    @Override
     public float getSpellCritChance() {
         return (float) getEntity().getAttribute(MKAttributes.SPELL_CRIT).getValue();
     }
 
-    @Override
     public float getSpellCritDamage() {
         return (float) getEntity().getAttribute(MKAttributes.SPELL_CRIT_MULTIPLIER).getValue();
     }
 
-    @Override
     public float getMeleeCritDamage() {
         return (float) getEntity().getAttribute(MKAttributes.MELEE_CRIT_MULTIPLIER).getValue();
     }
@@ -103,29 +98,24 @@ public class PlayerStatsModule implements ISyncObject, IStatsModule<PlayerEntity
         return getEntity().getMaxHealth();
     }
 
-    @Override
     public float getMana() {
         return mana.get();
     }
 
-    @Override
     public void setMana(float value) {
         value = MathHelper.clamp(value, 0, getMaxMana());
         mana.set(value);
     }
 
-    @Override
     public float getMaxMana() {
         return (float) getEntity().getAttribute(MKAttributes.MAX_MANA).getValue();
     }
 
-    @Override
     public void setMaxMana(float max) {
         getEntity().getAttribute(MKAttributes.MAX_MANA).setBaseValue(max);
         setMana(getMana()); // Refresh the mana to account for the updated maximum
     }
 
-    @Override
     public float getManaRegenRate() {
         return (float) getEntity().getAttribute(MKAttributes.MANA_REGEN).getValue();
     }
@@ -159,12 +149,10 @@ public class PlayerStatsModule implements ISyncObject, IStatsModule<PlayerEntity
         }
     }
 
-    @Override
     public void addMana(float value) {
         setMana(getMana() + value);
     }
 
-    @Override
     public boolean consumeMana(float amount) {
         if (getMana() >= amount) {
             setMana(getMana() - amount);
@@ -191,7 +179,6 @@ public class PlayerStatsModule implements ISyncObject, IStatsModule<PlayerEntity
         return ticks;
     }
 
-    @Override
     public float getAbilityManaCost(ResourceLocation abilityId) {
         MKAbilityInfo abilityInfo = playerData.getKnowledge().getAbilityInfo(abilityId);
         if (abilityInfo == null) {
@@ -241,7 +228,11 @@ public class PlayerStatsModule implements ISyncObject, IStatsModule<PlayerEntity
     }
 
     @Override
-    public PlayerEntity getEntity() {
+    public LivingEntity getEntity() {
+        return playerData.getEntity();
+    }
+
+    public PlayerEntity getPlayer() {
         return playerData.getPlayer();
     }
 

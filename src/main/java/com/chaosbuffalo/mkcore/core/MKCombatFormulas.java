@@ -11,7 +11,7 @@ public class MKCombatFormulas {
 
     public static int applyCooldownReduction(IMKEntityData playerData, int originalCooldownTicks) {
         final float MAX_COOLDOWN = 2.0f; // Maximum cooldown rate improvement is 200%
-        float cdrValue = (float) playerData.getPlayer().getAttribute(MKAttributes.COOLDOWN).getValue();
+        float cdrValue = (float) playerData.getEntity().getAttribute(MKAttributes.COOLDOWN).getValue();
         float mod = MAX_COOLDOWN - cdrValue;
         float newTicks = mod * originalCooldownTicks;
         return (int) newTicks;
