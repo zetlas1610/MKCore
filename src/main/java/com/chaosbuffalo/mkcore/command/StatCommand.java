@@ -55,7 +55,7 @@ public class StatCommand {
     static ArgumentBuilder<CommandSource, ?> createSimpleFloatStat(String name, Function<PlayerStatsModule, Float> getter, BiConsumer<PlayerStatsModule, Float> setter) {
         Function<PlayerEntity, Integer> getAction = playerEntity -> {
             playerEntity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap ->
-                    TextUtils.sendPlayerChatMessage(playerEntity, String.format("%s is %f", name, getter.apply(cap.getStats()))));
+                    TextUtils.sendPlayerChatMessage(playerEntity, String.format("%s is %f", name, getter.apply(cap.getPlayerStats()))));
 
             return Command.SINGLE_SUCCESS;
         };
@@ -65,8 +65,9 @@ public class StatCommand {
             setAction = (playerEntity, value) -> {
                 playerEntity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap -> {
                     TextUtils.sendPlayerChatMessage(playerEntity, String.format("Setting %s to %f", name, value));
-                    setter.accept(cap.getStats(), value);
-                    TextUtils.sendPlayerChatMessage(playerEntity, String.format("%s is now %f", name, getter.apply(cap.getStats())));
+                    setter.accept(cap.getPlayerStats(), value);
+                    TextUtils.sendPlayerChatMessage(playerEntity, String.format("%s is now %f",
+                            name, getter.apply(cap.getPlayerStats())));
                 });
                 return Command.SINGLE_SUCCESS;
             };

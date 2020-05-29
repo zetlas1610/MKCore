@@ -8,6 +8,7 @@ import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
+import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.core.PlayerAbilityExecutor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -38,7 +39,7 @@ public class MKOverlay {
         mc = Minecraft.getInstance();
     }
 
-    private void drawMana(IMKEntityData data) {
+    private void drawMana(MKPlayerData data) {
         int height = mc.getMainWindow().getScaledHeight();
 
         mc.getTextureManager().bindTexture(barTexture);
@@ -51,7 +52,7 @@ public class MKOverlay {
         int manaStartY = height - 24 - 10;
         int manaStartX = 24;
 
-        for (int i = 0; i < data.getStats().getMana(); i++) {
+        for (int i = 0; i < data.getPlayerStats().getMana(); i++) {
             int manaX = manaCellWidth * (i % maxManaPerRow);
             int manaY = (i / maxManaPerRow) * manaCellRowSize;
             GuiUtils.drawTexturedModalRect(manaStartX + manaX, manaStartY + manaY, MANA_START_U, MANA_START_V,
@@ -59,7 +60,7 @@ public class MKOverlay {
         }
     }
 
-    private void drawCastBar(IMKEntityData data) {
+    private void drawCastBar(MKPlayerData data) {
         PlayerAbilityExecutor executor = data.getAbilityExecutor();
         if (!executor.isCasting()) {
             return;
@@ -100,7 +101,7 @@ public class MKOverlay {
         }
     }
 
-    private void drawAbilities(IMKEntityData data, int slotCount, float partialTicks) {
+    private void drawAbilities(MKPlayerData data, int slotCount, float partialTicks) {
         RenderSystem.disableLighting();
 
         final int slotAbilityOffsetX = 1;
@@ -124,8 +125,8 @@ public class MKOverlay {
             if (ability == null)
                 continue;
 
-            float manaCost = data.getStats().getAbilityManaCost(abilityId);
-            if (!executor.isCasting() && data.getStats().getMana() >= manaCost) {
+            float manaCost = data.getPlayerStats().getAbilityManaCost(abilityId);
+            if (!executor.isCasting() && data.getPlayerStats().getMana() >= manaCost) {
                 RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             } else {
                 RenderSystem.color4f(0.5f, 0.5f, 0.5f, 1.0F);
