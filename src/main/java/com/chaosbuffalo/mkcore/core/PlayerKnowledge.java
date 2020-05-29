@@ -18,7 +18,7 @@ public class PlayerKnowledge extends PlayerSyncComponent {
     private final PlayerKnownAbilities knownAbilities;
 
     public PlayerKnowledge(MKPlayerData playerData) {
-        super();
+        super("knowledge");
         this.playerData = playerData;
         actionBar = new PlayerActionBar(playerData);
         knownAbilities = new PlayerKnownAbilities(playerData);

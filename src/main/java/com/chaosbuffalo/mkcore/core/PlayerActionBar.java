@@ -17,10 +17,10 @@ public class PlayerActionBar extends PlayerSyncComponent {
     private final MKPlayerData playerData;
     private final List<ResourceLocation> abilities = NonNullList.withSize(GameConstants.ACTION_BAR_SIZE, MKCoreRegistry.INVALID_ABILITY);
     private final SyncListUpdater<ResourceLocation> hotBarUpdater =
-            new SyncListUpdater<>("hotbar", () -> abilities, id -> StringNBT.valueOf(id.toString()), nbt -> new ResourceLocation(nbt.getString()));
+            new SyncListUpdater<>("active", () -> abilities, id -> StringNBT.valueOf(id.toString()), nbt -> new ResourceLocation(nbt.getString()));
 
     public PlayerActionBar(MKPlayerData playerData) {
-        super();
+        super("hotbar");
         this.playerData = playerData;
         addPrivate(hotBarUpdater);
     }

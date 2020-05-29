@@ -20,13 +20,12 @@ import java.util.Map;
 public class PlayerKnownAbilities extends PlayerSyncComponent {
     private final MKPlayerData playerData;
     private final Map<ResourceLocation, MKAbilityInfo> abilityInfoMap = new HashMap<>();
-
     private final SyncMapUpdater<ResourceLocation, MKAbilityInfo> abilityUpdater =
-            new SyncMapUpdater<>("knownAbilities", () -> abilityInfoMap, ResourceLocation::toString,
+            new SyncMapUpdater<>("known", () -> abilityInfoMap, ResourceLocation::toString,
                     ResourceLocation::new, PlayerKnownAbilities::createAbilityInfo);
 
     public PlayerKnownAbilities(MKPlayerData playerData) {
-        super();
+        super("abilities");
         this.playerData = playerData;
         addPrivate(abilityUpdater);
     }

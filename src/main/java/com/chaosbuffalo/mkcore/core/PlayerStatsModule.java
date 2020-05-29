@@ -22,7 +22,7 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
     private final SyncFloat mana = new SyncFloat("mana", 0f);
 
     public PlayerStatsModule(MKPlayerData playerData) {
-        super();
+        super("stats");
         this.playerData = playerData;
         regenTime = 0f;
         addPublic(mana);

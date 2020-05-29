@@ -12,6 +12,7 @@ public class SyncGroup implements ISyncObject, ISyncNotifier {
     private String nestedName = null;
     private final Set<ISyncObject> dirty = new HashSet<>();
     private ISyncNotifier parentNotifier = ISyncNotifier.NONE;
+    private boolean forceFull = false;
 
     public SyncGroup(ISyncObject... syncObjects) {
         for (ISyncObject sync : syncObjects) {
@@ -49,6 +50,10 @@ public class SyncGroup implements ISyncObject, ISyncNotifier {
         parentNotifier.notifyUpdate(this);
     }
 
+    public void forceDirty() {
+        forceFull = true;
+    }
+
     @Override
     public boolean isDirty() {
         return !dirty.isEmpty();
@@ -59,7 +64,7 @@ public class SyncGroup implements ISyncObject, ISyncNotifier {
     }
 
     private void writeUpdateRootTag(CompoundNBT tag, CompoundNBT filledRoot) {
-        if (nestedName != null) {
+        if (nestedName != null && filledRoot.size() > 0) {
             tag.put(nestedName, filledRoot);
         }
     }
@@ -72,12 +77,19 @@ public class SyncGroup implements ISyncObject, ISyncNotifier {
 
     @Override
     public void serializeUpdate(CompoundNBT tag) {
-        CompoundNBT root = getUpdateRootTag(tag);
-        dirty.stream()
-                .filter(ISyncObject::isDirty)
-                .forEach(c -> c.serializeUpdate(root));
-        writeUpdateRootTag(tag, root);
-        dirty.clear();
+        if (forceFull) {
+            serializeFull(tag);
+            forceFull = false;
+        } else {
+            CompoundNBT root = getUpdateRootTag(tag);
+            dirty.stream()
+                    .filter(ISyncObject::isDirty)
+                    .forEach(c -> c.serializeUpdate(root));
+            if (root.size() > 0) {
+                writeUpdateRootTag(tag, root);
+            }
+            dirty.clear();
+        }
     }
 
     @Override

@@ -26,10 +26,12 @@ public class UpdateEngine {
 
     public void addPublic(ISyncObject syncObject) {
         publicUpdater.add(syncObject);
+        publicUpdater.forceDirty();
     }
 
     public void removePublic(ISyncObject syncObject) {
         publicUpdater.remove(syncObject);
+        publicUpdater.forceDirty();
     }
 
     public void addPrivate(ISyncObject syncObject) {

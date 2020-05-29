@@ -33,7 +33,7 @@ public class PlayerSyncComponent {
         children.forEach(c -> c.detach(engine));
     }
 
-    void addChild(PlayerSyncComponent component) {
+    protected void addChild(PlayerSyncComponent component) {
         children.add(component);
     }
 

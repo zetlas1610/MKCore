@@ -150,7 +150,6 @@ public class MKPlayerData implements IMKEntityData {
 
     @Override
     public void serialize(CompoundNBT nbt) {
-//        MKCore.LOGGER.info("serialize({})", mana.get());
         getStats().serialize(nbt);
         getKnowledge().serialize(nbt);
     }
@@ -159,8 +158,6 @@ public class MKPlayerData implements IMKEntityData {
     public void deserialize(CompoundNBT nbt) {
         getKnowledge().deserialize(nbt);
         getStats().deserialize(nbt);
-
-//        MKCore.LOGGER.info("deserialize({})", mana.get());
     }
 
     public void addSpellTag(String tag) {
