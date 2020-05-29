@@ -3,8 +3,10 @@ package com.chaosbuffalo.mkcore;
 import com.chaosbuffalo.mkcore.abilities.AbilityManager;
 import com.chaosbuffalo.mkcore.client.gui.MKOverlay;
 import com.chaosbuffalo.mkcore.command.MKCommand;
-import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
+import com.chaosbuffalo.mkcore.mku.MKUEntityTypes;
+import com.chaosbuffalo.mkcore.mku.RenderRegistry;
+import com.chaosbuffalo.mkcore.mku.client.render.GreenLadyRenderer;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
@@ -12,6 +14,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -42,6 +45,7 @@ public class MKCore {
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, MKConfig.CLIENT_CONFIG);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, MKConfig.SERVER_CONFIG);
+        MKUEntityTypes.ENTITY_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     private void setup(final FMLCommonSetupEvent event) {
@@ -64,6 +68,7 @@ public class MKCore {
         LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().gameSettings);
         MinecraftForge.EVENT_BUS.register(new MKOverlay());
         ClientEventHandler.initKeybindings();
+        RenderRegistry.registerRenderers();
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
