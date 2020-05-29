@@ -43,14 +43,12 @@ public class PlayerStatsModule implements ISyncObject, IStatsModule {
         return (float) getEntity().getAttribute(damageType.getDamageAttribute()).getValue();
     }
 
-    @Override
     public float getDamageMultiplierForDamageType(MKDamageType damageType){
         float originalValue = 10.0f;
         float scaled = damageType.applyDamage(getEntity(), null, originalValue, 1.0f);
         return scaled / originalValue;
     }
 
-    @Override
     public float getArmorMultiplierForDamageType(MKDamageType damageType){
         float originalValue = 10.0f;
         float scaled = damageType.applyResistance(getEntity(), originalValue);

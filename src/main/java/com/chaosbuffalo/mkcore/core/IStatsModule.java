@@ -11,10 +11,6 @@ public interface IStatsModule {
 
     float getDamageTypeBonus(MKDamageType damageType);
 
-    float getDamageMultiplierForDamageType(MKDamageType damageType);
-
-    float getArmorMultiplierForDamageType(MKDamageType damageType);
-
     float getHealBonus();
 
     float getHealth();
