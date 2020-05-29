@@ -216,9 +216,9 @@ public class SpellTriggers {
             if (sourceData instanceof MKPlayerData){
                 MKPlayerData playerData = (MKPlayerData) sourceData;
                 if (MKCombatFormulas.checkCrit(playerSource,
-                        critChance + playerData.getPlayerStats().getMeleeCritChance())) {
+                        critChance + playerData.getStats().getMeleeCritChance())) {
                     float critMultiplier = ItemUtils.getCritDamageForItem(mainHand);
-                    critMultiplier += playerData.getPlayerStats().getMeleeCritDamage();
+                    critMultiplier += playerData.getStats().getMeleeCritDamage();
                     float newDamage = event.getAmount() * critMultiplier;
                     event.setAmount(newDamage);
                     sendCritPacket(livingTarget, playerSource,

@@ -27,11 +27,10 @@ public abstract class SongEffect extends SongPotionBase {
 
     @Override
     public void doEffect(Entity source, Entity indirectSource, LivingEntity target, int amplifier, SpellCast cast) {
-
         if (source instanceof PlayerEntity) {
             MKCore.getPlayer((PlayerEntity) source).ifPresent(pData -> {
-                PlayerEntity player = pData.getPlayer();
-                if (!pData.consumeMana(amplifier)) {
+                PlayerEntity player = pData.getEntity();
+                if (!pData.getStats().consumeMana(amplifier)) {
                     player.removePotionEffect(this);
                 }
                 AreaEffectBuilder builder = AreaEffectBuilder.Create(player, player)

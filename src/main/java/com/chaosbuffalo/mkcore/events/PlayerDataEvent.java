@@ -13,7 +13,7 @@ public class PlayerDataEvent extends Event {
     }
 
     public PlayerEntity getPlayer() {
-        return getPlayerData().getPlayer();
+        return getPlayerData().getEntity();
     }
 
     public MKPlayerData getPlayerData() {

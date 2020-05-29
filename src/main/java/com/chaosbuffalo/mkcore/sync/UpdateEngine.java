@@ -16,7 +16,7 @@ public class UpdateEngine {
 
     public UpdateEngine(MKPlayerData playerEntity) {
         this.playerData = playerEntity;
-        this.player = playerEntity.getPlayer();
+        this.player = playerEntity.getEntity();
     }
 
     private boolean isServerSide() {

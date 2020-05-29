@@ -30,12 +30,9 @@ public class MKPlayerData implements IMKEntityData {
 
     }
 
-    @Override
-    public boolean consumeMana(float amount) {
-        return getPlayerStats().consumeMana(amount);
-    }
 
-    public PlayerStatsModule getPlayerStats(){
+    @Override
+    public PlayerStatsModule getStats(){
         return stats;
     }
 
@@ -99,10 +96,6 @@ public class MKPlayerData implements IMKEntityData {
         return knowledge;
     }
 
-    @Override
-    public IStatsModule getStats() {
-        return stats;
-    }
 
     public UpdateEngine getUpdateEngine() {
         return updateEngine;
@@ -122,13 +115,8 @@ public class MKPlayerData implements IMKEntityData {
         attach((PlayerEntity) entity);
     }
 
-    public PlayerEntity getPlayer() {
-        return player;
-    }
-
-
     @Override
-    public LivingEntity getEntity() {
+    public PlayerEntity getEntity() {
         return player;
     }
 

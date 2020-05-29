@@ -33,7 +33,7 @@ public class PlayerAbilityExecutor {
     }
 
     private PlayerEntity getPlayer() {
-        return playerData.getPlayer();
+        return playerData.getEntity();
     }
 
     private boolean isServerSide() {
@@ -139,8 +139,8 @@ public class PlayerAbilityExecutor {
             return null;
         }
 
-        float manaCost = playerData.getPlayerStats().getAbilityManaCost(ability.getAbilityId());
-        playerData.consumeMana(manaCost);
+        float manaCost = playerData.getStats().getAbilityManaCost(ability.getAbilityId());
+        playerData.getStats().consumeMana(manaCost);
 
         int castTime = ability.getCastTime();
         CastState state = startCast(info, castTime);
@@ -293,7 +293,7 @@ public class PlayerAbilityExecutor {
         }
         MKToggleAbility toggle = (MKToggleAbility) ability;
 
-        PlayerEntity player = playerData.getPlayer();
+        PlayerEntity player = playerData.getEntity();
         MKAbilityInfo info = playerData.getKnowledge().getAbilityInfo(ability.getAbilityId());
         if (info != null && info.isCurrentlyKnown()) {
             // If this is a toggle ability we must re-apply the effect to make sure it's working at the proper rank
@@ -312,7 +312,7 @@ public class PlayerAbilityExecutor {
     }
 
     public void setToggleGroupAbility(ResourceLocation groupId, MKToggleAbility ability) {
-        PlayerEntity player = playerData.getPlayer();
+        PlayerEntity player = playerData.getEntity();
         MKToggleAbility current = activeToggleMap.get(ability.getToggleGroupId());
         // This can also be called when rebuilding the activeToggleMap after transferring dimensions and in that case
         // ability will be the same as current

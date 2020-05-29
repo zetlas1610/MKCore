@@ -17,7 +17,7 @@ public interface IMKEntityData {
 
     IStatsModule getStats();
 
-    boolean consumeMana(float amount);
+
 
     default CastState startAbility(MKAbility ability) {
         return getAbilityExecutor().startAbility(ability);

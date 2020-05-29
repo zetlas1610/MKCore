@@ -26,7 +26,7 @@ public class PlayerStatsModule implements ISyncObject, IStatsModule {
     public PlayerStatsModule(MKPlayerData playerData) {
         this.playerData = playerData;
         regenTime = 0f;
-        abilityTracker = AbilityTracker.getTracker(playerData.getPlayer());
+        abilityTracker = AbilityTracker.getTracker(playerData.getEntity());
         playerData.getUpdateEngine().addPrivate(abilityTracker);
     }
 
@@ -48,6 +48,7 @@ public class PlayerStatsModule implements ISyncObject, IStatsModule {
         float scaled = damageType.applyDamage(getEntity(), null, originalValue, 1.0f);
         return scaled / originalValue;
     }
+
 
     public float getArmorMultiplierForDamageType(MKDamageType damageType){
         float originalValue = 10.0f;
@@ -151,6 +152,7 @@ public class PlayerStatsModule implements ISyncObject, IStatsModule {
         setMana(getMana() + value);
     }
 
+    @Override
     public boolean consumeMana(float amount) {
         if (getMana() >= amount) {
             setMana(getMana() - amount);
@@ -226,12 +228,8 @@ public class PlayerStatsModule implements ISyncObject, IStatsModule {
     }
 
     @Override
-    public LivingEntity getEntity() {
+    public PlayerEntity getEntity() {
         return playerData.getEntity();
-    }
-
-    public PlayerEntity getPlayer() {
-        return playerData.getPlayer();
     }
 
 

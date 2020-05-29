@@ -21,6 +21,10 @@ public interface IStatsModule {
 
     void tick();
 
+    default boolean consumeMana(float amount){
+        return true;
+    }
+
     int getCurrentAbilityCooldown(ResourceLocation abilityId);
 
     float getActiveCooldownPercent(MKAbilityInfo abilityInfo, float partialTicks);

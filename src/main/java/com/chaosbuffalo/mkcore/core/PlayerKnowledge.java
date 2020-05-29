@@ -30,7 +30,7 @@ public class PlayerKnowledge implements ISyncObject {
     }
 
     PlayerEntity getPlayer() {
-        return playerData.getPlayer();
+        return playerData.getEntity();
     }
 
     public PlayerActionBar getActionBar() {
