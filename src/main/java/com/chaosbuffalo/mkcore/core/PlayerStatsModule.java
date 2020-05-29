@@ -4,10 +4,7 @@ import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
-import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
-import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import com.chaosbuffalo.mkcore.sync.SyncFloat;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -16,41 +13,43 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
-public class PlayerStatsModule implements ISyncObject, IStatsModule {
+
+public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModule {
     private final MKPlayerData playerData;
     private float regenTime;
     private final AbilityTracker abilityTracker;
     private final SyncFloat mana = new SyncFloat("mana", 0f);
-    private final CompositeUpdater publicUpdater = new CompositeUpdater(mana);
 
     public PlayerStatsModule(MKPlayerData playerData) {
+        super("stats");
         this.playerData = playerData;
         regenTime = 0f;
+        addPublic(mana);
         abilityTracker = AbilityTracker.getTracker(playerData.getEntity());
-        playerData.getUpdateEngine().addPrivate(abilityTracker);
+        addPrivate(abilityTracker);
     }
 
-    public float getCritChanceForDamageType(MKDamageType damageType){
+    public float getCritChanceForDamageType(MKDamageType damageType) {
         return damageType.getCritChance(getEntity(), null);
     }
 
-    public float getCritMultiplierForDamageType(MKDamageType damageType){
+    public float getCritMultiplierForDamageType(MKDamageType damageType) {
         return damageType.getCritMultiplier(getEntity(), null);
     }
 
     @Override
-    public float getDamageTypeBonus(MKDamageType damageType){
+    public float getDamageTypeBonus(MKDamageType damageType) {
         return (float) getEntity().getAttribute(damageType.getDamageAttribute()).getValue();
     }
 
-    public float getDamageMultiplierForDamageType(MKDamageType damageType){
+    public float getDamageMultiplierForDamageType(MKDamageType damageType) {
         float originalValue = 10.0f;
         float scaled = damageType.applyDamage(getEntity(), null, originalValue, 1.0f);
         return scaled / originalValue;
     }
 
 
-    public float getArmorMultiplierForDamageType(MKDamageType damageType){
+    public float getArmorMultiplierForDamageType(MKDamageType damageType) {
         float originalValue = 10.0f;
         float scaled = damageType.applyResistance(getEntity(), originalValue);
         return scaled / originalValue;
@@ -244,27 +243,4 @@ public class PlayerStatsModule implements ISyncObject, IStatsModule {
             setMana(nbt.getFloat("mana"));
         }
     }
-
-
-    @Override
-    public boolean isDirty() {
-        return publicUpdater.isDirty();
-    }
-
-    @Override
-    public void deserializeUpdate(CompoundNBT tag) {
-        publicUpdater.deserializeUpdate(tag);
-    }
-
-    @Override
-    public void serializeUpdate(CompoundNBT tag) {
-        publicUpdater.serializeUpdate(tag);
-    }
-
-    @Override
-    public void serializeFull(CompoundNBT tag) {
-        publicUpdater.serializeFull(tag);
-    }
-
-
 }

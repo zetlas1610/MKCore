@@ -1,5 +1,6 @@
 package com.chaosbuffalo.mkcore.core;
 
+import com.chaosbuffalo.mkcore.sync.ISyncNotifier;
 import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -138,6 +139,7 @@ public class AbilityTracker implements ISyncObject {
 
         private final ServerPlayerEntity player;
         private final List<ResourceLocation> dirty = new ArrayList<>();
+        private ISyncNotifier parentNotifier = ISyncNotifier.NONE;
 
         public AbilityTrackerServer(ServerPlayerEntity player) {
             this.player = player;
@@ -147,12 +149,19 @@ public class AbilityTracker implements ISyncObject {
         protected void notifyOnSet(ResourceLocation id, int ticksIn) {
             super.notifyOnSet(id, ticksIn);
             dirty.add(id);
+            parentNotifier.notifyUpdate(this);
         }
 
         @Override
         protected void notifyOnRemove(ResourceLocation id) {
             super.notifyOnRemove(id);
             dirty.add(id);
+            parentNotifier.notifyUpdate(this);
+        }
+
+        @Override
+        public void setNotifier(ISyncNotifier notifier) {
+            parentNotifier = notifier;
         }
 
         @Override
@@ -185,6 +194,11 @@ public class AbilityTracker implements ISyncObject {
         } else {
             return new AbilityTracker();
         }
+    }
+
+    @Override
+    public void setNotifier(ISyncNotifier notifier) {
+
     }
 
     @Override

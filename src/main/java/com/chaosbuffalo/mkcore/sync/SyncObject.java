@@ -10,6 +10,7 @@ public class SyncObject<T> implements ISyncObject {
     private boolean dirty;
     private final BiConsumer<CompoundNBT, SyncObject<T>> serializer;
     private final BiConsumer<CompoundNBT, SyncObject<T>> deserializer;
+    private ISyncNotifier parentNotifier = ISyncNotifier.NONE;
 
     public SyncObject(String name, T value, BiConsumer<CompoundNBT, SyncObject<T>> serializer, BiConsumer<CompoundNBT, SyncObject<T>> deserializer) {
         this.name = name;
@@ -21,10 +22,16 @@ public class SyncObject<T> implements ISyncObject {
     public void set(T value) {
         this.value = value;
         this.dirty = true;
+        parentNotifier.notifyUpdate(this);
     }
 
     public T get() {
         return value;
+    }
+
+    @Override
+    public void setNotifier(ISyncNotifier notifier) {
+        parentNotifier = notifier;
     }
 
     @Override

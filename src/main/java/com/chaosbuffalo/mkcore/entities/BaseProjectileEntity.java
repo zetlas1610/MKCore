@@ -59,7 +59,7 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
         setup();
     }
 
-    public void setup(){
+    public void setup() {
 
     }
 
@@ -83,7 +83,7 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
         return this.graphicalEffectTickInterval;
     }
 
-    public void setGraphicalEffectTickInterval(int value){
+    public void setGraphicalEffectTickInterval(int value) {
         graphicalEffectTickInterval = value;
     }
 
@@ -190,7 +190,7 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
         this.ticksInGround = 0;
     }
 
-    public boolean isInGround(){
+    public boolean isInGround() {
         return inGround;
     }
 
@@ -198,12 +198,12 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
 
     }
 
-    protected boolean checkIfInGround(BlockPos blockpos, BlockState blockstate){
+    protected boolean checkIfInGround(BlockPos blockpos, BlockState blockstate) {
         if (!blockstate.isAir(this.world, blockpos)) {
             VoxelShape voxelshape = blockstate.getCollisionShape(this.world, blockpos);
             if (!voxelshape.isEmpty()) {
                 Vec3d entityPos = this.getPositionVec();
-                for(AxisAlignedBB axisalignedbb : voxelshape.toBoundingBoxList()) {
+                for (AxisAlignedBB axisalignedbb : voxelshape.toBoundingBoxList()) {
                     if (axisalignedbb.offset(blockpos).contains(entityPos)) {
                         return true;
                     }
@@ -213,14 +213,14 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
         return false;
     }
 
-    protected boolean missingPrevPitchAndYaw(){
+    protected boolean missingPrevPitchAndYaw() {
         return this.prevRotationPitch == 0.0F && this.prevRotationYaw == 0.0F;
     }
 
-    protected void calculateOriginalPitchYaw(Vec3d motion){
+    protected void calculateOriginalPitchYaw(Vec3d motion) {
         float xyMag = MathHelper.sqrt(horizontalMag(motion));
-        this.rotationYaw = (float)(MathHelper.atan2(motion.x, motion.z) * (double)(180F / (float)Math.PI));
-        this.rotationPitch = (float)(MathHelper.atan2(motion.y, xyMag) * (double)(180F / (float)Math.PI));
+        this.rotationYaw = (float) (MathHelper.atan2(motion.x, motion.z) * (double) (180F / (float) Math.PI));
+        this.rotationPitch = (float) (MathHelper.atan2(motion.y, xyMag) * (double) (180F / (float) Math.PI));
         this.prevRotationYaw = this.rotationYaw;
         this.prevRotationPitch = this.rotationPitch;
     }
@@ -234,17 +234,16 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
     }
 
 
-
     protected boolean onAirProc(LivingEntity caster, int amplifier) {
         return false;
     }
 
     @Nullable
     public LivingEntity getShooter() {
-        if (shootingEntity != null && world instanceof ServerWorld){
+        if (shootingEntity != null && world instanceof ServerWorld) {
             ServerWorld serverWorld = (ServerWorld) world;
             Entity entity = serverWorld.getEntityByUuid(shootingEntity);
-            if (entity instanceof LivingEntity){
+            if (entity instanceof LivingEntity) {
                 return (LivingEntity) entity;
             }
         }
@@ -301,12 +300,12 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
 
     protected boolean onHit(RayTraceResult rayTraceResult) {
         if (rayTraceResult.getType() == RayTraceResult.Type.BLOCK) {
-            BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)rayTraceResult;
+            BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult) rayTraceResult;
             BlockState blockstate = this.world.getBlockState(blockraytraceresult.getPos());
             this.inBlockState = blockstate;
             Vec3d vec3d = blockraytraceresult.getHitVec().subtract(this.getPosX(), this.getPosY(), this.getPosZ());
             this.setMotion(vec3d);
-            Vec3d vec3d1 = vec3d.normalize().scale((double)0.05F);
+            Vec3d vec3d1 = vec3d.normalize().scale((double) 0.05F);
             this.setRawPosition(this.getPosX() - vec3d1.x, this.getPosY() - vec3d1.y,
                     this.getPosZ() - vec3d1.z);
             this.inGround = true;
@@ -369,7 +368,7 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
         this.lastTickPosY = this.getPosY();
         this.lastTickPosZ = this.getPosZ();
         super.tick();
-        if (!isAlive()){
+        if (!isAlive()) {
             return;
         }
 
@@ -379,7 +378,7 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
 
         Vec3d motion = this.getMotion();
 
-        if (missingPrevPitchAndYaw()){
+        if (missingPrevPitchAndYaw()) {
             calculateOriginalPitchYaw(motion);
         }
 
@@ -387,7 +386,7 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
         BlockState blockstate = this.world.getBlockState(blockpos);
         this.inGround = checkIfInGround(blockpos, blockstate);
 
-        if (world.isRemote && ticksExisted % graphicalEffectTickInterval == 0){
+        if (world.isRemote && ticksExisted % graphicalEffectTickInterval == 0) {
             clientGraphicalUpdate();
         }
 

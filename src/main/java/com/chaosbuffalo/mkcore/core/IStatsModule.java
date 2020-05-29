@@ -3,7 +3,6 @@ package com.chaosbuffalo.mkcore.core;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 
@@ -19,7 +18,7 @@ public interface IStatsModule {
 
     float getMaxHealth();
 
-    default boolean consumeMana(float amount){
+    default boolean consumeMana(float amount) {
         return true;
     }
 

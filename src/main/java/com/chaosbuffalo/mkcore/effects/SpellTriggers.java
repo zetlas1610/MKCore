@@ -4,9 +4,9 @@ import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
-import com.chaosbuffalo.mkcore.core.damage.MKDamageSource;
-import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.core.MKCombatFormulas;
+import com.chaosbuffalo.mkcore.core.MKPlayerData;
+import com.chaosbuffalo.mkcore.core.damage.MKDamageSource;
 import com.chaosbuffalo.mkcore.events.ServerSideLeftClickEmpty;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.network.CritMessagePacket;
@@ -127,7 +127,7 @@ public class SpellTriggers {
         public static void onPlayerHurtEntity(LivingHurtEvent event, DamageSource source,
                                               LivingEntity livingTarget, ServerPlayerEntity playerSource,
                                               IMKEntityData sourceData) {
-           if (isMKDamage(source)){
+            if (isMKDamage(source)) {
                 MKDamageSource mkSource = (MKDamageSource) source;
                 if (mkSource.isMeleeDamage()) {
                     handleMKMelee(event, mkSource, livingTarget, playerSource, sourceData);
@@ -203,7 +203,7 @@ public class SpellTriggers {
         }
 
         private static void handleMKMelee(LivingHurtEvent event, MKDamageSource source, LivingEntity livingTarget,
-                                          ServerPlayerEntity playerSource, IMKEntityData sourceData){
+                                          ServerPlayerEntity playerSource, IMKEntityData sourceData) {
 
             calculateAbilityDamage(event, livingTarget, playerSource, sourceData, source,
                     MELEE_TAG, playerHurtEntityMeleeTriggers);
@@ -213,7 +213,7 @@ public class SpellTriggers {
                                                ServerPlayerEntity playerSource, IMKEntityData sourceData) {
             ItemStack mainHand = playerSource.getHeldItemMainhand();
             float critChance = MKCombatFormulas.getCritChanceForItem(mainHand);
-            if (sourceData instanceof MKPlayerData){
+            if (sourceData instanceof MKPlayerData) {
                 MKPlayerData playerData = (MKPlayerData) sourceData;
                 if (MKCombatFormulas.checkCrit(playerSource,
                         critChance + playerData.getStats().getMeleeCritChance())) {

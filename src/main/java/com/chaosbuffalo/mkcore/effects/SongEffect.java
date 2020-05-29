@@ -40,7 +40,7 @@ public abstract class SongEffect extends SongPotionBase {
                         .radius(getSongDistance(amplifier), true);
                 prepareAreaEffect(player, pData, amplifier, builder).spawn();
             });
-        } else if (source instanceof LivingEntity){
+        } else if (source instanceof LivingEntity) {
 
         }
     }

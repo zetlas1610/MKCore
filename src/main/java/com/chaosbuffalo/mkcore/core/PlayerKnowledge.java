@@ -4,29 +4,26 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
-import com.chaosbuffalo.mkcore.sync.CompositeUpdater;
-import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 
-public class PlayerKnowledge implements ISyncObject {
+public class PlayerKnowledge extends PlayerSyncComponent {
 
     private final MKPlayerData playerData;
 
     private final PlayerActionBar actionBar;
     private final PlayerKnownAbilities knownAbilities;
 
-    private final CompositeUpdater privateUpdater = new CompositeUpdater();
-
     public PlayerKnowledge(MKPlayerData playerData) {
+        super("knowledge");
         this.playerData = playerData;
-        actionBar = new PlayerActionBar(this);
-        knownAbilities = new PlayerKnownAbilities(this);
-        privateUpdater.add(actionBar);
-        privateUpdater.add(knownAbilities);
+        actionBar = new PlayerActionBar(playerData);
+        knownAbilities = new PlayerKnownAbilities(playerData);
+        addChild(actionBar);
+        addChild(knownAbilities);
     }
 
     PlayerEntity getPlayer() {
@@ -65,26 +62,6 @@ public class PlayerKnowledge implements ISyncObject {
             playerData.getAbilityExecutor().onAbilityUnlearned(ability);
             actionBar.onAbilityUnlearned(ability);
         }
-    }
-
-    @Override
-    public boolean isDirty() {
-        return privateUpdater.isDirty();
-    }
-
-    @Override
-    public void deserializeUpdate(CompoundNBT tag) {
-        privateUpdater.deserializeUpdate(tag);
-    }
-
-    @Override
-    public void serializeUpdate(CompoundNBT tag) {
-        privateUpdater.serializeUpdate(tag);
-    }
-
-    @Override
-    public void serializeFull(CompoundNBT tag) {
-        privateUpdater.serializeFull(tag);
     }
 
     public void serialize(CompoundNBT tag) {
