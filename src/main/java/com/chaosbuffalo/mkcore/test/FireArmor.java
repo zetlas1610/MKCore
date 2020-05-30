@@ -11,7 +11,9 @@ import com.chaosbuffalo.mkcore.effects.SpellCast;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
+import com.chaosbuffalo.targeting_api.Contexts;
 import com.chaosbuffalo.targeting_api.Targeting;
+import com.chaosbuffalo.targeting_api.TargetingContext;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.ParticleTypes;
@@ -39,9 +41,10 @@ public class FireArmor extends MKAbility {
     }
 
     @Override
-    public Targeting.TargetType getTargetType() {
-        return Targeting.TargetType.ALL;
+    public TargetingContext getTargetContext() {
+        return Contexts.ALL;
     }
+
 
     @Override
     public float getDistance() {
@@ -75,9 +78,9 @@ public class FireArmor extends MKAbility {
                 40, 5, .1f);
 
         AreaEffectBuilder.Create(entity, entity)
-                .effect(absorbEffect, getTargetType())
-                .effect(fireResistanceEffect, getTargetType())
-                .spellCast(particlePotion, level, getTargetType())
+                .effect(absorbEffect, getTargetContext())
+                .effect(fireResistanceEffect, getTargetContext())
+                .spellCast(particlePotion, level, getTargetContext())
 //                .spellCast(SoundPotion.Create(entity, ModSounds.spell_fire_2, SoundCategory.PLAYERS),
 //                        1, getTargetType())
                 .instant()

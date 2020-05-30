@@ -94,7 +94,7 @@ dependencies {
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${forge_version}"
-    compile "curse.maven:targeting_api:2958155"
+    compile "curse.maven:targeting_api:2969181"
     compile "curse.maven:mk-widgets:2955593"
 
     // You may put jars on which you depend on in ./libs or you may define them like so..

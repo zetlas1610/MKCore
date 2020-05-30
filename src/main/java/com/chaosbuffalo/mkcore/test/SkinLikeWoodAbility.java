@@ -9,7 +9,9 @@ import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkcore.utils.SoundUtils;
+import com.chaosbuffalo.targeting_api.Contexts;
 import com.chaosbuffalo.targeting_api.Targeting;
+import com.chaosbuffalo.targeting_api.TargetingContext;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.ParticleTypes;
@@ -41,8 +43,8 @@ public class SkinLikeWoodAbility extends MKToggleAbility {
 
 
     @Override
-    public Targeting.TargetType getTargetType() {
-        return Targeting.TargetType.SELF;
+    public TargetingContext getTargetContext() {
+        return Contexts.SELF;
     }
 
     @Override

@@ -3,7 +3,8 @@ package com.chaosbuffalo.mkcore.effects;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
-import com.chaosbuffalo.targeting_api.Targeting;
+import com.chaosbuffalo.targeting_api.Contexts;
+import com.chaosbuffalo.targeting_api.TargetingContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particles.IParticleData;
@@ -36,8 +37,8 @@ public class ParticlePotion extends SpellPotionBase {
     }
 
     @Override
-    public Targeting.TargetType getTargetType() {
-        return Targeting.TargetType.ALL;
+    public TargetingContext getTargetContext() {
+        return Contexts.ALL;
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.mkcore.utils.RayTraceUtils;
 import com.chaosbuffalo.targeting_api.Targeting;
+import com.chaosbuffalo.targeting_api.TargetingContext;
 import com.google.gson.JsonObject;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -17,7 +18,6 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
@@ -134,14 +134,14 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         return AbilityType.Active;
     }
 
-    public abstract Targeting.TargetType getTargetType();
+    public abstract TargetingContext getTargetContext();
 
     public boolean canSelfCast() {
         return false;
     }
 
     protected boolean isValidTarget(LivingEntity caster, LivingEntity target) {
-        return Targeting.isValidTarget(getTargetType(), caster, target, !canSelfCast());
+        return Targeting.isValidTarget(getTargetContext(), caster, target);
     }
 
     public float getManaCost() {
