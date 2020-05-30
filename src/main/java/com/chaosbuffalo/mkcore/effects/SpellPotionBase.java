@@ -180,23 +180,6 @@ public abstract class SpellPotionBase extends Effect {
         return SpellManager.create(this, caster);
     }
 
-    @Override
-    public boolean equals(Object other) {
-        // Only exact class matches work
-        return other != null && other.getClass() == getClass();
-
-        // For subclasses, instead use
-        //return other != null && other.getClass().isAssignableFrom(getClass());
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 31 * hash + getLiquidColor();
-//        hash = 31 * hash + (isBadEffect() ? 1 : 0);
-        return hash;
-    }
-
     public ResourceLocation getIconTexture() {
         return null;
     }
@@ -225,16 +208,5 @@ public abstract class SpellPotionBase extends Effect {
             String s = EffectUtils.getPotionDurationString(effect, 1.0F);
             Minecraft.getInstance().fontRenderer.drawStringWithShadow(s, (float) (x + 10 + 18), (float) (y + 6 + 10), 8355711);
         }
-    }
-
-    @Override
-    public void renderHUDEffect(EffectInstance effect, AbstractGui gui, int x, int y, float z, float alpha) {
-        // FIXME: this may not work anymore on 1.15 due to effect icons being required to be located at textures/mob_effect/<id>.png. check PotionSpriteUploader
-//        if (getIconTexture() != null) {
-//            Minecraft.getInstance().getTextureManager().bindTexture(getIconTexture());
-////            Gui.drawModalRectWithCustomSizedTexture(x + 4, y + 4, 0, 0, 16, 16, 16, 16);
-//            AbstractGui.blit(x + 4, y + 4, 0, 0, 16, 16, 16, 16);
-//        }
-
     }
 }
