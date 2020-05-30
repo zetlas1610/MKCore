@@ -18,7 +18,7 @@ import java.util.Set;
 public class MKPlayerData implements IMKEntityData {
 
     private PlayerEntity player;
-    private AbilityExecutor abilityExecutor;
+    private PlayerAbilityExecutor abilityExecutor;
     private PlayerKnowledge knowledge;
     private PlayerStatsModule stats;
     private UpdateEngine updateEngine;
@@ -86,7 +86,7 @@ public class MKPlayerData implements IMKEntityData {
     }
 
     @Override
-    public AbilityExecutor getAbilityExecutor() {
+    public PlayerAbilityExecutor getAbilityExecutor() {
         return abilityExecutor;
     }
 

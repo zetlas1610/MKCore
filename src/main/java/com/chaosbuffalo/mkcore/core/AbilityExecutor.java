@@ -1,6 +1,5 @@
 package com.chaosbuffalo.mkcore.core;
 
-import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.CastState;
@@ -8,57 +7,42 @@ import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.abilities.MKToggleAbility;
 import com.chaosbuffalo.mkcore.client.sound.MovingSoundCasting;
-import com.chaosbuffalo.mkcore.events.PlayerAbilityEvent;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerStartCastPacket;
 import com.chaosbuffalo.mkcore.utils.SoundUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.common.MinecraftForge;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class AbilityExecutor {
-    protected final MKPlayerData playerData;
+    protected final IMKEntityData entityData;
     private PlayerCastingState currentCast;
     private final Map<ResourceLocation, MKToggleAbility> activeToggleMap = new HashMap<>();
 
-    public AbilityExecutor(MKPlayerData playerData) {
-        this.playerData = playerData;
+    public AbilityExecutor(IMKEntityData entityData) {
+        this.entityData = entityData;
     }
 
-    private PlayerEntity getPlayer() {
-        return playerData.getEntity();
-    }
-
-    private boolean isServerSide() {
-        return getPlayer() instanceof ServerPlayerEntity;
-    }
-
-    public void executeHotBarAbility(int slot) {
-        ResourceLocation abilityId = playerData.getKnowledge().getActionBar().getAbilityInSlot(slot);
-        if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
-            return;
-
-        executeAbility(abilityId);
+    protected boolean abilityExecutionCheck(MKAbility ability, MKAbilityInfo info) {
+        return ability.meetsRequirements(entityData);
     }
 
     public void executeAbility(ResourceLocation abilityId) {
-        MKAbilityInfo info = playerData.getKnowledge().getAbilityInfo(abilityId);
+        MKAbilityInfo info = entityData.getKnowledge().getAbilityInfo(abilityId);
         if (info == null || !info.isCurrentlyKnown())
             return;
 
-        if (playerData.getStats().getCurrentAbilityCooldown(abilityId) == 0) {
+        if (entityData.getStats().getCurrentAbilityCooldown(abilityId) != 0)
+            return;
 
-            MKAbility ability = info.getAbility();
-            if (ability.meetsRequirements(playerData) && !MinecraftForge.EVENT_BUS.post(new PlayerAbilityEvent.StartCasting(playerData, info))) {
-                ability.execute(getPlayer(), playerData);
-            }
+        MKAbility ability = info.getAbility();
+        if (abilityExecutionCheck(ability, info)) {
+            ability.execute(entityData.getEntity(), entityData);
         }
     }
 
@@ -71,16 +55,13 @@ public class AbilityExecutor {
     }
 
     public void onJoinWorld() {
-        if (isServerSide()) {
-            rebuildActiveToggleMap();
-        }
     }
 
     public void setCooldown(ResourceLocation id, int ticks) {
-        MKCore.LOGGER.info("setCooldown({}, {})", id, ticks);
+        MKCore.LOGGER.debug("setCooldown({}, {})", id, ticks);
 
         if (!id.equals(MKCoreRegistry.INVALID_ABILITY)) {
-            playerData.getStats().setTimer(id, ticks);
+            entityData.getStats().setTimer(id, ticks);
         }
     }
 
@@ -101,18 +82,17 @@ public class AbilityExecutor {
     }
 
     private CastState startCast(MKAbilityInfo abilityInfo, int castTime) {
-        MKCore.LOGGER.info("startCast {} {}", abilityInfo.getId(), castTime);
+        MKCore.LOGGER.debug("startCast {} {}", abilityInfo.getId(), castTime);
         ServerCastingState serverCastingState = createServerCastingState(abilityInfo, castTime);
         currentCast = serverCastingState;
-        if (getPlayer() instanceof ServerPlayerEntity) {
-            PacketHandler.sendToTrackingAndSelf(new PlayerStartCastPacket(abilityInfo.getId(), castTime), (ServerPlayerEntity) getPlayer());
-        }
+
+        PacketHandler.sendToTrackingMaybeSelf(new PlayerStartCastPacket(abilityInfo.getId(), castTime), entityData.getEntity());
 
         return serverCastingState.getAbilityCastState();
     }
 
     public void startCastClient(ResourceLocation abilityId, int castTicks) {
-        MKCore.LOGGER.info("startCastClient {} {}", abilityId, castTicks);
+        MKCore.LOGGER.debug("startCastClient {} {}", abilityId, castTicks);
         MKAbility ability = MKCoreRegistry.getAbility(abilityId);
         if (ability != null) {
             currentCast = createClientCastingState(ability, castTicks);
@@ -131,9 +111,15 @@ public class AbilityExecutor {
     }
 
     public CastState startAbility(MKAbility ability) {
-        MKAbilityInfo info = playerData.getKnowledge().getAbilityInfo(ability.getAbilityId());
-        if (info == null || !info.isCurrentlyKnown() || isCasting()) {
-            MKCore.LOGGER.info("startAbility null {} {}", info, isCasting());
+        if (isCasting()) {
+            MKCore.LOGGER.warn("startAbility({}) failed - {} currently casting", entityData::getEntity, ability::getAbilityId);
+            return null;
+        }
+
+        // TODO: decide if NPCs will need MKAbilityInfo. If not, this can be refactored and moved into PlayerAbilityExecutor
+        MKAbilityInfo info = entityData.getKnowledge().getAbilityInfo(ability.getAbilityId());
+        if (info == null || !info.isCurrentlyKnown()) {
+            MKCore.LOGGER.warn("startAbility({}) failed - {} does not know", entityData::getEntity, ability::getAbilityId);
             return null;
         }
 
@@ -149,19 +135,17 @@ public class AbilityExecutor {
         return null;
     }
 
-    private void completeAbility(MKAbility ability, MKAbilityInfo info, CastState castState) {
+    protected void completeAbility(MKAbility ability, MKAbilityInfo info, CastState castState) {
         // Finish the cast
-        ability.endCast(getPlayer(), playerData, castState);
+        ability.endCast(entityData.getEntity(), entityData, castState);
 
-        int cooldown = ability.getCooldownTicks();
-        cooldown = MKCombatFormulas.applyCooldownReduction(playerData, cooldown);
+        int cooldown = MKCombatFormulas.applyCooldownReduction(entityData, ability.getCooldownTicks());
         setCooldown(info.getId(), cooldown);
         SoundEvent sound = ability.getSpellCompleteSoundEvent();
         if (sound != null) {
-            SoundUtils.playSoundAtEntity(getPlayer(), sound, SoundCategory.PLAYERS);
+            SoundUtils.playSoundAtEntity(entityData.getEntity(), sound, SoundCategory.PLAYERS);
         }
         clearCastingAbility();
-        MinecraftForge.EVENT_BUS.post(new PlayerAbilityEvent.Completed(playerData, info));
     }
 
     public void onAbilityUnlearned(MKAbility ability) {
@@ -243,7 +227,7 @@ public class AbilityExecutor {
 
         @Override
         void activeTick() {
-            ability.continueCast(executor.getPlayer(), executor.playerData, castTicks, abilityCastState);
+            ability.continueCast(executor.entityData.getEntity(), executor.entityData, castTicks, abilityCastState);
         }
 
         @Override
@@ -264,7 +248,7 @@ public class AbilityExecutor {
         void begin() {
             SoundEvent event = ability.getCastingSoundEvent();
             if (event != null) {
-                sound = new MovingSoundCasting(executor.getPlayer(), event, SoundCategory.PLAYERS, castTicks);
+                sound = new MovingSoundCasting(executor.entityData.getEntity(), event, SoundCategory.PLAYERS, castTicks);
                 Minecraft.getInstance().getSoundHandler().play(sound);
                 playing = true;
             }
@@ -272,7 +256,7 @@ public class AbilityExecutor {
 
         @Override
         void activeTick() {
-            ability.continueCastClient(executor.getPlayer(), executor.playerData, castTicks);
+            ability.continueCastClient(executor.entityData.getEntity(), executor.entityData, castTicks);
         }
 
         @Override
@@ -284,35 +268,23 @@ public class AbilityExecutor {
         }
     }
 
-    private void rebuildActiveToggleMap() {
-        for (int i = 0; i < GameConstants.ACTION_BAR_SIZE; i++) {
-            ResourceLocation abilityId = playerData.getKnowledge().getActionBar().getAbilityInSlot(i);
-            MKAbility ability = MKCoreRegistry.getAbility(abilityId);
-            if (ability instanceof MKToggleAbility && playerData.getEntity() != null) {
-                MKToggleAbility toggle = (MKToggleAbility) ability;
-                if (playerData.getEntity().isPotionActive(toggle.getToggleEffect()))
-                    setToggleGroupAbility(toggle.getToggleGroupId(), toggle);
-            }
-        }
-    }
-
     private void updateToggleAbility(MKAbility ability) {
         if (!(ability instanceof MKToggleAbility)) {
             return;
         }
         MKToggleAbility toggle = (MKToggleAbility) ability;
 
-        PlayerEntity player = playerData.getEntity();
-        MKAbilityInfo info = playerData.getKnowledge().getAbilityInfo(ability.getAbilityId());
+        LivingEntity player = entityData.getEntity();
+        MKAbilityInfo info = entityData.getKnowledge().getAbilityInfo(ability.getAbilityId());
         if (info != null && info.isCurrentlyKnown()) {
             // If this is a toggle ability we must re-apply the effect to make sure it's working at the proper rank
             if (player.isPotionActive(toggle.getToggleEffect())) {
-                toggle.removeEffect(player, playerData);
-                toggle.applyEffect(player, playerData);
+                toggle.removeEffect(player, entityData);
+                toggle.applyEffect(player, entityData);
             }
         } else {
             // Unlearning, remove the effect
-            toggle.removeEffect(player, playerData);
+            toggle.removeEffect(player, entityData);
         }
     }
 
@@ -321,13 +293,13 @@ public class AbilityExecutor {
     }
 
     public void setToggleGroupAbility(ResourceLocation groupId, MKToggleAbility ability) {
-        PlayerEntity player = playerData.getEntity();
+        LivingEntity player = entityData.getEntity();
         MKToggleAbility current = activeToggleMap.get(ability.getToggleGroupId());
         // This can also be called when rebuilding the activeToggleMap after transferring dimensions and in that case
         // ability will be the same as current
         if (current != null && current != ability) {
-            current.removeEffect(player, playerData);
-            setCooldown(current.getAbilityId(), playerData.getStats().getAbilityCooldown(current));
+            current.removeEffect(player, entityData);
+            setCooldown(current.getAbilityId(), entityData.getStats().getAbilityCooldown(current));
         }
         activeToggleMap.put(groupId, ability);
     }
