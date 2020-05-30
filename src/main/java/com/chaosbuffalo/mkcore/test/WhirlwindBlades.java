@@ -16,7 +16,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -61,8 +60,8 @@ public class WhirlwindBlades extends MKAbility {
     }
 
     @Override
-    public void continueCast(LivingEntity entity, IMKEntityData data, World theWorld, int castTimeLeft, CastState state) {
-        super.continueCast(entity, data, theWorld, castTimeLeft, state);
+    public void continueCast(LivingEntity entity, IMKEntityData data, int castTimeLeft, CastState state) {
+        super.continueCast(entity, data, castTimeLeft, state);
         int tickSpeed = 6;
         if (castTimeLeft % tickSpeed == 0) {
             int level = 1;
@@ -102,7 +101,7 @@ public class WhirlwindBlades extends MKAbility {
     }
 
     @Override
-    public void execute(LivingEntity entity, IMKEntityData entityData, World theWorld) {
+    public void execute(LivingEntity entity, IMKEntityData entityData) {
         entityData.startAbility(this);
     }
 }

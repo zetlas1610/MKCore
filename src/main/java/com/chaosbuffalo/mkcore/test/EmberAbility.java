@@ -20,7 +20,6 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -71,8 +70,8 @@ public class EmberAbility extends MKAbility {
     }
 
     @Override
-    public void endCast(LivingEntity entity, IMKEntityData data, World theWorld, CastState state) {
-        super.endCast(entity, data, theWorld, state);
+    public void endCast(LivingEntity entity, IMKEntityData data, CastState state) {
+        super.endCast(entity, data, state);
         SingleTargetCastState singleTargetState = (SingleTargetCastState) state;
         if (singleTargetState == null) {
             return;
@@ -98,7 +97,7 @@ public class EmberAbility extends MKAbility {
     }
 
     @Override
-    public void execute(LivingEntity entity, IMKEntityData pData, World theWorld) {
+    public void execute(LivingEntity entity, IMKEntityData pData) {
         LivingEntity targetEntity = getSingleLivingTarget(entity, getDistance());
         if (targetEntity != null) {
             CastState state = pData.startAbility(this);

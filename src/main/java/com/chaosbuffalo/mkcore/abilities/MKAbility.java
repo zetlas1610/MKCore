@@ -223,15 +223,15 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         return ModSounds.spell_cast_3;
     }
 
-    public abstract void execute(LivingEntity entity, IMKEntityData data, World theWorld);
+    public abstract void execute(LivingEntity entity, IMKEntityData data);
 
-    public void continueCast(LivingEntity entity, IMKEntityData data, World theWorld, int castTimeLeft, CastState state) {
+    public void continueCast(LivingEntity entity, IMKEntityData data, int castTimeLeft, CastState state) {
     }
 
-    public void continueCastClient(LivingEntity entity, IMKEntityData data, World theWorld, int castTimeLeft) {
+    public void continueCastClient(LivingEntity entity, IMKEntityData data, int castTimeLeft) {
     }
 
-    public void endCast(LivingEntity entity, IMKEntityData data, World theWorld, CastState state) {
+    public void endCast(LivingEntity entity, IMKEntityData data, CastState state) {
     }
 
     protected LivingEntity getSingleLivingTarget(LivingEntity caster, float distance) {

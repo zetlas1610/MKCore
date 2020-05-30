@@ -8,7 +8,6 @@ import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -42,22 +41,22 @@ public abstract class MKToggleAbility extends MKAbility {
         return AbilityType.Active;
     }
 
-    public void applyEffect(LivingEntity entity, IMKEntityData entityData, World theWorld) {
+    public void applyEffect(LivingEntity entity, IMKEntityData entityData) {
         entityData.getAbilityExecutor().setToggleGroupAbility(getToggleGroupId(), this);
     }
 
-    public void removeEffect(LivingEntity entity, IMKEntityData entityData, World theWorld) {
+    public void removeEffect(LivingEntity entity, IMKEntityData entityData) {
         entityData.getAbilityExecutor().clearToggleGroupAbility(getToggleGroupId());
         entity.removePotionEffect(getToggleEffect());
     }
 
     @Override
-    public void execute(LivingEntity entity, IMKEntityData entityData, World theWorld) {
+    public void execute(LivingEntity entity, IMKEntityData entityData) {
         entityData.startAbility(this);
         if (entity.getActivePotionEffect(getToggleEffect()) != null) {
-            removeEffect(entity, entityData, theWorld);
+            removeEffect(entity, entityData);
         } else {
-            applyEffect(entity, entityData, theWorld);
+            applyEffect(entity, entityData);
         }
     }
 

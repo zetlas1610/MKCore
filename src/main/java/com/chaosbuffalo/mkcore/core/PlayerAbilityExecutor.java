@@ -57,7 +57,7 @@ public class PlayerAbilityExecutor {
 
             MKAbility ability = info.getAbility();
             if (ability.meetsRequirements(playerData) && !MinecraftForge.EVENT_BUS.post(new PlayerAbilityEvent.StartCasting(playerData, info))) {
-                ability.execute(getPlayer(), playerData, getPlayer().getEntityWorld());
+                ability.execute(getPlayer(), playerData);
             }
         }
     }
@@ -152,7 +152,7 @@ public class PlayerAbilityExecutor {
 
     private void completeAbility(MKAbility ability, MKAbilityInfo info, CastState castState) {
         // Finish the cast
-        ability.endCast(getPlayer(), playerData, getPlayer().getEntityWorld(), castState);
+        ability.endCast(getPlayer(), playerData, castState);
 
         int cooldown = ability.getCooldownTicks();
         cooldown = MKCombatFormulas.applyCooldownReduction(playerData, cooldown);
@@ -232,7 +232,7 @@ public class PlayerAbilityExecutor {
 
         @Override
         void activeTick() {
-            ability.continueCast(executor.getPlayer(), executor.playerData, executor.getPlayer().getEntityWorld(), castTicks, abilityCastState);
+            ability.continueCast(executor.getPlayer(), executor.playerData, castTicks, abilityCastState);
         }
 
         @Override
@@ -261,7 +261,7 @@ public class PlayerAbilityExecutor {
 
         @Override
         void activeTick() {
-            ability.continueCastClient(executor.getPlayer(), executor.playerData, executor.getPlayer().getEntityWorld(), castTicks);
+            ability.continueCastClient(executor.getPlayer(), executor.playerData, castTicks);
         }
 
         @Override
@@ -296,12 +296,12 @@ public class PlayerAbilityExecutor {
         if (info != null && info.isCurrentlyKnown()) {
             // If this is a toggle ability we must re-apply the effect to make sure it's working at the proper rank
             if (player.isPotionActive(toggle.getToggleEffect())) {
-                toggle.removeEffect(player, playerData, player.getEntityWorld());
-                toggle.applyEffect(player, playerData, player.getEntityWorld());
+                toggle.removeEffect(player, playerData);
+                toggle.applyEffect(player, playerData);
             }
         } else {
             // Unlearning, remove the effect
-            toggle.removeEffect(player, playerData, player.getEntityWorld());
+            toggle.removeEffect(player, playerData);
         }
     }
 
@@ -315,7 +315,7 @@ public class PlayerAbilityExecutor {
         // This can also be called when rebuilding the activeToggleMap after transferring dimensions and in that case
         // ability will be the same as current
         if (current != null && current != ability) {
-            current.removeEffect(player, playerData, player.getEntityWorld());
+            current.removeEffect(player, playerData);
             setCooldown(current.getAbilityId(), playerData.getStats().getAbilityCooldown(current));
         }
         activeToggleMap.put(groupId, ability);
