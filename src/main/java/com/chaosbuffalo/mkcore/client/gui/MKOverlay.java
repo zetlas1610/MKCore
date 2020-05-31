@@ -122,7 +122,7 @@ public class MKOverlay {
 
             MKAbility ability = info.getAbility();
 
-            float manaCost = data.getStats().getAbilityManaCost(abilityId);
+            float manaCost = data.getStats().getAbilityManaCost(ability);
             if (!executor.isCasting() && data.getStats().getMana() >= manaCost) {
                 RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             } else {
@@ -136,7 +136,7 @@ public class MKOverlay {
             AbstractGui.blit(slotX, slotY, 0, 0, ABILITY_ICON_SIZE, ABILITY_ICON_SIZE, ABILITY_ICON_SIZE, ABILITY_ICON_SIZE);
 
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-            float cooldownFactor = data.getStats().getActiveCooldownPercent(info, partialTicks);
+            float cooldownFactor = data.getStats().getCurrentAbilityCooldownPercent(abilityId, partialTicks);
             if (globalCooldown > 0.0f && cooldownFactor == 0) {
                 cooldownFactor = globalCooldown / ClientEventHandler.getTotalGlobalCooldown();
             }

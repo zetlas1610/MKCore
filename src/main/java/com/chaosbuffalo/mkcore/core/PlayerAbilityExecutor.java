@@ -35,7 +35,7 @@ public class PlayerAbilityExecutor extends AbilityExecutor {
 
     @Override
     protected void consumeResource(MKAbility ability) {
-        float manaCost = getPlayerData().getStats().getAbilityManaCost(ability.getAbilityId());
+        float manaCost = getPlayerData().getStats().getAbilityManaCost(ability);
         entityData.getStats().consumeMana(manaCost);
     }
 

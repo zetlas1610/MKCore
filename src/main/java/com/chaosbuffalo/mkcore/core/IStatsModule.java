@@ -24,9 +24,9 @@ public interface IStatsModule {
 
     int getCurrentAbilityCooldown(ResourceLocation abilityId);
 
-    float getActiveCooldownPercent(MKAbilityInfo abilityInfo, float partialTicks);
-
     int getAbilityCooldown(MKAbility ability);
+
+    float getAbilityManaCost(MKAbility ability);
 
     boolean canActivateAbility(MKAbility ability);
 
@@ -34,7 +34,7 @@ public interface IStatsModule {
 
     int getTimer(ResourceLocation id);
 
-    void resetAllCooldowns();
+    void resetAllTimers();
 
     void serialize(CompoundNBT nbt);
 

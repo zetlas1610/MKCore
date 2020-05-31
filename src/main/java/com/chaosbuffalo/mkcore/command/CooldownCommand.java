@@ -52,7 +52,7 @@ public class CooldownCommand {
 
     static int resetTimers(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
         ServerPlayerEntity player = ctx.getSource().asPlayer();
-        MKCore.getPlayer(player).ifPresent(playerData -> playerData.getStats().resetAllCooldowns());
+        MKCore.getPlayer(player).ifPresent(playerData -> playerData.getStats().resetAllTimers());
 
         return Command.SINGLE_SUCCESS;
     }

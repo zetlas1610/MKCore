@@ -37,9 +37,6 @@ public class AbilityExecutor {
         if (info == null || !info.isCurrentlyKnown())
             return;
 
-        if (entityData.getStats().getCurrentAbilityCooldown(abilityId) != 0)
-            return;
-
         MKAbility ability = info.getAbility();
         if (abilityExecutionCheck(ability, info)) {
             ability.execute(entityData.getEntity(), entityData);
@@ -47,7 +44,12 @@ public class AbilityExecutor {
     }
 
     public boolean canActivateAbility(MKAbility ability) {
-        return !isCasting();
+        if (isCasting())
+            return false;
+
+        if (entityData.getStats().getCurrentAbilityCooldown(ability.getAbilityId()) > 0)
+            return false;
+        return true;
     }
 
     public void tick() {
