@@ -2,6 +2,7 @@ package com.chaosbuffalo.mkcore.mku.entity.ai;
 
 
 import com.chaosbuffalo.targeting_api.Targeting;
+import com.chaosbuffalo.targeting_api.TargetingContexts;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -18,7 +19,7 @@ public class MKNearestAttackableTargetGoal extends TargetGoal {
         super(mobIn, checkSight, nearbyOnlyIn);
         this.targetChance = 4;
         targetEntitySelector = new EntityPredicate().setDistance(this.getTargetDistance()).setCustomPredicate(
-                (entity) -> Targeting.isValidTarget(Targeting.TargetType.ENEMY, this.goalOwner, entity, false));
+                (entity) -> Targeting.isValidTarget(TargetingContexts.ENEMY, this.goalOwner, entity));
     }
 
     @Override

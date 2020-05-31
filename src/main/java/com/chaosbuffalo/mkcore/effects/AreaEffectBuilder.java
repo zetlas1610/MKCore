@@ -2,7 +2,7 @@ package com.chaosbuffalo.mkcore.effects;
 
 
 import com.chaosbuffalo.mkcore.entities.MKAreaEffectEntity;
-import com.chaosbuffalo.targeting_api.Targeting;
+import com.chaosbuffalo.targeting_api.TargetingContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particles.IParticleData;
@@ -36,33 +36,23 @@ public class AreaEffectBuilder {
         return this;
     }
 
-    public AreaEffectBuilder spellCast(SpellCast cast, int amplifier, Targeting.TargetType targetType) {
-        return spellCast(cast, cast.toPotionEffect(amplifier), targetType, false);
+    public AreaEffectBuilder spellCast(SpellCast cast, int amplifier, TargetingContext targetContext) {
+        return spellCast(cast, cast.toPotionEffect(amplifier), targetContext);
     }
 
-    public AreaEffectBuilder spellCast(SpellCast cast, int amplifier, Targeting.TargetType targetType, boolean excludeCaster) {
-        return spellCast(cast, cast.toPotionEffect(amplifier), targetType, excludeCaster);
+
+    public AreaEffectBuilder spellCast(SpellCast cast, int duration, int amplifier, TargetingContext targetContext) {
+        return spellCast(cast, cast.toPotionEffect(duration, amplifier), targetContext);
     }
 
-    public AreaEffectBuilder spellCast(SpellCast cast, int duration, int amplifier, Targeting.TargetType targetType) {
-        return spellCast(cast, cast.toPotionEffect(duration, amplifier), targetType, false);
-    }
 
-    public AreaEffectBuilder spellCast(SpellCast cast, EffectInstance effect, Targeting.TargetType targetType) {
-        return spellCast(cast, effect, targetType, false);
-    }
-
-    public AreaEffectBuilder spellCast(SpellCast cast, EffectInstance effect, Targeting.TargetType targetType, boolean excludeCaster) {
-        areaEffectCloud.addSpellCast(cast, effect, targetType, excludeCaster);
+    public AreaEffectBuilder spellCast(SpellCast cast, EffectInstance effect, TargetingContext targetContext) {
+        areaEffectCloud.addSpellCast(cast, effect, targetContext);
         return this;
     }
 
-    public AreaEffectBuilder effect(EffectInstance effect, Targeting.TargetType targetType) {
-        return effect(effect, targetType, false);
-    }
-
-    private AreaEffectBuilder effect(EffectInstance effect, Targeting.TargetType targetType, boolean excludeCaster) {
-        areaEffectCloud.addEffect(effect, targetType, excludeCaster);
+    public AreaEffectBuilder effect(EffectInstance effect, TargetingContext targetContext) {
+        areaEffectCloud.addEffect(effect, targetContext);
         return this;
     }
 

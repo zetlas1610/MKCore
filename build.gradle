@@ -8,9 +8,7 @@ buildscript {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
     }
 }
-plugins {
-    id "com.wynprice.cursemaven" version "2.1.4"
-}
+
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
@@ -21,6 +19,13 @@ group = "${mod_group}" // http://maven.apache.org/guides/mini/guide-naming-conve
 archivesBaseName = "${mod_id}-${mc_version}"
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+
+repositories {
+    maven {
+        name = 'CurseForge'
+        url = 'https://minecraft.curseforge.com/api/maven/'
+    }
+}
 
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
@@ -94,8 +99,8 @@ dependencies {
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${forge_version}"
-    compile "curse.maven:targeting_api:2958155"
-    compile "curse.maven:mk-widgets:2955593"
+    compile group: 'targetingapi', name: 'targeting_api', version: '0.19'
+    compile group: 'mk-widgets', name: 'mkwidgets', version: '1.0'
 
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"

@@ -1,6 +1,7 @@
 package com.chaosbuffalo.mkcore.entities;
 
 import com.chaosbuffalo.targeting_api.Targeting;
+import com.chaosbuffalo.targeting_api.TargetingContext;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -68,12 +69,7 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
 
     }
 
-    protected abstract Targeting.TargetType getTargetType();
-
-    protected boolean shouldExcludeCaster() {
-        return false;
-    }
-
+    protected abstract TargetingContext getTargetContext();
 
     public int getAmplifier() {
         return this.amplifier;
@@ -257,7 +253,7 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
 
     protected boolean isValidEntityTarget(Entity entity) {
         if (entity instanceof LivingEntity && getShooter() != null) {
-            return Targeting.isValidTarget(getTargetType(), getShooter(), entity, shouldExcludeCaster());
+            return Targeting.isValidTarget(getTargetContext(), getShooter(), entity);
         }
         return isValidEntityTargetGeneric(entity);
     }

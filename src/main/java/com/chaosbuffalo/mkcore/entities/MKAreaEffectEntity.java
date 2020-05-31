@@ -5,6 +5,8 @@ import com.chaosbuffalo.mkcore.effects.SpellCast;
 import com.chaosbuffalo.mkcore.effects.SpellManager;
 import com.chaosbuffalo.mkcore.effects.SpellPotionBase;
 import com.chaosbuffalo.targeting_api.Targeting;
+import com.chaosbuffalo.targeting_api.TargetingContext;
+import com.chaosbuffalo.targeting_api.TargetingRegistry;
 import net.minecraft.entity.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -13,6 +15,7 @@ import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.EntityPredicates;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -29,18 +32,16 @@ public class MKAreaEffectEntity extends AreaEffectCloudEntity {
 
     private static class EffectEntry {
         final EffectInstance effect;
-        final Targeting.TargetType targetType;
-        final boolean excludeCaster;
+        final TargetingContext targetContext;
         SpellCast cast;
 
-        EffectEntry(EffectInstance effect, Targeting.TargetType targetType, boolean excludeCaster) {
+        EffectEntry(EffectInstance effect, TargetingContext targetContext) {
             this.effect = effect;
-            this.targetType = targetType;
-            this.excludeCaster = excludeCaster;
+            this.targetContext = targetContext;
         }
 
-        EffectEntry(SpellCast cast, EffectInstance effect, Targeting.TargetType targetType, boolean excludeCaster) {
-            this(effect, targetType, excludeCaster);
+        EffectEntry(SpellCast cast, EffectInstance effect, TargetingContext targetContext) {
+            this(effect, targetContext);
             this.cast = cast;
         }
     }
@@ -110,12 +111,12 @@ public class MKAreaEffectEntity extends AreaEffectCloudEntity {
         }
     }
 
-    public void addSpellCast(SpellCast cast, EffectInstance effect, Targeting.TargetType targetType, boolean excludeCaster) {
-        this.effects.add(new EffectEntry(cast, effect, targetType, excludeCaster));
+    public void addSpellCast(SpellCast cast, EffectInstance effect, TargetingContext targetContext) {
+        this.effects.add(new EffectEntry(cast, effect, targetContext));
     }
 
-    public void addEffect(EffectInstance effect, Targeting.TargetType targetType, boolean excludeCaster) {
-        this.effects.add(new EffectEntry(effect, targetType, excludeCaster));
+    public void addEffect(EffectInstance effect, TargetingContext targetContext) {
+        this.effects.add(new EffectEntry(effect, targetContext));
     }
 
     private boolean entityCheck(LivingEntity e) {
@@ -211,9 +212,9 @@ public class MKAreaEffectEntity extends AreaEffectCloudEntity {
             boolean validTarget;
             SpellPotionBase spBase = instance.getPotion() instanceof SpellPotionBase ? (SpellPotionBase) instance.getPotion() : null;
             if (spBase != null) {
-                validTarget = spBase.isValidTarget(spellEffect.targetType, getOwner(), target, spellEffect.excludeCaster);
+                validTarget = spBase.isValidTarget(spellEffect.targetContext, getOwner(), target);
             } else {
-                validTarget = Targeting.isValidTarget(spellEffect.targetType, getOwner(), target, spellEffect.excludeCaster);
+                validTarget = Targeting.isValidTarget(spellEffect.targetContext, getOwner(), target);
             }
 
             if (!validTarget) {
@@ -325,14 +326,14 @@ public class MKAreaEffectEntity extends AreaEffectCloudEntity {
             for (int i = 0; i < list.size(); i++) {
                 CompoundNBT pe = list.getCompound(i);
                 EffectInstance effect = EffectInstance.read(pe);
-
-                Targeting.TargetType tt = Targeting.TargetType.valueOf(pe.getString("TargetType"));
-                boolean excludeCaster = pe.getBoolean("NoCaster");
-
-                // This is needed because EffectInstance.read can definitely return null, but it's not marked @Nullable
-                //noinspection ConstantConditions
-                if (effect != null) {
-                    this.addEffect(effect, tt, excludeCaster);
+                if (pe.contains("TargetContext")){
+                    TargetingContext targetContext = TargetingRegistry.getTargetingContext(
+                            new ResourceLocation(pe.getString("TargetContext")));
+                    // This is needed because EffectInstance.read can definitely return null, but it's not marked @Nullable
+                    //noinspection ConstantConditions
+                    if (effect != null && targetContext != null) {
+                        this.addEffect(effect, targetContext);
+                    }
                 }
             }
         }
@@ -347,9 +348,10 @@ public class MKAreaEffectEntity extends AreaEffectCloudEntity {
         ListNBT list = new ListNBT();
         for (MKAreaEffectEntity.EffectEntry entry : this.effects) {
             CompoundNBT pe = entry.effect.write(new CompoundNBT());
+            if (entry.targetContext.getRegistryName() != null){
+                pe.putString("TargetContext", entry.targetContext.getRegistryName().toString());
+            }
 
-            pe.putString("TargetType", entry.targetType.toString());
-            pe.putBoolean("NoCaster", entry.excludeCaster);
 
             list.add(pe);
         }

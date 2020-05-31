@@ -1,6 +1,7 @@
 package com.chaosbuffalo.mkcore.effects;
 
 import com.chaosbuffalo.targeting_api.Targeting;
+import com.chaosbuffalo.targeting_api.TargetingContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.DisplayEffectsScreen;
@@ -26,7 +27,7 @@ public abstract class SpellPotionBase extends Effect {
         super(typeIn, liquidColorIn);
     }
 
-    public abstract Targeting.TargetType getTargetType();
+    public abstract TargetingContext getTargetContext();
 
     public boolean canSelfCast() {
         return false;
@@ -36,8 +37,8 @@ public abstract class SpellPotionBase extends Effect {
         return true;
     }
 
-    public boolean isValidTarget(Targeting.TargetType targetType, Entity caster, LivingEntity target, boolean excludeCaster) {
-        return !(caster == null || target == null) && Targeting.isValidTarget(targetType, caster, target, excludeCaster);
+    public boolean isValidTarget(TargetingContext targetContext, Entity caster, LivingEntity target) {
+        return !(caster == null || target == null) && Targeting.isValidTarget(targetContext, caster, target);
     }
 
     @Override
@@ -86,7 +87,7 @@ public abstract class SpellPotionBase extends Effect {
             return;
         }
 
-        if (!isValidTarget(getTargetType(), caster, target, !canSelfCast()))
+        if (!isValidTarget(getTargetContext(), caster, target))
             return;
 
         doEffect(applier, caster, target, amplifier, cast);
@@ -111,7 +112,7 @@ public abstract class SpellPotionBase extends Effect {
             return;
         }
 
-        if (!isValidTarget(getTargetType(), cast.getCaster(), target, !canSelfCast()))
+        if (!isValidTarget(getTargetContext(), cast.getCaster(), target))
             return;
 
         doEffect(cast.getApplier(), cast.getCaster(), target, amplifier, cast);

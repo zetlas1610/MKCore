@@ -10,7 +10,8 @@ import com.chaosbuffalo.mkcore.effects.SpellCast;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
-import com.chaosbuffalo.targeting_api.Targeting;
+import com.chaosbuffalo.targeting_api.TargetingContext;
+import com.chaosbuffalo.targeting_api.TargetingContexts;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.ParticleTypes;
@@ -39,8 +40,8 @@ public class WhirlwindBlades extends MKAbility {
     }
 
     @Override
-    public Targeting.TargetType getTargetType() {
-        return Targeting.TargetType.ENEMY;
+    public TargetingContext getTargetContext() {
+        return TargetingContexts.ENEMY;
     }
 
     @Override
@@ -80,8 +81,8 @@ public class WhirlwindBlades extends MKAbility {
 
 
             AreaEffectBuilder.Create(entity, entity)
-                    .spellCast(damage, level, getTargetType())
-                    .spellCast(particlePotion, level, getTargetType())
+                    .spellCast(damage, level, getTargetContext())
+                    .spellCast(particlePotion, level, getTargetContext())
 //                    .spellCast(SoundPotion.Create(entity, ModSounds.spell_shadow_2, SoundCategory.PLAYERS),
 //                            1, getTargetType())
                     .instant()
