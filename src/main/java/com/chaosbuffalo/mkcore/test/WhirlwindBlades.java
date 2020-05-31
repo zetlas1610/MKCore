@@ -10,9 +10,8 @@ import com.chaosbuffalo.mkcore.effects.SpellCast;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
-import com.chaosbuffalo.targeting_api.Contexts;
-import com.chaosbuffalo.targeting_api.Targeting;
 import com.chaosbuffalo.targeting_api.TargetingContext;
+import com.chaosbuffalo.targeting_api.TargetingContexts;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.ParticleTypes;
@@ -42,7 +41,7 @@ public class WhirlwindBlades extends MKAbility {
 
     @Override
     public TargetingContext getTargetContext() {
-        return Contexts.ENEMY;
+        return TargetingContexts.ENEMY;
     }
 
     @Override

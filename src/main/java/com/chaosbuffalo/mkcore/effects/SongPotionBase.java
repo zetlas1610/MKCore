@@ -1,8 +1,7 @@
 package com.chaosbuffalo.mkcore.effects;
 
-import com.chaosbuffalo.targeting_api.Contexts;
-import com.chaosbuffalo.targeting_api.Targeting;
 import com.chaosbuffalo.targeting_api.TargetingContext;
+import com.chaosbuffalo.targeting_api.TargetingContexts;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.EffectType;
 
@@ -17,7 +16,7 @@ public abstract class SongPotionBase extends SpellPeriodicPotionBase {
 
     @Override
     public TargetingContext getTargetContext() {
-        return Contexts.SELF;
+        return TargetingContexts.SELF;
     }
 
     @Override

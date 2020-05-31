@@ -1,8 +1,7 @@
 package com.chaosbuffalo.mkcore.effects;
 
-import com.chaosbuffalo.targeting_api.Contexts;
-import com.chaosbuffalo.targeting_api.Targeting;
 import com.chaosbuffalo.targeting_api.TargetingContext;
+import com.chaosbuffalo.targeting_api.TargetingContexts;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -16,7 +15,7 @@ public abstract class PassiveEffect extends SpellPotionBase {
 
     @Override
     public TargetingContext getTargetContext() {
-        return Contexts.FRIENDLY;
+        return TargetingContexts.FRIENDLY;
     }
 
     @Override

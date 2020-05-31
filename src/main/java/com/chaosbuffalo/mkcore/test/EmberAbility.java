@@ -14,9 +14,8 @@ import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkcore.utils.SoundUtils;
-import com.chaosbuffalo.targeting_api.Contexts;
-import com.chaosbuffalo.targeting_api.Targeting;
 import com.chaosbuffalo.targeting_api.TargetingContext;
+import com.chaosbuffalo.targeting_api.TargetingContexts;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundCategory;
@@ -47,7 +46,7 @@ public class EmberAbility extends MKAbility {
 
     @Override
     public TargetingContext getTargetContext() {
-        return Contexts.ENEMY;
+        return TargetingContexts.ENEMY;
     }
 
     @Override

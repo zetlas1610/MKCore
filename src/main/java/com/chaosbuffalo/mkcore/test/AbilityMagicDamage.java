@@ -3,9 +3,8 @@ package com.chaosbuffalo.mkcore.test;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
 import com.chaosbuffalo.mkcore.effects.SpellPotionBase;
-import com.chaosbuffalo.targeting_api.Contexts;
-import com.chaosbuffalo.targeting_api.Targeting;
 import com.chaosbuffalo.targeting_api.TargetingContext;
+import com.chaosbuffalo.targeting_api.TargetingContexts;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.Effect;
@@ -45,7 +44,7 @@ public class AbilityMagicDamage extends SpellPotionBase {
 
     @Override
     public TargetingContext getTargetContext() {
-        return Contexts.ENEMY;
+        return TargetingContexts.ENEMY;
     }
 
     @Override
