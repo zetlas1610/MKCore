@@ -21,7 +21,7 @@ import java.util.Map;
 
 public class AbilityExecutor {
     protected final IMKEntityData entityData;
-    private PlayerCastingState currentCast;
+    private EntityCastingState currentCast;
     private final Map<ResourceLocation, MKToggleAbility> activeToggleMap = new HashMap<>();
 
     public AbilityExecutor(IMKEntityData entityData) {
@@ -164,13 +164,13 @@ public class AbilityExecutor {
 
     }
 
-    static abstract class PlayerCastingState {
+    static abstract class EntityCastingState {
         boolean started = false;
         int castTicks;
         MKAbility ability;
         AbilityExecutor executor;
 
-        public PlayerCastingState(AbilityExecutor executor, MKAbility ability, int castTicks) {
+        public EntityCastingState(AbilityExecutor executor, MKAbility ability, int castTicks) {
             this.executor = executor;
             this.ability = ability;
             this.castTicks = castTicks;
@@ -211,7 +211,7 @@ public class AbilityExecutor {
         abstract void finish();
     }
 
-    static class ServerCastingState extends PlayerCastingState {
+    static class ServerCastingState extends EntityCastingState {
         protected MKAbilityInfo info;
         protected CastState abilityCastState;
 
@@ -236,7 +236,7 @@ public class AbilityExecutor {
         }
     }
 
-    static class ClientCastingState extends PlayerCastingState {
+    static class ClientCastingState extends EntityCastingState {
         protected MovingSoundCasting sound;
         protected boolean playing = false;
 
@@ -274,17 +274,17 @@ public class AbilityExecutor {
         }
         MKToggleAbility toggle = (MKToggleAbility) ability;
 
-        LivingEntity player = entityData.getEntity();
+        LivingEntity entity = entityData.getEntity();
         MKAbilityInfo info = entityData.getKnowledge().getAbilityInfo(ability.getAbilityId());
         if (info != null && info.isCurrentlyKnown()) {
             // If this is a toggle ability we must re-apply the effect to make sure it's working at the proper rank
-            if (player.isPotionActive(toggle.getToggleEffect())) {
-                toggle.removeEffect(player, entityData);
-                toggle.applyEffect(player, entityData);
+            if (entity.isPotionActive(toggle.getToggleEffect())) {
+                toggle.removeEffect(entity, entityData);
+                toggle.applyEffect(entity, entityData);
             }
         } else {
             // Unlearning, remove the effect
-            toggle.removeEffect(player, entityData);
+            toggle.removeEffect(entity, entityData);
         }
     }
 
@@ -293,12 +293,11 @@ public class AbilityExecutor {
     }
 
     public void setToggleGroupAbility(ResourceLocation groupId, MKToggleAbility ability) {
-        LivingEntity player = entityData.getEntity();
         MKToggleAbility current = activeToggleMap.get(ability.getToggleGroupId());
         // This can also be called when rebuilding the activeToggleMap after transferring dimensions and in that case
         // ability will be the same as current
         if (current != null && current != ability) {
-            current.removeEffect(player, entityData);
+            current.removeEffect(entityData.getEntity(), entityData);
             setCooldown(current.getAbilityId(), entityData.getStats().getAbilityCooldown(current));
         }
         activeToggleMap.put(groupId, ability);
