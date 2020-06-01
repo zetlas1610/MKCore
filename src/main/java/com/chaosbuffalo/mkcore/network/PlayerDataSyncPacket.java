@@ -48,11 +48,8 @@ public class PlayerDataSyncPacket {
             if (entity == null)
                 return;
 
-            entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap -> {
-                if (cap instanceof MKPlayerData) {
-                    ((MKPlayerData) cap).getUpdateEngine().deserializeUpdate(updateTag, privateUpdate);
-                }
-            });
+            entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap ->
+                    cap.getUpdateEngine().deserializeUpdate(updateTag, privateUpdate));
         });
         ctx.setPacketHandled(true);
     }

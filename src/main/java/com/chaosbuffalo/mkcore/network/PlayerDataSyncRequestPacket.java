@@ -27,11 +27,7 @@ public class PlayerDataSyncRequestPacket {
             if (entity == null)
                 return;
 
-            entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap -> {
-                if (cap instanceof MKPlayerData) {
-                    ((MKPlayerData) cap).initialSync();
-                }
-            });
+            entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(MKPlayerData::initialSync);
         });
         ctx.setPacketHandled(true);
     }

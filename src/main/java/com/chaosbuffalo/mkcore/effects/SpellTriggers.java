@@ -52,13 +52,12 @@ public class SpellTriggers {
     private static boolean startTrigger(Entity source, String tag) {
         if (source instanceof PlayerEntity) {
 //            Log.info("startTrigger - %s", tag);
-            return source.getCapability(Capabilities.PLAYER_CAPABILITY).map(iData -> {
-                MKPlayerData mkData = (MKPlayerData) iData;
-                if (mkData.hasSpellTag(tag)) {
+            return source.getCapability(Capabilities.PLAYER_CAPABILITY).map(cap -> {
+                if (cap.hasSpellTag(tag)) {
 //                Log.info("startTrigger - BLOCKING %s", tag);
                     return false;
                 }
-                mkData.addSpellTag(tag);
+                cap.addSpellTag(tag);
                 return true;
             }).orElse(true);
 
@@ -69,10 +68,7 @@ public class SpellTriggers {
     private static void endTrigger(Entity source, String tag) {
         if (source instanceof PlayerEntity) {
 //            Log.info("endTrigger - %s", tag);
-            source.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(iData -> {
-                MKPlayerData mkData = (MKPlayerData) iData;
-                mkData.removeSpellTag(tag);
-            });
+            source.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap -> cap.removeSpellTag(tag));
         }
     }
 

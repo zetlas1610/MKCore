@@ -8,6 +8,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.TargetGoal;
 import net.minecraft.util.math.AxisAlignedBB;
+
 import java.util.List;
 
 public class MKNearestAttackableTargetGoal extends TargetGoal {
@@ -39,7 +40,7 @@ public class MKNearestAttackableTargetGoal extends TargetGoal {
     protected void findNearestTarget() {
         List<LivingEntity> entities = this.goalOwner.world.getLoadedEntitiesWithinAABB(LivingEntity.class,
                 getTargetableArea(getTargetDistance()));
-        this.nearestTarget =  this.goalOwner.world.getClosestEntity(entities, targetEntitySelector,
+        this.nearestTarget = this.goalOwner.world.getClosestEntity(entities, targetEntitySelector,
                 this.goalOwner, this.goalOwner.getPosX(), this.goalOwner.getPosY(), this.goalOwner.getPosZ());
     }
 

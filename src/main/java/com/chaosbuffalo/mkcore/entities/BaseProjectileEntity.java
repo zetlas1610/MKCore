@@ -7,9 +7,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.IPacket;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.math.*;
@@ -304,7 +302,7 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
             this.inBlockState = blockstate;
             Vec3d vec3d = blockraytraceresult.getHitVec().subtract(this.getPosX(), this.getPosY(), this.getPosZ());
             this.setMotion(vec3d);
-            Vec3d vec3d1 = vec3d.normalize().scale((double) 0.05F);
+            Vec3d vec3d1 = vec3d.normalize().scale(0.05F);
             this.setRawPosition(this.getPosX() - vec3d1.x, this.getPosY() - vec3d1.y,
                     this.getPosZ() - vec3d1.z);
             this.inGround = true;
