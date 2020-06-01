@@ -1,8 +1,6 @@
 package com.chaosbuffalo.mkcore.core;
 
-import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
-import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
 import com.chaosbuffalo.mkcore.sync.SyncFloat;
 import net.minecraft.entity.player.PlayerEntity;
@@ -165,7 +163,7 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
     }
 
     public float getCurrentAbilityCooldownPercent(ResourceLocation abilityId, float partialTicks) {
-        return abilityTracker.getCooldown(abilityId, partialTicks);
+        return abilityTracker.getCooldownPercent(abilityId, partialTicks);
     }
 
     @Override
