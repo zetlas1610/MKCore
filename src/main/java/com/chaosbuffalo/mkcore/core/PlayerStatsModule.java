@@ -127,7 +127,7 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
     }
 
     private void updateMana() {
-        if (this.getManaRegenRate() <= 0.0f) {
+        if (getManaRegenRate() <= 0.0f) {
             return;
         }
 
@@ -150,7 +150,6 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
         setMana(getMana() + value);
     }
 
-    @Override
     public boolean consumeMana(float amount) {
         if (getMana() < amount) {
             return false;

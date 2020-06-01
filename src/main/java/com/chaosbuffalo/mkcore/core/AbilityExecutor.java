@@ -142,7 +142,7 @@ public class AbilityExecutor {
         ability.endCast(entityData.getEntity(), entityData, castState);
 
         int cooldown = MKCombatFormulas.applyCooldownReduction(entityData, ability.getCooldownTicks());
-        setCooldown(info.getId(), cooldown);
+        setCooldown(ability.getAbilityId(), cooldown);
         SoundEvent sound = ability.getSpellCompleteSoundEvent();
         if (sound != null) {
             SoundUtils.playSoundAtEntity(entityData.getEntity(), sound, SoundCategory.PLAYERS);

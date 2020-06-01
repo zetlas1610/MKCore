@@ -18,10 +18,6 @@ public interface IStatsModule {
 
     float getMaxHealth();
 
-    default boolean consumeMana(float amount) {
-        return true;
-    }
-
     int getCurrentAbilityCooldown(ResourceLocation abilityId);
 
     int getAbilityCooldown(MKAbility ability);
