@@ -19,7 +19,9 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.fml.network.NetworkHooks;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
@@ -154,9 +156,10 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
         return distance < edgeLength * edgeLength;
     }
 
+    @Nonnull
     @Override
     public IPacket<?> createSpawnPacket() {
-        return null;
+        return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     public void shoot(Entity source, float rotationPitchIn, float rotationYawIn,
@@ -315,47 +318,63 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
         return 0.03F;
     }
 
+//    @Override
+//    public void writeAdditional(CompoundNBT compound) {
+//        compound.putInt("ticksInGround", this.ticksInGround);
+//        compound.putInt("ticksInAir", this.ticksInAir);
+//        if (this.inBlockState != null) {
+//            compound.put("inBlockState", NBTUtil.writeBlockState(this.inBlockState));
+//        }
+//
+//        compound.putBoolean("inGround", this.inGround);
+//        if (this.shootingEntity != null) {
+//            compound.putUniqueId("OwnerUUID", this.shootingEntity);
+//        }
+//
+//        compound.putBoolean("doAirProc", this.getDoAirProc());
+//        compound.putBoolean("doGroundProc", this.getDoGroundProc());
+//        compound.putInt("airProcTime", this.getAirProcTime());
+//        compound.putInt("groundProcTime", this.getGroundProcTime());
+//        compound.putInt("deathTime", this.getDeathTime());
+//        compound.putInt("amplifier", this.getAmplifier());
+//    }
+//
+//    public void readAdditional(CompoundNBT compound) {
+//        this.ticksInGround = compound.getInt("ticksInGround");
+//        this.ticksInAir = compound.getInt("ticksInAir");
+//        if (compound.contains("inBlockState", 10)) {
+//            this.inBlockState = NBTUtil.readBlockState(compound.getCompound("inBlockState"));
+//        }
+//
+//        this.inGround = compound.getBoolean("inGround");
+//
+//
+//        if (compound.hasUniqueId("OwnerUUID")) {
+//            this.shootingEntity = compound.getUniqueId("OwnerUUID");
+//        }
+//
+//        this.setDoAirProc(compound.getBoolean("doAirProc"));
+//        this.setDoGroundProc(compound.getBoolean("doGroundProc"));
+//        this.setAirProcTime(compound.getInt("airProcTime"));
+//        this.setGroundProcTime(compound.getInt("groundProcTime"));
+//        this.setDeathTime(compound.getInt("deathTime"));
+//        this.setAmplifier(compound.getInt("amplifier"));
+//    }
+
+
     @Override
-    public void writeAdditional(CompoundNBT compound) {
-        compound.putInt("ticksInGround", this.ticksInGround);
-        compound.putInt("ticksInAir", this.ticksInAir);
-        if (this.inBlockState != null) {
-            compound.put("inBlockState", NBTUtil.writeBlockState(this.inBlockState));
-        }
+    protected void writeAdditional(CompoundNBT compound) {
 
-        compound.putBoolean("inGround", this.inGround);
-        if (this.shootingEntity != null) {
-            compound.putUniqueId("OwnerUUID", this.shootingEntity);
-        }
-
-        compound.putBoolean("doAirProc", this.getDoAirProc());
-        compound.putBoolean("doGroundProc", this.getDoGroundProc());
-        compound.putInt("airProcTime", this.getAirProcTime());
-        compound.putInt("groundProcTime", this.getGroundProcTime());
-        compound.putInt("deathTime", this.getDeathTime());
-        compound.putInt("amplifier", this.getAmplifier());
     }
 
-    public void readAdditional(CompoundNBT compound) {
-        this.ticksInGround = compound.getInt("ticksInGround");
-        this.ticksInAir = compound.getInt("ticksInAir");
-        if (compound.contains("inBlockState", 10)) {
-            this.inBlockState = NBTUtil.readBlockState(compound.getCompound("inBlockState"));
-        }
+    @Override
+    protected void readAdditional(CompoundNBT compound) {
 
-        this.inGround = compound.getBoolean("inGround");
+    }
 
-
-        if (compound.hasUniqueId("OwnerUUID")) {
-            this.shootingEntity = compound.getUniqueId("OwnerUUID");
-        }
-
-        this.setDoAirProc(compound.getBoolean("doAirProc"));
-        this.setDoGroundProc(compound.getBoolean("doGroundProc"));
-        this.setAirProcTime(compound.getInt("airProcTime"));
-        this.setGroundProcTime(compound.getInt("groundProcTime"));
-        this.setDeathTime(compound.getInt("deathTime"));
-        this.setAmplifier(compound.getInt("amplifier"));
+    @Override
+    public boolean writeUnlessPassenger(CompoundNBT compound) {
+        return false;
     }
 
     @Override
@@ -424,14 +443,6 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
             EntityRayTraceResult entityRayTrace = this.checkRayTraceEntities(traceStart, traceEnd, blockRayTrace);
             if (entityRayTrace != null) {
                 trace = entityRayTrace;
-            }
-            if (trace.getType() == RayTraceResult.Type.ENTITY) {
-                Entity target = entityRayTrace.getEntity();
-                Entity shooter = this.getShooter();
-                if (target instanceof PlayerEntity && shooter instanceof PlayerEntity &&
-                        !((PlayerEntity) shooter).canAttackPlayer((PlayerEntity) target)) {
-                    trace = null;
-                }
             }
 
             if (trace != null && trace.getType() != RayTraceResult.Type.MISS &&
