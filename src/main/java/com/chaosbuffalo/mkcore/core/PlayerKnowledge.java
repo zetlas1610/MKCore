@@ -43,6 +43,14 @@ public class PlayerKnowledge extends PlayerSyncComponent {
         return knownAbilities.getAbilityInfo(abilityId);
     }
 
+    @Nullable
+    public MKAbilityInfo getKnownAbilityInfo(ResourceLocation abilityId) {
+        MKAbilityInfo info = getAbilityInfo(abilityId);
+        if (info == null || !info.isCurrentlyKnown())
+            return null;
+        return info;
+    }
+
     public void learnAbility(MKAbility ability) {
         if (knownAbilities.learn(ability)) {
             actionBar.tryPlaceOnBar(ability.getAbilityId());

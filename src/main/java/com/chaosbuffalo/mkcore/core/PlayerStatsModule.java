@@ -1,8 +1,6 @@
 package com.chaosbuffalo.mkcore.core;
 
-import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
-import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
 import com.chaosbuffalo.mkcore.sync.SyncFloat;
 import net.minecraft.entity.player.PlayerEntity;
@@ -127,7 +125,7 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
     }
 
     private void updateMana() {
-        if (this.getManaRegenRate() <= 0.0f) {
+        if (getManaRegenRate() <= 0.0f) {
             return;
         }
 
@@ -150,47 +148,43 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
         setMana(getMana() + value);
     }
 
-    @Override
     public boolean consumeMana(float amount) {
-        if (getMana() >= amount) {
-            setMana(getMana() - amount);
-            return true;
+        if (getMana() < amount) {
+            return false;
         }
-        return false;
+
+        setMana(getMana() - amount);
+        return true;
     }
 
     @Override
     public int getCurrentAbilityCooldown(ResourceLocation abilityId) {
-        MKAbilityInfo abilityInfo = playerData.getKnowledge().getAbilityInfo(abilityId);
-        return abilityInfo != null ? abilityTracker.getCooldownTicks(abilityId) : GameConstants.ACTION_BAR_INVALID_COOLDOWN;
+        return abilityTracker.getCooldownTicks(abilityId);
     }
 
-    @Override
-    public float getActiveCooldownPercent(MKAbilityInfo abilityInfo, float partialTicks) {
-        return abilityInfo != null ? abilityTracker.getCooldown(abilityInfo.getId(), partialTicks) : 0.0f;
+    public float getCurrentAbilityCooldownPercent(ResourceLocation abilityId, float partialTicks) {
+        return abilityTracker.getCooldownPercent(abilityId, partialTicks);
     }
 
     @Override
     public int getAbilityCooldown(MKAbility ability) {
         int ticks = ability.getCooldownTicks();
-        ticks = MKCombatFormulas.applyCooldownReduction(playerData, ticks);
-        return ticks;
+        return MKCombatFormulas.applyCooldownReduction(playerData, ticks);
     }
 
-    public float getAbilityManaCost(ResourceLocation abilityId) {
-        MKAbilityInfo abilityInfo = playerData.getKnowledge().getAbilityInfo(abilityId);
-        if (abilityInfo == null) {
-            return 0.0f;
-        }
-        float manaCost = abilityInfo.getAbility().getManaCost();
+    @Override
+    public float getAbilityManaCost(MKAbility ability) {
+        float manaCost = ability.getManaCost();
         return MKCombatFormulas.applyManaCostReduction(playerData, manaCost);
     }
 
     @Override
     public boolean canActivateAbility(MKAbility ability) {
+        if (getMana() < getAbilityManaCost(ability))
+            return false;
+
         ResourceLocation abilityId = ability.getAbilityId();
-        return getMana() >= getAbilityManaCost(abilityId) &&
-                getCurrentAbilityCooldown(abilityId) == 0;
+        return getCurrentAbilityCooldown(abilityId) == 0;
     }
 
     @Override
@@ -220,7 +214,7 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
     }
 
     @Override
-    public void resetAllCooldowns() {
+    public void resetAllTimers() {
         abilityTracker.removeAll();
     }
 

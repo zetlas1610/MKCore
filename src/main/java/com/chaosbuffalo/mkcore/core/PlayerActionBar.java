@@ -83,12 +83,11 @@ public class PlayerActionBar extends PlayerSyncComponent {
     private void checkHotBar(ResourceLocation abilityId) {
         if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
             return;
-        MKAbilityInfo info = playerData.getKnowledge().getAbilityInfo(abilityId);
+        MKAbilityInfo info = playerData.getKnowledge().getKnownAbilityInfo(abilityId);
         if (info == null)
             return;
-        if (!info.isCurrentlyKnown()) {
-            removeFromHotBar(info.getId());
-        }
+
+        removeFromHotBar(info.getId());
     }
 
     public void serialize(CompoundNBT tag) {

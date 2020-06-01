@@ -239,7 +239,7 @@ public class SpellTriggers {
         @FunctionalInterface
         public interface EntityHurtPlayerTrigger {
             void apply(LivingHurtEvent event, DamageSource source, PlayerEntity livingTarget,
-                       IMKEntityData targetData);
+                       MKPlayerData targetData);
         }
 
         private static final String TAG = ENTITY_HURT_PLAYER.class.getName();
@@ -255,7 +255,7 @@ public class SpellTriggers {
         }
 
         public static void onEntityHurtPlayer(LivingHurtEvent event, DamageSource source, PlayerEntity livingTarget,
-                                              IMKEntityData targetData) {
+                                              MKPlayerData targetData) {
             if (!startTrigger(livingTarget, TAG))
                 return;
             entityHurtPlayerPreTriggers.forEach(f -> f.apply(event, source, livingTarget, targetData));
