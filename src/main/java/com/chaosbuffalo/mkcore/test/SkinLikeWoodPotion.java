@@ -5,6 +5,7 @@ import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.effects.PassiveEffect;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
+import com.chaosbuffalo.mkcore.effects.SpellTriggers;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -40,7 +41,7 @@ public class SkinLikeWoodPotion extends PassiveEffect {
     private SkinLikeWoodPotion() {
         super(EffectType.BENEFICIAL, 1665535);
         setRegistryName("effect.skin_like_wood");
-//        SpellTriggers.ENTITY_HURT_PLAYER.registerPreScale(this::playerHurtPreScale); TODO: spell triggers
+        SpellTriggers.ENTITY_HURT_PLAYER.registerPreScale(this::playerHurtPreScale);
     }
 
     @Override
@@ -53,12 +54,10 @@ public class SkinLikeWoodPotion extends PassiveEffect {
         return false;
     }
 
-    private void playerHurtPreScale(LivingHurtEvent event, DamageSource source, PlayerEntity livingTarget, IMKEntityData targetData) {
-
-        MKPlayerData playerData = (MKPlayerData) targetData; // FIXME: temp until spelltrigger player events updated
+    private void playerHurtPreScale(LivingHurtEvent event, DamageSource source, PlayerEntity livingTarget, MKPlayerData targetData) {
 
         if (livingTarget.isPotionActive(SkinLikeWoodPotion.INSTANCE)) {
-            if (!playerData.getStats().consumeMana(1)) {
+            if (!targetData.getStats().consumeMana(1)) {
                 livingTarget.removePotionEffect(SkinLikeWoodPotion.INSTANCE);
             }
         }
