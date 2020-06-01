@@ -33,8 +33,8 @@ public class AbilityExecutor {
     }
 
     public void executeAbility(ResourceLocation abilityId) {
-        MKAbilityInfo info = entityData.getKnowledge().getAbilityInfo(abilityId);
-        if (info == null || !info.isCurrentlyKnown())
+        MKAbilityInfo info = entityData.getKnowledge().getKnownAbilityInfo(abilityId);
+        if (info == null)
             return;
 
         MKAbility ability = info.getAbility();
@@ -119,8 +119,8 @@ public class AbilityExecutor {
         }
 
         // TODO: decide if NPCs will need MKAbilityInfo. If not, this can be refactored and moved into PlayerAbilityExecutor
-        MKAbilityInfo info = entityData.getKnowledge().getAbilityInfo(ability.getAbilityId());
-        if (info == null || !info.isCurrentlyKnown()) {
+        MKAbilityInfo info = entityData.getKnowledge().getKnownAbilityInfo(ability.getAbilityId());
+        if (info == null) {
             MKCore.LOGGER.warn("startAbility({}) failed - {} does not know", entityData::getEntity, ability::getAbilityId);
             return null;
         }
@@ -277,8 +277,8 @@ public class AbilityExecutor {
         MKToggleAbility toggle = (MKToggleAbility) ability;
 
         LivingEntity entity = entityData.getEntity();
-        MKAbilityInfo info = entityData.getKnowledge().getAbilityInfo(ability.getAbilityId());
-        if (info != null && info.isCurrentlyKnown()) {
+        MKAbilityInfo info = entityData.getKnowledge().getKnownAbilityInfo(ability.getAbilityId());
+        if (info != null) {
             // If this is a toggle ability we must re-apply the effect to make sure it's working at the proper rank
             if (entity.isPotionActive(toggle.getToggleEffect())) {
                 toggle.removeEffect(entity, entityData);

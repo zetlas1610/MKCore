@@ -64,8 +64,8 @@ public class MKOverlay {
         if (!executor.isCasting()) {
             return;
         }
-        MKAbilityInfo info = data.getKnowledge().getAbilityInfo(executor.getCastingAbility());
-        if (info == null || !info.isCurrentlyKnown()) {
+        MKAbilityInfo info = data.getKnowledge().getKnownAbilityInfo(executor.getCastingAbility());
+        if (info == null) {
             return;
         }
         MKAbility ability = info.getAbility();
@@ -116,8 +116,8 @@ public class MKOverlay {
             if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
                 continue;
 
-            MKAbilityInfo info = data.getKnowledge().getAbilityInfo(abilityId);
-            if (info == null || !info.isCurrentlyKnown())
+            MKAbilityInfo info = data.getKnowledge().getKnownAbilityInfo(abilityId);
+            if (info == null)
                 continue;
 
             MKAbility ability = info.getAbility();
