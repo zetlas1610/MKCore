@@ -1,6 +1,7 @@
 package com.chaosbuffalo.mkcore.core;
 
 import com.chaosbuffalo.mkcore.GameConstants;
+import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
@@ -84,10 +85,11 @@ public class PlayerActionBar extends PlayerSyncComponent {
         if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
             return;
         MKAbilityInfo info = playerData.getKnowledge().getKnownAbilityInfo(abilityId);
-        if (info == null)
+        if (info != null)
             return;
 
-        removeFromHotBar(info.getId());
+        MKCore.LOGGER.info("checkHotBar({}) - bad", abilityId);
+        removeFromHotBar(abilityId);
     }
 
     public void serialize(CompoundNBT tag) {
