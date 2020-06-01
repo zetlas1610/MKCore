@@ -6,19 +6,15 @@ import com.chaosbuffalo.mkcore.effects.SpellManager;
 import com.chaosbuffalo.mkcore.effects.SpellPotionBase;
 import com.chaosbuffalo.targeting_api.Targeting;
 import com.chaosbuffalo.targeting_api.TargetingContext;
-import com.chaosbuffalo.targeting_api.TargetingRegistry;
 import net.minecraft.entity.*;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.EntityPredicates;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.registries.ObjectHolder;
 
@@ -315,47 +311,10 @@ public class MKAreaEffectEntity extends AreaEffectCloudEntity {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
-    @Override
-    protected void readAdditional(@Nonnull CompoundNBT compound) {
-        super.readAdditional(compound);
-
-        effects.clear();
-        if (compound.contains("MKEffects", Constants.NBT.TAG_LIST)) {
-            ListNBT list = compound.getList("MKEffects", Constants.NBT.TAG_COMPOUND);
-
-            for (int i = 0; i < list.size(); i++) {
-                CompoundNBT pe = list.getCompound(i);
-                EffectInstance effect = EffectInstance.read(pe);
-                if (pe.contains("TargetContext")){
-                    TargetingContext targetContext = TargetingRegistry.getTargetingContext(
-                            new ResourceLocation(pe.getString("TargetContext")));
-                    // This is needed because EffectInstance.read can definitely return null, but it's not marked @Nullable
-                    //noinspection ConstantConditions
-                    if (effect != null && targetContext != null) {
-                        this.addEffect(effect, targetContext);
-                    }
-                }
-            }
-        }
-    }
 
     @Override
-    protected void writeAdditional(@Nonnull CompoundNBT compound) {
-        super.writeAdditional(compound);
-        if (this.effects.isEmpty())
-            return;
-
-        ListNBT list = new ListNBT();
-        for (MKAreaEffectEntity.EffectEntry entry : this.effects) {
-            CompoundNBT pe = entry.effect.write(new CompoundNBT());
-            if (entry.targetContext.getRegistryName() != null){
-                pe.putString("TargetContext", entry.targetContext.getRegistryName().toString());
-            }
-
-
-            list.add(pe);
-        }
-
-        compound.put("MKEffects", list);
+    public boolean writeUnlessPassenger(CompoundNBT compound) {
+        return false;
     }
+
 }
