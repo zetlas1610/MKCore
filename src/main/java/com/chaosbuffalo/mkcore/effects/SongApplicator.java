@@ -50,7 +50,7 @@ public abstract class SongApplicator extends SongPotionBase {
                     player.addPotionEffect(toCast.setTarget(player).toPotionEffect(getPeriod(), amplifier));
                 }
 
-                PacketHandler.sendToTracking(
+                PacketHandler.sendToTrackingMaybeSelf(
                         new ParticleEffectSpawnPacket(
                                 ParticleTypes.NOTE,
                                 ParticleEffects.CIRCLE_MOTION, 12, 4,

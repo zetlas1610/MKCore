@@ -76,14 +76,12 @@ public class NotoriousDOT extends MKToggleAbility {
         entity.addPotionEffect(NotoriousDOTSongPotion.Create(entity).setTarget(entity)
                 .toPotionEffect(BASE_DURATION, level));
         SoundUtils.playSoundAtEntity(entity, ModSounds.spell_shadow_9, SoundCategory.PLAYERS);
-        Vec3d lookVec = entity.getLookVec();
-        PacketHandler.sendToTrackingAndSelf(
+        PacketHandler.sendToTrackingMaybeSelf(
                 new ParticleEffectSpawnPacket(
                         ParticleTypes.NOTE,
                         ParticleEffects.SPHERE_MOTION, 50, 5,
                         entity.getPosX(), entity.getPosY() + 1.0,
                         entity.getPosZ(), 1.0, 1.0, 1.0, 1.0f,
-                        lookVec),
-                (ServerPlayerEntity) entity);
+                        entity.getLookVec()), entity);
     }
 }

@@ -86,14 +86,13 @@ public class EmberAbility extends MKAbility {
             targetEntity.attackEntityFrom(MKDamageSource.causeAbilityDamage(ModDamageTypes.FireDamage,
                     getAbilityId(), entity, entity), damage.getValue());
             SoundUtils.playSoundAtEntity(targetEntity, ModSounds.spell_fire_6, SoundCategory.PLAYERS);
-            Vec3d lookVec = entity.getLookVec();
-            PacketHandler.sendToTracking(
+            PacketHandler.sendToTrackingMaybeSelf(
                     new ParticleEffectSpawnPacket(
                             ParticleTypes.FLAME,
                             ParticleEffects.CIRCLE_PILLAR_MOTION, 60, 10,
                             targetEntity.getPosX(), targetEntity.getPosY() + 1.0,
                             targetEntity.getPosZ(), 1.0, 1.0, 1.0, .25,
-                            lookVec), targetEntity);
+                            entity.getLookVec()), targetEntity);
         });
     }
 
