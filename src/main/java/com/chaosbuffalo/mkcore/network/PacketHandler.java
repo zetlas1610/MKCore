@@ -64,6 +64,17 @@ public class PacketHandler {
                 .send(PacketHandler.getNetworkChannel().toVanillaPacket(msg, NetworkDirection.PLAY_TO_CLIENT));
     }
 
+    public static <T> void sendToTrackingMaybeSelf(T msg, Entity entity) {
+        if (entity.world.isRemote)
+            return;
+
+        if (entity instanceof ServerPlayerEntity) {
+            sendToTrackingAndSelf(msg, (ServerPlayerEntity) entity);
+        } else {
+            sendToTracking(msg, entity);
+        }
+    }
+
     public static <T> void sendToAll(T msg) {
         PacketDistributor.ALL.noArg().send(
                 PacketHandler.getNetworkChannel().toVanillaPacket(msg, NetworkDirection.PLAY_TO_CLIENT));

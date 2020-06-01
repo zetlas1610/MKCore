@@ -9,7 +9,7 @@ public interface IMKEntityData {
 
     LivingEntity getEntity();
 
-    PlayerAbilityExecutor getAbilityExecutor();
+    AbilityExecutor getAbilityExecutor();
 
     PlayerKnowledge getKnowledge();
 
