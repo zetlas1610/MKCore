@@ -7,7 +7,7 @@ import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.mku.MKUEntityTypes;
 import com.chaosbuffalo.mkcore.mku.RenderRegistry;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
@@ -81,7 +81,7 @@ public class MKCore {
         return new ResourceLocation(MKCore.MOD_ID, path);
     }
 
-    public static LazyOptional<MKPlayerData> getPlayer(PlayerEntity playerEntity) {
+    public static LazyOptional<MKPlayerData> getPlayer(Entity playerEntity) {
         return playerEntity.getCapability(Capabilities.PLAYER_CAPABILITY);
     }
 }

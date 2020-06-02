@@ -25,6 +25,9 @@ public class MKConfig {
     public static ForgeConfigSpec.BooleanValue showMyCrits;
     public static ForgeConfigSpec.BooleanValue showOthersCrits;
 
+    public static ForgeConfigSpec.BooleanValue healsDamageUndead;
+    public static ForgeConfigSpec.ConfigValue<Float> undeadHealDamageMultiplier;
+
     private static void initClient(ForgeConfigSpec.Builder builder) {
         builder.comment("General settings").push("general");
         showMyCrits = builder
@@ -44,6 +47,12 @@ public class MKConfig {
         talentPointLimit = builder
                 .comment("Max number of talents (-1 for unlimited)")
                 .defineInRange("talentPointLimit", -1, -1, Integer.MAX_VALUE);
+        healsDamageUndead = builder
+                .comment("Should healing spells damage undead entities")
+                .define("healsDamageUndead", true);
+        undeadHealDamageMultiplier = builder
+                .comment("Damage multiplier to use when healing spells damage undead entities (if healsDamageUndead is set)")
+                .define("undeadHealDamageMultiplier", 2.0f);
         builder.pop();
     }
 }
