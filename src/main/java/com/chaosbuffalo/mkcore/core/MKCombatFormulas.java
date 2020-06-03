@@ -22,10 +22,10 @@ public class MKCombatFormulas {
         return originalCost;
     }
 
-//    public static float applyHealBonus(IMKPlayerData playerData, float amount) {
-//        float mod = playerData.getHealBonus();
-//        return amount * mod;
-//    }
+    public static float applyHealBonus(IMKEntityData playerData, float amount) {
+        float mod = playerData.getStats().getHealBonus();
+        return amount * mod;
+    }
 
     public static float getCritChanceForItem(ItemStack item) {
         return ItemUtils.getCritChanceForItem(item);

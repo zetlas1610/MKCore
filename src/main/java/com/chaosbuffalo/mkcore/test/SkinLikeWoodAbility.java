@@ -69,15 +69,13 @@ public class SkinLikeWoodAbility extends MKToggleAbility {
         SoundUtils.playSoundAtEntity(entity, ModSounds.spell_earth_7, SoundCategory.PLAYERS);
         // What to do for each target hit
         entity.addPotionEffect(SkinLikeWoodPotion.Create(entity).setTarget(entity).toPotionEffect(BASE_DURATION, level));
-        Vec3d lookVec = entity.getLookVec();
-        PacketHandler.sendToTrackingAndSelf(
+
+        PacketHandler.sendToTrackingMaybeSelf(
                 new ParticleEffectSpawnPacket(
                         ParticleTypes.ITEM_SLIME,
                         ParticleEffects.CIRCLE_MOTION, 30, 0,
                         entity.getPosX(), entity.getPosY() + .5,
                         entity.getPosZ(), 1.0, 1.0, 1.0, 1.0f,
-                        lookVec),
-                (ServerPlayerEntity) entity);
-
+                        entity.getLookVec()), entity);
     }
 }

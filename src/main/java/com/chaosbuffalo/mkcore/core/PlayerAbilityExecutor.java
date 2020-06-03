@@ -60,6 +60,10 @@ public class PlayerAbilityExecutor extends AbilityExecutor {
         }
     }
 
+    public float getCurrentAbilityCooldownPercent(ResourceLocation abilityId, float partialTicks) {
+        return getPlayerData().getStats().getTimerPercent(abilityId, partialTicks);
+    }
+
     private void rebuildActiveToggleMap() {
         // Inspect the player's action bar and see if there are any toggle abilities slotted.
         // If there are, and the corresponding toggle effect is active on the player, set the toggle exclusive group

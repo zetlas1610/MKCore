@@ -8,7 +8,7 @@ import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.abilities.MKToggleAbility;
 import com.chaosbuffalo.mkcore.client.sound.MovingSoundCasting;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
-import com.chaosbuffalo.mkcore.network.PlayerStartCastPacket;
+import com.chaosbuffalo.mkcore.network.EntityStartCastPacket;
 import com.chaosbuffalo.mkcore.utils.SoundUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
@@ -47,7 +47,7 @@ public class AbilityExecutor {
         if (isCasting())
             return false;
 
-        if (entityData.getStats().getCurrentAbilityCooldown(ability.getAbilityId()) > 0)
+        if (getCurrentAbilityCooldown(ability.getAbilityId()) > 0)
             return false;
         return true;
     }
@@ -65,6 +65,10 @@ public class AbilityExecutor {
         if (!id.equals(MKCoreRegistry.INVALID_ABILITY)) {
             entityData.getStats().setTimer(id, ticks);
         }
+    }
+
+    public int getCurrentAbilityCooldown(ResourceLocation abilityId) {
+        return entityData.getStats().getTimer(abilityId);
     }
 
     public boolean isCasting() {
@@ -88,7 +92,7 @@ public class AbilityExecutor {
         ServerCastingState serverCastingState = createServerCastingState(abilityInfo, castTime);
         currentCast = serverCastingState;
 
-        PacketHandler.sendToTrackingMaybeSelf(new PlayerStartCastPacket(abilityInfo.getId(), castTime), entityData.getEntity());
+        PacketHandler.sendToTrackingMaybeSelf(new EntityStartCastPacket(entityData, abilityInfo.getId(), castTime), entityData.getEntity());
 
         return serverCastingState.getAbilityCastState();
     }

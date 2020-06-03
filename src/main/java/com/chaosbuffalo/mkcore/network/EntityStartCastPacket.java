@@ -1,7 +1,9 @@
 package com.chaosbuffalo.mkcore.network;
 
 import com.chaosbuffalo.mkcore.Capabilities;
+import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -10,22 +12,26 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class PlayerStartCastPacket {
+public class EntityStartCastPacket {
 
+    private final int entityId;
     private final ResourceLocation abilityId;
     private final int castTicks;
 
-    public PlayerStartCastPacket(ResourceLocation abilityId, int castTicks) {
+    public EntityStartCastPacket(IMKEntityData entityData, ResourceLocation abilityId, int castTicks) {
+        entityId = entityData.getEntity().getEntityId();
         this.abilityId = abilityId;
         this.castTicks = castTicks;
     }
 
-    public PlayerStartCastPacket(PacketBuffer buffer) {
+    public EntityStartCastPacket(PacketBuffer buffer) {
+        entityId = buffer.readInt();
         abilityId = buffer.readResourceLocation();
         castTicks = buffer.readInt();
     }
 
     public void toBytes(PacketBuffer buffer) {
+        buffer.writeInt(entityId);
         buffer.writeResourceLocation(abilityId);
         buffer.writeInt(castTicks);
     }
@@ -37,7 +43,7 @@ public class PlayerStartCastPacket {
             if (world == null)
                 return;
 
-            PlayerEntity entity = Minecraft.getInstance().player;
+            Entity entity = world.getEntityByID(entityId);
             if (entity == null)
                 return;
 

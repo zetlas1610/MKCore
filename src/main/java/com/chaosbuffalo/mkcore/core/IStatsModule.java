@@ -17,8 +17,6 @@ public interface IStatsModule {
 
     float getMaxHealth();
 
-    int getCurrentAbilityCooldown(ResourceLocation abilityId);
-
     int getAbilityCooldown(MKAbility ability);
 
     float getAbilityManaCost(MKAbility ability);

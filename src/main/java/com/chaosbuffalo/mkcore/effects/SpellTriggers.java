@@ -272,7 +272,7 @@ public class SpellTriggers {
                                        CritMessagePacket packet) {
         PacketHandler.sendToTrackingAndSelf(packet, playerSource);
         Vec3d lookVec = livingTarget.getLookVec();
-        PacketHandler.sendToTracking(
+        PacketHandler.sendToTrackingMaybeSelf(
                 new ParticleEffectSpawnPacket(
                         ParticleTypes.ENCHANTED_HIT,
                         ParticleEffects.SPHERE_MOTION, 12, 4,

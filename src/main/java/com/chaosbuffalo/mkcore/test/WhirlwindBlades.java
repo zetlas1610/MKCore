@@ -90,14 +90,13 @@ public class WhirlwindBlades extends MKAbility {
                     .particle(ParticleTypes.CRIT)
                     .spawn();
 
-            Vec3d lookVec = entity.getLookVec();
-            PacketHandler.sendToTrackingAndSelf(
+            PacketHandler.sendToTrackingMaybeSelf(
                     new ParticleEffectSpawnPacket(
                             ParticleTypes.SWEEP_ATTACK,
                             ParticleEffects.SPHERE_MOTION, 16, 4,
                             entity.getPosX(), entity.getPosY() + 1.0,
                             entity.getPosZ(), 1.0, 1.0, 1.0, 1.5,
-                            lookVec), (ServerPlayerEntity) entity);
+                            entity.getLookVec()), entity);
         }
     }
 

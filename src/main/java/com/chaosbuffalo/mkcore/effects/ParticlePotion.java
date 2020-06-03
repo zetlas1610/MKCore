@@ -60,7 +60,7 @@ public class ParticlePotion extends SpellPotionBase {
         if (!particleCast.includeSelf && target.equals(caster)) {
             return;
         }
-        PacketHandler.sendToTracking(particleCast.createPacket(target), target);
+        PacketHandler.sendToTrackingMaybeSelf(particleCast.createPacket(target), target);
     }
 
     public static class ParticleCast extends SpellCast {

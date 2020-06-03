@@ -87,15 +87,13 @@ public class FireArmor extends MKAbility {
                 .color(16762905).radius(getDistance(), true)
                 .spawn();
 
-        Vec3d lookVec = entity.getLookVec();
-        PacketHandler.sendToTrackingAndSelf(
+        PacketHandler.sendToTrackingMaybeSelf(
                 new ParticleEffectSpawnPacket(
                         ParticleTypes.FLAME,
                         ParticleEffects.CIRCLE_MOTION, 50, 0,
                         entity.getPosX(), entity.getPosY() + 1.0,
                         entity.getPosZ(), 1.0, 1.0, 1.0, .1f,
-                        lookVec),
-                (ServerPlayerEntity) entity);
+                        entity.getLookVec()), entity);
     }
 
     @Override
