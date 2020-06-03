@@ -47,7 +47,7 @@ public class AbilityExecutor {
         if (isCasting())
             return false;
 
-        if (entityData.getStats().getCurrentAbilityCooldown(ability.getAbilityId()) > 0)
+        if (getCurrentAbilityCooldown(ability.getAbilityId()) > 0)
             return false;
         return true;
     }
@@ -65,6 +65,10 @@ public class AbilityExecutor {
         if (!id.equals(MKCoreRegistry.INVALID_ABILITY)) {
             entityData.getStats().setTimer(id, ticks);
         }
+    }
+
+    public int getCurrentAbilityCooldown(ResourceLocation abilityId) {
+        return entityData.getStats().getTimer(abilityId);
     }
 
     public boolean isCasting() {

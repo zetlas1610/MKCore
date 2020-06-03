@@ -158,15 +158,6 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
     }
 
     @Override
-    public int getCurrentAbilityCooldown(ResourceLocation abilityId) {
-        return abilityTracker.getCooldownTicks(abilityId);
-    }
-
-    public float getCurrentAbilityCooldownPercent(ResourceLocation abilityId, float partialTicks) {
-        return abilityTracker.getCooldownPercent(abilityId, partialTicks);
-    }
-
-    @Override
     public int getAbilityCooldown(MKAbility ability) {
         int ticks = ability.getCooldownTicks();
         return MKCombatFormulas.applyCooldownReduction(playerData, ticks);
@@ -182,9 +173,7 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
     public boolean canActivateAbility(MKAbility ability) {
         if (getMana() < getAbilityManaCost(ability))
             return false;
-
-        ResourceLocation abilityId = ability.getAbilityId();
-        return getCurrentAbilityCooldown(abilityId) == 0;
+        return true;
     }
 
     @Override
@@ -199,6 +188,10 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
     @Override
     public int getTimer(ResourceLocation id) {
         return abilityTracker.getCooldownTicks(id);
+    }
+
+    public float getTimerPercent(ResourceLocation abilityId, float partialTicks) {
+        return abilityTracker.getCooldownPercent(abilityId, partialTicks);
     }
 
     public void printActiveCooldowns() {
