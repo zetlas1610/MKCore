@@ -12,15 +12,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 
 public class PlayerAbilityExecutor extends AbilityExecutor {
-    private final MKPlayerData playerData;
 
     public PlayerAbilityExecutor(MKPlayerData playerData) {
         super(playerData);
-        this.playerData = playerData;
     }
 
     private MKPlayerData getPlayerData() {
-        return playerData;
+        return (MKPlayerData) entityData;
     }
 
     private boolean isServerSide() {
@@ -28,7 +26,7 @@ public class PlayerAbilityExecutor extends AbilityExecutor {
     }
 
     public void executeHotBarAbility(int slot) {
-        ResourceLocation abilityId = playerData.getKnowledge().getActionBar().getAbilityInSlot(slot);
+        ResourceLocation abilityId = getPlayerData().getKnowledge().getActionBar().getAbilityInSlot(slot);
         if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
             return;
 
@@ -60,15 +58,11 @@ public class PlayerAbilityExecutor extends AbilityExecutor {
         }
     }
 
-    public float getCurrentAbilityCooldownPercent(ResourceLocation abilityId, float partialTicks) {
-        return getPlayerData().getStats().getTimerPercent(abilityId, partialTicks);
-    }
-
     private void rebuildActiveToggleMap() {
         // Inspect the player's action bar and see if there are any toggle abilities slotted.
         // If there are, and the corresponding toggle effect is active on the player, set the toggle exclusive group
         for (int i = 0; i < GameConstants.ACTION_BAR_SIZE; i++) {
-            ResourceLocation abilityId = playerData.getKnowledge().getActionBar().getAbilityInSlot(i);
+            ResourceLocation abilityId = getPlayerData().getKnowledge().getActionBar().getAbilityInSlot(i);
             MKAbility ability = MKCoreRegistry.getAbility(abilityId);
             if (ability instanceof MKToggleAbility && entityData.getEntity() != null) {
                 MKToggleAbility toggle = (MKToggleAbility) ability;
