@@ -33,8 +33,8 @@ public class PacketHandler {
                 PlayerDataSyncRequestPacket::new, PlayerDataSyncRequestPacket::handle);
         networkChannel.registerMessage(id++, ExecuteActiveAbilityPacket.class, ExecuteActiveAbilityPacket::toBytes,
                 ExecuteActiveAbilityPacket::new, ExecuteActiveAbilityPacket::handle);
-        networkChannel.registerMessage(id++, PlayerStartCastPacket.class, PlayerStartCastPacket::toBytes,
-                PlayerStartCastPacket::new, PlayerStartCastPacket::handle);
+        networkChannel.registerMessage(id++, EntityStartCastPacket.class, EntityStartCastPacket::toBytes,
+                EntityStartCastPacket::new, EntityStartCastPacket::handle);
         networkChannel.registerMessage(id++, ParticleEffectSpawnPacket.class, ParticleEffectSpawnPacket::toBytes,
                 ParticleEffectSpawnPacket::new, ParticleEffectSpawnPacket::handle);
         networkChannel.registerMessage(id++, PlayerAbilitiesSyncPacket.class, PlayerAbilitiesSyncPacket::toBytes,

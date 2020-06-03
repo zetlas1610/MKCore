@@ -8,7 +8,7 @@ import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.abilities.MKToggleAbility;
 import com.chaosbuffalo.mkcore.client.sound.MovingSoundCasting;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
-import com.chaosbuffalo.mkcore.network.PlayerStartCastPacket;
+import com.chaosbuffalo.mkcore.network.EntityStartCastPacket;
 import com.chaosbuffalo.mkcore.utils.SoundUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
@@ -88,7 +88,7 @@ public class AbilityExecutor {
         ServerCastingState serverCastingState = createServerCastingState(abilityInfo, castTime);
         currentCast = serverCastingState;
 
-        PacketHandler.sendToTrackingMaybeSelf(new PlayerStartCastPacket(abilityInfo.getId(), castTime), entityData.getEntity());
+        PacketHandler.sendToTrackingMaybeSelf(new EntityStartCastPacket(entityData, abilityInfo.getId(), castTime), entityData.getEntity());
 
         return serverCastingState.getAbilityCastState();
     }
