@@ -55,5 +55,6 @@ public class SyncInt implements ISyncObject {
     @Override
     public void serializeFull(CompoundNBT tag) {
         tag.putInt(name, value);
+        dirty = false;
     }
 }

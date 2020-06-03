@@ -89,6 +89,8 @@ public class SyncMapUpdater<K, V extends IMKSerializable<CompoundNBT>> implement
             root.put(keyEncoder.apply(name), nbt);
         });
 
-        tag.put(rootName, root);
+        if (root.size() > 0) {
+            tag.put(rootName, root);
+        }
     }
 }

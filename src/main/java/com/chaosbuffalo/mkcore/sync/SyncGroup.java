@@ -97,5 +97,6 @@ public class SyncGroup implements ISyncObject, ISyncNotifier {
         CompoundNBT root = getUpdateRootTag(tag);
         components.forEach(c -> c.serializeFull(root));
         writeUpdateRootTag(tag, root);
+        dirty.clear();
     }
 }

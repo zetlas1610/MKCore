@@ -81,7 +81,9 @@ public class SyncListUpdater<T> implements ISyncObject {
         for (int i = 0; i < fullList.size(); i++) {
             list.add(i, makeEntry(i, fullList.get(i)));
         }
-        tag.put(name, list);
+        if (list.size() > 0) {
+            tag.put(name, list);
+        }
     }
 
     public void serialize(CompoundNBT tag) {
