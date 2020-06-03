@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class PlayerAbilityKnowledge extends PlayerSyncComponent implements IAbilityKnowledge {
+public class PlayerAbilityKnowledge extends PlayerSyncComponent {
     private final MKPlayerData playerData;
     private final Map<ResourceLocation, MKAbilityInfo> abilityInfoMap = new HashMap<>();
     private final SyncMapUpdater<ResourceLocation, MKAbilityInfo> abilityUpdater =
@@ -30,19 +30,16 @@ public class PlayerAbilityKnowledge extends PlayerSyncComponent implements IAbil
         addPrivate(abilityUpdater);
     }
 
-    @Override
     @Nullable
     public MKAbilityInfo getAbilityInfo(ResourceLocation abilityId) {
         return abilityInfoMap.get(abilityId);
     }
 
-    @Override
     public Collection<MKAbilityInfo> getAbilities() {
         return Collections.unmodifiableCollection(abilityInfoMap.values());
     }
 
 
-    @Override
     public boolean learnAbility(MKAbility ability) {
         MKAbilityInfo info = getAbilityInfo(ability.getAbilityId());
         if (info == null) {
@@ -65,7 +62,6 @@ public class PlayerAbilityKnowledge extends PlayerSyncComponent implements IAbil
     }
 
 
-    @Override
     public boolean unlearnAbility(ResourceLocation abilityId) {
         MKAbilityInfo info = getAbilityInfo(abilityId);
         if (info == null) {
@@ -79,13 +75,11 @@ public class PlayerAbilityKnowledge extends PlayerSyncComponent implements IAbil
         return true;
     }
 
-    @Override
     public boolean knowsAbility(ResourceLocation abilityId) {
         return abilityInfoMap.containsKey(abilityId);
     }
 
     @Nullable
-    @Override
     public MKAbilityInfo getKnownAbilityInfo(ResourceLocation abilityId) {
         MKAbilityInfo info = getAbilityInfo(abilityId);
         if (info == null || !info.isCurrentlyKnown())
