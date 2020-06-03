@@ -42,10 +42,6 @@ public class EntityStatsModule implements IStatsModule {
         return getEntity().getMaxHealth();
     }
 
-    @Override
-    public int getCurrentAbilityCooldown(ResourceLocation abilityId) {
-        return abilityTracker.getCooldownTicks(abilityId);
-    }
 
     @Override
     public int getAbilityCooldown(MKAbility ability) {
@@ -60,8 +56,7 @@ public class EntityStatsModule implements IStatsModule {
 
     @Override
     public boolean canActivateAbility(MKAbility ability) {
-        ResourceLocation abilityId = ability.getAbilityId();
-        return getCurrentAbilityCooldown(abilityId) == 0;
+        return true;
     }
 
     @Override
