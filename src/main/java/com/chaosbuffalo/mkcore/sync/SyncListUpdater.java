@@ -50,8 +50,13 @@ public class SyncListUpdater<T> implements ISyncObject {
 
     @Override
     public void deserializeUpdate(CompoundNBT tag) {
-        ListNBT list = tag.getList(name, Constants.NBT.TAG_COMPOUND);
+        CompoundNBT root = tag.getCompound(name);
 
+        if (root.getBoolean("f")) {
+            parent.get().clear();
+        }
+
+        ListNBT list = root.getList("l", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
             CompoundNBT entry = list.getCompound(i);
             int index = entry.getInt("i");
@@ -65,25 +70,33 @@ public class SyncListUpdater<T> implements ISyncObject {
 
     @Override
     public void serializeUpdate(CompoundNBT tag) {
-        if (dirtyEntries.size() > 0) {
-            List<T> fullList = parent.get();
-            ListNBT list = tag.getList(name, Constants.NBT.TAG_COMPOUND);
-            dirtyEntries.forEach((int i) -> list.add(list.size(), makeEntry(i, fullList.get(i))));
-            tag.put(name, list);
-            dirtyEntries.clear();
-        }
+        if (dirtyEntries.isEmpty())
+            return;
+
+        CompoundNBT root = new CompoundNBT();
+        List<T> fullList = parent.get();
+        ListNBT list = tag.getList(name, Constants.NBT.TAG_COMPOUND);
+        dirtyEntries.forEach((int i) -> list.add(list.size(), makeEntry(i, fullList.get(i))));
+
+        root.put("l", list);
+        tag.put(name, root);
+        dirtyEntries.clear();
     }
 
     @Override
     public void serializeFull(CompoundNBT tag) {
         List<T> fullList = parent.get();
+        CompoundNBT root = new CompoundNBT();
         ListNBT list = tag.getList(name, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < fullList.size(); i++) {
-            list.add(i, makeEntry(i, fullList.get(i)));
+            T value = fullList.get(i);
+            list.add(i, makeEntry(i, value));
         }
-        if (list.size() > 0) {
-            tag.put(name, list);
-        }
+
+        root.putBoolean("f", true);
+        root.put("l", list);
+        tag.put(name, root);
+        dirtyEntries.clear();
     }
 
     public void serialize(CompoundNBT tag) {
