@@ -10,6 +10,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
 
@@ -18,10 +19,14 @@ public class PlayerActionBar extends PlayerSyncComponent {
     private final MKPlayerData playerData;
     private final List<ResourceLocation> abilities = NonNullList.withSize(GameConstants.ACTION_BAR_SIZE, MKCoreRegistry.INVALID_ABILITY);
     private final SyncListUpdater<ResourceLocation> hotBarUpdater =
-            new SyncListUpdater<>("active", () -> abilities, id -> StringNBT.valueOf(id.toString()), nbt -> new ResourceLocation(nbt.getString()));
+            new SyncListUpdater<>("active",
+                    () -> abilities,
+                    id -> StringNBT.valueOf(id.toString()),
+                    nbt -> new ResourceLocation(nbt.getString()),
+                    Constants.NBT.TAG_STRING);
 
     public PlayerActionBar(MKPlayerData playerData) {
-        super("hotbar");
+        super("action_bar");
         this.playerData = playerData;
         addPrivate(hotBarUpdater);
     }
@@ -93,11 +98,11 @@ public class PlayerActionBar extends PlayerSyncComponent {
     }
 
     public void serialize(CompoundNBT tag) {
-        hotBarUpdater.serialize(tag);
+        hotBarUpdater.serializeStorage(tag);
     }
 
     public void deserialize(CompoundNBT tag) {
-        hotBarUpdater.deserialize(tag);
+        hotBarUpdater.deserializeStorage(tag);
         abilities.forEach(this::checkHotBar);
     }
 }
