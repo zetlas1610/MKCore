@@ -51,6 +51,10 @@ public class SyncMapUpdater<K, V extends IMKSerializable<CompoundNBT>> implement
     public void deserializeUpdate(CompoundNBT tag) {
         CompoundNBT root = tag.getCompound(rootName);
 
+        if (tag.getBoolean("f")) {
+            mapSupplier.get().clear();
+        }
+
         ListNBT list = root.getList("l", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
             CompoundNBT entryTag = list.getCompound(i);
@@ -102,6 +106,7 @@ public class SyncMapUpdater<K, V extends IMKSerializable<CompoundNBT>> implement
     public void serializeFull(CompoundNBT tag) {
         CompoundNBT root = new CompoundNBT();
         ListNBT list = serializeList(mapSupplier.get().keySet());
+        root.putBoolean("f", true);
         root.put("l", list);
         tag.put(rootName, root);
 
