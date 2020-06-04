@@ -56,6 +56,10 @@ public class SyncMapUpdater<K, V extends IMKSerializable<CompoundNBT>> implement
         }
 
         ListNBT list = root.getList("l", Constants.NBT.TAG_COMPOUND);
+        deserializeList(list);
+    }
+
+    private void deserializeList(ListNBT list) {
         for (int i = 0; i < list.size(); i++) {
             CompoundNBT entryTag = list.getCompound(i);
 //            MKCore.LOGGER.info("update {} {}", i, entryTag);
@@ -111,5 +115,16 @@ public class SyncMapUpdater<K, V extends IMKSerializable<CompoundNBT>> implement
         tag.put(rootName, root);
 
         dirty.clear();
+    }
+
+    public void serializeStorage(CompoundNBT tag, String tagName) {
+        ListNBT list = serializeList(mapSupplier.get().keySet());
+        tag.put(tagName, list);
+    }
+
+    public void deserializeStorage(CompoundNBT tag, String tagName) {
+        ListNBT list = tag.getList(tagName, Constants.NBT.TAG_COMPOUND);
+        mapSupplier.get().clear();
+        deserializeList(list);
     }
 }

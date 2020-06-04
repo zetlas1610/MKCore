@@ -4,19 +4,15 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
-import com.chaosbuffalo.mkcore.sync.IMKSerializable;
 import com.chaosbuffalo.mkcore.sync.SyncMapUpdater;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 
 public class PlayerKnownAbilities extends PlayerSyncComponent {
@@ -90,41 +86,11 @@ public class PlayerKnownAbilities extends PlayerSyncComponent {
     }
 
     public void serialize(CompoundNBT tag) {
-        ListNBT tagList = new ListNBT();
-        for (MKAbilityInfo info : abilityInfoMap.values()) {
-            CompoundNBT sk = new CompoundNBT();
-            info.serialize(sk);
-            tagList.add(sk);
-        }
-
-        tag.put("abilities", tagList);
+        abilityUpdater.serializeStorage(tag, "abilities");
     }
 
     public void deserialize(CompoundNBT tag) {
-        if (tag.contains("abilities")) {
-            ListNBT tagList = tag.getList("abilities", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < tagList.size(); i++) {
-                CompoundNBT abilityTag = tagList.getCompound(i);
-                MKAbilityInfo info = readEntry(abilityTag, PlayerKnownAbilities::createAbilityInfo);
-                if (info == null)
-                    continue;
-
-                abilityInfoMap.put(info.getId(), info);
-            }
-        } else {
-            abilityInfoMap.clear();
-        }
-    }
-
-    private <T extends IMKSerializable<CompoundNBT>> T readEntry(CompoundNBT abilityTag, Function<ResourceLocation, T> factory) {
-        ResourceLocation abilityId = MKAbilityInfo.decodeId(abilityTag);
-        T info = factory.apply(abilityId);
-        if (info != null) {
-            if (info.deserialize(abilityTag)) {
-                return info;
-            }
-        }
-        return null;
+        abilityUpdater.deserializeStorage(tag, "abilities");
     }
 
     private static MKAbilityInfo createAbilityInfo(ResourceLocation abilityId) {
