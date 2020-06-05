@@ -4,7 +4,7 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
-import com.chaosbuffalo.mkcore.core.PlayerKnownAbilities;
+import com.chaosbuffalo.mkcore.core.PlayerAbilityKnowledge;
 import com.chaosbuffalo.mkcore.utils.TextUtils;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -58,7 +58,7 @@ public class AbilityCommand {
 
 
         MKCore.getPlayer(player).ifPresent(cap -> {
-            PlayerKnownAbilities knownAbilities = cap.getKnowledge().getKnownAbilities();
+            PlayerAbilityKnowledge knownAbilities = cap.getKnowledge().getKnownAbilities();
             Collection<MKAbilityInfo> abilities = knownAbilities.getAbilities();
             if (abilities.size() > 0) {
                 TextUtils.sendPlayerChatMessage(player, "Known Abilities");

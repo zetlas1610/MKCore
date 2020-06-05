@@ -10,7 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 
 
-public class GreenLadyEntity extends ZombieEntity {
+public class GreenLadyEntity extends ZombieEntity implements IMKEntity {
 
     public GreenLadyEntity(EntityType<? extends GreenLadyEntity> type, World worldIn) {
         super(type, worldIn);

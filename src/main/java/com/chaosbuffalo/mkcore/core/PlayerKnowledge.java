@@ -9,19 +9,20 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 
-public class PlayerKnowledge extends PlayerSyncComponent {
+public class PlayerKnowledge extends PlayerSyncComponent implements IAbilityKnowledge {
 
     private final MKPlayerData playerData;
 
     private final PlayerActionBar actionBar;
-    private final PlayerKnownAbilities knownAbilities;
+    private final PlayerAbilityKnowledge knownAbilities;
 
     public PlayerKnowledge(MKPlayerData playerData) {
         super("knowledge");
         this.playerData = playerData;
         actionBar = new PlayerActionBar(playerData);
-        knownAbilities = new PlayerKnownAbilities(playerData);
+        knownAbilities = new PlayerAbilityKnowledge(playerData);
         addChild(actionBar);
         addChild(knownAbilities);
     }
@@ -34,42 +35,57 @@ public class PlayerKnowledge extends PlayerSyncComponent {
         return actionBar;
     }
 
-    public PlayerKnownAbilities getKnownAbilities() {
+    public PlayerAbilityKnowledge getKnownAbilities() {
         return knownAbilities;
     }
 
     @Nullable
+    @Override
     public MKAbilityInfo getAbilityInfo(ResourceLocation abilityId) {
         return knownAbilities.getAbilityInfo(abilityId);
     }
 
-    @Nullable
-    public MKAbilityInfo getKnownAbilityInfo(ResourceLocation abilityId) {
-        MKAbilityInfo info = getAbilityInfo(abilityId);
-        if (info == null || !info.isCurrentlyKnown())
-            return null;
-        return info;
+    @Override
+    public Collection<MKAbilityInfo> getAbilities() {
+        return knownAbilities.getAbilities();
     }
 
-    public void learnAbility(MKAbility ability) {
-        if (knownAbilities.learn(ability)) {
+    @Nullable
+    @Override
+    public MKAbilityInfo getKnownAbilityInfo(ResourceLocation abilityId) {
+        return knownAbilities.getKnownAbilityInfo(abilityId);
+    }
+
+    @Override
+    public boolean learnAbility(MKAbility ability) {
+        if (knownAbilities.learnAbility(ability)) {
             actionBar.tryPlaceOnBar(ability.getAbilityId());
+            return true;
         } else {
             MKCore.LOGGER.info("learnAbility({}) - failure", ability.getAbilityId());
+            return false;
         }
     }
 
-    public void unlearnAbility(ResourceLocation abilityId) {
+    @Override
+    public boolean unlearnAbility(ResourceLocation abilityId) {
         MKAbility ability = MKCoreRegistry.getAbility(abilityId);
         if (ability == null) {
             MKCore.LOGGER.warn("{} tried to unlearn ability not in registry: {}", getPlayer(), abilityId);
-            return;
+            return false;
         }
-        if (knownAbilities.unlearn(abilityId)) {
+        if (knownAbilities.unlearnAbility(abilityId)) {
             // FIXME: maybe generalize this
             playerData.getAbilityExecutor().onAbilityUnlearned(ability);
             actionBar.onAbilityUnlearned(ability);
+            return true;
         }
+        return false;
+    }
+
+    @Override
+    public boolean knowsAbility(ResourceLocation abilityId) {
+        return knownAbilities.knowsAbility(abilityId);
     }
 
     public void serialize(CompoundNBT tag) {

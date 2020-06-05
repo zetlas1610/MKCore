@@ -11,7 +11,7 @@ public interface IMKEntityData {
 
     AbilityExecutor getAbilityExecutor();
 
-    PlayerKnowledge getKnowledge();
+    IAbilityKnowledge getKnowledge();
 
     IStatsModule getStats();
 

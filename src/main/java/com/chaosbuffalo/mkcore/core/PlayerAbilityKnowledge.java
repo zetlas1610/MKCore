@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class PlayerKnownAbilities extends PlayerSyncComponent {
+public class PlayerAbilityKnowledge extends PlayerSyncComponent {
     private final MKPlayerData playerData;
     private final Map<ResourceLocation, MKAbilityInfo> abilityInfoMap = new HashMap<>();
     private final SyncMapUpdater<ResourceLocation, MKAbilityInfo> abilityUpdater =
@@ -23,10 +23,10 @@ public class PlayerKnownAbilities extends PlayerSyncComponent {
                     () -> abilityInfoMap,
                     MKAbilityInfo::encodeId,
                     MKAbilityInfo::decodeId,
-                    PlayerKnownAbilities::createAbilityInfo
+                    PlayerAbilityKnowledge::createAbilityInfo
             );
 
-    public PlayerKnownAbilities(MKPlayerData playerData) {
+    public PlayerAbilityKnowledge(MKPlayerData playerData) {
         super("abilities");
         this.playerData = playerData;
         addPrivate(abilityUpdater);
@@ -42,7 +42,7 @@ public class PlayerKnownAbilities extends PlayerSyncComponent {
     }
 
 
-    public boolean learn(MKAbility ability) {
+    public boolean learnAbility(MKAbility ability) {
         MKAbilityInfo info = getAbilityInfo(ability.getAbilityId());
         if (info == null) {
             info = ability.createAbilityInfo();
@@ -64,7 +64,7 @@ public class PlayerKnownAbilities extends PlayerSyncComponent {
     }
 
 
-    public boolean unlearn(ResourceLocation abilityId) {
+    public boolean unlearnAbility(ResourceLocation abilityId) {
         MKAbilityInfo info = getAbilityInfo(abilityId);
         if (info == null) {
             MKCore.LOGGER.error("{} tried to unlearn unknown ability {}", playerData.getEntity(), abilityId);
@@ -79,6 +79,14 @@ public class PlayerKnownAbilities extends PlayerSyncComponent {
 
     public boolean knowsAbility(ResourceLocation abilityId) {
         return abilityInfoMap.containsKey(abilityId);
+    }
+
+    @Nullable
+    public MKAbilityInfo getKnownAbilityInfo(ResourceLocation abilityId) {
+        MKAbilityInfo info = getAbilityInfo(abilityId);
+        if (info == null || !info.isCurrentlyKnown())
+            return null;
+        return info;
     }
 
     public void markDirty(MKAbilityInfo info) {
