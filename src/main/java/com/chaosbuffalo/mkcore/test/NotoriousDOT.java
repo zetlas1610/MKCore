@@ -2,7 +2,7 @@ package com.chaosbuffalo.mkcore.test;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
-import com.chaosbuffalo.mkcore.abilities.MKToggleAbility;
+import com.chaosbuffalo.mkcore.abilities.MKSongAbility;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.init.ModSounds;
@@ -24,7 +24,7 @@ import net.minecraftforge.fml.common.Mod;
 import javax.annotation.Nullable;
 
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class NotoriousDOT extends MKToggleAbility {
+public class NotoriousDOT extends MKSongAbility {
     public static final NotoriousDOT INSTANCE = new NotoriousDOT();
     public static ResourceLocation TOGGLE_GROUP = MKCore.makeRL("toggle_group.skald");
 
@@ -43,7 +43,7 @@ public class NotoriousDOT extends MKToggleAbility {
 
     @Override
     public Effect getToggleEffect() {
-        return NotoriousDOTSongPotion.INSTANCE;
+        return NotoriousDOTCasterEffect.INSTANCE;
     }
 
     @Override
@@ -71,8 +71,7 @@ public class NotoriousDOT extends MKToggleAbility {
     public void applyEffect(LivingEntity entity, IMKEntityData entityData) {
         super.applyEffect(entity, entityData);
         int level = 1;
-        entity.addPotionEffect(NotoriousDOTSongPotion.Create(entity).setTarget(entity)
-                .toPotionEffect(BASE_DURATION, level));
+        entity.addPotionEffect(NotoriousDOTCasterEffect.Create(entity).toPotionEffect(BASE_DURATION, level));
         SoundUtils.playSoundAtEntity(entity, ModSounds.spell_shadow_9, SoundCategory.PLAYERS);
         PacketHandler.sendToTrackingMaybeSelf(
                 new ParticleEffectSpawnPacket(
