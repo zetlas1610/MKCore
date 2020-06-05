@@ -4,7 +4,6 @@ import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;

@@ -52,9 +52,9 @@ public class Capabilities {
     public static void attachEntityCapability(AttachCapabilitiesEvent<Entity> e) {
         if (e.getObject() instanceof PlayerEntity) {
             e.addCapability(PLAYER_CAP_ID, new PlayerDataProvider((PlayerEntity) e.getObject()));
-        } else if (e.getObject() instanceof LivingEntity && e.getObject() instanceof IMKEntity){
+        } else if (e.getObject() instanceof LivingEntity && e.getObject() instanceof IMKEntity) {
             e.addCapability(ENTITY_CAP_ID, new EntityDataProvider((LivingEntity) e.getObject()));
-        } else if (e.getObject() instanceof LivingEntity){
+        } else if (e.getObject() instanceof LivingEntity) {
             LivingEntity livEnt = (LivingEntity) e.getObject();
             AbstractAttributeMap attributes = livEnt.getAttributes();
             for (MKDamageType damageType : MKCoreRegistry.DAMAGE_TYPES.getValues()) {
@@ -86,9 +86,9 @@ public class Capabilities {
     public static class EntityDataProvider implements ICapabilitySerializable<CompoundNBT> {
         private final MKEntityData entityHandler;
 
-        public EntityDataProvider(LivingEntity entity){
+        public EntityDataProvider(LivingEntity entity) {
             entityHandler = Capabilities.ENTITY_CAPABILITY.getDefaultInstance();
-            if (entityHandler != null){
+            if (entityHandler != null) {
                 entityHandler.attach(entity);
             }
         }

@@ -1,7 +1,6 @@
 package com.chaosbuffalo.mkcore.network;
 
 import com.chaosbuffalo.mkcore.Capabilities;
-import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;

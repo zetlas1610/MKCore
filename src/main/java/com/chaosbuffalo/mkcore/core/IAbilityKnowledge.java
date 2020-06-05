@@ -20,5 +20,5 @@ public interface IAbilityKnowledge {
     boolean knowsAbility(ResourceLocation abilityId);
 
     @Nullable
-   MKAbilityInfo getKnownAbilityInfo(ResourceLocation abilityId);
+    MKAbilityInfo getKnownAbilityInfo(ResourceLocation abilityId);
 }

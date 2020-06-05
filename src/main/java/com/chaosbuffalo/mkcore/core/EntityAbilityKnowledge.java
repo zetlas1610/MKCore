@@ -11,11 +11,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EntityAbilityKnowledge implements IAbilityKnowledge{
+public class EntityAbilityKnowledge implements IAbilityKnowledge {
     private final MKEntityData entityData;
     private final Map<ResourceLocation, MKAbilityInfo> abilityInfoMap = new HashMap<>();
 
-    public EntityAbilityKnowledge(MKEntityData entityData){
+    public EntityAbilityKnowledge(MKEntityData entityData) {
         this.entityData = entityData;
     }
 

@@ -6,14 +6,14 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.nbt.CompoundNBT;
 
-public class MKEntityData implements IMKEntityData{
+public class MKEntityData implements IMKEntityData {
 
     private LivingEntity entity;
     private AbilityExecutor abilityExecutor;
     private EntityStatsModule stats;
     private EntityAbilityKnowledge knowledge;
 
-    public MKEntityData(){
+    public MKEntityData() {
 
     }
 

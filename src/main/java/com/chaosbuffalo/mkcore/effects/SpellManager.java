@@ -3,7 +3,9 @@ package com.chaosbuffalo.mkcore.effects;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 
-import java.util.*;
+import java.util.IdentityHashMap;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public class SpellManager {
 

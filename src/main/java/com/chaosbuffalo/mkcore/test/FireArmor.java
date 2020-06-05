@@ -14,7 +14,6 @@ import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.targeting_api.TargetingContext;
 import com.chaosbuffalo.targeting_api.TargetingContexts;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;

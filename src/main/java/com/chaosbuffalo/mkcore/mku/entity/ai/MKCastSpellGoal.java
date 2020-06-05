@@ -10,7 +10,7 @@ public class MKCastSpellGoal extends Goal {
 
     private final CreatureEntity attacker;
 
-    public MKCastSpellGoal(CreatureEntity creature, double speedIn, boolean useLongMemory){
+    public MKCastSpellGoal(CreatureEntity creature, double speedIn, boolean useLongMemory) {
         this.attacker = creature;
     }
 

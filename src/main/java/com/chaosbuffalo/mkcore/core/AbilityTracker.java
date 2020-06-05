@@ -3,7 +3,6 @@ package com.chaosbuffalo.mkcore.core;
 import com.chaosbuffalo.mkcore.sync.ISyncNotifier;
 import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;

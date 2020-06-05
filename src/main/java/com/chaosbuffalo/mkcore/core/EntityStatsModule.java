@@ -12,7 +12,7 @@ public class EntityStatsModule implements IStatsModule {
     private final AbilityTracker abilityTracker;
 
 
-    public EntityStatsModule(IMKEntityData data){
+    public EntityStatsModule(IMKEntityData data) {
         entityData = data;
         abilityTracker = AbilityTracker.getTracker(data.getEntity());
     }
@@ -88,7 +88,7 @@ public class EntityStatsModule implements IStatsModule {
 
     }
 
-    public LivingEntity getEntity(){
+    public LivingEntity getEntity() {
         return entityData.getEntity();
     }
 
