@@ -40,6 +40,7 @@ public class PlayerKnowledge extends PlayerSyncComponent implements IAbilityKnow
     }
 
     @Nullable
+    @Override
     public MKAbilityInfo getAbilityInfo(ResourceLocation abilityId) {
         return knownAbilities.getAbilityInfo(abilityId);
     }
@@ -50,6 +51,7 @@ public class PlayerKnowledge extends PlayerSyncComponent implements IAbilityKnow
     }
 
     @Nullable
+    @Override
     public MKAbilityInfo getKnownAbilityInfo(ResourceLocation abilityId) {
         return knownAbilities.getKnownAbilityInfo(abilityId);
     }
