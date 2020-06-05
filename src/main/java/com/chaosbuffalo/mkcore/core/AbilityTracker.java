@@ -178,6 +178,7 @@ public class AbilityTracker implements ISyncObject {
         @Override
         public void serializeFull(CompoundNBT tag) {
             serialize(tag);
+            dirty.clear();
         }
     }
 

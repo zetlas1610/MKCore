@@ -55,5 +55,6 @@ public class SyncFloat implements ISyncObject {
     @Override
     public void serializeFull(CompoundNBT tag) {
         tag.putFloat(name, value);
+        dirty = false;
     }
 }

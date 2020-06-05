@@ -34,13 +34,15 @@ public class MKAbilityInfo implements IMKSerializable<CompoundNBT> {
         this.known = learn;
     }
 
+    @Override
     public void serialize(CompoundNBT tag) {
-        tag.putString("id", ability.getAbilityId().toString());
+        encodeId(this, tag);
         tag.putBoolean("known", known);
     }
 
+    @Override
     public boolean deserialize(CompoundNBT tag) {
-        ResourceLocation id = new ResourceLocation(tag.getString("id"));
+        ResourceLocation id = decodeId(tag);
         if (!id.equals(ability.getAbilityId())) {
             MKCore.LOGGER.error("Failed to deserialize ability! id was {}, linked ability was {}", id, ability.getAbilityId());
             return false;
@@ -49,5 +51,13 @@ public class MKAbilityInfo implements IMKSerializable<CompoundNBT> {
             known = tag.getBoolean("known");
         }
         return true;
+    }
+
+    public static void encodeId(MKAbilityInfo info, CompoundNBT tag) {
+        tag.putString("id", info.getId().toString());
+    }
+
+    public static ResourceLocation decodeId(CompoundNBT tag) {
+        return new ResourceLocation(tag.getString("id"));
     }
 }
