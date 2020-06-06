@@ -6,21 +6,20 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.TargetGoal;
 
-import java.util.List;
 import java.util.Optional;
 
-public class MKNearestAttackableTargetGoal extends TargetGoal {
+public class TargetEnemyGoal extends TargetGoal {
     protected LivingEntity nearestTarget;
 
-    public MKNearestAttackableTargetGoal(MobEntity mobIn, boolean checkSight, boolean nearbyOnlyIn) {
+    public TargetEnemyGoal(MobEntity mobIn, boolean checkSight, boolean nearbyOnlyIn) {
         super(mobIn, checkSight, nearbyOnlyIn);
     }
 
     @Override
     public boolean shouldExecute() {
-        Optional<List<LivingEntity>> opt = goalOwner.getBrain().getMemory(MKMemoryModuleTypes.THREAT_LIST);
-        if (opt.isPresent() && opt.get().size() > 0){
-            this.nearestTarget = opt.get().get(0);
+        Optional<LivingEntity> opt = goalOwner.getBrain().getMemory(MKMemoryModuleTypes.THREAT_TARGET);
+        if (opt.isPresent() && (this.nearestTarget == null || !this.nearestTarget.isEntityEqual(opt.get()))){
+            this.nearestTarget = opt.get();
             return true;
         }
         return false;

@@ -20,7 +20,6 @@ public class MKThreatSensor extends Sensor<LivingEntity> {
 
     @Override
     protected void update(ServerWorld worldIn, LivingEntity entityIn) {
-        MKCore.LOGGER.info("In threat sensor update");
         Optional<List<LivingEntity>> enemyOpt = entityIn.getBrain().getMemory(MKMemoryModuleTypes.VISIBLE_ENEMIES);
         Optional<Map<LivingEntity, ThreatMapEntry>> opt = entityIn.getBrain().getMemory(
                 MKMemoryModuleTypes.THREAT_MAP);
@@ -35,11 +34,18 @@ public class MKThreatSensor extends Sensor<LivingEntity> {
                             (1.0f - dist2 / THREAT_DISTANCE_2) * MAX_THREAT_FROM_CLOSENESS)));
                 }
             }
-            MKCore.LOGGER.info("Found {} threats", threatMap.size());
-            entityIn.getBrain().setMemory(MKMemoryModuleTypes.THREAT_MAP, threatMap);
-            entityIn.getBrain().setMemory(MKMemoryModuleTypes.THREAT_LIST, threatMap.entrySet().stream()
+            MKCore.LOGGER.info("Threat sensor found: {} enemies", enemies.size());
+            List<LivingEntity> sortedThreat = threatMap.entrySet().stream()
                     .sorted(Comparator.comparingInt(entry -> -entry.getValue().getCurrentThreat()))
-                    .map(Map.Entry::getKey).collect(Collectors.toList()));
+                    .map(Map.Entry::getKey).collect(Collectors.toList());
+            entityIn.getBrain().setMemory(MKMemoryModuleTypes.THREAT_MAP, threatMap);
+            entityIn.getBrain().setMemory(MKMemoryModuleTypes.THREAT_LIST, sortedThreat);
+            if (sortedThreat.size() > 0){
+                entityIn.getBrain().setMemory(MKMemoryModuleTypes.THREAT_TARGET, sortedThreat.get(0));
+                MKCore.LOGGER.info("Set threat to: {}", sortedThreat.get(0));
+            } else {
+                entityIn.getBrain().removeMemory(MKMemoryModuleTypes.THREAT_TARGET);
+            }
         }
 
 
