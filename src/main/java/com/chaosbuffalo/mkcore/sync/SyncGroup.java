@@ -1,5 +1,6 @@
 package com.chaosbuffalo.mkcore.sync;
 
+import com.chaosbuffalo.mkcore.MKCore;
 import net.minecraft.nbt.CompoundNBT;
 
 import java.util.ArrayList;
@@ -52,11 +53,12 @@ public class SyncGroup implements ISyncObject, ISyncNotifier {
 
     public void forceDirty() {
         forceFull = true;
+        parentNotifier.notifyUpdate(this);
     }
 
     @Override
     public boolean isDirty() {
-        return !dirty.isEmpty();
+        return forceFull || !dirty.isEmpty();
     }
 
     private CompoundNBT getUpdateRootTag(CompoundNBT tag) {
@@ -78,8 +80,8 @@ public class SyncGroup implements ISyncObject, ISyncNotifier {
     @Override
     public void serializeUpdate(CompoundNBT tag) {
         if (forceFull) {
+            MKCore.LOGGER.info("SyncGroup.serializeUpdate({}) forced full", nestedName);
             serializeFull(tag);
-            forceFull = false;
         } else {
             CompoundNBT root = getUpdateRootTag(tag);
             dirty.stream()
@@ -98,5 +100,11 @@ public class SyncGroup implements ISyncObject, ISyncNotifier {
         components.forEach(c -> c.serializeFull(root));
         writeUpdateRootTag(tag, root);
         dirty.clear();
+        forceFull = false;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("SyncGroup[name='%s', components=%d, dirty=%d]", nestedName, components.size(), dirty.size());
     }
 }
