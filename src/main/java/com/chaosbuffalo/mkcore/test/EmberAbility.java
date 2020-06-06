@@ -3,6 +3,7 @@ package com.chaosbuffalo.mkcore.test;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.CastState;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.abilities.SingleTargetCastState;
 import com.chaosbuffalo.mkcore.abilities.attributes.FloatAttribute;
 import com.chaosbuffalo.mkcore.abilities.attributes.IntAttribute;
@@ -17,6 +18,7 @@ import com.chaosbuffalo.mkcore.utils.SoundUtils;
 import com.chaosbuffalo.targeting_api.TargetingContext;
 import com.chaosbuffalo.targeting_api.TargetingContexts;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -73,14 +75,18 @@ public class EmberAbility extends MKAbility {
     public void endCast(LivingEntity entity, IMKEntityData data, CastState state) {
         super.endCast(entity, data, state);
         SingleTargetCastState singleTargetState = (SingleTargetCastState) state;
-        if (singleTargetState == null) {
+        if (singleTargetState == null)
             return;
-        }
+
+        CountingAbilityInfo info = getAbilityInfo(CountingAbilityInfo.class, data);
+        if (info == null)
+            return;
 
         singleTargetState.getTarget().ifPresent(targetEntity -> {
             int burnDuration = burnTime.getValue();
             float amount = damage.getValue();
-            MKCore.LOGGER.info("Ember damage {} burnTime {}", amount, burnDuration);
+            info.count++;
+            MKCore.LOGGER.info("Ember damage {} burnTime {} count {}", amount, burnDuration, info.count);
             targetEntity.setFire(burnDuration);
             targetEntity.attackEntityFrom(MKDamageSource.causeAbilityDamage(ModDamageTypes.FireDamage,
                     getAbilityId(), entity, entity), damage.getValue());
@@ -104,6 +110,42 @@ public class EmberAbility extends MKAbility {
             if (singleTargetState != null) {
                 singleTargetState.setTarget(targetEntity);
             }
+        }
+    }
+
+    @Override
+    public CountingAbilityInfo createAbilityInfo() {
+        return new CountingAbilityInfo(this);
+    }
+
+    <T> T getAbilityInfo(Class<T> clazz, IMKEntityData entityData) {
+        MKAbilityInfo info = entityData.getKnowledge().getKnownAbilityInfo(getAbilityId());
+        if (info == null)
+            return null;
+        return clazz.cast(info);
+    }
+
+    private static class CountingAbilityInfo extends MKAbilityInfo {
+
+        int count;
+
+        public CountingAbilityInfo(MKAbility ability) {
+            super(ability);
+            count = 0;
+        }
+
+        @Override
+        public void serialize(CompoundNBT tag) {
+            super.serialize(tag);
+            tag.putInt("count", count);
+        }
+
+        @Override
+        public boolean deserialize(CompoundNBT tag) {
+            if (!super.deserialize(tag))
+                return false;
+            count = tag.getInt("count");
+            return true;
         }
     }
 }
