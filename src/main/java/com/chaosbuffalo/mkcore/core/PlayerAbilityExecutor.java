@@ -53,13 +53,30 @@ public class PlayerAbilityExecutor extends AbilityExecutor {
 
     @Override
     public void onJoinWorld() {
-        if (isServerSide()) {
-            rebuildActiveToggleMap();
-        }
+    }
+
+    public void onPersonaActivated() {
+        rebuildActiveToggleMap();
+    }
+
+    public void onPersonaDeactivated() {
+        deactivateCurrentToggleAbilities();
     }
 
     public float getCurrentAbilityCooldownPercent(ResourceLocation abilityId, float partialTicks) {
         return getPlayerData().getStats().getTimerPercent(abilityId, partialTicks);
+    }
+
+    private void deactivateCurrentToggleAbilities() {
+        PlayerActionBar actionBar = getPlayerData().getKnowledge().getActionBar();
+        for (int i = 0; i < GameConstants.ACTION_BAR_SIZE; i++) {
+            ResourceLocation abilityId = actionBar.getAbilityInSlot(i);
+            MKAbility ability = MKCoreRegistry.getAbility(abilityId);
+            if (ability instanceof MKToggleAbility && entityData.getEntity() != null) {
+                MKToggleAbility toggle = (MKToggleAbility) ability;
+                toggle.removeEffect(entityData.getEntity(), entityData);
+            }
+        }
     }
 
     private void rebuildActiveToggleMap() {

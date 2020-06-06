@@ -13,7 +13,8 @@ public class MKCommand {
                 .then(CooldownCommand.register())
                 .then(AbilityCommand.register())
                 .then(EffectCommand.register())
-                .then(InfoCommand.register());
+                .then(InfoCommand.register())
+                .then(PersonaCommand.register());
         dispatcher.register(builder);
     }
 
