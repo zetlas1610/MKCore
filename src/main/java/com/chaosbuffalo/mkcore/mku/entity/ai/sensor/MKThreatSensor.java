@@ -34,7 +34,6 @@ public class MKThreatSensor extends Sensor<LivingEntity> {
                             (1.0f - dist2 / THREAT_DISTANCE_2) * MAX_THREAT_FROM_CLOSENESS)));
                 }
             }
-            MKCore.LOGGER.info("Threat sensor found: {} enemies", enemies.size());
             List<LivingEntity> sortedThreat = threatMap.entrySet().stream()
                     .sorted(Comparator.comparingInt(entry -> -entry.getValue().getCurrentThreat()))
                     .map(Map.Entry::getKey).collect(Collectors.toList());
@@ -42,7 +41,6 @@ public class MKThreatSensor extends Sensor<LivingEntity> {
             entityIn.getBrain().setMemory(MKMemoryModuleTypes.THREAT_LIST, sortedThreat);
             if (sortedThreat.size() > 0){
                 entityIn.getBrain().setMemory(MKMemoryModuleTypes.THREAT_TARGET, sortedThreat.get(0));
-                MKCore.LOGGER.info("Set threat to: {}", sortedThreat.get(0));
             } else {
                 entityIn.getBrain().removeMemory(MKMemoryModuleTypes.THREAT_TARGET);
             }

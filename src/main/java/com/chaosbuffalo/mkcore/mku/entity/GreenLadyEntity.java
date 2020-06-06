@@ -1,37 +1,29 @@
 package com.chaosbuffalo.mkcore.mku.entity;
 
 import com.chaosbuffalo.mkcore.MKCore;
+import com.chaosbuffalo.mkcore.mku.entity.ai.LookAtThreatTargetGoal;
 import com.chaosbuffalo.mkcore.mku.entity.ai.MovementGoal;
 import com.chaosbuffalo.mkcore.mku.entity.ai.TargetEnemyGoal;
-import com.chaosbuffalo.mkcore.mku.entity.ai.controller.DestinationController;
+import com.chaosbuffalo.mkcore.mku.entity.ai.controller.MovementStrategyController;
 import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
 import com.chaosbuffalo.mkcore.mku.entity.ai.memory.ThreatMapEntry;
 import com.chaosbuffalo.mkcore.mku.entity.ai.sensor.MKSensorTypes;
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.Dynamic;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
-import net.minecraft.entity.ai.brain.task.WalkToTargetTask;
-import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
-import net.minecraft.entity.ai.goal.ZombieAttackGoal;
 import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -39,10 +31,12 @@ import java.util.Optional;
 
 public class GreenLadyEntity extends ZombieEntity implements IMKEntity {
     private int timesDone;
+    private boolean isWalkingBackwards;
 
     public GreenLadyEntity(EntityType<? extends GreenLadyEntity> type, World worldIn) {
         super(type, worldIn);
         timesDone = 0;
+        isWalkingBackwards = false;
     }
 
     @Override
@@ -63,15 +57,16 @@ public class GreenLadyEntity extends ZombieEntity implements IMKEntity {
         this.world.getProfiler().endSection();
     }
 
+
     @Override
     public ActionResultType applyPlayerInteraction(PlayerEntity player, Vec3d vec, Hand hand) {
         if (!player.getEntityWorld().isRemote()){
             if (timesDone % 3 == 0){
-                DestinationController.enterMeleeMode(this, 1.0);
+                MovementStrategyController.enterMeleeMode(this, 1);
             } else if (timesDone % 3 == 1){
-                DestinationController.enterCastingMode(this, 8.0);
+                MovementStrategyController.enterCastingMode(this, 8.0);
             } else {
-                DestinationController.enterStationary(this);
+                MovementStrategyController.enterStationary(this);
             }
             timesDone++;
         }
@@ -81,7 +76,7 @@ public class GreenLadyEntity extends ZombieEntity implements IMKEntity {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(8, new LookAtGoal(this, PlayerEntity.class, 8.0F));
+        this.goalSelector.addGoal(7, new LookAtThreatTargetGoal(this));
         this.goalSelector.addGoal(8, new LookRandomlyGoal(this));
         this.targetSelector.addGoal(2, new TargetEnemyGoal(this, true,
                 true));
@@ -109,8 +104,7 @@ public class GreenLadyEntity extends ZombieEntity implements IMKEntity {
                         MKMemoryModuleTypes.VISIBLE_ENEMIES,
                         MemoryModuleType.WALK_TARGET,
                         MemoryModuleType.PATH,
-                        MKMemoryModuleTypes.DESTINATION_MOVEMENT,
-                        MKMemoryModuleTypes.TARGET_DISTANCE),
+                        MKMemoryModuleTypes.MOVEMENT_STRATEGY),
                 ImmutableList.of(
                         MKSensorTypes.ENTITIES_SENSOR,
                         MKSensorTypes.THREAT_SENSOR,

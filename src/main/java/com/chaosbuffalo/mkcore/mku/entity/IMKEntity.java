@@ -7,4 +7,5 @@ public interface IMKEntity {
     void addThreat(LivingEntity entity, int value);
 
     void reduceThreat(LivingEntity entity, int value);
+
 }

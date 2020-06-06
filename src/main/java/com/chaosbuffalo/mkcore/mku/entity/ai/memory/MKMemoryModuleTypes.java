@@ -2,7 +2,8 @@ package com.chaosbuffalo.mkcore.mku.entity.ai.memory;
 
 
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.mku.entity.ai.sensor.DestinationSensor;
+import com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy.MovementStrategy;
+import com.chaosbuffalo.mkcore.mku.entity.ai.sensor.MovementStrategySensor;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraftforge.event.RegistryEvent;
@@ -35,11 +36,8 @@ public class MKMemoryModuleTypes {
     @ObjectHolder("mkcore:threat_target")
     public static MemoryModuleType<LivingEntity> THREAT_TARGET;
 
-    @ObjectHolder("mkcore:target_distance")
-    public static MemoryModuleType<Double> TARGET_DISTANCE;
-
-    @ObjectHolder("mkcore:destination_movement")
-    public static MemoryModuleType<DestinationSensor.MovementType> DESTINATION_MOVEMENT;
+    @ObjectHolder("mkcore:movement_strategy")
+    public static MemoryModuleType<MovementStrategy> MOVEMENT_STRATEGY;
 
 
 
@@ -57,10 +55,8 @@ public class MKMemoryModuleTypes {
                 .setRegistryName(MKCore.MOD_ID, "threat_list"));
         evt.getRegistry().register(new MemoryModuleType<LivingEntity>(Optional.empty())
                 .setRegistryName(MKCore.MOD_ID, "threat_target"));
-        evt.getRegistry().register(new MemoryModuleType<Double>(Optional.empty())
-            .setRegistryName(MKCore.MOD_ID, "target_distance"));
-        evt.getRegistry().register(new MemoryModuleType<DestinationSensor.MovementType>(Optional.empty())
-            .setRegistryName(MKCore.MOD_ID, "destination_movement"));
+        evt.getRegistry().register(new MemoryModuleType<MovementStrategy>(Optional.empty())
+            .setRegistryName(MKCore.MOD_ID, "movement_strategy"));
     }
 
 

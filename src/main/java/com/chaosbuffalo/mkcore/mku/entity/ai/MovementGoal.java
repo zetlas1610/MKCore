@@ -1,6 +1,7 @@
 package com.chaosbuffalo.mkcore.mku.entity.ai;
 
 import net.minecraft.entity.CreatureEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.entity.ai.brain.memory.WalkTarget;
@@ -18,7 +19,7 @@ public class MovementGoal extends Goal {
     @Nullable
     private BlockPos blockPos;
     private float speed;
-    private final CreatureEntity entity;
+    private final MobEntity entity;
 
     public MovementGoal(CreatureEntity creature) {
         this.entity = creature;
