@@ -16,11 +16,14 @@ import java.util.stream.Collectors;
 
 public class MKLivingEntitiesSensor extends Sensor<LivingEntity> {
 
+    public MKLivingEntitiesSensor(){
+        super(20);
+    }
+
     protected void update(ServerWorld worldIn, LivingEntity entityIn) {
         List<LivingEntity> entities = worldIn.getEntitiesWithinAABB(LivingEntity.class,
-                entityIn.getBoundingBox().grow(16.0D, 16.0D, 16.0D), (entity) -> {
-            return entity != entityIn && entity.isAlive();
-        });
+                entityIn.getBoundingBox().grow(16.0D, 16.0D, 16.0D),
+                (entity) -> entity != entityIn && entity.isAlive());
         entities.sort(Comparator.comparingDouble(entityIn::getDistanceSq));
         Brain<?> brain = entityIn.getBrain();
         List<LivingEntity> enemies = entities.stream().filter((x) -> Targeting.isValidEnemy(entityIn, x))
@@ -34,6 +37,7 @@ public class MKLivingEntitiesSensor extends Sensor<LivingEntity> {
     }
 
     public Set<MemoryModuleType<?>> getUsedMemories() {
-        return ImmutableSet.of(MKMemoryModuleTypes.ENEMIES, MKMemoryModuleTypes.ALLIES, MKMemoryModuleTypes.VISIBLE_ENEMIES);
+        return ImmutableSet.of(MKMemoryModuleTypes.ENEMIES, MKMemoryModuleTypes.ALLIES,
+                MKMemoryModuleTypes.VISIBLE_ENEMIES);
     }
 }

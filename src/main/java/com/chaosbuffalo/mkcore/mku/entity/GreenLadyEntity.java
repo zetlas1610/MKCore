@@ -1,10 +1,16 @@
 package com.chaosbuffalo.mkcore.mku.entity;
 
+import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.mku.entity.ai.MKNearestAttackableTargetGoal;
 import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
 import com.chaosbuffalo.mkcore.mku.entity.ai.memory.ThreatMapEntry;
+import com.chaosbuffalo.mkcore.mku.entity.ai.sensor.MKLivingEntitiesSensor;
+import com.chaosbuffalo.mkcore.mku.entity.ai.sensor.MKSensorTypes;
+import com.google.common.collect.ImmutableList;
+import com.mojang.datafixers.Dynamic;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.ZombieAttackGoal;
@@ -12,6 +18,7 @@ import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +37,19 @@ public class GreenLadyEntity extends ZombieEntity implements IMKEntity {
     }
 
     @Override
+    public Brain<GreenLadyEntity> getBrain() {
+        return (Brain<GreenLadyEntity>) super.getBrain();
+    }
+
+    @Override
+    protected void updateAITasks() {
+        super.updateAITasks();
+        this.world.getProfiler().startSection("brain");
+        this.getBrain().tick((ServerWorld)this.world, this);
+        this.world.getProfiler().endSection();
+    }
+
+    @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(8, new LookAtGoal(this, PlayerEntity.class, 8.0F));
         this.goalSelector.addGoal(8, new LookRandomlyGoal(this));
@@ -42,8 +62,16 @@ public class GreenLadyEntity extends ZombieEntity implements IMKEntity {
     protected void damageEntity(DamageSource damageSrc, float damageAmount) {
         super.damageEntity(damageSrc, damageAmount);
         if (damageSrc.getTrueSource() instanceof LivingEntity){
+            MKCore.LOGGER.info("Adding threat {} to {}", damageAmount, damageSrc.getTrueSource());
             addThreat((LivingEntity) damageSrc.getTrueSource(), Math.round(damageAmount));
         }
+    }
+
+    @Override
+    protected Brain<GreenLadyEntity> createBrain(Dynamic<?> dynamicIn) {
+        return new Brain<>(ImmutableList.of(MKMemoryModuleTypes.ALLIES, MKMemoryModuleTypes.ENEMIES,
+                MKMemoryModuleTypes.THREAT_LIST, MKMemoryModuleTypes.THREAT_MAP, MKMemoryModuleTypes.VISIBLE_ENEMIES),
+                ImmutableList.of(MKSensorTypes.ENTITIES_SENSOR, MKSensorTypes.THREAT_SENSOR), dynamicIn);
     }
 
     @Override

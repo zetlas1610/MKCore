@@ -33,7 +33,7 @@ public class MKMemoryModuleTypes {
 
 
     @SubscribeEvent
-    public static void registerEntities(RegistryEvent.Register<MemoryModuleType<?>> evt){
+    public static void registerModuleTypes(RegistryEvent.Register<MemoryModuleType<?>> evt){
         evt.getRegistry().register(new MemoryModuleType<List<LivingEntity>>(Optional.empty())
                 .setRegistryName(MKCore.MOD_ID, "allies"));
         evt.getRegistry().register(new MemoryModuleType<List<LivingEntity>>(Optional.empty())
