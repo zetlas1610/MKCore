@@ -165,7 +165,7 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
 
     @Override
     public float getAbilityManaCost(MKAbility ability) {
-        float manaCost = ability.getManaCost();
+        float manaCost = ability.getManaCost(playerData);
         return MKCombatFormulas.applyManaCostReduction(playerData, manaCost);
     }
 

@@ -97,12 +97,15 @@ public class PlayerActionBar extends PlayerSyncComponent {
         removeFromHotBar(abilityId);
     }
 
+    void onPersonaSwitch() {
+        abilities.forEach(this::checkHotBar);
+    }
+
     public void serialize(CompoundNBT tag) {
         hotBarUpdater.serializeStorage(tag);
     }
 
     public void deserialize(CompoundNBT tag) {
         hotBarUpdater.deserializeStorage(tag);
-        abilities.forEach(this::checkHotBar);
     }
 }

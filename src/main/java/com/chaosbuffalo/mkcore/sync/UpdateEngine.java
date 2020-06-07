@@ -26,20 +26,30 @@ public class UpdateEngine {
 
     public void addPublic(ISyncObject syncObject) {
         publicUpdater.add(syncObject);
-        publicUpdater.forceDirty();
+        if (syncObject instanceof SyncGroup) {
+            ((SyncGroup) syncObject).forceDirty();
+        }
     }
 
     public void removePublic(ISyncObject syncObject) {
         publicUpdater.remove(syncObject);
-        publicUpdater.forceDirty();
+        if (syncObject instanceof SyncGroup) {
+            ((SyncGroup) syncObject).forceDirty();
+        }
     }
 
     public void addPrivate(ISyncObject syncObject) {
         privateUpdater.add(syncObject);
+        if (syncObject instanceof SyncGroup) {
+            ((SyncGroup) syncObject).forceDirty();
+        }
     }
 
     public void removePrivate(ISyncObject syncObject) {
         privateUpdater.remove(syncObject);
+        if (syncObject instanceof SyncGroup) {
+            ((SyncGroup) syncObject).forceDirty();
+        }
     }
 
     public void syncUpdates() {
