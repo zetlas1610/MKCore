@@ -39,6 +39,9 @@ public class MKMemoryModuleTypes {
     @ObjectHolder("mkcore:movement_strategy")
     public static MemoryModuleType<MovementStrategy> MOVEMENT_STRATEGY;
 
+    @ObjectHolder("mkcore:movement_target")
+    public static MemoryModuleType<LivingEntity> MOVEMENT_TARGET;
+
 
 
     @SubscribeEvent
@@ -57,6 +60,8 @@ public class MKMemoryModuleTypes {
                 .setRegistryName(MKCore.MOD_ID, "threat_target"));
         evt.getRegistry().register(new MemoryModuleType<MovementStrategy>(Optional.empty())
             .setRegistryName(MKCore.MOD_ID, "movement_strategy"));
+        evt.getRegistry().register(new MemoryModuleType<LivingEntity>(Optional.empty())
+                .setRegistryName(MKCore.MOD_ID, "movement_target"));
     }
 
 

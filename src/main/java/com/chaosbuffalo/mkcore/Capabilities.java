@@ -4,7 +4,7 @@ import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.core.MKEntityData;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
-import com.chaosbuffalo.mkcore.mku.entity.IMKEntity;
+import com.chaosbuffalo.mkcore.mku.entity.MKEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
@@ -52,7 +52,7 @@ public class Capabilities {
     public static void attachEntityCapability(AttachCapabilitiesEvent<Entity> e) {
         if (e.getObject() instanceof PlayerEntity) {
             e.addCapability(PLAYER_CAP_ID, new PlayerDataProvider((PlayerEntity) e.getObject()));
-        } else if (e.getObject() instanceof LivingEntity && e.getObject() instanceof IMKEntity) {
+        } else if (e.getObject() instanceof LivingEntity && e.getObject() instanceof MKEntity) {
             e.addCapability(ENTITY_CAP_ID, new EntityDataProvider((LivingEntity) e.getObject()));
         } else if (e.getObject() instanceof LivingEntity) {
             LivingEntity livEnt = (LivingEntity) e.getObject();

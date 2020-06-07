@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class MKLivingEntitiesSensor extends Sensor<LivingEntity> {
 
     public MKLivingEntitiesSensor(){
-        super(20);
+        super(50);
     }
 
     protected void update(ServerWorld worldIn, LivingEntity entityIn) {

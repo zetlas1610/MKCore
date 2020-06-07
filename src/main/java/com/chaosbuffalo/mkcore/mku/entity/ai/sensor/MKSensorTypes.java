@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.Mod;
 public class MKSensorTypes {
 
 
-    public static SensorType<MKThreatSensor> THREAT_SENSOR;
+    public static SensorType<ThreatSensor> THREAT_SENSOR;
 
     public static SensorType<MKLivingEntitiesSensor> ENTITIES_SENSOR;
 
@@ -23,7 +23,7 @@ public class MKSensorTypes {
         ENTITIES_SENSOR = new SensorType<>(MKLivingEntitiesSensor::new);
         ENTITIES_SENSOR.setRegistryName(MKCore.MOD_ID, "sensor.entities");
         evt.getRegistry().register(ENTITIES_SENSOR);
-        THREAT_SENSOR = new SensorType<>(MKThreatSensor::new);
+        THREAT_SENSOR = new SensorType<>(ThreatSensor::new);
         THREAT_SENSOR.setRegistryName(MKCore.MOD_ID, "sensor.threat");
         evt.getRegistry().register(THREAT_SENSOR);
         DESTINATION_SENSOR = new SensorType<>(MovementStrategySensor::new);

@@ -18,7 +18,7 @@ public class MKUEntityTypes {
 
     public static final RegistryObject<EntityType<GreenLadyEntity>> GREEN_LADY = ENTITY_TYPES.register(
             GREEN_LADY_NAME, () ->
-                    EntityType.Builder.create(GreenLadyEntity::new, EntityClassification.MONSTER)
+                    EntityType.Builder.create(GreenLadyEntity::new, EntityClassification.CREATURE)
                             .size(EntityType.ZOMBIE.getWidth(), EntityType.ZOMBIE.getHeight())
                             .build(new ResourceLocation(MKCore.MOD_ID, GREEN_LADY_NAME).toString())
     );

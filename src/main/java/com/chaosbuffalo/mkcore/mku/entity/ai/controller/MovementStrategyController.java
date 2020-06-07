@@ -1,11 +1,9 @@
 package com.chaosbuffalo.mkcore.mku.entity.ai.controller;
 
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
 import com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy.FollowMovementStrategy;
 import com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy.KiteMovementStrategy;
 import com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy.StationaryMovementStrategy;
-import com.chaosbuffalo.mkcore.mku.entity.ai.sensor.MovementStrategySensor;
 import net.minecraft.entity.LivingEntity;
 
 public class MovementStrategyController {
