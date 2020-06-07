@@ -34,6 +34,11 @@ public class MKEntityData implements IMKEntityData {
         }
     }
 
+    public void update() {
+        getAbilityExecutor().tick();
+        getStats().tick();
+    }
+
     @Override
     public LivingEntity getEntity() {
         return entity;
