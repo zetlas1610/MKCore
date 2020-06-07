@@ -22,6 +22,10 @@ public class EntityStatsModule implements IStatsModule {
         return (float) getEntity().getAttribute(damageType.getDamageAttribute()).getValue();
     }
 
+    public void tick() {
+        abilityTracker.tick();
+    }
+
     @Override
     public float getHealBonus() {
         return (float) getEntity().getAttribute(MKAttributes.HEAL_BONUS).getValue();

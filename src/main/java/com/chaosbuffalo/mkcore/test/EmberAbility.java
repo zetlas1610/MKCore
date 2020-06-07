@@ -72,11 +72,12 @@ public class EmberAbility extends MKAbility {
     @Override
     public void endCast(LivingEntity entity, IMKEntityData data, CastState state) {
         super.endCast(entity, data, state);
+        MKCore.LOGGER.info("In end cast ember");
         SingleTargetCastState singleTargetState = (SingleTargetCastState) state;
         if (singleTargetState == null) {
             return;
         }
-
+        MKCore.LOGGER.info("has state");
         singleTargetState.getTarget().ifPresent(targetEntity -> {
             int burnDuration = burnTime.getValue();
             float amount = damage.getValue();
@@ -98,7 +99,9 @@ public class EmberAbility extends MKAbility {
     @Override
     public void execute(LivingEntity entity, IMKEntityData pData) {
         LivingEntity targetEntity = getSingleLivingTarget(entity, getDistance());
+        MKCore.LOGGER.info("In cast ember");
         if (targetEntity != null) {
+            MKCore.LOGGER.info("Found target: {}", targetEntity);
             CastState state = pData.startAbility(this);
             SingleTargetCastState singleTargetState = (SingleTargetCastState) state;
             if (singleTargetState != null) {

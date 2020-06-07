@@ -2,6 +2,7 @@ package com.chaosbuffalo.mkcore.mku.entity.ai.memory;
 
 
 import com.chaosbuffalo.mkcore.MKCore;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy.MovementStrategy;
 import com.chaosbuffalo.mkcore.mku.entity.ai.sensor.MovementStrategySensor;
 import net.minecraft.entity.LivingEntity;
@@ -42,6 +43,8 @@ public class MKMemoryModuleTypes {
     @ObjectHolder("mkcore:movement_target")
     public static MemoryModuleType<LivingEntity> MOVEMENT_TARGET;
 
+    @ObjectHolder("mkcore:current_ability")
+    public static MemoryModuleType<MKAbility> CURRENT_ABILITY;
 
 
     @SubscribeEvent
@@ -62,6 +65,8 @@ public class MKMemoryModuleTypes {
             .setRegistryName(MKCore.MOD_ID, "movement_strategy"));
         evt.getRegistry().register(new MemoryModuleType<LivingEntity>(Optional.empty())
                 .setRegistryName(MKCore.MOD_ID, "movement_target"));
+        evt.getRegistry().register(new MemoryModuleType<MKAbility>(Optional.empty())
+                .setRegistryName(MKCore.MOD_ID, "current_ability"));
     }
 
 

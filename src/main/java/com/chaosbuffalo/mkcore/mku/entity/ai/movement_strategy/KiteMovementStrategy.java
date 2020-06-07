@@ -45,7 +45,7 @@ public class KiteMovementStrategy extends MovementStrategy {
             }
             if (targetPos != null){
                 brain.setMemory(MemoryModuleType.WALK_TARGET,
-                        new WalkTarget(targetPos, 1.1f, 1));
+                        new WalkTarget(targetPos, 1.0f, 1));
             }
         }
 

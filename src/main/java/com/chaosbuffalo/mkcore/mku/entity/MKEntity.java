@@ -93,11 +93,13 @@ public abstract class MKEntity extends CreatureEntity {
                         MemoryModuleType.WALK_TARGET,
                         MemoryModuleType.PATH,
                         MKMemoryModuleTypes.MOVEMENT_STRATEGY,
-                        MKMemoryModuleTypes.MOVEMENT_TARGET),
+                        MKMemoryModuleTypes.MOVEMENT_TARGET,
+                        MKMemoryModuleTypes.CURRENT_ABILITY),
                 ImmutableList.of(
                         MKSensorTypes.ENTITIES_SENSOR,
                         MKSensorTypes.THREAT_SENSOR,
-                        MKSensorTypes.DESTINATION_SENSOR),
+                        MKSensorTypes.DESTINATION_SENSOR,
+                        MKSensorTypes.ABILITY_SENSOR),
                 dynamicIn);
     }
 

@@ -18,6 +18,8 @@ public class MKSensorTypes {
 
     public static SensorType<MovementStrategySensor> DESTINATION_SENSOR;
 
+    public static SensorType<AbilityUseSensor> ABILITY_SENSOR;
+
     @SubscribeEvent
     public static void registerModuleTypes(RegistryEvent.Register<SensorType<?>> evt){
         ENTITIES_SENSOR = new SensorType<>(MKLivingEntitiesSensor::new);
@@ -29,5 +31,8 @@ public class MKSensorTypes {
         DESTINATION_SENSOR = new SensorType<>(MovementStrategySensor::new);
         DESTINATION_SENSOR.setRegistryName(MKCore.MOD_ID, "sensor.destination");
         evt.getRegistry().register(DESTINATION_SENSOR);
+        ABILITY_SENSOR = new SensorType<>(AbilityUseSensor::new);
+        ABILITY_SENSOR.setRegistryName(MKCore.MOD_ID, "sensor.ability_use");
+        evt.getRegistry().register(ABILITY_SENSOR);
     }
 }
