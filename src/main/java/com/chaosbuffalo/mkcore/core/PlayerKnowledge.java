@@ -97,4 +97,12 @@ public class PlayerKnowledge extends PlayerSyncComponent implements IAbilityKnow
         knownAbilities.deserialize(tag);
         actionBar.deserialize(tag);
     }
+
+    public void onPersonaDeactivated() {
+
+    }
+
+    public void onPersonaActivated() {
+        actionBar.onPersonaSwitch();
+    }
 }

@@ -19,8 +19,8 @@ public class MKPlayerData implements IMKEntityData {
 
     private PlayerEntity player;
     private PlayerAbilityExecutor abilityExecutor;
-    private PlayerKnowledge knowledge;
     private PlayerStatsModule stats;
+    private PersonaManager personaManager;
     private UpdateEngine updateEngine;
     private final Set<String> spellTag = new HashSet<>();
 
@@ -37,11 +37,9 @@ public class MKPlayerData implements IMKEntityData {
     public void attach(PlayerEntity newPlayer) {
         player = newPlayer;
         updateEngine = new UpdateEngine(this);
-        knowledge = new PlayerKnowledge(this);
+        personaManager = PersonaManager.getPersonaManager(this);
         abilityExecutor = new PlayerAbilityExecutor(this);
         stats = new PlayerStatsModule(this);
-
-        knowledge.attach(updateEngine);
         stats.attach(updateEngine);
 
         registerAttributes();
@@ -92,12 +90,15 @@ public class MKPlayerData implements IMKEntityData {
 
     @Override
     public PlayerKnowledge getKnowledge() {
-        return knowledge;
+        return getPersonaManager().getActivePersona().getKnowledge();
     }
-
 
     public UpdateEngine getUpdateEngine() {
         return updateEngine;
+    }
+
+    public PersonaManager getPersonaManager() {
+        return personaManager;
     }
 
     public void clone(IMKEntityData previous, boolean death) {
@@ -147,15 +148,27 @@ public class MKPlayerData implements IMKEntityData {
         }
     }
 
+    public void onPersonaActivated(PersonaManager.Persona persona) {
+        persona.getKnowledge().attach(updateEngine);
+        persona.getKnowledge().onPersonaActivated();
+        getAbilityExecutor().onPersonaActivated();
+    }
+
+    public void onPersonaDeactivated(PersonaManager.Persona persona) {
+        persona.getKnowledge().onPersonaDeactivated();
+        persona.getKnowledge().detach(updateEngine);
+        getAbilityExecutor().onPersonaDeactivated();
+    }
+
     @Override
     public void serialize(CompoundNBT nbt) {
+        personaManager.serialize(nbt);
         getStats().serialize(nbt);
-        getKnowledge().serialize(nbt);
     }
 
     @Override
     public void deserialize(CompoundNBT nbt) {
-        getKnowledge().deserialize(nbt);
+        personaManager.deserialize(nbt);
         getStats().deserialize(nbt);
     }
 
