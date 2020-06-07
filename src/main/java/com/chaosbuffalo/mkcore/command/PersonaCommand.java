@@ -8,9 +8,15 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.entity.player.ServerPlayerEntity;
+
+import java.util.Collections;
+import java.util.concurrent.CompletableFuture;
 
 public class PersonaCommand {
     public static LiteralArgumentBuilder<CommandSource> register() {
@@ -22,11 +28,19 @@ public class PersonaCommand {
                                 .executes(PersonaCommand::createPersona)))
                 .then(Commands.literal("switch")
                         .then(Commands.argument("name", StringArgumentType.string())
+                                .suggests(PersonaCommand::suggestKnownPersonas)
                                 .executes(PersonaCommand::switchPersona)))
                 .then(Commands.literal("delete")
                         .then(Commands.argument("name", StringArgumentType.string())
+                                .suggests(PersonaCommand::suggestKnownPersonas)
                                 .executes(PersonaCommand::deletePersona)))
                 ;
+    }
+
+    static CompletableFuture<Suggestions> suggestKnownPersonas(final CommandContext<CommandSource> context, final SuggestionsBuilder builder) throws CommandSyntaxException {
+        ServerPlayerEntity player = context.getSource().asPlayer();
+        return ISuggestionProvider.suggest(MKCore.getPlayer(player).map(playerData ->
+                playerData.getPersonaManager().getPersonaNames()).orElse(Collections.emptyList()), builder);
     }
 
     static int listPersonas(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
