@@ -47,7 +47,8 @@ public class MKMeleeAttackGoal extends Goal {
     @Override
     public void tick() {
         this.delayCounter = Math.max(delayCounter - 1, 0);
-        this.entity.getNavigator().tryMoveToEntityLiving(target,speed);
+        entity.getNavigator().tryMoveToEntityLiving(target,speed);
+        entity.getLookController().setLookPositionWithEntity(target, 30.0f, 30.0f);
         if (delayCounter == 0){
             checkAndPerformAttack(target, entity.getDistanceSq(target));
         }

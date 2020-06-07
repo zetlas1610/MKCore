@@ -5,6 +5,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.Goal;
 
+import java.util.EnumSet;
 import java.util.Optional;
 
 public class LookAtThreatTargetGoal extends Goal {
@@ -13,6 +14,7 @@ public class LookAtThreatTargetGoal extends Goal {
 
     public LookAtThreatTargetGoal(MobEntity entity){
         this.entity = entity;
+        setMutexFlags(EnumSet.of(Flag.LOOK));
     }
 
     @Override

@@ -26,6 +26,11 @@ public class UseAbilityGoal extends Goal {
     }
 
     @Override
+    public boolean isPreemptible() {
+        return false;
+    }
+
+    @Override
     public boolean shouldExecute() {
         Optional<MKAbility> abilityOptional = entity.getBrain().getMemory(MKMemoryModuleTypes.CURRENT_ABILITY);
         Optional<LivingEntity> target = entity.getBrain().getMemory(MKMemoryModuleTypes.THREAT_TARGET);
@@ -45,11 +50,8 @@ public class UseAbilityGoal extends Goal {
     }
 
     public boolean shouldContinueExecuting() {
-        boolean shouldContinue = currentAbility != null && entity.getCapability(Capabilities.ENTITY_CAPABILITY).map(
-                (entityData) -> entityData.getAbilityExecutor().isCasting()).orElse(false) &&
-                target != null && entity.getBrain().getMemory(MKMemoryModuleTypes.THREAT_TARGET).map(
-                (ent) -> ent.isEntityEqual(target)).orElse(false);
-        return shouldContinue;
+        return entity.getCapability(Capabilities.ENTITY_CAPABILITY).map(
+                (entityData) -> entityData.getAbilityExecutor().isCasting()).orElse(false);
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -45,9 +46,14 @@ public class EntityStartCastPacket {
             Entity entity = world.getEntityByID(entityId);
             if (entity == null)
                 return;
+            if (entity instanceof PlayerEntity){
+                entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap ->
+                        cap.getAbilityExecutor().startCastClient(abilityId, castTicks));
+            } else {
+                entity.getCapability(Capabilities.ENTITY_CAPABILITY).ifPresent(cap ->
+                        cap.getAbilityExecutor().startCastClient(abilityId, castTicks));
+            }
 
-            entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap ->
-                    cap.getAbilityExecutor().startCastClient(abilityId, castTicks));
         });
         ctx.setPacketHandled(true);
     }

@@ -25,6 +25,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
+import java.util.Random;
 
 
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -67,6 +68,15 @@ public class EmberAbility extends MKAbility {
     @Override
     public SoundEvent getCastingSoundEvent() {
         return ModSounds.casting_fire;
+    }
+
+    @Override
+    public void continueCastClient(LivingEntity entity, IMKEntityData data, int castTimeLeft) {
+        super.continueCastClient(entity, data, castTimeLeft);
+        Random rand = entity.getRNG();
+        entity.getEntityWorld().addParticle(ParticleTypes.LAVA,
+               entity.getPosX(), entity.getPosY() + 0.5F, entity.getPosZ(),
+                rand.nextFloat() / 2.0F, 5.0E-5D, rand.nextFloat() / 2.0F);
     }
 
     @Override
