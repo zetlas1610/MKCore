@@ -118,13 +118,6 @@ public class EmberAbility extends MKAbility {
         return new CountingAbilityInfo(this);
     }
 
-    <T> T getAbilityInfo(Class<T> clazz, IMKEntityData entityData) {
-        MKAbilityInfo info = entityData.getKnowledge().getKnownAbilityInfo(getAbilityId());
-        if (info == null)
-            return null;
-        return clazz.cast(info);
-    }
-
     private static class CountingAbilityInfo extends MKAbilityInfo {
 
         int count;

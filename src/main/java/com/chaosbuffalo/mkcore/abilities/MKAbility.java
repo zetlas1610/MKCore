@@ -238,6 +238,13 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
     public void endCast(LivingEntity entity, IMKEntityData data, CastState state) {
     }
 
+    protected <T> T getAbilityInfo(Class<T> clazz, IMKEntityData entityData) {
+        MKAbilityInfo info = entityData.getKnowledge().getKnownAbilityInfo(getAbilityId());
+        if (info == null)
+            return null;
+        return clazz.cast(info);
+    }
+
     protected LivingEntity getSingleLivingTarget(LivingEntity caster, float distance) {
         return getSingleLivingTarget(caster, distance, true);
     }
