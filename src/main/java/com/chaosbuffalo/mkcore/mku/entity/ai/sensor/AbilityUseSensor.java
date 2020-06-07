@@ -29,7 +29,6 @@ public class AbilityUseSensor extends Sensor<MKEntity> {
             entityIn.getCapability(Capabilities.ENTITY_CAPABILITY).ifPresent(mkEntityData -> {
                 for (MKAbilityInfo ability : mkEntityData.getKnowledge().getAbilities()){
                     if (mkEntityData.getAbilityExecutor().canActivateAbility(ability.getAbility())){
-                        MKCore.LOGGER.info("Setting ability to use: {}", ability.getAbility().getAbilityId());
                         entityIn.getBrain().setMemory(MKMemoryModuleTypes.CURRENT_ABILITY, ability.getAbility());
                         return;
                     }

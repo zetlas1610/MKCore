@@ -32,8 +32,6 @@ public class UseAbilityGoal extends Goal {
         if (abilityOptional.isPresent() && target.isPresent()){
             currentAbility = abilityOptional.get();
             this.target = target.get();
-            MKCore.LOGGER.info("In should execute: {}, {}",
-                    entity.getEntitySenses().canSee(this.target), canActivate());
             return entity.getEntitySenses().canSee(this.target) && canActivate();
         } else {
             return false;
@@ -51,7 +49,6 @@ public class UseAbilityGoal extends Goal {
                 (entityData) -> entityData.getAbilityExecutor().isCasting()).orElse(false) &&
                 target != null && entity.getBrain().getMemory(MKMemoryModuleTypes.THREAT_TARGET).map(
                 (ent) -> ent.isEntityEqual(target)).orElse(false);
-        MKCore.LOGGER.info("Shold continue: {} ", shouldContinue);
         return shouldContinue;
     }
 
@@ -59,10 +56,8 @@ public class UseAbilityGoal extends Goal {
     public void startExecuting() {
         entity.faceEntity(target, 360.0f, 360.0f);
         entity.getLookController().setLookPositionWithEntity(target, 50.0f, 50.0f);
-        entity.getCapability(Capabilities.ENTITY_CAPABILITY).ifPresent((entityData) ->{
-                MKCore.LOGGER.info("Start execute for ability: {}", currentAbility);
-                entityData.getAbilityExecutor().executeAbility(currentAbility.getAbilityId());
-        });
+        entity.getCapability(Capabilities.ENTITY_CAPABILITY).ifPresent(
+                (entityData) -> entityData.getAbilityExecutor().executeAbility(currentAbility.getAbilityId()));
     }
 
     @Override
@@ -74,7 +69,6 @@ public class UseAbilityGoal extends Goal {
     @Override
     public void resetTask() {
         super.resetTask();
-        MKCore.LOGGER.info("Resetting ability use");
         currentAbility = null;
         target = null;
         entity.getBrain().removeMemory(MKMemoryModuleTypes.CURRENT_ABILITY);
