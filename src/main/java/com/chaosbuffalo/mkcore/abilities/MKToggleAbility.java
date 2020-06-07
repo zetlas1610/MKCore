@@ -37,6 +37,14 @@ public abstract class MKToggleAbility extends MKAbility {
     public abstract Effect getToggleEffect();
 
     @Override
+    public float getManaCost(IMKEntityData entityData) {
+        if (entityData.getEntity().isPotionActive(getToggleEffect())) {
+            return 0f;
+        }
+        return super.getManaCost(entityData);
+    }
+
+    @Override
     public AbilityType getType() {
         return AbilityType.Active;
     }

@@ -148,6 +148,10 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         return manaCost;
     }
 
+    public float getManaCost(IMKEntityData entityData) {
+        return getManaCost();
+    }
+
     public MKAbility setManaCost(float newCost) {
         manaCost = newCost;
         return this;
