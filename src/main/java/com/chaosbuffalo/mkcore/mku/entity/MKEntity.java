@@ -34,6 +34,12 @@ public abstract class MKEntity extends CreatureEntity {
     }
 
     @Override
+    public void livingTick() {
+        updateArmSwingProgress();
+        super.livingTick();
+    }
+
+    @Override
     protected void registerAttributes() {
         super.registerAttributes();
         this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
