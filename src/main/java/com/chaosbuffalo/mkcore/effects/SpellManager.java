@@ -1,33 +1,27 @@
 package com.chaosbuffalo.mkcore.effects;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.WeakHashMap;
 
 public class SpellManager {
 
     private static final WeakHashMap<LivingEntity, Map<SpellPotionBase, SpellCast>> allCasts = new WeakHashMap<>();
 
-    public static SpellCast create(SpellPotionBase potion, Entity caster) {
-        return new SpellCast(potion, caster);
-    }
-
-    public static SpellCast get(LivingEntity target, SpellPotionBase potion) {
-
+    public static Optional<SpellCast> getCast(LivingEntity target, SpellPotionBase spellPotionBase) {
         Map<SpellPotionBase, SpellCast> targetSpells = allCasts.get(target);
         if (targetSpells == null) {
-//            Log.warn("Tried to get a spell on an unregistered target! Spell: %s", potion.getName());
-            return null;
+            return Optional.empty();
         }
 
-        SpellCast cast = targetSpells.get(potion);
+        SpellCast cast = targetSpells.get(spellPotionBase);
         if (cast != null) {
             cast.updateRefs(target.world);
         }
-        return cast;
+        return Optional.ofNullable(cast);
     }
 
     public static void registerTarget(SpellCast cast, LivingEntity target) {

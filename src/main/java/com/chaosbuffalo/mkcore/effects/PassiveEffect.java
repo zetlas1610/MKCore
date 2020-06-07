@@ -4,14 +4,14 @@ import com.chaosbuffalo.targeting_api.TargetingContext;
 import com.chaosbuffalo.targeting_api.TargetingContexts;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.EffectType;
 
-public abstract class PassiveEffect extends SpellPotionBase {
+public abstract class PassiveEffect extends SpellPotionBase implements IMKInfiniteEffect {
+
     protected PassiveEffect(EffectType typeIn, int liquidColorIn) {
         super(typeIn, liquidColorIn);
     }
-
 
     @Override
     public TargetingContext getTargetContext() {
@@ -20,7 +20,7 @@ public abstract class PassiveEffect extends SpellPotionBase {
 
     @Override
     public void doEffect(Entity applier, Entity caster, LivingEntity target, int amplifier, SpellCast cast) {
-
+        attemptInfiniteEffectRefresh(target, this);
     }
 
     @Override
@@ -30,7 +30,8 @@ public abstract class PassiveEffect extends SpellPotionBase {
 
     @Override
     public boolean isReady(int duration, int amplitude) {
-        return false;
+        // Don't do anything until it's time to refresh
+        return needsInfiniteEffectRefresh(duration);
     }
 
     @Override
@@ -39,12 +40,11 @@ public abstract class PassiveEffect extends SpellPotionBase {
     }
 
     @Override
-    public double getAttributeModifierAmount(int amplifier, AttributeModifier modifier) {
-        return modifier.getAmount() * (double) (amplifier);
-    }
-
-    @Override
     public boolean canPersistAcrossSessions() {
         return false;
+    }
+
+    public EffectInstance createSelfCastEffectInstance(LivingEntity caster, int amplifier) {
+        return newSpellCast(caster).setTarget(caster).toPotionEffect(getPassiveDuration(), amplifier);
     }
 }

@@ -51,10 +51,6 @@ public class PlayerAbilityExecutor extends AbilityExecutor {
         MinecraftForge.EVENT_BUS.post(new PlayerAbilityEvent.Completed(getPlayerData(), info));
     }
 
-    @Override
-    public void onJoinWorld() {
-    }
-
     public void onPersonaActivated() {
         rebuildActiveToggleMap();
     }

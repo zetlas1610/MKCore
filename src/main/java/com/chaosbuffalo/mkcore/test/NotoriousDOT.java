@@ -15,7 +15,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.Effect;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -71,7 +70,7 @@ public class NotoriousDOT extends MKSongAbility {
     public void applyEffect(LivingEntity entity, IMKEntityData entityData) {
         super.applyEffect(entity, entityData);
         int level = 1;
-        entity.addPotionEffect(NotoriousDOTCasterEffect.Create(entity).toPotionEffect(BASE_DURATION, level));
+        entity.addPotionEffect(NotoriousDOTCasterEffect.INSTANCE.createSelfCastEffectInstance(entity, level));
         SoundUtils.playSoundAtEntity(entity, ModSounds.spell_shadow_9);
         PacketHandler.sendToTrackingMaybeSelf(
                 new ParticleEffectSpawnPacket(

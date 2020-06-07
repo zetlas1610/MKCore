@@ -29,9 +29,9 @@ public class EffectCommand {
 
         Collection<EffectInstance> effects = player.getActivePotionEffects();
         if (effects.size() > 0) {
-            TextUtils.sendPlayerChatMessage(player, "Active effects:");
+            TextUtils.sendPlayerChatMessage(player, "Active effects");
             for (EffectInstance instance : player.getActivePotionEffects()) {
-                TextUtils.sendPlayerChatMessage(player, String.format("%s: %d", instance.getPotion().getRegistryName(), instance.getDuration()));
+                TextUtils.sendChatMessage(player, String.format("%s: %d", instance.getPotion().getRegistryName(), instance.getDuration()));
             }
         } else {
             TextUtils.sendPlayerChatMessage(player, "No active effects");

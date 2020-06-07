@@ -1,7 +1,6 @@
 package com.chaosbuffalo.mkcore.effects;
 
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKSongAbility;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
@@ -20,7 +19,7 @@ import java.util.Set;
  * This effect is itself a periodic effect applied only to the caster, so that even if the player disables the ability
  * toggle that applied this effect, the periodic area effect will continue to be cast until this expires.
  */
-public abstract class SongCasterEffect extends SongPotionBase {
+public abstract class SongCasterEffect extends SongPotionBase implements IMKInfiniteEffect {
     protected SongCasterEffect(int period, EffectType typeIn, int liquidColorIn) {
         super(period, false, typeIn, liquidColorIn);
     }
@@ -35,16 +34,19 @@ public abstract class SongCasterEffect extends SongPotionBase {
 
     @Override
     public void doEffect(Entity source, Entity indirectSource, LivingEntity target, int amplifier, SpellCast cast) {
+        if (!attemptInfiniteEffectRefresh(target, this, getPeriod()))
+            return;
+
         MKCore.getPlayer(source).ifPresent(playerData -> {
             LivingEntity entity = playerData.getEntity();
-            MKAbility ability = MKSongAbility.getAbilityForCasterEffect(this);
+            MKSongAbility ability = MKSongAbility.getAbilityForCasterEffect(this);
             if (ability == null) {
-                MKCore.LOGGER.info("ERROR: SongCasterEffect cast ability null!");
+                MKCore.LOGGER.error("ERROR: SongCasterEffect cast ability null!");
                 return;
             }
 
             if (playerData.getAbilityExecutor().isCasting() ||
-                    !playerData.getStats().consumeMana(ability.getManaCost(playerData))) {
+                    !playerData.getStats().consumeMana(ability.getCasterEffectSustainCost(playerData))) {
                 entity.removePotionEffect(this);
                 return;
             }
@@ -64,5 +66,16 @@ public abstract class SongCasterEffect extends SongPotionBase {
                             target.getLookVec()),
                     target);
         });
+    }
+
+    public EffectInstance createSelfCastEffectInstance(LivingEntity caster, int amplifier) {
+        // Round up to the next multiple of period to avoid inconsistent tick lengths
+        int minDuration = (int) (getPeriod() * Math.ceil((float) getPassiveDuration() / getPeriod()));
+        return newSpellCast(caster).setTarget(caster).toPotionEffect(minDuration, amplifier);
+    }
+
+    @Override
+    public boolean isReady(int duration, int amplitude) {
+        return super.isReady(duration, amplitude) || needsInfiniteEffectRefresh(duration);
     }
 }
