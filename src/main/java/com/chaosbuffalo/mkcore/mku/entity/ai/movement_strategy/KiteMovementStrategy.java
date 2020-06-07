@@ -39,7 +39,6 @@ public class KiteMovementStrategy extends MovementStrategy {
             if (distanceTo < threeQuarterDist && distToWalkTarget < (threeQuarterDist * threeQuarterDist)) {
                 targetPos = RandomPositionGenerator.findRandomTargetBlockAwayFrom(
                         entity, (int) Math.round(dist), 3, target.getPositionVec());
-                MKCore.LOGGER.info("Target move to: {}, {}", targetPos, dist);
             } else if (distanceTo > 1.1 * dist){
                 targetPos = target.getPositionVector();
             }
