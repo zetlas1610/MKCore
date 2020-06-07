@@ -22,6 +22,10 @@ public class AreaEffectBuilder {
         return new AreaEffectBuilder(caster, center);
     }
 
+    public static AreaEffectBuilder createOnEntity(LivingEntity caster) {
+        return Create(caster, caster);
+    }
+
     public AreaEffectBuilder instant() {
         return duration(6).waitTime(0);
     }

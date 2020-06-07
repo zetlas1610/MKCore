@@ -9,25 +9,12 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.IdentityHashMap;
-import java.util.Map;
-
 public abstract class MKToggleAbility extends MKAbility {
 
-    private static final Map<Effect, ResourceLocation> toggleAbilityMap = new IdentityHashMap<>();
     private static final ResourceLocation TOGGLE_EFFECT = MKCore.makeRL("textures/class/abilities/ability_toggle.png");
-
-    public static ResourceLocation getToggleAbilityIdForPotion(Effect potion) {
-        return toggleAbilityMap.get(potion);
-    }
-
-    public MKToggleAbility(String domain, String id) {
-        this(new ResourceLocation(domain, id));
-    }
 
     public MKToggleAbility(ResourceLocation abilityId) {
         super(abilityId);
-        toggleAbilityMap.put(getToggleEffect(), abilityId);
     }
 
     public ResourceLocation getToggleGroupId() {
