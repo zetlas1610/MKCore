@@ -128,10 +128,10 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
     }
 
     private void activatePersonaInternal(Persona persona, boolean firstActivation) {
-        MKCore.LOGGER.info("activatePersona({})", persona.getName());
+        MKCore.LOGGER.debug("activatePersona({}) {} ", persona.getName(), playerData.getEntity());
         if (!firstActivation && getActivePersona() != persona) {
             Persona current = getActivePersona();
-            MKCore.LOGGER.info("activatePersona({}) - deactivating previous {}", persona.getName(), current.getName());
+            MKCore.LOGGER.debug("activatePersona({}) - deactivating previous {}", persona.getName(), current.getName());
             playerData.onPersonaDeactivated(current);
         }
 

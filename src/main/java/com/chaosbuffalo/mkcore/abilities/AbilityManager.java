@@ -33,11 +33,11 @@ public class AbilityManager extends JsonReloadListener {
     @Override
     protected void apply(Map<ResourceLocation, JsonObject> objectIn, IResourceManager resourceManagerIn,
                          IProfiler profilerIn) {
-        MKCore.LOGGER.info("In apply reload for AbilityManager");
+        MKCore.LOGGER.debug("In apply reload for AbilityManager");
         boolean wasChanged = false;
         for (Map.Entry<ResourceLocation, JsonObject> entry : objectIn.entrySet()) {
             ResourceLocation resourcelocation = entry.getKey();
-            MKCore.LOGGER.info("Found file: {}", resourcelocation);
+            MKCore.LOGGER.debug("Found file: {}", resourcelocation);
             if (resourcelocation.getPath().startsWith("_"))
                 continue; //Forge: filter anything beginning with "_" as it's used for metadata.
             if (parse(entry.getKey(), entry.getValue())) {
@@ -57,17 +57,17 @@ public class AbilityManager extends JsonReloadListener {
     @SuppressWarnings("unused")
     @SubscribeEvent
     public void playerLoggedInEvent(PlayerEvent.PlayerLoggedInEvent event) {
-        MKCore.LOGGER.info("Player logged in ability manager");
+        MKCore.LOGGER.debug("Player logged in ability manager");
         if (event.getPlayer() instanceof ServerPlayerEntity) {
             PlayerAbilitiesSyncPacket updatePacket = new PlayerAbilitiesSyncPacket(MKCoreRegistry
                     .ABILITIES.getValues());
-            MKCore.LOGGER.info("Sending {} update packet", event.getPlayer());
+            MKCore.LOGGER.debug("Sending {} update packet", event.getPlayer());
             PacketHandler.sendMessage(updatePacket, (ServerPlayerEntity) event.getPlayer());
         }
     }
 
     private boolean parse(ResourceLocation loc, JsonObject json) {
-        MKCore.LOGGER.info("Parsing Ability Json for {}", loc);
+        MKCore.LOGGER.debug("Parsing Ability Json for {}", loc);
         ResourceLocation abilityLoc = new ResourceLocation(loc.getNamespace(),
                 "ability." + loc.getPath());
         MKAbility ability = MKCoreRegistry.getAbility(abilityLoc);

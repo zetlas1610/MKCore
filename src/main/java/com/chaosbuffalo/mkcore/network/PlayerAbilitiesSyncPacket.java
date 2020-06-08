@@ -45,12 +45,12 @@ public class PlayerAbilitiesSyncPacket {
 
     public void handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context ctx = supplier.get();
-        MKCore.LOGGER.info("Handling player abilities update packet");
+        MKCore.LOGGER.debug("Handling player abilities update packet");
         ctx.enqueueWork(() -> {
             for (Entry<ResourceLocation, CompoundNBT> abilityData : data.entrySet()) {
                 MKAbility ability = MKCoreRegistry.ABILITIES.getValue(abilityData.getKey());
                 if (ability != null) {
-                    MKCore.LOGGER.info("Updating ability with server data: {}", abilityData.getKey());
+                    MKCore.LOGGER.debug("Updating ability with server data: {}", abilityData.getKey());
                     ability.deserialize(abilityData.getValue());
                 } else {
                     MKCore.LOGGER.warn("Skipping ability update for {}", abilityData.getKey());

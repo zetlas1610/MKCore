@@ -80,7 +80,7 @@ public class SyncGroup implements ISyncObject, ISyncNotifier {
     @Override
     public void serializeUpdate(CompoundNBT tag) {
         if (forceFull) {
-            MKCore.LOGGER.info("SyncGroup.serializeUpdate({}) forced full", nestedName);
+            MKCore.LOGGER.debug("SyncGroup.serializeUpdate({}) forced full", nestedName);
             serializeFull(tag);
         } else {
             CompoundNBT root = getUpdateRootTag(tag);
