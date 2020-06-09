@@ -157,14 +157,6 @@ public abstract class SpellPotionBase extends Effect {
         return false;
     }
 
-    public EffectInstance toPotionEffect(int amplifier) {
-        return toPotionEffect(1, amplifier);
-    }
-
-    public EffectInstance toPotionEffect(int duration, int amplifier) {
-        return new EffectInstance(this, duration, amplifier, isAmbient(), shouldShowParticles());
-    }
-
     public SpellCast newSpellCast(Entity caster) {
         return new SpellCast(this, caster);
     }
