@@ -1,10 +1,10 @@
 {
   "cooldown": 4,
-  "castTime": 10,
+  "castTime": 30,
   "manaCost": 2,
   "attributes": {
     "damage": {
-      "value": 20.0
+      "value": 5.0
     }
   }
 }

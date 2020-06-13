@@ -39,6 +39,8 @@ public abstract class MKEntity extends CreatureEntity {
         super.livingTick();
     }
 
+    public abstract void enterDefaultMovementState(LivingEntity target);
+
     @Override
     protected void registerAttributes() {
         super.registerAttributes();
@@ -55,7 +57,6 @@ public abstract class MKEntity extends CreatureEntity {
     @Override
     public void setAttackTarget(@Nullable LivingEntity entitylivingbaseIn) {
         super.setAttackTarget(entitylivingbaseIn);
-        brain.setMemory(MKMemoryModuleTypes.MOVEMENT_TARGET, entitylivingbaseIn);
     }
 
     @Override
@@ -94,7 +95,8 @@ public abstract class MKEntity extends CreatureEntity {
                         MemoryModuleType.PATH,
                         MKMemoryModuleTypes.MOVEMENT_STRATEGY,
                         MKMemoryModuleTypes.MOVEMENT_TARGET,
-                        MKMemoryModuleTypes.CURRENT_ABILITY),
+                        MKMemoryModuleTypes.CURRENT_ABILITY,
+                        MKMemoryModuleTypes.ABILITY_TARGET),
                 ImmutableList.of(
                         MKSensorTypes.ENTITIES_SENSOR,
                         MKSensorTypes.THREAT_SENSOR,

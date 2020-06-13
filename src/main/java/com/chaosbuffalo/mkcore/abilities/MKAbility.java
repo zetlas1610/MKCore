@@ -1,7 +1,11 @@
 package com.chaosbuffalo.mkcore.abilities;
 
 import com.chaosbuffalo.mkcore.GameConstants;
+import com.chaosbuffalo.mkcore.abilities.ai.AbilityTarget;
+import com.chaosbuffalo.mkcore.abilities.ai.AbilityUseCondition;
+import com.chaosbuffalo.mkcore.abilities.ai.StandardUseCondition;
 import com.chaosbuffalo.mkcore.abilities.attributes.IAbilityAttribute;
+import com.chaosbuffalo.mkcore.abilities.ai.AbilityUseContext;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.mkcore.utils.RayTraceUtils;
@@ -40,6 +44,7 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
     private int cooldown;
     private float manaCost;
     private final List<IAbilityAttribute<?>> attributes;
+    private AbilityUseCondition useCondition;
 
 
     public MKAbility(String domain, String id) {
@@ -52,10 +57,19 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         this.castTime = 0;
         this.manaCost = 1;
         this.attributes = new ArrayList<>();
+        setUseCondition(new StandardUseCondition(this));
+    }
+
+    public void setUseCondition(AbilityUseCondition useCondition) {
+        this.useCondition = useCondition;
     }
 
     public List<IAbilityAttribute<?>> getAttributes() {
         return attributes;
+    }
+
+    public AbilityUseCondition getUseCondition() {
+        return useCondition;
     }
 
     public MKAbility addAttribute(IAbilityAttribute<?> attr) {
@@ -111,6 +125,14 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
     public MKAbility setCastTime(int newCastTime) {
         castTime = newCastTime;
         return this;
+    }
+
+    public AbilityTarget getAbilityTarget(AbilityUseContext context){
+        return getUseCondition().getTarget(context);
+    }
+
+    public boolean shouldAIUse(AbilityUseContext context){
+        return getUseCondition().test(context);
     }
 
     public float getDistance() {

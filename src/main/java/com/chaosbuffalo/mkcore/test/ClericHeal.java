@@ -5,6 +5,7 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.CastState;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.SingleTargetCastState;
+import com.chaosbuffalo.mkcore.abilities.ai.HealCondition;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
@@ -37,7 +38,9 @@ public class ClericHeal extends MKAbility {
     public static float VALUE_SCALE = 5.0f;
 
     private ClericHeal() {
+
         super(MKCore.makeRL("ability.heal"));
+        setUseCondition(new HealCondition(this, .75f));
     }
 
     @Override

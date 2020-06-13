@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class MKLivingEntitiesSensor extends Sensor<LivingEntity> {
+public class LivingEntitiesSensor extends Sensor<LivingEntity> {
 
-    public MKLivingEntitiesSensor(){
+    public LivingEntitiesSensor(){
         super(50);
     }
 
@@ -30,6 +30,8 @@ public class MKLivingEntitiesSensor extends Sensor<LivingEntity> {
                 .collect(Collectors.toList());
         List<LivingEntity> friends = entities.stream().filter((x) -> Targeting.isValidFriendly(entityIn, x))
                 .collect(Collectors.toList());
+        friends.sort((friend, other) -> Float.compare(friend.getHealth() / friend.getMaxHealth(),
+                other.getHealth() / other.getMaxHealth()));
         brain.setMemory(MKMemoryModuleTypes.ENEMIES, enemies);
         brain.setMemory(MKMemoryModuleTypes.ALLIES, friends);
         brain.setMemory(MKMemoryModuleTypes.VISIBLE_ENEMIES, enemies.stream().filter(entityIn::canEntityBeSeen)

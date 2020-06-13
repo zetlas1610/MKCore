@@ -4,6 +4,8 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.CastState;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.SingleTargetCastState;
+import com.chaosbuffalo.mkcore.abilities.ai.AbilityUseCondition;
+import com.chaosbuffalo.mkcore.abilities.ai.StandardUseCondition;
 import com.chaosbuffalo.mkcore.abilities.attributes.FloatAttribute;
 import com.chaosbuffalo.mkcore.abilities.attributes.IntAttribute;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
@@ -25,6 +27,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
+import java.util.Random;
 
 
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -32,6 +35,7 @@ public class EmberAbility extends MKAbility {
     public static final EmberAbility INSTANCE = new EmberAbility();
     protected final FloatAttribute damage = new FloatAttribute("damage", 6.0f);
     protected final IntAttribute burnTime = new IntAttribute("burnTime", 5);
+
 
     @SubscribeEvent
     public static void register(RegistryEvent.Register<MKAbility> event) {
@@ -67,6 +71,15 @@ public class EmberAbility extends MKAbility {
     @Override
     public SoundEvent getCastingSoundEvent() {
         return ModSounds.casting_fire;
+    }
+
+    @Override
+    public void continueCastClient(LivingEntity entity, IMKEntityData data, int castTimeLeft) {
+        super.continueCastClient(entity, data, castTimeLeft);
+        Random rand = entity.getRNG();
+        entity.getEntityWorld().addParticle(ParticleTypes.LAVA,
+               entity.getPosX(), entity.getPosY() + 0.5F, entity.getPosZ(),
+                rand.nextFloat() / 2.0F, 5.0E-5D, rand.nextFloat() / 2.0F);
     }
 
     @Override

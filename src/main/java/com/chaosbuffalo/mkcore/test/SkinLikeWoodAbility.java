@@ -3,6 +3,7 @@ package com.chaosbuffalo.mkcore.test;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKToggleAbility;
+import com.chaosbuffalo.mkcore.abilities.ai.NeedsBuffCondition;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.init.ModSounds;
@@ -35,7 +36,9 @@ public class SkinLikeWoodAbility extends MKToggleAbility {
     public static int DURATION_SCALE = 0;
 
     private SkinLikeWoodAbility() {
+
         super(MKCore.makeRL("ability.skin_like_wood"));
+        setUseCondition(new NeedsBuffCondition(this, SkinLikeWoodPotion.INSTANCE).setSelfOnly(true));
     }
 
 

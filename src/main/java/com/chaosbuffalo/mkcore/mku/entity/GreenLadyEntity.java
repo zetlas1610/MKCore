@@ -4,11 +4,12 @@ import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.mku.entity.ai.*;
 import com.chaosbuffalo.mkcore.mku.entity.ai.controller.MovementStrategyController;
+import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
+import com.chaosbuffalo.mkcore.test.ClericHeal;
 import com.chaosbuffalo.mkcore.test.EmberAbility;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ILivingEntityData;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.SpawnReason;
+import com.chaosbuffalo.mkcore.test.FireArmor;
+import com.chaosbuffalo.mkcore.test.SkinLikeWoodAbility;
+import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
@@ -34,7 +35,12 @@ public class GreenLadyEntity extends MKEntity {
     public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
                                             @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
         this.getCapability(Capabilities.ENTITY_CAPABILITY).ifPresent(
-                mkEntityData -> mkEntityData.getKnowledge().learnAbility(EmberAbility.INSTANCE));
+                mkEntityData -> {
+                    mkEntityData.getKnowledge().learnAbility(EmberAbility.INSTANCE);
+                    mkEntityData.getKnowledge().learnAbility(FireArmor.INSTANCE);
+                    mkEntityData.getKnowledge().learnAbility(ClericHeal.INSTANCE);
+                    mkEntityData.getKnowledge().learnAbility(SkinLikeWoodAbility.INSTANCE);
+                });
         this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(.3);
         MovementStrategyController.enterCastingMode(this, 5.0);
         return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
@@ -68,4 +74,9 @@ public class GreenLadyEntity extends MKEntity {
     }
 
 
+    @Override
+    public void enterDefaultMovementState(LivingEntity target) {
+        this.brain.setMemory(MKMemoryModuleTypes.MOVEMENT_TARGET, target);
+        MovementStrategyController.enterCastingMode(this, 5.0);
+    }
 }

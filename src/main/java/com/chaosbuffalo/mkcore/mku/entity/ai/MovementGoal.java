@@ -10,6 +10,7 @@ import net.minecraft.pathfinding.Path;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
+import java.util.EnumSet;
 import java.util.Optional;
 
 public class MovementGoal extends Goal {
@@ -24,6 +25,7 @@ public class MovementGoal extends Goal {
     public MovementGoal(CreatureEntity creature) {
         this.entity = creature;
         speed = 1.0f;
+        setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
     }
 
 
