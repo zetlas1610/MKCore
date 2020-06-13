@@ -35,7 +35,7 @@ public class GreenLadyEntity extends MKEntity {
                                             @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
         this.getCapability(Capabilities.ENTITY_CAPABILITY).ifPresent(
                 mkEntityData -> {
-                    mkEntityData.getKnowledge().learnAbility(EmberAbility.INSTANCE);
+                    mkEntityData.getKnowledge().learnAbility(EmberAbility.INSTANCE, 2);
                     mkEntityData.getKnowledge().learnAbility(FireArmor.INSTANCE);
                     mkEntityData.getKnowledge().learnAbility(ClericHeal.INSTANCE);
                     mkEntityData.getKnowledge().learnAbility(SkinLikeWoodAbility.INSTANCE);
