@@ -131,7 +131,7 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         return getUseCondition().getTarget(context);
     }
 
-    public boolean getAIShouldUse(AbilityUseContext context){
+    public boolean shouldAIUse(AbilityUseContext context){
         return getUseCondition().test(context);
     }
 

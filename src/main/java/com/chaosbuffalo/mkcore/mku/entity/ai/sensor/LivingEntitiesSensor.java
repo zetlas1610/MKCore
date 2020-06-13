@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class MKLivingEntitiesSensor extends Sensor<LivingEntity> {
+public class LivingEntitiesSensor extends Sensor<LivingEntity> {
 
-    public MKLivingEntitiesSensor(){
+    public LivingEntitiesSensor(){
         super(50);
     }
 

@@ -4,14 +4,12 @@ import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.mku.entity.ai.*;
 import com.chaosbuffalo.mkcore.mku.entity.ai.controller.MovementStrategyController;
+import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
 import com.chaosbuffalo.mkcore.test.ClericHeal;
 import com.chaosbuffalo.mkcore.test.EmberAbility;
 import com.chaosbuffalo.mkcore.test.FireArmor;
 import com.chaosbuffalo.mkcore.test.SkinLikeWoodAbility;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ILivingEntityData;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
@@ -76,4 +74,9 @@ public class GreenLadyEntity extends MKEntity {
     }
 
 
+    @Override
+    public void enterDefaultMovementState(LivingEntity target) {
+        this.brain.setMemory(MKMemoryModuleTypes.MOVEMENT_TARGET, target);
+        MovementStrategyController.enterCastingMode(this, 5.0);
+    }
 }

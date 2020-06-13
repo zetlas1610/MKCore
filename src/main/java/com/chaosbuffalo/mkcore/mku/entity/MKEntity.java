@@ -39,6 +39,8 @@ public abstract class MKEntity extends CreatureEntity {
         super.livingTick();
     }
 
+    public abstract void enterDefaultMovementState(LivingEntity target);
+
     @Override
     protected void registerAttributes() {
         super.registerAttributes();

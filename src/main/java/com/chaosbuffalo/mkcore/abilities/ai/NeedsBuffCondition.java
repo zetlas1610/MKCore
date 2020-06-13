@@ -34,7 +34,7 @@ public class NeedsBuffCondition extends AbilityUseCondition {
 
     @Override
     public boolean test(AbilityUseContext context) {
-        if (needsBuff(context.getCaster())){
+        if (getAbility().canSelfCast() && needsBuff(context.getCaster())){
             return true;
         }
         if (!selfOnly){
@@ -50,7 +50,7 @@ public class NeedsBuffCondition extends AbilityUseCondition {
     @Nullable
     @Override
     public AbilityTarget getTarget(AbilityUseContext context) {
-        if (needsBuff(context.getCaster())){
+        if (getAbility().canSelfCast() && needsBuff(context.getCaster())){
             return new AbilityTarget(context.getCaster());
         }
         if (!selfOnly){

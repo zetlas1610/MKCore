@@ -1,7 +1,6 @@
 package com.chaosbuffalo.mkcore.mku.entity.ai.sensor;
 
 import com.chaosbuffalo.mkcore.Capabilities;
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.abilities.ai.AbilityTarget;
@@ -14,7 +13,7 @@ import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.entity.ai.brain.sensor.Sensor;
 import net.minecraft.world.server.ServerWorld;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
@@ -31,12 +30,12 @@ public class AbilityUseSensor extends Sensor<MKEntity> {
         if (targetOptional.isPresent() && !abilityOptional.isPresent()){
             entityIn.getCapability(Capabilities.ENTITY_CAPABILITY).ifPresent(mkEntityData -> {
                 AbilityUseContext context = new AbilityUseContext(entityIn, targetOptional.get(),
-                        entityIn.getBrain().getMemory(MKMemoryModuleTypes.ALLIES).orElse(new ArrayList<>()),
-                        entityIn.getBrain().getMemory(MKMemoryModuleTypes.ENEMIES).orElse(new ArrayList<>()));
+                        entityIn.getBrain().getMemory(MKMemoryModuleTypes.ALLIES).orElse(Collections.emptyList()),
+                        entityIn.getBrain().getMemory(MKMemoryModuleTypes.ENEMIES).orElse(Collections.emptyList()));
                 for (MKAbilityInfo ability : mkEntityData.getKnowledge().getAbilities()){
                     MKAbility mkAbility = ability.getAbility();
                     if (mkEntityData.getAbilityExecutor().canActivateAbility(mkAbility)){
-                        if (mkAbility.getAIShouldUse(context)){
+                        if (mkAbility.shouldAIUse(context)){
                             AbilityTarget target = mkAbility.getAbilityTarget(context);
                             if (target != null){
                                 entityIn.getBrain().setMemory(MKMemoryModuleTypes.CURRENT_ABILITY, mkAbility);
@@ -51,6 +50,7 @@ public class AbilityUseSensor extends Sensor<MKEntity> {
                         }
                     }
                 }
+                entityIn.enterDefaultMovementState(targetOptional.get());
             });
         }
     }

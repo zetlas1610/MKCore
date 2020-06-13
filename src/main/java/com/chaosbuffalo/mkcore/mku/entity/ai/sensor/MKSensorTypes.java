@@ -14,7 +14,7 @@ public class MKSensorTypes {
 
     public static SensorType<ThreatSensor> THREAT_SENSOR;
 
-    public static SensorType<MKLivingEntitiesSensor> ENTITIES_SENSOR;
+    public static SensorType<LivingEntitiesSensor> ENTITIES_SENSOR;
 
     public static SensorType<MovementStrategySensor> DESTINATION_SENSOR;
 
@@ -22,7 +22,7 @@ public class MKSensorTypes {
 
     @SubscribeEvent
     public static void registerModuleTypes(RegistryEvent.Register<SensorType<?>> evt){
-        ENTITIES_SENSOR = new SensorType<>(MKLivingEntitiesSensor::new);
+        ENTITIES_SENSOR = new SensorType<>(LivingEntitiesSensor::new);
         ENTITIES_SENSOR.setRegistryName(MKCore.MOD_ID, "sensor.entities");
         evt.getRegistry().register(ENTITIES_SENSOR);
         THREAT_SENSOR = new SensorType<>(ThreatSensor::new);
