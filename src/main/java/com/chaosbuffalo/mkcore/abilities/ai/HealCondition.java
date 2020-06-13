@@ -25,17 +25,17 @@ public class HealCondition extends AbilityUseCondition {
         return this;
     }
 
-    public HealCondition(MKAbility ability){
+    public HealCondition(MKAbility ability) {
         this(ability, .75f);
     }
 
-    private boolean needsHealing(LivingEntity entity){
+    private boolean needsHealing(LivingEntity entity) {
         return entity.getHealth() <= entity.getMaxHealth() * healThreshold;
     }
 
     @Override
     public boolean test(AbilityUseContext context) {
-        if (getAbility().canSelfCast() && needsHealing(context.getCaster())){
+        if (getAbility().canSelfCast() && needsHealing(context.getCaster())) {
             return true;
         }
         return !selfOnly && context.getFriendlies().size() > 0 && needsHealing(context.getFriendlies().get(0));
@@ -44,7 +44,7 @@ public class HealCondition extends AbilityUseCondition {
     @Nullable
     @Override
     public AbilityTarget getTarget(AbilityUseContext context) {
-        if (getAbility().canSelfCast() && needsHealing(context.getCaster())){
+        if (getAbility().canSelfCast() && needsHealing(context.getCaster())) {
             return new AbilityTarget(context.getCaster());
         } else if (!selfOnly) {
             return new AbilityTarget(context.getFriendlies().get(0), movementStrategy);

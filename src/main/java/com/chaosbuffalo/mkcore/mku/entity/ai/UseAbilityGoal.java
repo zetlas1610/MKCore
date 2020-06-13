@@ -1,15 +1,11 @@
 package com.chaosbuffalo.mkcore.mku.entity.ai;
 
 import com.chaosbuffalo.mkcore.Capabilities;
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.mku.entity.MKEntity;
 import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
-import com.chaosbuffalo.targeting_api.Targeting;
-import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.util.math.BlockPos;
 
 import java.util.EnumSet;
 import java.util.Optional;
@@ -20,7 +16,7 @@ public class UseAbilityGoal extends Goal {
     private MKAbility currentAbility;
     private LivingEntity target;
 
-    public UseAbilityGoal(MKEntity entity){
+    public UseAbilityGoal(MKEntity entity) {
         this.entity = entity;
         this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
     }
@@ -34,7 +30,7 @@ public class UseAbilityGoal extends Goal {
     public boolean shouldExecute() {
         Optional<MKAbility> abilityOptional = entity.getBrain().getMemory(MKMemoryModuleTypes.CURRENT_ABILITY);
         Optional<LivingEntity> target = entity.getBrain().getMemory(MKMemoryModuleTypes.ABILITY_TARGET);
-        if (abilityOptional.isPresent() && target.isPresent()){
+        if (abilityOptional.isPresent() && target.isPresent()) {
             currentAbility = abilityOptional.get();
             this.target = target.get();
             return entity.getEntitySenses().canSee(this.target) && canActivate();
@@ -43,7 +39,7 @@ public class UseAbilityGoal extends Goal {
         }
     }
 
-    public boolean canActivate(){
+    public boolean canActivate() {
         return entity.getCapability(Capabilities.ENTITY_CAPABILITY).map((entityData) ->
                 entityData.getAbilityExecutor().canActivateAbility(currentAbility))
                 .orElse(false);

@@ -28,18 +28,18 @@ public class NeedsBuffCondition extends AbilityUseCondition {
         return this;
     }
 
-    private boolean needsBuff(LivingEntity entity){
+    private boolean needsBuff(LivingEntity entity) {
         return entity.getActivePotionEffect(buffEffect) == null;
     }
 
     @Override
     public boolean test(AbilityUseContext context) {
-        if (getAbility().canSelfCast() && needsBuff(context.getCaster())){
+        if (getAbility().canSelfCast() && needsBuff(context.getCaster())) {
             return true;
         }
-        if (!selfOnly){
-            for (LivingEntity friendly : context.getFriendlies()){
-                if (needsBuff(friendly)){
+        if (!selfOnly) {
+            for (LivingEntity friendly : context.getFriendlies()) {
+                if (needsBuff(friendly)) {
                     return true;
                 }
             }
@@ -50,12 +50,12 @@ public class NeedsBuffCondition extends AbilityUseCondition {
     @Nullable
     @Override
     public AbilityTarget getTarget(AbilityUseContext context) {
-        if (getAbility().canSelfCast() && needsBuff(context.getCaster())){
+        if (getAbility().canSelfCast() && needsBuff(context.getCaster())) {
             return new AbilityTarget(context.getCaster());
         }
-        if (!selfOnly){
-            for (LivingEntity friendly : context.getFriendlies()){
-                if (needsBuff(friendly)){
+        if (!selfOnly) {
+            for (LivingEntity friendly : context.getFriendlies()) {
+                if (needsBuff(friendly)) {
                     return new AbilityTarget(friendly, movementStrategy);
                 }
             }

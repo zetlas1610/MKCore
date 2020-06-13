@@ -4,8 +4,6 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.CastState;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.SingleTargetCastState;
-import com.chaosbuffalo.mkcore.abilities.ai.AbilityUseCondition;
-import com.chaosbuffalo.mkcore.abilities.ai.StandardUseCondition;
 import com.chaosbuffalo.mkcore.abilities.attributes.FloatAttribute;
 import com.chaosbuffalo.mkcore.abilities.attributes.IntAttribute;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
@@ -20,7 +18,6 @@ import com.chaosbuffalo.targeting_api.TargetingContext;
 import com.chaosbuffalo.targeting_api.TargetingContexts;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -78,7 +75,7 @@ public class EmberAbility extends MKAbility {
         super.continueCastClient(entity, data, castTimeLeft);
         Random rand = entity.getRNG();
         entity.getEntityWorld().addParticle(ParticleTypes.LAVA,
-               entity.getPosX(), entity.getPosY() + 0.5F, entity.getPosZ(),
+                entity.getPosX(), entity.getPosY() + 0.5F, entity.getPosZ(),
                 rand.nextFloat() / 2.0F, 5.0E-5D, rand.nextFloat() / 2.0F);
     }
 

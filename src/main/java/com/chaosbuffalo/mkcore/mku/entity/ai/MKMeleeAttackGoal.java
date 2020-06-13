@@ -6,7 +6,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
 
 import java.util.EnumSet;
 import java.util.Optional;
@@ -21,9 +20,9 @@ public class MKMeleeAttackGoal extends Goal {
     public boolean shouldExecute() {
         Brain<?> brain = entity.getBrain();
         Optional<LivingEntity> targetOpt = brain.getMemory(MKMemoryModuleTypes.THREAT_TARGET);
-        if (targetOpt.isPresent()){
+        if (targetOpt.isPresent()) {
             LivingEntity target = targetOpt.get();
-            if (isInReach(target)){
+            if (isInReach(target)) {
                 this.target = target;
                 return true;
             }
@@ -31,7 +30,7 @@ public class MKMeleeAttackGoal extends Goal {
         return false;
     }
 
-    public MKMeleeAttackGoal(MKEntity entity, double speedIn){
+    public MKMeleeAttackGoal(MKEntity entity, double speedIn) {
         this.entity = entity;
         this.speed = speedIn;
         this.delayCounter = 0;
@@ -47,9 +46,9 @@ public class MKMeleeAttackGoal extends Goal {
     @Override
     public void tick() {
         this.delayCounter = Math.max(delayCounter - 1, 0);
-        entity.getNavigator().tryMoveToEntityLiving(target,speed);
+        entity.getNavigator().tryMoveToEntityLiving(target, speed);
         entity.getLookController().setLookPositionWithEntity(target, 30.0f, 30.0f);
-        if (delayCounter == 0){
+        if (delayCounter == 0) {
             checkAndPerformAttack(target, entity.getDistanceSq(target));
         }
 
@@ -64,7 +63,7 @@ public class MKMeleeAttackGoal extends Goal {
         }
     }
 
-    public boolean isInReach(LivingEntity target){
+    public boolean isInReach(LivingEntity target) {
         return entity.getDistanceSq(target) <= this.getAttackReachSqr(target);
     }
 
@@ -84,7 +83,6 @@ public class MKMeleeAttackGoal extends Goal {
         Optional<LivingEntity> targetOpt = brain.getMemory(MKMemoryModuleTypes.THREAT_TARGET);
         return target != null && targetOpt.map((ent) -> ent.isEntityEqual(target) && isInReach(ent)).orElse(false);
     }
-
 
 
 }

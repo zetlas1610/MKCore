@@ -12,7 +12,7 @@ public class LookAtThreatTargetGoal extends Goal {
     private final MobEntity entity;
     private LivingEntity target;
 
-    public LookAtThreatTargetGoal(MobEntity entity){
+    public LookAtThreatTargetGoal(MobEntity entity) {
         this.entity = entity;
         setMutexFlags(EnumSet.of(Flag.LOOK));
     }
@@ -20,7 +20,7 @@ public class LookAtThreatTargetGoal extends Goal {
     @Override
     public boolean shouldExecute() {
         Optional<LivingEntity> target = entity.getBrain().getMemory(MKMemoryModuleTypes.THREAT_TARGET);
-        if (target.isPresent()){
+        if (target.isPresent()) {
             this.target = target.get();
             return true;
         }

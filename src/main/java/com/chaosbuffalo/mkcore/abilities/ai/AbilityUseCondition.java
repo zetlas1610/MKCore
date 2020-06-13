@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 public abstract class AbilityUseCondition {
     private final MKAbility ability;
 
-    public AbilityUseCondition(MKAbility ability){
+    public AbilityUseCondition(MKAbility ability) {
         this.ability = ability;
     }
 

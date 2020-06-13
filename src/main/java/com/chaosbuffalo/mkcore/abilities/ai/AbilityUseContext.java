@@ -12,7 +12,7 @@ public class AbilityUseContext {
     private final LivingEntity threatTarget;
 
     public AbilityUseContext(LivingEntity caster, LivingEntity threatTarget,
-                             List<LivingEntity> friendlies, List<LivingEntity> enemies){
+                             List<LivingEntity> friendlies, List<LivingEntity> enemies) {
         this.caster = caster;
         this.friendlies = friendlies;
         this.enemies = enemies;

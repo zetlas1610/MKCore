@@ -1,7 +1,6 @@
 package com.chaosbuffalo.mkcore.mku.entity;
 
 import com.chaosbuffalo.mkcore.Capabilities;
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.mku.entity.ai.*;
 import com.chaosbuffalo.mkcore.mku.entity.ai.controller.MovementStrategyController;
 import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
@@ -49,10 +48,10 @@ public class GreenLadyEntity extends MKEntity {
 
     @Override
     public ActionResultType applyPlayerInteraction(PlayerEntity player, Vec3d vec, Hand hand) {
-        if (!player.getEntityWorld().isRemote()){
-            if (timesDone % 3 == 0){
+        if (!player.getEntityWorld().isRemote()) {
+            if (timesDone % 3 == 0) {
                 MovementStrategyController.enterMeleeMode(this, 1);
-            } else if (timesDone % 3 == 1){
+            } else if (timesDone % 3 == 1) {
                 MovementStrategyController.enterCastingMode(this, 8.0);
             } else {
                 MovementStrategyController.enterStationary(this);

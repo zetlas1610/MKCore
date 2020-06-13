@@ -21,7 +21,7 @@ public class MKSensorTypes {
     public static SensorType<AbilityUseSensor> ABILITY_SENSOR;
 
     @SubscribeEvent
-    public static void registerModuleTypes(RegistryEvent.Register<SensorType<?>> evt){
+    public static void registerModuleTypes(RegistryEvent.Register<SensorType<?>> evt) {
         ENTITIES_SENSOR = new SensorType<>(LivingEntitiesSensor::new);
         ENTITIES_SENSOR.setRegistryName(MKCore.MOD_ID, "sensor.entities");
         evt.getRegistry().register(ENTITIES_SENSOR);

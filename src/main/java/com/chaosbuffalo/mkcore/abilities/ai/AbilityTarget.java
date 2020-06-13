@@ -9,12 +9,12 @@ public class AbilityTarget {
     private final MovementStrategy movementStrategy;
     private static final MovementStrategy STATIONARY = new StationaryMovementStrategy();
 
-    public AbilityTarget(LivingEntity target, MovementStrategy movementStrategy){
+    public AbilityTarget(LivingEntity target, MovementStrategy movementStrategy) {
         this.target = target;
         this.movementStrategy = movementStrategy;
     }
 
-    public AbilityTarget(LivingEntity target){
+    public AbilityTarget(LivingEntity target) {
         this(target, STATIONARY);
     }
 

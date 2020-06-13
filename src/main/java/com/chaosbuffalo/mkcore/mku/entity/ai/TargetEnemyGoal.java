@@ -17,7 +17,7 @@ public class TargetEnemyGoal extends TargetGoal {
     @Override
     public boolean shouldExecute() {
         Optional<LivingEntity> opt = goalOwner.getBrain().getMemory(MKMemoryModuleTypes.THREAT_TARGET);
-        if (opt.isPresent() && (this.target == null || !this.target.isEntityEqual(opt.get()))){
+        if (opt.isPresent() && (this.target == null || !this.target.isEntityEqual(opt.get()))) {
             this.target = opt.get();
             return true;
         }

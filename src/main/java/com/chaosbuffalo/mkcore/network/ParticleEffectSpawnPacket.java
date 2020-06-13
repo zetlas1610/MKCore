@@ -1,6 +1,5 @@
 package com.chaosbuffalo.mkcore.network;
 
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;

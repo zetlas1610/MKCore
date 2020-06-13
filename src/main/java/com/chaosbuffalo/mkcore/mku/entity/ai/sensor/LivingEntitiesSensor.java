@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class LivingEntitiesSensor extends Sensor<LivingEntity> {
 
-    public LivingEntitiesSensor(){
+    public LivingEntitiesSensor() {
         super(50);
     }
 

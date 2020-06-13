@@ -4,7 +4,6 @@ package com.chaosbuffalo.mkcore.mku.entity.ai.memory;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy.MovementStrategy;
-import com.chaosbuffalo.mkcore.mku.entity.ai.sensor.MovementStrategySensor;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraftforge.event.RegistryEvent;
@@ -13,8 +12,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Map;
+import java.util.Optional;
 
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class MKMemoryModuleTypes {
@@ -51,7 +50,7 @@ public class MKMemoryModuleTypes {
 
 
     @SubscribeEvent
-    public static void registerModuleTypes(RegistryEvent.Register<MemoryModuleType<?>> evt){
+    public static void registerModuleTypes(RegistryEvent.Register<MemoryModuleType<?>> evt) {
         evt.getRegistry().register(new MemoryModuleType<List<LivingEntity>>(Optional.empty())
                 .setRegistryName(MKCore.MOD_ID, "allies"));
         evt.getRegistry().register(new MemoryModuleType<List<LivingEntity>>(Optional.empty())
@@ -65,7 +64,7 @@ public class MKMemoryModuleTypes {
         evt.getRegistry().register(new MemoryModuleType<LivingEntity>(Optional.empty())
                 .setRegistryName(MKCore.MOD_ID, "threat_target"));
         evt.getRegistry().register(new MemoryModuleType<MovementStrategy>(Optional.empty())
-            .setRegistryName(MKCore.MOD_ID, "movement_strategy"));
+                .setRegistryName(MKCore.MOD_ID, "movement_strategy"));
         evt.getRegistry().register(new MemoryModuleType<LivingEntity>(Optional.empty())
                 .setRegistryName(MKCore.MOD_ID, "movement_target"));
         evt.getRegistry().register(new MemoryModuleType<MKAbility>(Optional.empty())

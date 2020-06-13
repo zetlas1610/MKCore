@@ -9,7 +9,7 @@ public interface IMKInfiniteEffect {
     int MAX_PASSIVE_DURATION = 32767;
     // This duration makes the client show **:** for the time if it is being rendered
     int DEFAULT_PASSIVE_DURATION = MAX_PASSIVE_DURATION;
-//    int DEFAULT_PASSIVE_DURATION = 1400;
+    //    int DEFAULT_PASSIVE_DURATION = 1400;
     // This should stay above 600 so the client is refreshed before hitting 0
     int DEFAULT_REFRESH_DURATION = 700;
 

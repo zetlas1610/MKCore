@@ -1,6 +1,5 @@
 package com.chaosbuffalo.mkcore.mku.entity.ai.sensor;
 
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
 import com.chaosbuffalo.mkcore.mku.entity.ai.memory.ThreatMapEntry;
 import com.google.common.collect.ImmutableSet;
@@ -25,15 +24,15 @@ public class ThreatSensor extends Sensor<LivingEntity> {
                 MKMemoryModuleTypes.THREAT_MAP);
         Map<LivingEntity, ThreatMapEntry> threatMap = opt.orElse(new HashMap<>());
         Optional<LivingEntity> targetOpt = entityIn.getBrain().getMemory(MKMemoryModuleTypes.THREAT_TARGET);
-        if (targetOpt.isPresent() && !targetOpt.get().isAlive()){
+        if (targetOpt.isPresent() && !targetOpt.get().isAlive()) {
             entityIn.getBrain().removeMemory(MKMemoryModuleTypes.THREAT_TARGET);
         }
-        if (enemyOpt.isPresent()){
+        if (enemyOpt.isPresent()) {
             List<LivingEntity> enemies = enemyOpt.get();
             Map<LivingEntity, ThreatMapEntry> newThreatMap = new HashMap<>();
-            for (LivingEntity enemy : enemies){
+            for (LivingEntity enemy : enemies) {
                 float dist2 = (float) entityIn.getDistanceSq(enemy);
-                if (dist2 < THREAT_DISTANCE_2){
+                if (dist2 < THREAT_DISTANCE_2) {
                     ThreatMapEntry entry = threatMap.getOrDefault(enemy, new ThreatMapEntry());
                     newThreatMap.put(enemy, entry.addThreat(Math.round(
                             (1.0f - dist2 / THREAT_DISTANCE_2) * MAX_THREAT_FROM_CLOSENESS)));
@@ -44,13 +43,12 @@ public class ThreatSensor extends Sensor<LivingEntity> {
                     .map(Map.Entry::getKey).collect(Collectors.toList());
             entityIn.getBrain().setMemory(MKMemoryModuleTypes.THREAT_MAP, newThreatMap);
             entityIn.getBrain().setMemory(MKMemoryModuleTypes.THREAT_LIST, sortedThreat);
-            if (sortedThreat.size() > 0){
+            if (sortedThreat.size() > 0) {
                 entityIn.getBrain().setMemory(MKMemoryModuleTypes.THREAT_TARGET, sortedThreat.get(0));
             } else {
                 entityIn.getBrain().removeMemory(MKMemoryModuleTypes.THREAT_TARGET);
             }
         }
-
 
 
     }

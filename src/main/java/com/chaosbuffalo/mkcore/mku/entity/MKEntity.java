@@ -63,18 +63,17 @@ public abstract class MKEntity extends CreatureEntity {
     protected void updateAITasks() {
         super.updateAITasks();
         this.world.getProfiler().startSection("brain");
-        this.getBrain().tick((ServerWorld)this.world, this);
+        this.getBrain().tick((ServerWorld) this.world, this);
         this.world.getProfiler().endSection();
     }
 
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
-        if (source.getTrueSource() instanceof LivingEntity){
+        if (source.getTrueSource() instanceof LivingEntity) {
             addThreat((LivingEntity) source.getTrueSource(), Math.round(amount));
         }
         return super.attackEntityFrom(source, amount);
     }
-
 
 
     @Override

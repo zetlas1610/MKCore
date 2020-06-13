@@ -46,7 +46,7 @@ public class EntityStartCastPacket {
             Entity entity = world.getEntityByID(entityId);
             if (entity == null)
                 return;
-            if (entity instanceof PlayerEntity){
+            if (entity instanceof PlayerEntity) {
                 entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap ->
                         cap.getAbilityExecutor().startCastClient(abilityId, castTicks));
             } else {

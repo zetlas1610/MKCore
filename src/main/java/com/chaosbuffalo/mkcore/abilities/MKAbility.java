@@ -3,9 +3,9 @@ package com.chaosbuffalo.mkcore.abilities;
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.abilities.ai.AbilityTarget;
 import com.chaosbuffalo.mkcore.abilities.ai.AbilityUseCondition;
+import com.chaosbuffalo.mkcore.abilities.ai.AbilityUseContext;
 import com.chaosbuffalo.mkcore.abilities.ai.StandardUseCondition;
 import com.chaosbuffalo.mkcore.abilities.attributes.IAbilityAttribute;
-import com.chaosbuffalo.mkcore.abilities.ai.AbilityUseContext;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.mkcore.utils.RayTraceUtils;
@@ -127,11 +127,11 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         return this;
     }
 
-    public AbilityTarget getAbilityTarget(AbilityUseContext context){
+    public AbilityTarget getAbilityTarget(AbilityUseContext context) {
         return getUseCondition().getTarget(context);
     }
 
-    public boolean shouldAIUse(AbilityUseContext context){
+    public boolean shouldAIUse(AbilityUseContext context) {
         return getUseCondition().test(context);
     }
 

@@ -33,7 +33,7 @@ public class MovementGoal extends Goal {
     public boolean shouldExecute() {
         Brain<?> brain = entity.getBrain();
         Optional<WalkTarget> targetOpt = brain.getMemory(MemoryModuleType.WALK_TARGET);
-        if (targetOpt.isPresent()){
+        if (targetOpt.isPresent()) {
             WalkTarget walkTarget = targetOpt.get();
             if (!this.hasReachedTarget(walkTarget)) {
                 this.blockPos = walkTarget.getTarget().getBlockPos();
@@ -54,12 +54,12 @@ public class MovementGoal extends Goal {
     public boolean shouldContinueExecuting() {
         Brain<?> brain = entity.getBrain();
         Optional<WalkTarget> targetOpt = brain.getMemory(MemoryModuleType.WALK_TARGET);
-        if (targetOpt.isPresent()){
+        if (targetOpt.isPresent()) {
             WalkTarget walkTarget = targetOpt.get();
-            if (this.entity.getNavigator().noPath()){
+            if (this.entity.getNavigator().noPath()) {
                 return false;
             }
-            if (hasReachedTarget(walkTarget)){
+            if (hasReachedTarget(walkTarget)) {
                 return false;
             }
             return this.blockPos == null || this.blockPos.equals(walkTarget.getTarget().getBlockPos());

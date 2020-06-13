@@ -1,6 +1,5 @@
 package com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy;
 
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.LivingEntity;
@@ -17,7 +16,7 @@ public class KiteMovementStrategy extends MovementStrategy {
 
     private double dist;
 
-    public KiteMovementStrategy(double dist){
+    public KiteMovementStrategy(double dist) {
         this.dist = dist;
     }
 
@@ -26,9 +25,9 @@ public class KiteMovementStrategy extends MovementStrategy {
         Brain<?> brain = entity.getBrain();
         Optional<LivingEntity> targetOpt = brain.getMemory(MKMemoryModuleTypes.MOVEMENT_TARGET);
         Optional<WalkTarget> walkTargetOptional = brain.getMemory(MemoryModuleType.WALK_TARGET);
-        if (targetOpt.isPresent()){
+        if (targetOpt.isPresent()) {
             LivingEntity target = targetOpt.get();
-            if (target.isEntityEqual(entity)){
+            if (target.isEntityEqual(entity)) {
                 brain.removeMemory(MemoryModuleType.WALK_TARGET);
                 return;
             }
@@ -36,17 +35,17 @@ public class KiteMovementStrategy extends MovementStrategy {
             Vec3d targetPos = null;
             double distToWalkTarget = 0.0;
             double distanceTo = entity.getDistance(target);
-            if (walkTarget != null){
+            if (walkTarget != null) {
                 distToWalkTarget = target.getDistanceSq(walkTarget.getTarget().getPos());
             }
             double threeQuarterDist = .75 * dist;
             if (distanceTo < threeQuarterDist && distToWalkTarget < (threeQuarterDist * threeQuarterDist)) {
                 targetPos = RandomPositionGenerator.findRandomTargetBlockAwayFrom(
                         entity, (int) Math.round(dist), 3, target.getPositionVec());
-            } else if (distanceTo > 1.1 * dist){
+            } else if (distanceTo > 1.1 * dist) {
                 targetPos = target.getPositionVector();
             }
-            if (targetPos != null){
+            if (targetPos != null) {
                 brain.setMemory(MemoryModuleType.WALK_TARGET,
                         new WalkTarget(targetPos, 1.0f, 1));
             }

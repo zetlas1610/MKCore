@@ -15,7 +15,7 @@ public class FollowMovementStrategy extends MovementStrategy {
     private final float movementScale;
     private final int dist;
 
-    public FollowMovementStrategy(float movementScale, int manhattanDist){
+    public FollowMovementStrategy(float movementScale, int manhattanDist) {
         this.movementScale = movementScale;
         this.dist = manhattanDist;
     }
@@ -24,9 +24,9 @@ public class FollowMovementStrategy extends MovementStrategy {
     public void update(ServerWorld world, CreatureEntity entity) {
         Brain<?> brain = entity.getBrain();
         Optional<LivingEntity> targetOpt = brain.getMemory(MKMemoryModuleTypes.MOVEMENT_TARGET);
-        if (targetOpt.isPresent()){
+        if (targetOpt.isPresent()) {
             LivingEntity target = targetOpt.get();
-            if (target.isEntityEqual(entity)){
+            if (target.isEntityEqual(entity)) {
                 brain.removeMemory(MemoryModuleType.WALK_TARGET);
                 return;
             }

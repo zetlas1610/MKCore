@@ -19,7 +19,7 @@ import java.util.Set;
 
 public class AbilityUseSensor extends Sensor<MKEntity> {
 
-    public AbilityUseSensor(){
+    public AbilityUseSensor() {
         super(40);
     }
 
@@ -27,17 +27,17 @@ public class AbilityUseSensor extends Sensor<MKEntity> {
     protected void update(ServerWorld worldIn, MKEntity entityIn) {
         Optional<MKAbility> abilityOptional = entityIn.getBrain().getMemory(MKMemoryModuleTypes.CURRENT_ABILITY);
         Optional<LivingEntity> targetOptional = entityIn.getBrain().getMemory(MKMemoryModuleTypes.THREAT_TARGET);
-        if (targetOptional.isPresent() && !abilityOptional.isPresent()){
+        if (targetOptional.isPresent() && !abilityOptional.isPresent()) {
             entityIn.getCapability(Capabilities.ENTITY_CAPABILITY).ifPresent(mkEntityData -> {
                 AbilityUseContext context = new AbilityUseContext(entityIn, targetOptional.get(),
                         entityIn.getBrain().getMemory(MKMemoryModuleTypes.ALLIES).orElse(Collections.emptyList()),
                         entityIn.getBrain().getMemory(MKMemoryModuleTypes.ENEMIES).orElse(Collections.emptyList()));
-                for (MKAbilityInfo ability : mkEntityData.getKnowledge().getAbilities()){
+                for (MKAbilityInfo ability : mkEntityData.getKnowledge().getAbilities()) {
                     MKAbility mkAbility = ability.getAbility();
-                    if (mkEntityData.getAbilityExecutor().canActivateAbility(mkAbility)){
-                        if (mkAbility.shouldAIUse(context)){
+                    if (mkEntityData.getAbilityExecutor().canActivateAbility(mkAbility)) {
+                        if (mkAbility.shouldAIUse(context)) {
                             AbilityTarget target = mkAbility.getAbilityTarget(context);
-                            if (target != null){
+                            if (target != null) {
                                 entityIn.getBrain().setMemory(MKMemoryModuleTypes.CURRENT_ABILITY, mkAbility);
                                 entityIn.getBrain().setMemory(MKMemoryModuleTypes.ABILITY_TARGET,
                                         target.getTargetEntity());
