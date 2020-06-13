@@ -72,7 +72,7 @@ public class NotoriousDOT extends MKSongAbility {
         super.applyEffect(entity, entityData);
         int level = 1;
         entity.addPotionEffect(NotoriousDOTCasterEffect.Create(entity).toPotionEffect(BASE_DURATION, level));
-        SoundUtils.playSoundAtEntity(entity, ModSounds.spell_shadow_9, SoundCategory.PLAYERS);
+        SoundUtils.playSoundAtEntity(entity, ModSounds.spell_shadow_9);
         PacketHandler.sendToTrackingMaybeSelf(
                 new ParticleEffectSpawnPacket(
                         ParticleTypes.NOTE,
