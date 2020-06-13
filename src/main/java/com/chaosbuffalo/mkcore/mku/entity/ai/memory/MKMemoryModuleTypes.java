@@ -46,6 +46,9 @@ public class MKMemoryModuleTypes {
     @ObjectHolder("mkcore:current_ability")
     public static MemoryModuleType<MKAbility> CURRENT_ABILITY;
 
+    @ObjectHolder("mkcore:ability_target")
+    public static MemoryModuleType<LivingEntity> ABILITY_TARGET;
+
 
     @SubscribeEvent
     public static void registerModuleTypes(RegistryEvent.Register<MemoryModuleType<?>> evt){
@@ -67,6 +70,8 @@ public class MKMemoryModuleTypes {
                 .setRegistryName(MKCore.MOD_ID, "movement_target"));
         evt.getRegistry().register(new MemoryModuleType<MKAbility>(Optional.empty())
                 .setRegistryName(MKCore.MOD_ID, "current_ability"));
+        evt.getRegistry().register(new MemoryModuleType<LivingEntity>(Optional.empty())
+                .setRegistryName(MKCore.MOD_ID, "ability_target"));
     }
 
 

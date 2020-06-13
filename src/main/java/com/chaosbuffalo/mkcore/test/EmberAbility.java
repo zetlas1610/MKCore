@@ -4,6 +4,8 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.CastState;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.SingleTargetCastState;
+import com.chaosbuffalo.mkcore.abilities.ai.AbilityUseCondition;
+import com.chaosbuffalo.mkcore.abilities.ai.StandardUseCondition;
 import com.chaosbuffalo.mkcore.abilities.attributes.FloatAttribute;
 import com.chaosbuffalo.mkcore.abilities.attributes.IntAttribute;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
@@ -33,6 +35,7 @@ public class EmberAbility extends MKAbility {
     public static final EmberAbility INSTANCE = new EmberAbility();
     protected final FloatAttribute damage = new FloatAttribute("damage", 6.0f);
     protected final IntAttribute burnTime = new IntAttribute("burnTime", 5);
+
 
     @SubscribeEvent
     public static void register(RegistryEvent.Register<MKAbility> event) {

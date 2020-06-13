@@ -26,6 +26,10 @@ public class FollowMovementStrategy extends MovementStrategy {
         Optional<LivingEntity> targetOpt = brain.getMemory(MKMemoryModuleTypes.MOVEMENT_TARGET);
         if (targetOpt.isPresent()){
             LivingEntity target = targetOpt.get();
+            if (target.isEntityEqual(entity)){
+                brain.removeMemory(MemoryModuleType.WALK_TARGET);
+                return;
+            }
             brain.setMemory(MemoryModuleType.WALK_TARGET, new WalkTarget(target.getPosition(),
                     movementScale, dist));
         }

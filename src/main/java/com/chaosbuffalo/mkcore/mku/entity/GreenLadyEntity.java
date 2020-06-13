@@ -4,7 +4,10 @@ import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.mku.entity.ai.*;
 import com.chaosbuffalo.mkcore.mku.entity.ai.controller.MovementStrategyController;
+import com.chaosbuffalo.mkcore.test.ClericHeal;
 import com.chaosbuffalo.mkcore.test.EmberAbility;
+import com.chaosbuffalo.mkcore.test.FireArmor;
+import com.chaosbuffalo.mkcore.test.SkinLikeWoodAbility;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -34,7 +37,12 @@ public class GreenLadyEntity extends MKEntity {
     public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
                                             @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
         this.getCapability(Capabilities.ENTITY_CAPABILITY).ifPresent(
-                mkEntityData -> mkEntityData.getKnowledge().learnAbility(EmberAbility.INSTANCE));
+                mkEntityData -> {
+                    mkEntityData.getKnowledge().learnAbility(EmberAbility.INSTANCE);
+                    mkEntityData.getKnowledge().learnAbility(FireArmor.INSTANCE);
+                    mkEntityData.getKnowledge().learnAbility(ClericHeal.INSTANCE);
+                    mkEntityData.getKnowledge().learnAbility(SkinLikeWoodAbility.INSTANCE);
+                });
         this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(.3);
         MovementStrategyController.enterCastingMode(this, 5.0);
         return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);

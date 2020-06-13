@@ -4,6 +4,7 @@ import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.CastState;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.abilities.ai.NeedsBuffCondition;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.effects.AreaEffectBuilder;
 import com.chaosbuffalo.mkcore.effects.ParticlePotion;
@@ -36,11 +37,12 @@ public class FireArmor extends MKAbility {
 
     private FireArmor() {
         super(MKCore.makeRL("ability.fire_armor"));
+        setUseCondition(new NeedsBuffCondition(this, Effects.FIRE_RESISTANCE));
     }
 
     @Override
     public TargetingContext getTargetContext() {
-        return TargetingContexts.ALL;
+        return TargetingContexts.FRIENDLY;
     }
 
 

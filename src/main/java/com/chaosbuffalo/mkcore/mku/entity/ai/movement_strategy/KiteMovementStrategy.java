@@ -28,6 +28,10 @@ public class KiteMovementStrategy extends MovementStrategy {
         Optional<WalkTarget> walkTargetOptional = brain.getMemory(MemoryModuleType.WALK_TARGET);
         if (targetOpt.isPresent()){
             LivingEntity target = targetOpt.get();
+            if (target.isEntityEqual(entity)){
+                brain.removeMemory(MemoryModuleType.WALK_TARGET);
+                return;
+            }
             WalkTarget walkTarget = walkTargetOptional.orElse(null);
             Vec3d targetPos = null;
             double distToWalkTarget = 0.0;
