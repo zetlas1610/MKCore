@@ -32,7 +32,7 @@ public class AbilityUseSensor extends Sensor<MKEntity> {
                 AbilityUseContext context = new AbilityUseContext(entityIn, targetOptional.get(),
                         entityIn.getBrain().getMemory(MKMemoryModuleTypes.ALLIES).orElse(Collections.emptyList()),
                         entityIn.getBrain().getMemory(MKMemoryModuleTypes.ENEMIES).orElse(Collections.emptyList()));
-                for (MKAbilityInfo ability : mkEntityData.getKnowledge().getAbilities()) {
+                for (MKAbilityInfo ability : mkEntityData.getKnowledge().getAbilitiesPriorityOrder()) {
                     MKAbility mkAbility = ability.getAbility();
                     if (mkEntityData.getAbilityExecutor().canActivateAbility(mkAbility)) {
                         if (mkAbility.shouldAIUse(context)) {

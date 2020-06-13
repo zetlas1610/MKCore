@@ -1,6 +1,8 @@
-package com.chaosbuffalo.mkcore.abilities.ai;
+package com.chaosbuffalo.mkcore.abilities.ai.conditions;
 
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.abilities.ai.AbilityTarget;
+import com.chaosbuffalo.mkcore.abilities.ai.AbilityUseContext;
 import com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy.KiteMovementStrategy;
 import com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy.MovementStrategy;
 

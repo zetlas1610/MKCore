@@ -3,7 +3,7 @@ package com.chaosbuffalo.mkcore.test;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKToggleAbility;
-import com.chaosbuffalo.mkcore.abilities.ai.NeedsBuffCondition;
+import com.chaosbuffalo.mkcore.abilities.ai.conditions.NeedsBuffCondition;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.effects.PassiveEffect;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;

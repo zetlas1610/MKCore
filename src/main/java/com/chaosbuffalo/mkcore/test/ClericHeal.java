@@ -5,7 +5,7 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.CastState;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.SingleTargetCastState;
-import com.chaosbuffalo.mkcore.abilities.ai.HealCondition;
+import com.chaosbuffalo.mkcore.abilities.ai.conditions.HealCondition;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;

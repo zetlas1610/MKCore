@@ -2,9 +2,9 @@ package com.chaosbuffalo.mkcore.abilities;
 
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.abilities.ai.AbilityTarget;
-import com.chaosbuffalo.mkcore.abilities.ai.AbilityUseCondition;
+import com.chaosbuffalo.mkcore.abilities.ai.conditions.AbilityUseCondition;
 import com.chaosbuffalo.mkcore.abilities.ai.AbilityUseContext;
-import com.chaosbuffalo.mkcore.abilities.ai.StandardUseCondition;
+import com.chaosbuffalo.mkcore.abilities.ai.conditions.StandardUseCondition;
 import com.chaosbuffalo.mkcore.abilities.attributes.IAbilityAttribute;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.init.ModSounds;

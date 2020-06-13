@@ -16,7 +16,6 @@ public class MKPlayerModel extends PlayerModel<AbstractClientPlayerEntity> {
         super.setRotationAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         entityIn.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(mkEntityData -> {
             if (mkEntityData.getAbilityExecutor().isCasting()) {
-                MKCore.LOGGER.info("Rendering player casting");
                 int castTicks = mkEntityData.getAbilityExecutor().getCastTicks();
                 float castProgress = castTicks / 20.0f;
                 float armZ = MathHelper.sin((float) (Math.PI / 2.0f + castProgress * (float) Math.PI / 2.f)) * 1.0f * (float) Math.PI / 4.0f;
