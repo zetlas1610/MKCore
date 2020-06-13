@@ -10,12 +10,19 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 
 public class AbilityCommand {
 
@@ -23,13 +30,40 @@ public class AbilityCommand {
         return Commands.literal("ability")
                 .then(Commands.literal("learn")
                         .then(Commands.argument("ability", AbilityIdArgument.ability())
+                                .suggests(AbilityCommand::suggestUnknownAbilities)
                                 .executes(AbilityCommand::learnAbility)))
                 .then(Commands.literal("unlearn")
                         .then(Commands.argument("ability", AbilityIdArgument.ability())
+                                .suggests(AbilityCommand::suggestKnownAbilities)
                                 .executes(AbilityCommand::unlearnAbility)))
                 .then(Commands.literal("list")
                         .executes(AbilityCommand::listAbilities))
                 ;
+    }
+
+    static CompletableFuture<Suggestions> suggestKnownAbilities(final CommandContext<CommandSource> context, final SuggestionsBuilder builder) throws CommandSyntaxException {
+        ServerPlayerEntity player = context.getSource().asPlayer();
+        return ISuggestionProvider.suggest(MKCore.getPlayer(player)
+                        .map(playerData -> playerData.getKnowledge()
+                                .getKnownAbilities()
+                                .getAbilities()
+                                .stream()
+                                .map(MKAbilityInfo::getId)
+                                .map(ResourceLocation::toString))
+                        .orElse(Stream.empty()),
+                builder);
+    }
+
+    static CompletableFuture<Suggestions> suggestUnknownAbilities(final CommandContext<CommandSource> context, final SuggestionsBuilder builder) throws CommandSyntaxException {
+        ServerPlayerEntity player = context.getSource().asPlayer();
+        return ISuggestionProvider.suggest(MKCore.getPlayer(player)
+                        .map(playerData -> {
+                            Set<MKAbility> allAbilities = new HashSet<>(MKCoreRegistry.ABILITIES.getValues());
+                            allAbilities.removeIf(ability -> playerData.getKnowledge().getKnownAbilityInfo(ability.getAbilityId()) != null);
+                            return allAbilities.stream().map(MKAbility::getAbilityId).map(ResourceLocation::toString);
+                        })
+                        .orElse(Stream.empty()),
+                builder);
     }
 
     static int learnAbility(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
