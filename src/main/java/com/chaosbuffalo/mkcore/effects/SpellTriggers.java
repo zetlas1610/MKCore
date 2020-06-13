@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 public class SpellTriggers {
 
@@ -282,6 +283,18 @@ public class SpellTriggers {
                 livingTarget);
     }
 
+    static <T> void selectiveTrigger(LivingEntity entity, Map<SpellPotionBase, T> triggers, BiConsumer<T, EffectInstance> consumer) {
+        for (EffectInstance effectInstance : entity.getActivePotionEffects()) {
+            if (effectInstance.getPotion() instanceof SpellPotionBase) {
+                SpellPotionBase effect = (SpellPotionBase) effectInstance.getPotion();
+                T trigger = triggers.get(effect);
+                if (trigger != null) {
+                    consumer.accept(trigger, effectInstance);
+                }
+            }
+        }
+    }
+
     public static class ATTACK_ENTITY {
 
         @FunctionalInterface
@@ -299,12 +312,8 @@ public class SpellTriggers {
         public static void onAttackEntity(LivingEntity attacker, Entity target) {
             if (!startTrigger(attacker, TAG))
                 return;
-            attackEntityTriggers.forEach((spellPotionBase, attackEntityTrigger) -> {
-                EffectInstance effect = attacker.getActivePotionEffect(spellPotionBase);
-                if (effect != null) {
-                    attackEntityTrigger.apply(attacker, target, effect);
-                }
-            });
+
+            selectiveTrigger(attacker, attackEntityTriggers, (trigger, instance) -> trigger.apply(attacker, target, instance));
             endTrigger(attacker, TAG);
         }
     }
@@ -325,12 +334,8 @@ public class SpellTriggers {
         public static void onAttackEntity(LivingEntity attacker, Entity target) {
             if (!startTrigger(attacker, TAG))
                 return;
-            attackEntityTriggers.forEach((spellPotionBase, attackEntityTrigger) -> {
-                EffectInstance effect = attacker.getActivePotionEffect(spellPotionBase);
-                if (effect != null) {
-                    attackEntityTrigger.apply(attacker, target, effect);
-                }
-            });
+
+            selectiveTrigger(attacker, attackEntityTriggers, (trigger, instance) -> trigger.apply(attacker, target, instance));
             endTrigger(attacker, TAG);
         }
     }
@@ -352,12 +357,8 @@ public class SpellTriggers {
         public static void onEmptyLeftClick(PlayerEntity player, ServerSideLeftClickEmpty event) {
             if (!startTrigger(player, TAG))
                 return;
-            emptyLeftClickTriggers.forEach((spellPotionBase, trigger) -> {
-                EffectInstance effect = player.getActivePotionEffect(spellPotionBase);
-                if (effect != null) {
-                    trigger.apply(event, player, effect);
-                }
-            });
+
+            selectiveTrigger(player, emptyLeftClickTriggers, (trigger, instance) -> trigger.apply(event, player, instance));
             endTrigger(player, TAG);
         }
     }
@@ -378,12 +379,8 @@ public class SpellTriggers {
         public static void onEntityDeath(LivingDeathEvent event, DamageSource source, PlayerEntity entity) {
             if (!startTrigger(entity, TAG))
                 return;
-            killTriggers.forEach((spellPotionBase, trigger) -> {
-                EffectInstance effect = entity.getActivePotionEffect(spellPotionBase);
-                if (effect != null) {
-                    trigger.apply(event, source, entity);
-                }
-            });
+
+            selectiveTrigger(entity, killTriggers, (trigger, instance) -> trigger.apply(event, source, entity));
             endTrigger(entity, TAG);
         }
     }
@@ -404,11 +401,8 @@ public class SpellTriggers {
         public static void onEntityDeath(LivingDeathEvent event, DamageSource source, PlayerEntity entity) {
             if (!startTrigger(entity, TAG))
                 return;
-            killTriggers.forEach((spellPotionBase, trigger) -> {
-                if (entity.isPotionActive(spellPotionBase)) {
-                    trigger.apply(event, source, entity);
-                }
-            });
+
+            selectiveTrigger(entity, killTriggers, (trigger, instance) -> trigger.apply(event, source, entity));
             endTrigger(entity, TAG);
         }
     }
@@ -429,12 +423,8 @@ public class SpellTriggers {
         public static void onEquipmentChange(LivingEquipmentChangeEvent event, IMKEntityData data, PlayerEntity player) {
             if (!startTrigger(player, TAG))
                 return;
-            triggers.forEach((spellPotionBase, trigger) -> {
-                EffectInstance effect = player.getActivePotionEffect(spellPotionBase);
-                if (effect != null) {
-                    trigger.apply(event, data, player);
-                }
-            });
+
+            selectiveTrigger(player, triggers, (trigger, instance) -> trigger.apply(event, data, player));
             endTrigger(player, TAG);
         }
     }
