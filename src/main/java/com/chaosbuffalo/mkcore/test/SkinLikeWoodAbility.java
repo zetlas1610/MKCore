@@ -34,7 +34,7 @@ public class SkinLikeWoodAbility extends MKToggleAbility {
     private SkinLikeWoodAbility() {
 
         super(MKCore.makeRL("ability.skin_like_wood"));
-        setUseCondition(new NeedsBuffCondition(this, SkinLikeWoodPotion.INSTANCE).setSelfOnly(true));
+        setUseCondition(new NeedsBuffCondition(this, SkinLikeWoodEffect.INSTANCE).setSelfOnly(true));
     }
 
     @Override
@@ -49,7 +49,7 @@ public class SkinLikeWoodAbility extends MKToggleAbility {
 
     @Override
     public PassiveEffect getToggleEffect() {
-        return SkinLikeWoodPotion.INSTANCE;
+        return SkinLikeWoodEffect.INSTANCE;
     }
 
     @Nullable

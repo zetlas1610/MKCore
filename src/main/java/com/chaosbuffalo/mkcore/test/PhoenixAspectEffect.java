@@ -19,11 +19,11 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class PhoenixAspectPotion extends PassiveEffect {
+public class PhoenixAspectEffect extends PassiveEffect {
 
     public static final UUID MODIFIER_ID = UUID.fromString("721f69b8-c361-4b80-897f-724f84e08ae7");
 
-    public static final PhoenixAspectPotion INSTANCE = (PhoenixAspectPotion) new PhoenixAspectPotion()
+    public static final PhoenixAspectEffect INSTANCE = (PhoenixAspectEffect) new PhoenixAspectEffect()
             .addAttributesModifier(MKAttributes.COOLDOWN, MODIFIER_ID.toString(),
                     0.33, AttributeModifier.Operation.MULTIPLY_TOTAL)
             .addAttributesModifier(MKAttributes.MANA_REGEN, MODIFIER_ID.toString(),
@@ -38,7 +38,7 @@ public class PhoenixAspectPotion extends PassiveEffect {
         return INSTANCE.newSpellCast(source);
     }
 
-    private PhoenixAspectPotion() {
+    private PhoenixAspectEffect() {
         super(EffectType.BENEFICIAL, 4393423);
         setRegistryName("effect.phoenix_aspect");
     }

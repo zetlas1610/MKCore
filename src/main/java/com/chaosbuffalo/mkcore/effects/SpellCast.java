@@ -14,14 +14,14 @@ import java.util.UUID;
 
 public class SpellCast {
 
-    private final SpellPotionBase potion;
+    private final SpellEffectBase potion;
     private final CompoundNBT data;
     private WeakReference<Entity> applier;
     private WeakReference<Entity> caster;
     private UUID casterUUID;
     private UUID applierUUID;
 
-    public SpellCast(SpellPotionBase potion, Entity caster) {
+    public SpellCast(SpellEffectBase potion, Entity caster) {
         this.potion = potion;
         this.applier = new WeakReference<>(caster);
         this.caster = new WeakReference<>(caster);
@@ -32,7 +32,7 @@ public class SpellCast {
         }
     }
 
-    public SpellPotionBase getPotion() {
+    public SpellEffectBase getPotion() {
         return potion;
     }
 

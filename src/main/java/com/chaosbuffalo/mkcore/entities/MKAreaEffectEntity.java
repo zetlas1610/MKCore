@@ -3,7 +3,7 @@ package com.chaosbuffalo.mkcore.entities;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
 import com.chaosbuffalo.mkcore.effects.SpellManager;
-import com.chaosbuffalo.mkcore.effects.SpellPotionBase;
+import com.chaosbuffalo.mkcore.effects.SpellEffectBase;
 import com.chaosbuffalo.targeting_api.Targeting;
 import com.chaosbuffalo.targeting_api.TargetingContext;
 import net.minecraft.entity.*;
@@ -206,7 +206,7 @@ public class MKAreaEffectEntity extends AreaEffectCloudEntity {
             EffectInstance instance = spellEffect.effect;
 
             boolean validTarget;
-            SpellPotionBase spBase = instance.getPotion() instanceof SpellPotionBase ? (SpellPotionBase) instance.getPotion() : null;
+            SpellEffectBase spBase = instance.getPotion() instanceof SpellEffectBase ? (SpellEffectBase) instance.getPotion() : null;
             if (spBase != null) {
                 validTarget = spBase.isValidTarget(spellEffect.targetContext, getOwner(), target);
             } else {

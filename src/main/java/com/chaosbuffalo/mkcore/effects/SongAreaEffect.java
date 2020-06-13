@@ -8,7 +8,7 @@ import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectType;
 
-public abstract class SongAreaEffect extends SongPotionBase {
+public abstract class SongAreaEffect extends SongEffectBase {
     protected SongAreaEffect(int period, EffectType typeIn, int liquidColorIn) {
         super(period, true, typeIn, liquidColorIn);
     }

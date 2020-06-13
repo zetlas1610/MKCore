@@ -290,9 +290,9 @@ public class SpellTriggers {
         }
 
         private static final String TAG = ATTACK_ENTITY.class.getName();
-        private static final Map<SpellPotionBase, AttackEntityTrigger> attackEntityTriggers = new HashMap<>();
+        private static final Map<SpellEffectBase, AttackEntityTrigger> attackEntityTriggers = new HashMap<>();
 
-        public static void register(SpellPotionBase potion, AttackEntityTrigger trigger) {
+        public static void register(SpellEffectBase potion, AttackEntityTrigger trigger) {
             attackEntityTriggers.put(potion, trigger);
         }
 
@@ -316,9 +316,9 @@ public class SpellTriggers {
         }
 
         private static final String TAG = PLAYER_ATTACK_ENTITY.class.getName();
-        private static final Map<SpellPotionBase, PlayerAttackEntityTrigger> attackEntityTriggers = new HashMap<>();
+        private static final Map<SpellEffectBase, PlayerAttackEntityTrigger> attackEntityTriggers = new HashMap<>();
 
-        public static void register(SpellPotionBase potion, PlayerAttackEntityTrigger trigger) {
+        public static void register(SpellEffectBase potion, PlayerAttackEntityTrigger trigger) {
             attackEntityTriggers.put(potion, trigger);
         }
 
@@ -343,9 +343,9 @@ public class SpellTriggers {
         }
 
         private static final String TAG = EMPTY_LEFT_CLICK.class.getName();
-        private static final Map<SpellPotionBase, EmptyLeftClickTrigger> emptyLeftClickTriggers = new HashMap<>();
+        private static final Map<SpellEffectBase, EmptyLeftClickTrigger> emptyLeftClickTriggers = new HashMap<>();
 
-        public static void register(SpellPotionBase potion, EmptyLeftClickTrigger trigger) {
+        public static void register(SpellEffectBase potion, EmptyLeftClickTrigger trigger) {
             emptyLeftClickTriggers.put(potion, trigger);
         }
 
@@ -364,14 +364,14 @@ public class SpellTriggers {
 
     public static class PLAYER_KILL_ENTITY {
         private static final String TAG = PLAYER_KILL_ENTITY.class.getName();
-        private static final Map<SpellPotionBase, PlayerKillEntityTrigger> killTriggers = new HashMap<>();
+        private static final Map<SpellEffectBase, PlayerKillEntityTrigger> killTriggers = new HashMap<>();
 
         @FunctionalInterface
         public interface PlayerKillEntityTrigger {
             void apply(LivingDeathEvent event, DamageSource source, PlayerEntity player);
         }
 
-        public static void register(SpellPotionBase potion, PlayerKillEntityTrigger trigger) {
+        public static void register(SpellEffectBase potion, PlayerKillEntityTrigger trigger) {
             killTriggers.put(potion, trigger);
         }
 
@@ -395,9 +395,9 @@ public class SpellTriggers {
         }
 
         private static final String TAG = PLAYER_DEATH.class.getName();
-        private static final Map<SpellPotionBase, PlayerKillEntityTrigger> killTriggers = new HashMap<>();
+        private static final Map<SpellEffectBase, PlayerKillEntityTrigger> killTriggers = new HashMap<>();
 
-        public static void register(SpellPotionBase potion, PlayerKillEntityTrigger trigger) {
+        public static void register(SpellEffectBase potion, PlayerKillEntityTrigger trigger) {
             killTriggers.put(potion, trigger);
         }
 
@@ -415,14 +415,14 @@ public class SpellTriggers {
 
     public static class PLAYER_EQUIPMENT_CHANGE {
         private static final String TAG = PLAYER_EQUIPMENT_CHANGE.class.getName();
-        private static final Map<SpellPotionBase, PlayerEquipmentChangeTrigger> triggers = new HashMap<>();
+        private static final Map<SpellEffectBase, PlayerEquipmentChangeTrigger> triggers = new HashMap<>();
 
         @FunctionalInterface
         public interface PlayerEquipmentChangeTrigger {
             void apply(LivingEquipmentChangeEvent event, IMKEntityData data, PlayerEntity player);
         }
 
-        public static void register(SpellPotionBase potion, PlayerEquipmentChangeTrigger trigger) {
+        public static void register(SpellEffectBase potion, PlayerEquipmentChangeTrigger trigger) {
             triggers.put(potion, trigger);
         }
 

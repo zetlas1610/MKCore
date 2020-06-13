@@ -17,9 +17,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class FeatherFallPotion extends PassiveEffect {
+public class FeatherFallEffect extends PassiveEffect {
 
-    public static final FeatherFallPotion INSTANCE = new FeatherFallPotion();
+    public static final FeatherFallEffect INSTANCE = new FeatherFallEffect();
 
     @SubscribeEvent
     public static void register(RegistryEvent.Register<Effect> event) {
@@ -31,7 +31,7 @@ public class FeatherFallPotion extends PassiveEffect {
     }
 
 
-    private FeatherFallPotion() {
+    private FeatherFallEffect() {
         super(EffectType.BENEFICIAL, 16750080);
         setRegistryName("effect.featherfall");
         SpellTriggers.FALL.register(this::onFall);

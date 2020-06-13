@@ -5,11 +5,11 @@ import com.chaosbuffalo.targeting_api.TargetingContexts;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.EffectType;
 
-public abstract class SongPotionBase extends SpellPeriodicPotionBase {
+public abstract class SongEffectBase extends SpellPeriodicEffectBase {
 
     private final boolean isVisible;
 
-    protected SongPotionBase(int period, boolean isVisible, EffectType typeIn, int liquidColorIn) {
+    protected SongEffectBase(int period, boolean isVisible, EffectType typeIn, int liquidColorIn) {
         super(period, typeIn, liquidColorIn);
         this.isVisible = isVisible;
     }

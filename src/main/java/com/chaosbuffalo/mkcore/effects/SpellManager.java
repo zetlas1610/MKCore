@@ -9,15 +9,15 @@ import java.util.WeakHashMap;
 
 public class SpellManager {
 
-    private static final WeakHashMap<LivingEntity, Map<SpellPotionBase, SpellCast>> allCasts = new WeakHashMap<>();
+    private static final WeakHashMap<LivingEntity, Map<SpellEffectBase, SpellCast>> allCasts = new WeakHashMap<>();
 
-    public static Optional<SpellCast> getCast(LivingEntity target, SpellPotionBase spellPotionBase) {
-        Map<SpellPotionBase, SpellCast> targetSpells = allCasts.get(target);
+    public static Optional<SpellCast> getCast(LivingEntity target, SpellEffectBase spellEffectBase) {
+        Map<SpellEffectBase, SpellCast> targetSpells = allCasts.get(target);
         if (targetSpells == null) {
             return Optional.empty();
         }
 
-        SpellCast cast = targetSpells.get(spellPotionBase);
+        SpellCast cast = targetSpells.get(spellEffectBase);
         if (cast != null) {
             cast.updateRefs(target.world);
         }

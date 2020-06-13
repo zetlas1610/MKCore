@@ -19,7 +19,7 @@ import java.util.Set;
  * This effect is itself a periodic effect applied only to the caster, so that even if the player disables the ability
  * toggle that applied this effect, the periodic area effect will continue to be cast until this expires.
  */
-public abstract class SongCasterEffect extends SongPotionBase implements IMKInfiniteEffect {
+public abstract class SongCasterEffect extends SongEffectBase implements IMKInfiniteEffect {
     protected SongCasterEffect(int period, EffectType typeIn, int liquidColorIn) {
         super(period, false, typeIn, liquidColorIn);
     }

@@ -76,7 +76,7 @@ public class ClericHeal extends MKAbility {
 
         singleTargetState.getTarget().ifPresent(target -> {
             int level = 1;
-            SpellCast heal = ClericHealPotion.Create(entity, BASE_VALUE, VALUE_SCALE).setTarget(target);
+            SpellCast heal = ClericHealEffect.Create(entity, BASE_VALUE, VALUE_SCALE).setTarget(target);
             target.addPotionEffect(heal.toPotionEffect(level));
             SoundUtils.playSoundAtEntity(target, ModSounds.spell_heal_3);
             PacketHandler.sendToTrackingMaybeSelf(
@@ -106,7 +106,7 @@ public class ClericHeal extends MKAbility {
 
     @Override
     protected boolean isValidTarget(LivingEntity caster, LivingEntity target) {
-        return ClericHealPotion.INSTANCE.isValidTarget(getTargetContext(), caster, target);
+        return ClericHealEffect.INSTANCE.isValidTarget(getTargetContext(), caster, target);
     }
 
     @Override
