@@ -9,9 +9,7 @@ import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.entity.ai.brain.sensor.Sensor;
 import net.minecraft.world.server.ServerWorld;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class LivingEntitiesSensor extends Sensor<LivingEntity> {
@@ -26,16 +24,23 @@ public class LivingEntitiesSensor extends Sensor<LivingEntity> {
                 (entity) -> entity != entityIn && entity.isAlive());
         entities.sort(Comparator.comparingDouble(entityIn::getDistanceSq));
         Brain<?> brain = entityIn.getBrain();
-        List<LivingEntity> enemies = entities.stream().filter((x) -> Targeting.isValidEnemy(entityIn, x))
+
+        Map<Targeting.TargetRelation, List<LivingEntity>> groups = entities.stream()
+                .collect(Collectors.groupingBy(other -> Targeting.getTargetRelation(entityIn, other)));
+
+        List<LivingEntity> enemies = groups.getOrDefault(Targeting.TargetRelation.ENEMY, Collections.emptyList());
+        List<LivingEntity> friends = groups.getOrDefault(Targeting.TargetRelation.FRIEND, Collections.emptyList())
+                .stream()
+                .sorted(this::sortByHealth)
                 .collect(Collectors.toList());
-        List<LivingEntity> friends = entities.stream().filter((x) -> Targeting.isValidFriendly(entityIn, x))
-                .collect(Collectors.toList());
-        friends.sort((friend, other) -> Float.compare(friend.getHealth() / friend.getMaxHealth(),
-                other.getHealth() / other.getMaxHealth()));
         brain.setMemory(MKMemoryModuleTypes.ENEMIES, enemies);
         brain.setMemory(MKMemoryModuleTypes.ALLIES, friends);
         brain.setMemory(MKMemoryModuleTypes.VISIBLE_ENEMIES, enemies.stream().filter(entityIn::canEntityBeSeen)
                 .collect(Collectors.toList()));
+    }
+
+    private int sortByHealth(LivingEntity friend, LivingEntity other) {
+        return Float.compare(friend.getHealth() / friend.getMaxHealth(), other.getHealth() / other.getMaxHealth());
     }
 
     public Set<MemoryModuleType<?>> getUsedMemories() {
