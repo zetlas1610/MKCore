@@ -5,7 +5,7 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.core.MKCombatFormulas;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageSource;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
-import com.chaosbuffalo.mkcore.effects.SpellPotionBase;
+import com.chaosbuffalo.mkcore.effects.SpellEffectBase;
 import com.chaosbuffalo.mkcore.init.ModDamageTypes;
 import com.chaosbuffalo.targeting_api.TargetingContext;
 import com.chaosbuffalo.targeting_api.TargetingContexts;
@@ -18,9 +18,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class ClericHealPotion extends SpellPotionBase {
+public class ClericHealEffect extends SpellEffectBase {
 
-    public static final ClericHealPotion INSTANCE = new ClericHealPotion();
+    public static final ClericHealEffect INSTANCE = new ClericHealEffect();
 
     @SubscribeEvent
     public static void register(RegistryEvent.Register<Effect> event) {
@@ -35,7 +35,7 @@ public class ClericHealPotion extends SpellPotionBase {
         return INSTANCE.newSpellCast(source).setScalingParameters(base, scaling);
     }
 
-    private ClericHealPotion() {
+    private ClericHealEffect() {
         super(EffectType.BENEFICIAL, 4393481);
         setRegistryName("effect.cleric_heal");
     }

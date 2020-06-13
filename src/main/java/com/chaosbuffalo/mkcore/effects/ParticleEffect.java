@@ -16,9 +16,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class ParticlePotion extends SpellPotionBase {
+public class ParticleEffect extends SpellEffectBase {
 
-    public static final ParticlePotion INSTANCE = new ParticlePotion();
+    public static final ParticleEffect INSTANCE = new ParticleEffect();
 
     @SubscribeEvent
     public static void register(RegistryEvent.Register<Effect> event) {
@@ -31,7 +31,7 @@ public class ParticlePotion extends SpellPotionBase {
         return new ParticleCast(source, particleId, motionType, radius, offsets, particleCount, particleData, particleSpeed, includeSelf);
     }
 
-    protected ParticlePotion() {
+    protected ParticleEffect() {
         super(EffectType.NEUTRAL, 123);
         setRegistryName("effect.particle_potion");
     }
@@ -77,7 +77,7 @@ public class ParticlePotion extends SpellPotionBase {
         public ParticleCast(Entity source, IParticleData particleId, int motionType,
                             Vec3d radius, Vec3d offsets, int particleCount, int particleData,
                             double particleSpeed, boolean includeSelf) {
-            super(ParticlePotion.INSTANCE, source);
+            super(ParticleEffect.INSTANCE, source);
             this.source = source;
             this.particleId = particleId;
             this.motionType = motionType;

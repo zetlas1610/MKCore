@@ -7,7 +7,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.EffectType;
 
-public abstract class PassiveEffect extends SpellPotionBase implements IMKInfiniteEffect {
+public abstract class PassiveEffect extends SpellEffectBase implements IMKInfiniteEffect {
 
     protected PassiveEffect(EffectType typeIn, int liquidColorIn) {
         super(typeIn, liquidColorIn);

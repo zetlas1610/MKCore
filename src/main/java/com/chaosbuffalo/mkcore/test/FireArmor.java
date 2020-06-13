@@ -7,7 +7,7 @@ import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.ai.NeedsBuffCondition;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.effects.AreaEffectBuilder;
-import com.chaosbuffalo.mkcore.effects.ParticlePotion;
+import com.chaosbuffalo.mkcore.effects.ParticleEffect;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
@@ -70,7 +70,7 @@ public class FireArmor extends MKAbility {
 
         EffectInstance fireResistanceEffect = new EffectInstance(Effects.FIRE_RESISTANCE, duration, level, false, true);
 
-        SpellCast particlePotion = ParticlePotion.Create(entity,
+        SpellCast particlePotion = ParticleEffect.Create(entity,
                 ParticleTypes.FLAME,
                 ParticleEffects.CIRCLE_PILLAR_MOTION, false,
                 new Vec3d(1.0, 1.0, 1.0),

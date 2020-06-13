@@ -6,7 +6,7 @@ import com.chaosbuffalo.mkcore.abilities.CastState;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.effects.AreaEffectBuilder;
-import com.chaosbuffalo.mkcore.effects.ParticlePotion;
+import com.chaosbuffalo.mkcore.effects.ParticleEffect;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.init.ModSounds;
@@ -84,9 +84,9 @@ public class PhoenixAspectAbility extends MKAbility {
         // What to do for each target hit
         int duration = (BASE_DURATION + DURATION_SCALE * level) * GameConstants.TICKS_PER_SECOND;
 //        duration = PlayerFormulas.applyBuffDurationBonus(data, duration);
-        SpellCast flying = PhoenixAspectPotion.INSTANCE.newSpellCast(entity);
-        SpellCast feather = FeatherFallPotion.INSTANCE.newSpellCast(entity);
-        SpellCast particlePotion = ParticlePotion.Create(entity,
+        SpellCast flying = PhoenixAspectEffect.INSTANCE.newSpellCast(entity);
+        SpellCast feather = FeatherFallEffect.INSTANCE.newSpellCast(entity);
+        SpellCast particlePotion = ParticleEffect.Create(entity,
                 ParticleTypes.FIREWORK,
                 ParticleEffects.DIRECTED_SPOUT, false, new Vec3d(1.0, 1.5, 1.0),
                 new Vec3d(0.0, 1.0, 0.0), 40, 5, 1.0);

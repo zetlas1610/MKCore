@@ -2,7 +2,7 @@ package com.chaosbuffalo.mkcore.test;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
-import com.chaosbuffalo.mkcore.effects.SpellPotionBase;
+import com.chaosbuffalo.mkcore.effects.SpellEffectBase;
 import com.chaosbuffalo.targeting_api.TargetingContext;
 import com.chaosbuffalo.targeting_api.TargetingContexts;
 import net.minecraft.entity.Entity;
@@ -16,7 +16,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class AbilityMagicDamage extends SpellPotionBase {
+public class AbilityMagicDamage extends SpellEffectBase {
     public static final String SCALING_CONTRIBUTION = "instant_indirect_magic_damage.scaling_contribution";
 
     public static ResourceLocation INDIRECT_MAGIC_DMG_ABILITY_ID = MKCore.makeRL("ability.instant_indirect_magic_damage");

@@ -5,7 +5,7 @@ import com.chaosbuffalo.mkcore.abilities.CastState;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.effects.AreaEffectBuilder;
-import com.chaosbuffalo.mkcore.effects.ParticlePotion;
+import com.chaosbuffalo.mkcore.effects.ParticleEffect;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
@@ -71,7 +71,7 @@ public class WhirlwindBlades extends MKAbility {
             float scaling = count * baseAmount;
             // What to do for each target hit
             SpellCast damage = AbilityMagicDamage.Create(entity, BASE_DAMAGE, DAMAGE_SCALE, scaling);
-            SpellCast particlePotion = ParticlePotion.Create(entity,
+            SpellCast particlePotion = ParticleEffect.Create(entity,
                     ParticleTypes.SWEEP_ATTACK,
                     ParticleEffects.CIRCLE_MOTION, false,
                     new Vec3d(1.0, 1.0, 1.0),

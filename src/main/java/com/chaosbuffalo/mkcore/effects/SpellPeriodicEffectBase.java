@@ -2,11 +2,11 @@ package com.chaosbuffalo.mkcore.effects;
 
 import net.minecraft.potion.EffectType;
 
-public abstract class SpellPeriodicPotionBase extends SpellPotionBase {
+public abstract class SpellPeriodicEffectBase extends SpellEffectBase {
 
     private final int period;
 
-    protected SpellPeriodicPotionBase(int period, EffectType typeIn, int liquidColorIn) {
+    protected SpellPeriodicEffectBase(int period, EffectType typeIn, int liquidColorIn) {
         super(typeIn, liquidColorIn);
         this.period = period;
     }

@@ -18,13 +18,13 @@ import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 
-public abstract class SpellPotionBase extends Effect {
+public abstract class SpellEffectBase extends Effect {
 
     public void register(String name) {
         setRegistryName(name);
     }
 
-    protected SpellPotionBase(EffectType typeIn, int liquidColorIn) {
+    protected SpellEffectBase(EffectType typeIn, int liquidColorIn) {
         super(typeIn, liquidColorIn);
     }
 
