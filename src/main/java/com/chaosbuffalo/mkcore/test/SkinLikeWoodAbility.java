@@ -67,7 +67,7 @@ public class SkinLikeWoodAbility extends MKToggleAbility {
     public void applyEffect(LivingEntity entity, IMKEntityData entityData) {
         super.applyEffect(entity, entityData);
         int level = 1;
-        SoundUtils.playSoundAtEntity(entity, ModSounds.spell_earth_7, SoundCategory.PLAYERS);
+        SoundUtils.playSoundAtEntity(entity, ModSounds.spell_earth_7);
         // What to do for each target hit
         entity.addPotionEffect(SkinLikeWoodPotion.Create(entity).setTarget(entity).toPotionEffect(BASE_DURATION, level));
 

@@ -79,7 +79,7 @@ public class ClericHeal extends MKAbility {
             int level = 1;
             SpellCast heal = ClericHealPotion.Create(entity, BASE_VALUE, VALUE_SCALE).setTarget(target);
             target.addPotionEffect(heal.toPotionEffect(level));
-            SoundUtils.playSoundAtEntity(target, ModSounds.spell_heal_3, SoundCategory.PLAYERS);
+            SoundUtils.playSoundAtEntity(target, ModSounds.spell_heal_3);
             PacketHandler.sendToTrackingMaybeSelf(
                     new ParticleEffectSpawnPacket(
                             ParticleTypes.HAPPY_VILLAGER,

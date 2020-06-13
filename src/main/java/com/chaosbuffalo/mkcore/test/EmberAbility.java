@@ -98,7 +98,7 @@ public class EmberAbility extends MKAbility {
             targetEntity.setFire(burnDuration);
             targetEntity.attackEntityFrom(MKDamageSource.causeAbilityDamage(ModDamageTypes.FireDamage,
                     getAbilityId(), entity, entity), damage.getValue());
-            SoundUtils.playSoundAtEntity(targetEntity, ModSounds.spell_fire_6, SoundCategory.PLAYERS);
+            SoundUtils.playSoundAtEntity(targetEntity, ModSounds.spell_fire_6);
             PacketHandler.sendToTrackingMaybeSelf(
                     new ParticleEffectSpawnPacket(
                             ParticleTypes.FLAME,

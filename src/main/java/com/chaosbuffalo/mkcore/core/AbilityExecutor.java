@@ -149,7 +149,7 @@ public class AbilityExecutor {
         setCooldown(ability.getAbilityId(), cooldown);
         SoundEvent sound = ability.getSpellCompleteSoundEvent();
         if (sound != null) {
-            SoundUtils.playSoundAtEntity(entityData.getEntity(), sound, SoundCategory.PLAYERS);
+            SoundUtils.playSoundAtEntity(entityData.getEntity(), sound);
         }
         clearCastingAbility();
     }
