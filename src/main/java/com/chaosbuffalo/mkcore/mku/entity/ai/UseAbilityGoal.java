@@ -33,7 +33,7 @@ public class UseAbilityGoal extends Goal {
     @Override
     public boolean shouldExecute() {
         Optional<MKAbility> abilityOptional = entity.getBrain().getMemory(MKMemoryModuleTypes.CURRENT_ABILITY);
-        Optional<LivingEntity> target = entity.getBrain().getMemory(MKMemoryModuleTypes.THREAT_TARGET);
+        Optional<LivingEntity> target = entity.getBrain().getMemory(MKMemoryModuleTypes.ABILITY_TARGET);
         if (abilityOptional.isPresent() && target.isPresent()){
             currentAbility = abilityOptional.get();
             this.target = target.get();
