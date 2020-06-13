@@ -93,7 +93,7 @@ public class PlayerActionBar extends PlayerSyncComponent {
         if (info != null)
             return;
 
-        MKCore.LOGGER.info("checkHotBar({}) - bad", abilityId);
+        MKCore.LOGGER.debug("checkHotBar({}) - bad", abilityId);
         removeFromHotBar(abilityId);
     }
 

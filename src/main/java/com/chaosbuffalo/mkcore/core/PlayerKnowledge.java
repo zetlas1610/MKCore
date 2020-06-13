@@ -62,7 +62,7 @@ public class PlayerKnowledge extends PlayerSyncComponent implements IAbilityKnow
             actionBar.tryPlaceOnBar(ability.getAbilityId());
             return true;
         } else {
-            MKCore.LOGGER.info("learnAbility({}) - failure", ability.getAbilityId());
+            MKCore.LOGGER.error("learnAbility({}) for {} failure", ability.getAbilityId(), getPlayer());
             return false;
         }
     }

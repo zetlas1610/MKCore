@@ -7,6 +7,8 @@ import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.abilities.MKToggleAbility;
 import com.chaosbuffalo.mkcore.client.sound.MovingSoundCasting;
+import com.chaosbuffalo.mkcore.effects.PassiveEffect;
+import com.chaosbuffalo.mkcore.effects.SpellCast;
 import com.chaosbuffalo.mkcore.network.EntityStartCastPacket;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.utils.SoundUtils;
@@ -57,6 +59,7 @@ public class AbilityExecutor {
     }
 
     public void onJoinWorld() {
+        checkPassiveEffects();
     }
 
     public void setCooldown(ResourceLocation id, int ticks) {
@@ -122,7 +125,6 @@ public class AbilityExecutor {
             return null;
         }
 
-        // TODO: decide if NPCs will need MKAbilityInfo. If not, this can be refactored and moved into PlayerAbilityExecutor
         MKAbilityInfo info = entityData.getKnowledge().getKnownAbilityInfo(ability.getAbilityId());
         if (info == null) {
             MKCore.LOGGER.warn("startAbility({}) failed - {} does not know", entityData::getEntity, ability::getAbilityId);
@@ -307,5 +309,25 @@ public class AbilityExecutor {
             setCooldown(current.getAbilityId(), entityData.getStats().getAbilityCooldown(current));
         }
         activeToggleMap.put(groupId, ability);
+    }
+
+    protected void checkPassiveEffects() {
+        LivingEntity entity = entityData.getEntity();
+        entity.getActivePotionMap().forEach((p, e) -> {
+            if (p instanceof PassiveEffect) {
+                PassiveEffect sp = (PassiveEffect) p;
+                if (sp.canPersistAcrossSessions())
+                    return;
+
+                MKCore.LOGGER.debug("AbilityExecutor.checkPassiveEffects {} {}", entity, sp.getName());
+
+                SpellCast cast = sp.createReapplicationCast(entity);
+                if (cast != null) {
+                    // Call onPotionAdd to re-apply any non-attribute bonuses (such as granting flying)
+                    sp.onPotionAdd(cast, entity, entity.getAttributes(), e.getAmplifier());
+                    MKCore.LOGGER.debug("AbilityExecutor.checkPassiveEffects {} {} onPotionAdd", entity, sp.getName());
+                }
+            }
+        });
     }
 }

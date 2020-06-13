@@ -1,5 +1,6 @@
 package com.chaosbuffalo.mkcore.effects;
 
+import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.targeting_api.Targeting;
 import com.chaosbuffalo.targeting_api.TargetingContext;
 import net.minecraft.client.Minecraft;
@@ -53,13 +54,14 @@ public abstract class SpellPotionBase extends Effect {
     }
 
     public SpellCast createReapplicationCast(LivingEntity target) {
-        if (!canPersistAcrossSessions()) {
-            EffectInstance current = target.getActivePotionEffect(this);
-            if (current != null) {
-                return newSpellCast(target).setTarget(target);
-            }
-        }
-        return null;
+        if (canPersistAcrossSessions())
+            return null;
+
+        EffectInstance current = target.getActivePotionEffect(this);
+        if (current == null)
+            return null;
+
+        return newSpellCast(target).setTarget(target);
     }
 
     @Override
@@ -71,15 +73,11 @@ public abstract class SpellPotionBase extends Effect {
     // AreaEffect or thrown potion bottle
     @Override
     public void affectEntity(Entity applier, Entity caster, @Nonnull LivingEntity target, int amplifier, double health) {
-
         if (target.world.isRemote && isServerSideOnly())
             return;
+        MKCore.LOGGER.debug("affectEntity {} {}", target, getName());
 
-        SpellCast cast = SpellManager.get(target, this);
-        if (cast == null) {
-            cast = createReapplicationCast(target);
-//            Log.debug("affectEntity cast was null, recasting Spell: %s", getName());
-        }
+        SpellCast cast = SpellManager.getCast(target, this).orElseGet(() -> createReapplicationCast(target));
 
         // Second chance
         if (cast == null) {
@@ -96,15 +94,11 @@ public abstract class SpellPotionBase extends Effect {
     // Called for effects that are applied directly to an entity
     @Override
     public void performEffect(@Nonnull LivingEntity target, int amplifier) {
-
         if (target.world.isRemote && isServerSideOnly())
             return;
+        MKCore.LOGGER.debug("performEffect {} {}", target, getName());
 
-        SpellCast cast = SpellManager.get(target, this);
-        if (cast == null) {
-            cast = createReapplicationCast(target);
-//            Log.debug("performEffect cast was null, recasting Spell: %s", getName());
-        }
+        SpellCast cast = SpellManager.getCast(target, this).orElseGet(() -> createReapplicationCast(target));
 
         // Second chance
         if (cast == null) {
@@ -120,14 +114,11 @@ public abstract class SpellPotionBase extends Effect {
 
     @Override
     public void applyAttributesModifiersToEntity(@Nonnull LivingEntity target, @Nonnull AbstractAttributeMap attributes, int amplifier) {
+        MKCore.LOGGER.debug("applyAttributesModifiersToEntity {} {}", target, getName());
         super.applyAttributesModifiersToEntity(target, attributes, amplifier);
 
         if (!target.world.isRemote || !isServerSideOnly()) {
-            SpellCast cast = SpellManager.get(target, this);
-            if (cast == null) {
-                cast = createReapplicationCast(target);
-//                Log.debug("applyAttributesModifiersToEntity cast was null! Spell: %s", getName());
-            }
+            SpellCast cast = SpellManager.getCast(target, this).orElseGet(() -> createReapplicationCast(target));
 
             if (cast != null) {
                 onPotionAdd(cast, target, attributes, amplifier);
@@ -138,14 +129,11 @@ public abstract class SpellPotionBase extends Effect {
 
     @Override
     public void removeAttributesModifiersFromEntity(@Nonnull LivingEntity target, @Nonnull AbstractAttributeMap attributes, int amplifier) {
+        MKCore.LOGGER.debug("removeAttributesModifiersFromEntity {} {}", target, getName());
         super.removeAttributesModifiersFromEntity(target, attributes, amplifier);
 
         if (!target.world.isRemote || !isServerSideOnly()) {
-            SpellCast cast = SpellManager.get(target, this);
-            if (cast == null) {
-                cast = createReapplicationCast(target);
-//                Log.debug("removeAttributesModifiersFromEntity cast was null! Spell: %s", getName());
-            }
+            SpellCast cast = SpellManager.getCast(target, this).orElseGet(() -> createReapplicationCast(target));
 
             if (cast != null) {
                 onPotionRemove(cast, target, attributes, amplifier);
@@ -167,14 +155,6 @@ public abstract class SpellPotionBase extends Effect {
 
     protected boolean isAmbient() {
         return false;
-    }
-
-    public EffectInstance toPotionEffect(int amplifier) {
-        return toPotionEffect(1, amplifier);
-    }
-
-    public EffectInstance toPotionEffect(int duration, int amplifier) {
-        return new EffectInstance(this, duration, amplifier, isAmbient(), shouldShowParticles());
     }
 
     public SpellCast newSpellCast(Entity caster) {

@@ -112,7 +112,7 @@ public class ParticleEffectSpawnPacket {
     public void handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
-            MKCore.LOGGER.info("Got spawn particle packet");
+//            MKCore.LOGGER.info("Got spawn particle packet");
             ParticleEffects.spawnParticleEffect(
                     particleID, motionType, data, speed, count,
                     new Vec3d(xPos, yPos, zPos),

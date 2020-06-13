@@ -5,6 +5,7 @@ import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKToggleAbility;
 import com.chaosbuffalo.mkcore.abilities.ai.NeedsBuffCondition;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
+import com.chaosbuffalo.mkcore.effects.PassiveEffect;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
@@ -14,8 +15,6 @@ import com.chaosbuffalo.targeting_api.TargetingContext;
 import com.chaosbuffalo.targeting_api.TargetingContexts;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.Effect;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -32,15 +31,11 @@ public class SkinLikeWoodAbility extends MKToggleAbility {
         event.getRegistry().register(INSTANCE);
     }
 
-    public static int BASE_DURATION = 32767;
-    public static int DURATION_SCALE = 0;
-
     private SkinLikeWoodAbility() {
 
         super(MKCore.makeRL("ability.skin_like_wood"));
         setUseCondition(new NeedsBuffCondition(this, SkinLikeWoodPotion.INSTANCE).setSelfOnly(true));
     }
-
 
     @Override
     public TargetingContext getTargetContext() {
@@ -53,7 +48,7 @@ public class SkinLikeWoodAbility extends MKToggleAbility {
     }
 
     @Override
-    public Effect getToggleEffect() {
+    public PassiveEffect getToggleEffect() {
         return SkinLikeWoodPotion.INSTANCE;
     }
 
@@ -66,10 +61,10 @@ public class SkinLikeWoodAbility extends MKToggleAbility {
     @Override
     public void applyEffect(LivingEntity entity, IMKEntityData entityData) {
         super.applyEffect(entity, entityData);
-        int level = 1;
+        int amplifier = 0;
         SoundUtils.playSoundAtEntity(entity, ModSounds.spell_earth_7);
         // What to do for each target hit
-        entity.addPotionEffect(SkinLikeWoodPotion.Create(entity).setTarget(entity).toPotionEffect(BASE_DURATION, level));
+        entity.addPotionEffect(getToggleEffect().createSelfCastEffectInstance(entity, amplifier));
 
         PacketHandler.sendToTrackingMaybeSelf(
                 new ParticleEffectSpawnPacket(

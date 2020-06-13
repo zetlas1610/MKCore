@@ -22,7 +22,7 @@ public class ParticleEffects {
                                            Vec3d position, Vec3d radii,
                                            Vec3d heading, World theWorld) {
         double[] posAndMotion;
-        MKCore.LOGGER.info("Spawning {} particles", count);
+        MKCore.LOGGER.debug("Spawning {} particles", count);
         for (int i = 0; i < count; i++) {
             posAndMotion = getPositionAndMotion(motionType, data, position,
                     speed, i, count, radii, heading);
