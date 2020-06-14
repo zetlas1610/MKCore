@@ -93,7 +93,7 @@ public class PhoenixAspectAbility extends MKAbility {
                 ParticleEffects.DIRECTED_SPOUT, false, new Vec3d(1.0, 1.5, 1.0),
                 new Vec3d(0.0, 1.0, 0.0), 40, 5, 1.0);
 
-        AreaEffectBuilder.Create(entity, entity)
+        AreaEffectBuilder.createOnCaster(entity)
                 .spellCast(flying, duration, level, getTargetContext())
                 .spellCast(feather, duration + 10 * GameConstants.TICKS_PER_SECOND, level, getTargetContext())
                 .spellCast(particlePotion, level, getTargetContext())

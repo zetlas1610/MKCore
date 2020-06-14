@@ -80,7 +80,7 @@ public class WhirlwindBlades extends MKAbility {
                     4, 0, 1.0);
 
 
-            AreaEffectBuilder.Create(entity, entity)
+            AreaEffectBuilder.createOnCaster(entity)
                     .spellCast(damage, level, getTargetContext())
                     .spellCast(particlePotion, level, getTargetContext())
 //                    .spellCast(SoundPotion.Create(entity, ModSounds.spell_shadow_2, SoundCategory.PLAYERS),
