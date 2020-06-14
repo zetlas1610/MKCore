@@ -15,7 +15,7 @@ public interface IMKEntityData {
 
     IStatsModule getStats();
 
-    default AbilityContext startAbility(AbilityContext context, MKAbility ability) {
+    default boolean startAbility(AbilityContext context, MKAbility ability) {
         return getAbilityExecutor().startAbility(context, ability);
     }
 

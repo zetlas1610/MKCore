@@ -118,12 +118,6 @@ public class ClericHeal extends MKAbility {
     }
 
     @Override
-    public void executeWithContext(IMKEntityData entityData, AbilityContext context) {
-        MKCore.LOGGER.info("ClericHeal.executeWithContext {}", entityData.getEntity());
-        entityData.startAbility(context, this);
-    }
-
-    @Override
     public AbilityContext createAbilityContext(IMKEntityData pData) {
         LivingEntity targetEntity = getSingleLivingTargetOrSelf(pData.getEntity(), getDistance(), true);
         MKCore.LOGGER.info("ClericHeal.selectTarget {} {}", pData.getEntity(), targetEntity);

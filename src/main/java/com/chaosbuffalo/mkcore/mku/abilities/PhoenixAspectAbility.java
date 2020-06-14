@@ -109,9 +109,4 @@ public class PhoenixAspectAbility extends MKAbility {
                 entity.getPosZ(), 1.0, 1.0, 1.0, 1.0f,
                 entity.getLookVec()), entity);
     }
-
-    @Override
-    public void executeWithContext(IMKEntityData pData, AbilityContext context) {
-        pData.startAbility(context, this);
-    }
 }

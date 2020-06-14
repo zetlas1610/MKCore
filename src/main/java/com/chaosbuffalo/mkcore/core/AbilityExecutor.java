@@ -58,11 +58,7 @@ public class AbilityExecutor {
                 context = ability.createAbilityContext(entityData);
             }
             if (context != null) {
-                if (ability.isExecutableContext(context)) {
-                    ability.executeWithContext(entityData, context);
-                } else {
-                    MKCore.LOGGER.debug("Entity {} tried to execute ability {} with missing memories!", entityData.getEntity(), abilityId);
-                }
+                ability.executeWithContext(entityData, context);
             } else {
                 MKCore.LOGGER.warn("Entity {} tried to execute ability {} with a null context!", entityData.getEntity(), abilityId);
             }
@@ -147,16 +143,21 @@ public class AbilityExecutor {
         }
     }
 
-    public AbilityContext startAbility(AbilityContext context, MKAbility ability) {
+    public boolean startAbility(AbilityContext context, MKAbility ability) {
         if (isCasting()) {
             MKCore.LOGGER.warn("startAbility({}) failed - {} currently casting", entityData::getEntity, ability::getAbilityId);
-            return null;
+            return false;
         }
 
         MKAbilityInfo info = entityData.getKnowledge().getKnownAbilityInfo(ability.getAbilityId());
         if (info == null) {
             MKCore.LOGGER.warn("startAbility({}) failed - {} does not know", entityData::getEntity, ability::getAbilityId);
-            return null;
+            return false;
+        }
+
+        if (!ability.isExecutableContext(context)) {
+            MKCore.LOGGER.debug("Entity {} tried to execute ability {} with missing memories!", entityData.getEntity(), ability.getAbilityId());
+            return false;
         }
 
         consumeResource(ability);
@@ -164,11 +165,11 @@ public class AbilityExecutor {
         int castTime = ability.getCastTime();
         startCast(context, info, castTime);
         if (castTime > 0) {
-            return context;
+            return true;
         } else {
             completeAbility(ability, info, context);
         }
-        return context;
+        return true;
     }
 
     protected void completeAbility(MKAbility ability, MKAbilityInfo info, AbilityContext context) {

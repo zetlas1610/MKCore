@@ -111,13 +111,4 @@ public class EmberAbility extends MKAbility {
         MKCore.LOGGER.info("EmberAbility.createAbilityContext {} {}", pData.getEntity(), targetEntity);
         return AbilityContext.singleTarget(targetEntity);
     }
-
-    @Override
-    public void executeWithContext(IMKEntityData entityData, AbilityContext context) {
-        MKCore.LOGGER.info("EmberAbility.executeWithContext {}", entityData.getEntity());
-        context.getMemory(MKAbilityMemories.ABILITY_TARGET).ifPresent(target -> {
-            MKCore.LOGGER.info("with target {}", target);
-            entityData.startAbility(context, this);
-        });
-    }
 }

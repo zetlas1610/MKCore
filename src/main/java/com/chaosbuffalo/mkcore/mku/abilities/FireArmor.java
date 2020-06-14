@@ -96,9 +96,4 @@ public class FireArmor extends MKAbility {
                         entity.getPosZ(), 1.0, 1.0, 1.0, .1f,
                         entity.getLookVec()), entity);
     }
-
-    @Override
-    public void executeWithContext(IMKEntityData pData, AbilityContext context) {
-        pData.startAbility(context, this);
-    }
 }

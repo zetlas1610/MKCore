@@ -248,7 +248,10 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         return ModSounds.spell_cast_3;
     }
 
-    public abstract void executeWithContext(IMKEntityData entityData, AbilityContext context);
+    public void executeWithContext(IMKEntityData entityData, AbilityContext context) {
+        entityData.startAbility(context, this);
+    }
+
 
     public AbilityContext createAbilityContext(IMKEntityData pData) {
         return AbilityContext.EMPTY;

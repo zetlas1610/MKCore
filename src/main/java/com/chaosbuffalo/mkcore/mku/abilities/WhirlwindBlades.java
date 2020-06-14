@@ -99,9 +99,4 @@ public class WhirlwindBlades extends MKAbility {
                             entity.getLookVec()), entity);
         }
     }
-
-    @Override
-    public void executeWithContext(IMKEntityData pData, AbilityContext context) {
-        pData.startAbility(context, this);
-    }
 }
