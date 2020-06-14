@@ -23,11 +23,6 @@ public class MKEntityData implements IMKEntityData {
         knowledge = new EntityAbilityKnowledge(this);
         abilityExecutor = new AbilityExecutor(this);
         stats = new EntityStatsModule(this);
-        if (entity instanceof MKEntity){
-            MKEntity mkEntity = (MKEntity) entity;
-            abilityExecutor.setStartCastCallback(mkEntity::startCast);
-            abilityExecutor.setCompleteAbilityCallback(mkEntity::endCast);
-        }
         registerAttributes();
     }
 

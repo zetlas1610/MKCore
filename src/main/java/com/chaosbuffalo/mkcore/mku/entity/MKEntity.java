@@ -1,5 +1,6 @@
 package com.chaosbuffalo.mkcore.mku.entity;
 
+import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
@@ -37,6 +38,10 @@ public abstract class MKEntity extends CreatureEntity {
         castAnimTimer = 0;
         visualCastState = VisualCastState.NONE;
         castingAbility = null;
+        getCapability(Capabilities.ENTITY_CAPABILITY).ifPresent((mkEntityData -> {
+            mkEntityData.getAbilityExecutor().setStartCastCallback(this::startCast);
+            mkEntityData.getAbilityExecutor().setCompleteAbilityCallback(this::endCast);
+        }));
     }
 
     public void addThreat(LivingEntity entity, int value) {
@@ -46,9 +51,7 @@ public abstract class MKEntity extends CreatureEntity {
         this.brain.setMemory(MKMemoryModuleTypes.THREAT_MAP, newMap);
     }
 
-    @Override
-    public void livingTick() {
-        updateArmSwingProgress();
+    protected void updateEntityCastState(){
         if (castAnimTimer > 0){
             castAnimTimer--;
             if (castAnimTimer == 0){
@@ -56,6 +59,13 @@ public abstract class MKEntity extends CreatureEntity {
                 visualCastState = VisualCastState.NONE;
             }
         }
+    }
+
+
+    @Override
+    public void livingTick() {
+        updateArmSwingProgress();
+        updateEntityCastState();
         super.livingTick();
     }
 
