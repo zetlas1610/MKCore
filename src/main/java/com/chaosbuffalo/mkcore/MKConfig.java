@@ -24,6 +24,7 @@ public class MKConfig {
 
     public static ForgeConfigSpec.BooleanValue showMyCrits;
     public static ForgeConfigSpec.BooleanValue showOthersCrits;
+    public static ForgeConfigSpec.BooleanValue enablePlayerCastAnimations;
 
     public static ForgeConfigSpec.BooleanValue healsDamageUndead;
     public static ForgeConfigSpec.ConfigValue<Float> undeadHealDamageMultiplier;
@@ -36,6 +37,10 @@ public class MKConfig {
         showOthersCrits = builder
                 .comment("Show other's crit messages")
                 .define("showOthersCrits", true);
+        enablePlayerCastAnimations = builder
+                .comment("Enable player cast animations. Requires client restart to take effect")
+                .worldRestart()
+                .define("enablePlayerCastAnimations", true);
         builder.pop();
     }
 
