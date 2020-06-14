@@ -1,18 +1,16 @@
 package com.chaosbuffalo.mkcore.abilities.attributes;
 
-import com.google.gson.JsonObject;
-import net.minecraft.nbt.CompoundNBT;
+import com.mojang.datafixers.Dynamic;
+import com.mojang.datafixers.types.DynamicOps;
 
 public interface IAbilityAttribute<T> {
     T getValue();
 
     void setValue(T newValue);
 
-    CompoundNBT serialize();
-
-    void deserialize(CompoundNBT nbt);
-
     String getName();
 
-    void readFromDataPack(JsonObject obj);
+    <D> D serialize(DynamicOps<D> ops);
+
+    <D> void deserialize(Dynamic<D> dynamic);
 }

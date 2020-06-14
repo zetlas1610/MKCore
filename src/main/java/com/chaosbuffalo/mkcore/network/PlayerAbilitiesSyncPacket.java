@@ -3,7 +3,10 @@ package com.chaosbuffalo.mkcore.network;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.mojang.datafixers.Dynamic;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.NBTDynamicOps;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -21,7 +24,12 @@ public class PlayerAbilitiesSyncPacket {
     public PlayerAbilitiesSyncPacket(Collection<MKAbility> abilities) {
         data = new HashMap<>();
         for (MKAbility ability : abilities) {
-            data.put(ability.getRegistryName(), ability.serialize());
+            INBT dyn = ability.serializeDynamic(NBTDynamicOps.INSTANCE);
+            if (dyn instanceof CompoundNBT) {
+                data.put(ability.getRegistryName(), (CompoundNBT) dyn);
+            } else {
+                throw new RuntimeException(String.format("Ability %s did not serialize to a CompoundNBT!", ability.getAbilityId()));
+            }
         }
     }
 
@@ -51,7 +59,7 @@ public class PlayerAbilitiesSyncPacket {
                 MKAbility ability = MKCoreRegistry.ABILITIES.getValue(abilityData.getKey());
                 if (ability != null) {
                     MKCore.LOGGER.debug("Updating ability with server data: {}", abilityData.getKey());
-                    ability.deserialize(abilityData.getValue());
+                    ability.deserializeDynamic(new Dynamic<>(NBTDynamicOps.INSTANCE, abilityData.getValue()));
                 } else {
                     MKCore.LOGGER.warn("Skipping ability update for {}", abilityData.getKey());
                 }

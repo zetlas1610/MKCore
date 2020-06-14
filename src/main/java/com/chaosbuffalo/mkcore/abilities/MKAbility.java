@@ -1,6 +1,7 @@
 package com.chaosbuffalo.mkcore.abilities;
 
 import com.chaosbuffalo.mkcore.GameConstants;
+import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.ai.conditions.AbilityUseCondition;
 import com.chaosbuffalo.mkcore.abilities.ai.conditions.StandardUseCondition;
 import com.chaosbuffalo.mkcore.abilities.attributes.IAbilityAttribute;
@@ -10,14 +11,16 @@ import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.mkcore.utils.RayTraceUtils;
 import com.chaosbuffalo.targeting_api.Targeting;
 import com.chaosbuffalo.targeting_api.TargetingContext;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.JsonObject;
+import com.mojang.datafixers.Dynamic;
+import com.mojang.datafixers.types.DynamicOps;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.EntityRayTraceResult;
@@ -29,11 +32,10 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
 
@@ -209,59 +211,33 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
                 entityData.getStats().canActivateAbility(this);
     }
 
-    public CompoundNBT serialize() {
-        CompoundNBT tag = new CompoundNBT();
-        tag.putInt("cooldown", getBaseCooldown());
-        tag.putInt("castTime", getBaseCastTime());
-        tag.putFloat("manaCost", getBaseManaCost());
-        if (getAttributes().size() > 0) {
-            CompoundNBT attributes = new CompoundNBT();
-            for (IAbilityAttribute<?> attr : getAttributes()) {
-                attributes.put(attr.getName(), attr.serialize());
-            }
-            tag.put("attributes", attributes);
-        }
-        return tag;
+    public <T> T serializeDynamic(DynamicOps<T> ops) {
+        return ops.createMap(
+                ImmutableMap.of(
+                        ops.createString("cooldown"), ops.createInt(getBaseCooldown()),
+                        ops.createString("manaCost"), ops.createFloat(getBaseManaCost()),
+                        ops.createString("castTime"), ops.createInt(getBaseCastTime()),
+                        ops.createString("attributes"),
+                        ops.createMap(attributes.stream().map(attr ->
+                                Pair.of(ops.createString(attr.getName()), attr.serialize(ops))
+                        ).collect(Collectors.toMap(Pair::getFirst, Pair::getSecond)))
+                )
+        );
     }
 
-    public void deserialize(CompoundNBT nbt) {
-        if (nbt.contains("cooldown")) {
-            setCooldownTicks(nbt.getInt("cooldown"));
-        }
-        if (nbt.contains("castTime")) {
-            setCastTime(nbt.getInt("castTime"));
-        }
-        if (nbt.contains("manaCost")) {
-            setManaCost(nbt.getFloat("manaCost"));
-        }
-        if (nbt.contains("attributes")) {
-            CompoundNBT attributes = nbt.getCompound("attributes");
-            for (IAbilityAttribute<?> attr : getAttributes()) {
-                if (attributes.contains(attr.getName())) {
-                    attr.deserialize(attributes.getCompound(attr.getName()));
-                }
-            }
-        }
-    }
+    public <T> void deserializeDynamic(Dynamic<T> dynamic) {
+        MKCore.LOGGER.info("ability deserialize {}", dynamic.getValue());
+        setCooldownTicks(dynamic.get("cooldown").asInt(getBaseCooldown()));
+        setManaCost(dynamic.get("manaCost").asFloat(getBaseManaCost()));
+        setCastTime(dynamic.get("castTime").asInt(getBaseCastTime()));
 
-    public void readFromDataPack(JsonObject obj) {
-        if (obj.has("cooldown")) {
-            setCooldownTicks(obj.get("cooldown").getAsInt());
-        }
-        if (obj.has("manaCost")) {
-            setManaCost(obj.get("manaCost").getAsFloat());
-        }
-        if (obj.has("castTime")) {
-            setCastTime(obj.get("castTime").getAsInt());
-        }
-        if (obj.has("attributes")) {
-            JsonObject attributes = obj.getAsJsonObject("attributes");
-            for (IAbilityAttribute<?> attr : getAttributes()) {
-                if (attributes.has(attr.getName())) {
-                    attr.readFromDataPack(attributes.getAsJsonObject(attr.getName()));
-                }
+        Map<String, Dynamic<T>> map = dynamic.get("attributes").asMap(d -> d.asString(""), Function.identity());
+        getAttributes().forEach(attr -> {
+            Dynamic<T> attrValue = map.get(attr.getName());
+            if (attrValue != null) {
+                attr.deserialize(attrValue);
             }
-        }
+        });
     }
 
     @Nullable

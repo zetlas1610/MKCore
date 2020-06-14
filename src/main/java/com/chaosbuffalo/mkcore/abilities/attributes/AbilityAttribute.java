@@ -1,14 +1,13 @@
 package com.chaosbuffalo.mkcore.abilities.attributes;
 
 
-import com.google.gson.JsonObject;
-import net.minecraft.nbt.CompoundNBT;
-
 public abstract class AbilityAttribute<T> implements IAbilityAttribute<T> {
+    private final T defaultValue;
     private T currentValue;
     private final String name;
 
     public AbilityAttribute(String name, T defaultValue) {
+        this.defaultValue = defaultValue;
         currentValue = defaultValue;
         this.name = name;
     }
@@ -16,6 +15,10 @@ public abstract class AbilityAttribute<T> implements IAbilityAttribute<T> {
     @Override
     public String getName() {
         return name;
+    }
+
+    public T getDefaultValue() {
+        return defaultValue;
     }
 
     @Override
@@ -27,13 +30,4 @@ public abstract class AbilityAttribute<T> implements IAbilityAttribute<T> {
     public void setValue(T newValue) {
         this.currentValue = newValue;
     }
-
-    @Override
-    public abstract CompoundNBT serialize();
-
-    @Override
-    public abstract void deserialize(CompoundNBT nbt);
-
-    @Override
-    public abstract void readFromDataPack(JsonObject obj);
 }
