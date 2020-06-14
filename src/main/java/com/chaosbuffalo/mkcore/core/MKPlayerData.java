@@ -3,8 +3,6 @@ package com.chaosbuffalo.mkcore.core;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
-import com.chaosbuffalo.mkcore.network.PacketHandler;
-import com.chaosbuffalo.mkcore.network.PlayerDataSyncRequestPacket;
 import com.chaosbuffalo.mkcore.sync.UpdateEngine;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -77,9 +75,9 @@ public class MKPlayerData implements IMKEntityData {
         getAbilityExecutor().onJoinWorld();
         if (isServerSide()) {
             MKCore.LOGGER.info("server player joined world!");
+            initialSync();
         } else {
             MKCore.LOGGER.info("client player joined world!");
-            PacketHandler.sendMessageToServer(new PlayerDataSyncRequestPacket());
         }
     }
 
