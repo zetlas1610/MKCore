@@ -1,4 +1,4 @@
-package com.chaosbuffalo.mkcore.test;
+package com.chaosbuffalo.mkcore.mku.abilities;
 
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
