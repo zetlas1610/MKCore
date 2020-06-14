@@ -77,7 +77,7 @@ public class FireArmor extends MKAbility {
                 new Vec3d(0.0, 1.0, 0.0),
                 40, 5, .1f);
 
-        AreaEffectBuilder.Create(entity, entity)
+        AreaEffectBuilder.createOnCaster(entity)
                 .effect(absorbEffect, getTargetContext())
                 .effect(fireResistanceEffect, getTargetContext())
                 .spellCast(particlePotion, level, getTargetContext())

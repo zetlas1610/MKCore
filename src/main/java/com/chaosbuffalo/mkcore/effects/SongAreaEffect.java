@@ -32,7 +32,7 @@ public abstract class SongAreaEffect extends SongEffectBase {
                 entity.removePotionEffect(this);
             }
 
-            AreaEffectBuilder builder = AreaEffectBuilder.createOnEntity(entity)
+            AreaEffectBuilder builder = AreaEffectBuilder.createOnCaster(entity)
                     .instant()
                     .particle(getSongParticle())
                     .color(16762905)

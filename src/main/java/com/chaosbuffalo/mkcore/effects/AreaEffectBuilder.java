@@ -22,7 +22,7 @@ public class AreaEffectBuilder {
         return new AreaEffectBuilder(caster, center);
     }
 
-    public static AreaEffectBuilder createOnEntity(LivingEntity caster) {
+    public static AreaEffectBuilder createOnCaster(LivingEntity caster) {
         return Create(caster, caster);
     }
 
