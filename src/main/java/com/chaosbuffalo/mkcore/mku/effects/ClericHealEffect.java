@@ -1,4 +1,4 @@
-package com.chaosbuffalo.mkcore.test;
+package com.chaosbuffalo.mkcore.mku.effects;
 
 import com.chaosbuffalo.mkcore.MKConfig;
 import com.chaosbuffalo.mkcore.MKCore;
@@ -7,6 +7,7 @@ import com.chaosbuffalo.mkcore.core.damage.MKDamageSource;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
 import com.chaosbuffalo.mkcore.effects.SpellEffectBase;
 import com.chaosbuffalo.mkcore.init.ModDamageTypes;
+import com.chaosbuffalo.mkcore.mku.abilities.ClericHeal;
 import com.chaosbuffalo.targeting_api.TargetingContext;
 import com.chaosbuffalo.targeting_api.TargetingContexts;
 import net.minecraft.entity.Entity;
