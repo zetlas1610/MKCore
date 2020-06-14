@@ -3,11 +3,13 @@ package com.chaosbuffalo.mkcore;
 import com.chaosbuffalo.mkcore.abilities.AbilityManager;
 import com.chaosbuffalo.mkcore.client.gui.MKOverlay;
 import com.chaosbuffalo.mkcore.command.MKCommand;
+import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.mku.MKUEntityTypes;
 import com.chaosbuffalo.mkcore.mku.RenderRegistry;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
@@ -83,5 +85,13 @@ public class MKCore {
 
     public static LazyOptional<MKPlayerData> getPlayer(Entity playerEntity) {
         return playerEntity.getCapability(Capabilities.PLAYER_CAPABILITY);
+    }
+
+    public static LazyOptional<? extends IMKEntityData> getEntityData(Entity entity){
+        if (entity instanceof PlayerEntity){
+            return entity.getCapability(Capabilities.PLAYER_CAPABILITY);
+        } else {
+            return entity.getCapability(Capabilities.ENTITY_CAPABILITY);
+        }
     }
 }

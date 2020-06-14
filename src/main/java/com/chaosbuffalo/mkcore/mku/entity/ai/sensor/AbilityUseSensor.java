@@ -27,9 +27,9 @@ public class AbilityUseSensor extends Sensor<MKEntity> {
     protected void update(ServerWorld worldIn, MKEntity entityIn) {
         Optional<MKAbility> abilityOptional = entityIn.getBrain().getMemory(MKMemoryModuleTypes.CURRENT_ABILITY);
         Optional<LivingEntity> targetOptional = entityIn.getBrain().getMemory(MKMemoryModuleTypes.THREAT_TARGET);
-        if (targetOptional.isPresent() && !abilityOptional.isPresent()) {
+        if (!abilityOptional.isPresent()) {
             entityIn.getCapability(Capabilities.ENTITY_CAPABILITY).ifPresent(mkEntityData -> {
-                AbilityUseContext context = new AbilityUseContext(entityIn, targetOptional.get(),
+                AbilityUseContext context = new AbilityUseContext(entityIn, targetOptional.orElse(null),
                         entityIn.getBrain().getMemory(MKMemoryModuleTypes.ALLIES).orElse(Collections.emptyList()),
                         entityIn.getBrain().getMemory(MKMemoryModuleTypes.ENEMIES).orElse(Collections.emptyList()));
                 for (MKAbilityInfo ability : mkEntityData.getKnowledge().getAbilitiesPriorityOrder()) {
@@ -50,7 +50,7 @@ public class AbilityUseSensor extends Sensor<MKEntity> {
                         }
                     }
                 }
-                entityIn.enterDefaultMovementState(targetOptional.get());
+                entityIn.enterDefaultMovementState(targetOptional.orElse(null));
             });
         }
     }

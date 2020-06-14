@@ -18,6 +18,9 @@ public class StandardUseCondition extends AbilityUseCondition {
 
     @Override
     public boolean test(AbilityUseContext context) {
+        if (context.getThreatTarget() == null){
+            return false;
+        }
         float range = getAbility().getDistance();
         return context.getThreatTarget().getDistanceSq(context.getCaster()) <= range * range;
     }
@@ -25,6 +28,9 @@ public class StandardUseCondition extends AbilityUseCondition {
     @Nullable
     @Override
     public AbilityTarget getTarget(AbilityUseContext context) {
-        return new AbilityTarget(context.getThreatTarget(), movementStrategy);
+        if (context.getThreatTarget() != null){
+            return new AbilityTarget(context.getThreatTarget(), movementStrategy);
+        }
+        return null;
     }
 }
