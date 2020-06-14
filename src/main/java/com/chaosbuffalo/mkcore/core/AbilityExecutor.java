@@ -55,7 +55,7 @@ public class AbilityExecutor {
         MKAbility ability = info.getAbility();
         if (abilityExecutionCheck(ability, info)) {
             if (context == null) {
-                context = ability.createAbilityContext(entityData);
+                context = ability.getTargetSelector().createContext(entityData, ability);
             }
             if (context != null) {
                 ability.executeWithContext(entityData, context);

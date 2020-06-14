@@ -1,9 +1,7 @@
 package com.chaosbuffalo.mkcore.mku.abilities;
 
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.abilities.MKAbilityMemories;
-import com.chaosbuffalo.mkcore.abilities.AbilityContext;
-import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.abilities.*;
 import com.chaosbuffalo.mkcore.abilities.attributes.FloatAttribute;
 import com.chaosbuffalo.mkcore.abilities.attributes.IntAttribute;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
@@ -28,6 +26,7 @@ import net.minecraftforge.fml.common.Mod;
 import javax.annotation.Nullable;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -106,9 +105,7 @@ public class EmberAbility extends MKAbility {
     }
 
     @Override
-    public AbilityContext createAbilityContext(IMKEntityData pData) {
-        LivingEntity targetEntity = getSingleLivingTarget(pData.getEntity(), getDistance());
-        MKCore.LOGGER.info("EmberAbility.createAbilityContext {} {}", pData.getEntity(), targetEntity);
-        return AbilityContext.singleTarget(targetEntity);
+    public AbilityTargetSelector getTargetSelector() {
+        return AbilityTargeting.SINGLE_TARGET;
     }
 }

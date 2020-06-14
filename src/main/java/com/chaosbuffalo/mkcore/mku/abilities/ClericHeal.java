@@ -2,9 +2,7 @@ package com.chaosbuffalo.mkcore.mku.abilities;
 
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.abilities.MKAbilityMemories;
-import com.chaosbuffalo.mkcore.abilities.AbilityContext;
-import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.abilities.*;
 import com.chaosbuffalo.mkcore.abilities.ai.conditions.HealCondition;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
@@ -27,6 +25,7 @@ import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClericHeal extends MKAbility {
@@ -118,9 +117,7 @@ public class ClericHeal extends MKAbility {
     }
 
     @Override
-    public AbilityContext createAbilityContext(IMKEntityData pData) {
-        LivingEntity targetEntity = getSingleLivingTargetOrSelf(pData.getEntity(), getDistance(), true);
-        MKCore.LOGGER.info("ClericHeal.selectTarget {} {}", pData.getEntity(), targetEntity);
-        return AbilityContext.singleTarget(targetEntity);
+    public AbilityTargetSelector getTargetSelector() {
+        return AbilityTargeting.SINGLE_TARGET_OR_SELF;
     }
 }

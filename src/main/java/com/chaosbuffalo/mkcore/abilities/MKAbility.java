@@ -2,8 +2,8 @@ package com.chaosbuffalo.mkcore.abilities;
 
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.abilities.ai.AbilityTarget;
-import com.chaosbuffalo.mkcore.abilities.ai.conditions.AbilityUseCondition;
 import com.chaosbuffalo.mkcore.abilities.ai.AbilityUseContext;
+import com.chaosbuffalo.mkcore.abilities.ai.conditions.AbilityUseCondition;
 import com.chaosbuffalo.mkcore.abilities.ai.conditions.StandardUseCondition;
 import com.chaosbuffalo.mkcore.abilities.attributes.IAbilityAttribute;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
@@ -252,9 +252,8 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         entityData.startAbility(context, this);
     }
 
-
-    public AbilityContext createAbilityContext(IMKEntityData pData) {
-        return AbilityContext.EMPTY;
+    public AbilityTargetSelector getTargetSelector() {
+        return AbilityTargeting.NONE;
     }
 
     public Set<MemoryModuleType<?>> getRequiredMemories() {

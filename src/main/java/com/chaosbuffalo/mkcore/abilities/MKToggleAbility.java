@@ -57,8 +57,8 @@ public abstract class MKToggleAbility extends MKAbility {
     }
 
     @Override
-    public AbilityContext createAbilityContext(IMKEntityData pData) {
-        return AbilityContext.singleTarget(pData.getEntity());
+    public AbilityTargetSelector getTargetSelector() {
+        return AbilityTargeting.SELF;
     }
 
     @Override
