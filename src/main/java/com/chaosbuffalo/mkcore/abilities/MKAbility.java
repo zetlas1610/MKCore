@@ -114,10 +114,6 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
 
     }
 
-    public CastState createCastState(int castTime) {
-        return new CastState(castTime);
-    }
-
     public int getCastTime() {
         return castTime;
     }
@@ -249,15 +245,19 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         return ModSounds.spell_cast_3;
     }
 
-    public abstract void execute(LivingEntity entity, IMKEntityData data);
+    public abstract void executeWithContext(IMKEntityData entityData, AbilityContext context);
 
-    public void continueCast(LivingEntity entity, IMKEntityData data, int castTimeLeft, CastState state) {
+    public AbilityContext createAbilityContext(IMKEntityData pData) {
+        return AbilityContext.EMPTY;
+    }
+
+    public void continueCast(LivingEntity entity, IMKEntityData data, int castTimeLeft, AbilityContext context) {
     }
 
     public void continueCastClient(LivingEntity entity, IMKEntityData data, int castTimeLeft) {
     }
 
-    public void endCast(LivingEntity entity, IMKEntityData data, CastState state) {
+    public void endCast(LivingEntity entity, IMKEntityData data, AbilityContext context) {
     }
 
     protected LivingEntity getSingleLivingTarget(LivingEntity caster, float distance) {

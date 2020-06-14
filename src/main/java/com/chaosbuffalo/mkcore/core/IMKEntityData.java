@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.core;
 
-import com.chaosbuffalo.mkcore.abilities.CastState;
+import com.chaosbuffalo.mkcore.abilities.AbilityContext;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -15,8 +15,8 @@ public interface IMKEntityData {
 
     IStatsModule getStats();
 
-    default CastState startAbility(MKAbility ability) {
-        return getAbilityExecutor().startAbility(ability);
+    default AbilityContext startAbility(AbilityContext context, MKAbility ability) {
+        return getAbilityExecutor().startAbility(context, ability);
     }
 
     void serialize(CompoundNBT nbt);

@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkcore.mku.abilities;
 
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.abilities.CastState;
+import com.chaosbuffalo.mkcore.abilities.AbilityContext;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.effects.AreaEffectBuilder;
@@ -61,8 +61,8 @@ public class WhirlwindBlades extends MKAbility {
     }
 
     @Override
-    public void continueCast(LivingEntity entity, IMKEntityData data, int castTimeLeft, CastState state) {
-        super.continueCast(entity, data, castTimeLeft, state);
+    public void continueCast(LivingEntity entity, IMKEntityData data, int castTimeLeft, AbilityContext context) {
+        super.continueCast(entity, data, castTimeLeft, context);
         int tickSpeed = 6;
         if (castTimeLeft % tickSpeed == 0) {
             int level = 1;
@@ -101,7 +101,7 @@ public class WhirlwindBlades extends MKAbility {
     }
 
     @Override
-    public void execute(LivingEntity entity, IMKEntityData entityData) {
-        entityData.startAbility(this);
+    public void executeWithContext(IMKEntityData pData, AbilityContext context) {
+        pData.startAbility(context, this);
     }
 }

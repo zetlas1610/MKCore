@@ -2,10 +2,7 @@ package com.chaosbuffalo.mkcore.core;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
-import com.chaosbuffalo.mkcore.abilities.CastState;
-import com.chaosbuffalo.mkcore.abilities.MKAbility;
-import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
-import com.chaosbuffalo.mkcore.abilities.MKToggleAbility;
+import com.chaosbuffalo.mkcore.abilities.*;
 import com.chaosbuffalo.mkcore.client.sound.MovingSoundCasting;
 import com.chaosbuffalo.mkcore.effects.PassiveEffect;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
@@ -15,7 +12,6 @@ import com.chaosbuffalo.mkcore.utils.SoundUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 
 import java.util.HashMap;
@@ -48,13 +44,24 @@ public class AbilityExecutor {
     }
 
     public void executeAbility(ResourceLocation abilityId) {
+        executeAbilityWithContext(abilityId, null);
+    }
+
+    public void executeAbilityWithContext(ResourceLocation abilityId, AbilityContext context) {
         MKAbilityInfo info = entityData.getKnowledge().getKnownAbilityInfo(abilityId);
         if (info == null)
             return;
 
         MKAbility ability = info.getAbility();
         if (abilityExecutionCheck(ability, info)) {
-            ability.execute(entityData.getEntity(), entityData);
+            if (context == null) {
+                context = ability.createAbilityContext(entityData);
+            }
+            if (context != null) {
+                ability.executeWithContext(entityData, context);
+            } else {
+                MKCore.LOGGER.warn("Entity {} tried to execute ability {} with a null context!", entityData.getEntity(), abilityId);
+            }
         }
     }
 
@@ -105,16 +112,13 @@ public class AbilityExecutor {
         currentCast = null;
     }
 
-    private CastState startCast(MKAbilityInfo abilityInfo, int castTime) {
+    private void startCast(AbilityContext context, MKAbilityInfo abilityInfo, int castTime) {
         MKCore.LOGGER.debug("startCast {} {}", abilityInfo.getId(), castTime);
-        ServerCastingState serverCastingState = createServerCastingState(abilityInfo, castTime);
-        currentCast = serverCastingState;
-        if (startCastCallback != null){
+        currentCast = createServerCastingState(context, abilityInfo, castTime);
+        if (startCastCallback != null) {
             startCastCallback.accept(abilityInfo.getAbility());
         }
         PacketHandler.sendToTrackingMaybeSelf(new EntityStartCastPacket(entityData, abilityInfo.getId(), castTime), entityData.getEntity());
-
-        return serverCastingState.getAbilityCastState();
     }
 
     public void startCastClient(ResourceLocation abilityId, int castTicks) {
@@ -139,7 +143,7 @@ public class AbilityExecutor {
         }
     }
 
-    public CastState startAbility(MKAbility ability) {
+    public AbilityContext startAbility(AbilityContext context, MKAbility ability) {
         if (isCasting()) {
             MKCore.LOGGER.warn("startAbility({}) failed - {} currently casting", entityData::getEntity, ability::getAbilityId);
             return null;
@@ -154,18 +158,18 @@ public class AbilityExecutor {
         consumeResource(ability);
 
         int castTime = ability.getCastTime();
-        CastState state = startCast(info, castTime);
+        startCast(context, info, castTime);
         if (castTime > 0) {
-            return state;
+            return context;
         } else {
-            completeAbility(ability, info, state);
+            completeAbility(ability, info, context);
         }
-        return null;
+        return context;
     }
 
-    protected void completeAbility(MKAbility ability, MKAbilityInfo info, CastState castState) {
+    protected void completeAbility(MKAbility ability, MKAbilityInfo info, AbilityContext context) {
         // Finish the cast
-        ability.endCast(entityData.getEntity(), entityData, castState);
+        ability.endCast(entityData.getEntity(), entityData, context);
         if (completeAbilityCallback != null){
             completeAbilityCallback.accept(ability);
         }
@@ -182,8 +186,8 @@ public class AbilityExecutor {
         updateToggleAbility(ability);
     }
 
-    protected ServerCastingState createServerCastingState(MKAbilityInfo abilityInfo, int castTime) {
-        return new ServerCastingState(this, abilityInfo, castTime);
+    public ServerCastingState createServerCastingState(AbilityContext context, MKAbilityInfo abilityInfo, int castTime) {
+        return new ServerCastingState(context, this, abilityInfo, castTime);
     }
 
     protected ClientCastingState createClientCastingState(MKAbility ability, int castTicks) {
@@ -243,26 +247,26 @@ public class AbilityExecutor {
 
     static class ServerCastingState extends EntityCastingState {
         protected MKAbilityInfo info;
-        protected CastState abilityCastState;
+        protected AbilityContext abilityContext;
 
-        public ServerCastingState(AbilityExecutor executor, MKAbilityInfo abilityInfo, int castTicks) {
+        public ServerCastingState(AbilityContext context, AbilityExecutor executor, MKAbilityInfo abilityInfo, int castTicks) {
             super(executor, abilityInfo.getAbility(), castTicks);
             this.info = abilityInfo;
-            abilityCastState = abilityInfo.getAbility().createCastState(castTicks);
+            abilityContext = context;
         }
 
-        public CastState getAbilityCastState() {
-            return abilityCastState;
+        public AbilityContext getAbilityContext() {
+            return abilityContext;
         }
 
         @Override
         void activeTick() {
-            ability.continueCast(executor.entityData.getEntity(), executor.entityData, castTicks, abilityCastState);
+            ability.continueCast(executor.entityData.getEntity(), executor.entityData, castTicks, abilityContext);
         }
 
         @Override
         void finish() {
-            executor.completeAbility(ability, info, abilityCastState);
+            executor.completeAbility(ability, info, abilityContext);
         }
     }
 

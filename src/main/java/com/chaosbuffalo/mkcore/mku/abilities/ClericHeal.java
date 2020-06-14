@@ -2,15 +2,15 @@ package com.chaosbuffalo.mkcore.mku.abilities;
 
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.abilities.CastState;
+import com.chaosbuffalo.mkcore.abilities.AbilityContext;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
-import com.chaosbuffalo.mkcore.abilities.SingleTargetCastState;
 import com.chaosbuffalo.mkcore.abilities.ai.conditions.HealCondition;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.mkcore.mku.effects.ClericHealEffect;
+import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkcore.utils.SoundUtils;
@@ -49,11 +49,6 @@ public class ClericHeal extends MKAbility {
     }
 
     @Override
-    public CastState createCastState(int castTime) {
-        return new SingleTargetCastState(castTime);
-    }
-
-    @Override
     public TargetingContext getTargetContext() {
         return TargetingContexts.FRIENDLY;
     }
@@ -70,12 +65,11 @@ public class ClericHeal extends MKAbility {
     }
 
     @Override
-    public void endCast(LivingEntity entity, IMKEntityData data, CastState castState) {
-        super.endCast(entity, data, castState);
+    public void endCast(LivingEntity entity, IMKEntityData data, AbilityContext context) {
+        super.endCast(entity, data, context);
 
-        SingleTargetCastState singleTargetState = (SingleTargetCastState) castState;
-
-        singleTargetState.getTarget().ifPresent(target -> {
+        context.getMemory(MKMemoryModuleTypes.ABILITY_TARGET).ifPresent(target -> {
+            MKCore.LOGGER.info("ClericHeal.endCast {} {}", data.getEntity(), target);
             int level = 1;
             SpellCast heal = ClericHealEffect.Create(entity, BASE_VALUE, VALUE_SCALE).setTarget(target);
             target.addPotionEffect(heal.toPotionEffect(level));
@@ -116,12 +110,16 @@ public class ClericHeal extends MKAbility {
     }
 
     @Override
-    public void execute(LivingEntity entity, IMKEntityData pData) {
-        LivingEntity targetEntity = getSingleLivingTargetOrSelf(entity, getDistance(), true);
-        CastState state = pData.startAbility(this);
-        SingleTargetCastState singleTargetState = (SingleTargetCastState) state;
-        if (singleTargetState != null) {
-            singleTargetState.setTarget(targetEntity);
-        }
+    public void executeWithContext(IMKEntityData entityData, AbilityContext context) {
+        MKCore.LOGGER.info("ClericHeal.executeWithContext {}", entityData.getEntity());
+        entityData.startAbility(context, this);
+    }
+
+    @Override
+    public AbilityContext createAbilityContext(IMKEntityData pData) {
+        LivingEntity targetEntity = getSingleLivingTargetOrSelf(pData.getEntity(), getDistance(), true);
+
+        MKCore.LOGGER.info("ClericHeal.selectTarget {} {}", pData.getEntity(), targetEntity);
+        return AbilityContext.singleTarget(targetEntity);
     }
 }

@@ -1,9 +1,8 @@
 package com.chaosbuffalo.mkcore.mku.abilities;
 
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.abilities.CastState;
+import com.chaosbuffalo.mkcore.abilities.AbilityContext;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
-import com.chaosbuffalo.mkcore.abilities.SingleTargetCastState;
 import com.chaosbuffalo.mkcore.abilities.attributes.FloatAttribute;
 import com.chaosbuffalo.mkcore.abilities.attributes.IntAttribute;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
@@ -11,6 +10,7 @@ import com.chaosbuffalo.mkcore.core.damage.MKDamageSource;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.init.ModDamageTypes;
 import com.chaosbuffalo.mkcore.init.ModSounds;
+import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkcore.utils.SoundUtils;
@@ -54,11 +54,6 @@ public class EmberAbility extends MKAbility {
         return 25.0f;
     }
 
-    @Override
-    public CastState createCastState(int castTime) {
-        return new SingleTargetCastState(castTime);
-    }
-
     @Nullable
     @Override
     public SoundEvent getSpellCompleteSoundEvent() {
@@ -80,15 +75,11 @@ public class EmberAbility extends MKAbility {
     }
 
     @Override
-    public void endCast(LivingEntity entity, IMKEntityData data, CastState state) {
-        super.endCast(entity, data, state);
+    public void endCast(LivingEntity entity, IMKEntityData data, AbilityContext context) {
+        super.endCast(entity, data, context);
         MKCore.LOGGER.info("In end cast ember");
-        SingleTargetCastState singleTargetState = (SingleTargetCastState) state;
-        if (singleTargetState == null) {
-            return;
-        }
-        MKCore.LOGGER.info("has state");
-        singleTargetState.getTarget().ifPresent(targetEntity -> {
+        context.getMemory(MKMemoryModuleTypes.ABILITY_TARGET).ifPresent(targetEntity -> {
+            MKCore.LOGGER.info("has target {}", targetEntity);
             int burnDuration = burnTime.getValue();
             float amount = damage.getValue();
             MKCore.LOGGER.info("Ember damage {} burnTime {}", amount, burnDuration);
@@ -107,16 +98,18 @@ public class EmberAbility extends MKAbility {
     }
 
     @Override
-    public void execute(LivingEntity entity, IMKEntityData pData) {
-        LivingEntity targetEntity = getSingleLivingTarget(entity, getDistance());
-        MKCore.LOGGER.info("In cast ember");
-        if (targetEntity != null) {
-            MKCore.LOGGER.info("Found target: {}", targetEntity);
-            CastState state = pData.startAbility(this);
-            SingleTargetCastState singleTargetState = (SingleTargetCastState) state;
-            if (singleTargetState != null) {
-                singleTargetState.setTarget(targetEntity);
-            }
-        }
+    public AbilityContext createAbilityContext(IMKEntityData pData) {
+        MKCore.LOGGER.info("In cast ember selectTarget for {}", pData.getEntity());
+        LivingEntity targetEntity = getSingleLivingTarget(pData.getEntity(), getDistance());
+        return targetEntity != null ? AbilityContext.singleTarget(targetEntity) : null;
+    }
+
+    @Override
+    public void executeWithContext(IMKEntityData entityData, AbilityContext context) {
+        MKCore.LOGGER.info("In cast ember executeWithContext {}", entityData.getEntity());
+        context.getMemory(MKMemoryModuleTypes.ABILITY_TARGET).ifPresent(target -> {
+            MKCore.LOGGER.info("target {}", target);
+            entityData.startAbility(context, this);
+        });
     }
 }

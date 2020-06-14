@@ -2,10 +2,7 @@ package com.chaosbuffalo.mkcore.core;
 
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
-import com.chaosbuffalo.mkcore.abilities.CastState;
-import com.chaosbuffalo.mkcore.abilities.MKAbility;
-import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
-import com.chaosbuffalo.mkcore.abilities.MKToggleAbility;
+import com.chaosbuffalo.mkcore.abilities.*;
 import com.chaosbuffalo.mkcore.events.PlayerAbilityEvent;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
@@ -46,8 +43,8 @@ public class PlayerAbilityExecutor extends AbilityExecutor {
     }
 
     @Override
-    protected void completeAbility(MKAbility ability, MKAbilityInfo info, CastState castState) {
-        super.completeAbility(ability, info, castState);
+    protected void completeAbility(MKAbility ability, MKAbilityInfo info, AbilityContext context) {
+        super.completeAbility(ability, info, context);
         MinecraftForge.EVENT_BUS.post(new PlayerAbilityEvent.Completed(getPlayerData(), info));
     }
 
