@@ -27,8 +27,12 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
+    }
+
+    @SubscribeEvent
+    public static void onPlayerJoinWorld(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof PlayerEntity) {
-            MKCore.getPlayer((PlayerEntity) event.getEntity()).ifPresent(MKPlayerData::onJoinWorld);
+            MKCore.getPlayer(event.getEntity()).ifPresent(MKPlayerData::onJoinWorld);
         }
     }
 

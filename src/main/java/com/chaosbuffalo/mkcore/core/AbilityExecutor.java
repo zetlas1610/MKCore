@@ -72,7 +72,9 @@ public class AbilityExecutor {
     }
 
     public void onJoinWorld() {
-        checkPassiveEffects();
+        if (!entityData.getEntity().getEntityWorld().isRemote) {
+            checkPassiveEffects();
+        }
     }
 
     public void setCooldown(ResourceLocation id, int ticks) {
