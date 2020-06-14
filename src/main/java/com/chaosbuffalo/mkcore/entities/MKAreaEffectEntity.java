@@ -310,11 +310,4 @@ public class MKAreaEffectEntity extends AreaEffectCloudEntity {
     public IPacket<?> createSpawnPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
-
-
-    @Override
-    public boolean writeUnlessPassenger(CompoundNBT compound) {
-        return false;
-    }
-
 }
