@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.mku.entity.ai.sensor;
 
-import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
+import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKUMemoryModuleTypes;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
@@ -14,13 +14,13 @@ public class MovementStrategySensor extends Sensor<CreatureEntity> {
 
     @Override
     protected void update(ServerWorld worldIn, CreatureEntity entityIn) {
-        entityIn.getBrain().getMemory(MKMemoryModuleTypes.MOVEMENT_STRATEGY).ifPresent(
+        entityIn.getBrain().getMemory(MKUMemoryModuleTypes.MOVEMENT_STRATEGY).ifPresent(
                 movementStrategy -> movementStrategy.update(worldIn, entityIn));
     }
 
     @Override
     public Set<MemoryModuleType<?>> getUsedMemories() {
-        return ImmutableSet.of(MKMemoryModuleTypes.THREAT_TARGET, MKMemoryModuleTypes.VISIBLE_ENEMIES,
-                MemoryModuleType.WALK_TARGET, MKMemoryModuleTypes.MOVEMENT_STRATEGY);
+        return ImmutableSet.of(MKUMemoryModuleTypes.THREAT_TARGET, MKUMemoryModuleTypes.VISIBLE_ENEMIES,
+                MemoryModuleType.WALK_TARGET, MKUMemoryModuleTypes.MOVEMENT_STRATEGY);
     }
 }

@@ -1,6 +1,7 @@
 package com.chaosbuffalo.mkcore.mku.abilities;
 
 import com.chaosbuffalo.mkcore.MKCore;
+import com.chaosbuffalo.mkcore.abilities.MKAbilityMemories;
 import com.chaosbuffalo.mkcore.abilities.AbilityContext;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.attributes.FloatAttribute;
@@ -10,7 +11,6 @@ import com.chaosbuffalo.mkcore.core.damage.MKDamageSource;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.init.ModDamageTypes;
 import com.chaosbuffalo.mkcore.init.ModSounds;
-import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkcore.utils.SoundUtils;
@@ -78,7 +78,7 @@ public class EmberAbility extends MKAbility {
     public void endCast(LivingEntity entity, IMKEntityData data, AbilityContext context) {
         super.endCast(entity, data, context);
         MKCore.LOGGER.info("In end cast ember");
-        context.getMemory(MKMemoryModuleTypes.ABILITY_TARGET).ifPresent(targetEntity -> {
+        context.getMemory(MKAbilityMemories.ABILITY_TARGET).ifPresent(targetEntity -> {
             MKCore.LOGGER.info("has target {}", targetEntity);
             int burnDuration = burnTime.getValue();
             float amount = damage.getValue();
@@ -107,7 +107,7 @@ public class EmberAbility extends MKAbility {
     @Override
     public void executeWithContext(IMKEntityData entityData, AbilityContext context) {
         MKCore.LOGGER.info("In cast ember executeWithContext {}", entityData.getEntity());
-        context.getMemory(MKMemoryModuleTypes.ABILITY_TARGET).ifPresent(target -> {
+        context.getMemory(MKAbilityMemories.ABILITY_TARGET).ifPresent(target -> {
             MKCore.LOGGER.info("target {}", target);
             entityData.startAbility(context, this);
         });

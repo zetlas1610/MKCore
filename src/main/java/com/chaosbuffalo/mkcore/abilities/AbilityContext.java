@@ -1,6 +1,5 @@
 package com.chaosbuffalo.mkcore.abilities;
 
-import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
@@ -43,6 +42,6 @@ public class AbilityContext {
     }
 
     public static AbilityContext singleTarget(LivingEntity target) {
-        return new AbilityContext().withMemory(MKMemoryModuleTypes.ABILITY_TARGET, Optional.ofNullable(target));
+        return new AbilityContext().withMemory(MKAbilityMemories.ABILITY_TARGET, Optional.ofNullable(target));
     }
 }

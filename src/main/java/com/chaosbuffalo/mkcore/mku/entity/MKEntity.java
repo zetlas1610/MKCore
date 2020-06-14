@@ -1,8 +1,9 @@
 package com.chaosbuffalo.mkcore.mku.entity;
 
 import com.chaosbuffalo.mkcore.Capabilities;
+import com.chaosbuffalo.mkcore.abilities.MKAbilityMemories;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
-import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
+import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKUMemoryModuleTypes;
 import com.chaosbuffalo.mkcore.mku.entity.ai.memory.ThreatMapEntry;
 import com.chaosbuffalo.mkcore.mku.entity.ai.sensor.MKSensorTypes;
 import com.google.common.collect.ImmutableList;
@@ -44,10 +45,10 @@ public abstract class MKEntity extends CreatureEntity {
     }
 
     public void addThreat(LivingEntity entity, int value) {
-        Optional<Map<LivingEntity, ThreatMapEntry>> threatMap = this.brain.getMemory(MKMemoryModuleTypes.THREAT_MAP);
+        Optional<Map<LivingEntity, ThreatMapEntry>> threatMap = this.brain.getMemory(MKUMemoryModuleTypes.THREAT_MAP);
         Map<LivingEntity, ThreatMapEntry> newMap = threatMap.orElse(new HashMap<>());
         newMap.put(entity, newMap.getOrDefault(entity, new ThreatMapEntry()).addThreat(value));
-        this.brain.setMemory(MKMemoryModuleTypes.THREAT_MAP, newMap);
+        this.brain.setMemory(MKUMemoryModuleTypes.THREAT_MAP, newMap);
     }
 
     protected void updateEntityCastState(){
@@ -100,10 +101,10 @@ public abstract class MKEntity extends CreatureEntity {
     }
 
     public void reduceThreat(LivingEntity entity, int value) {
-        Optional<Map<LivingEntity, ThreatMapEntry>> threatMap = this.brain.getMemory(MKMemoryModuleTypes.THREAT_MAP);
+        Optional<Map<LivingEntity, ThreatMapEntry>> threatMap = this.brain.getMemory(MKUMemoryModuleTypes.THREAT_MAP);
         Map<LivingEntity, ThreatMapEntry> newMap = threatMap.orElse(new HashMap<>());
         newMap.put(entity, newMap.getOrDefault(entity, new ThreatMapEntry()).subtractThreat(value));
-        this.brain.setMemory(MKMemoryModuleTypes.THREAT_MAP, newMap);
+        this.brain.setMemory(MKUMemoryModuleTypes.THREAT_MAP, newMap);
     }
 
     @Override
@@ -137,17 +138,17 @@ public abstract class MKEntity extends CreatureEntity {
     protected Brain<MKEntity> createBrain(Dynamic<?> dynamicIn) {
         return new Brain<>(
                 ImmutableList.of(
-                        MKMemoryModuleTypes.ALLIES,
-                        MKMemoryModuleTypes.ENEMIES,
-                        MKMemoryModuleTypes.THREAT_LIST,
-                        MKMemoryModuleTypes.THREAT_MAP,
-                        MKMemoryModuleTypes.VISIBLE_ENEMIES,
+                        MKUMemoryModuleTypes.ALLIES,
+                        MKUMemoryModuleTypes.ENEMIES,
+                        MKUMemoryModuleTypes.THREAT_LIST,
+                        MKUMemoryModuleTypes.THREAT_MAP,
+                        MKUMemoryModuleTypes.VISIBLE_ENEMIES,
                         MemoryModuleType.WALK_TARGET,
                         MemoryModuleType.PATH,
-                        MKMemoryModuleTypes.MOVEMENT_STRATEGY,
-                        MKMemoryModuleTypes.MOVEMENT_TARGET,
-                        MKMemoryModuleTypes.CURRENT_ABILITY,
-                        MKMemoryModuleTypes.ABILITY_TARGET),
+                        MKUMemoryModuleTypes.MOVEMENT_STRATEGY,
+                        MKUMemoryModuleTypes.MOVEMENT_TARGET,
+                        MKUMemoryModuleTypes.CURRENT_ABILITY,
+                        MKAbilityMemories.ABILITY_TARGET),
                 ImmutableList.of(
                         MKSensorTypes.ENTITIES_SENSOR,
                         MKSensorTypes.THREAT_SENSOR,

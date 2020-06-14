@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.mku.entity.ai;
 
-import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
+import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKUMemoryModuleTypes;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.Goal;
@@ -19,7 +19,7 @@ public class LookAtThreatTargetGoal extends Goal {
 
     @Override
     public boolean shouldExecute() {
-        Optional<LivingEntity> target = entity.getBrain().getMemory(MKMemoryModuleTypes.THREAT_TARGET);
+        Optional<LivingEntity> target = entity.getBrain().getMemory(MKUMemoryModuleTypes.THREAT_TARGET);
         if (target.isPresent()) {
             this.target = target.get();
             return true;
@@ -29,7 +29,7 @@ public class LookAtThreatTargetGoal extends Goal {
 
     @Override
     public boolean shouldContinueExecuting() {
-        Optional<LivingEntity> target = entity.getBrain().getMemory(MKMemoryModuleTypes.THREAT_TARGET);
+        Optional<LivingEntity> target = entity.getBrain().getMemory(MKUMemoryModuleTypes.THREAT_TARGET);
         return target.isPresent() && this.target != null && this.target.isEntityEqual(target.get());
     }
 

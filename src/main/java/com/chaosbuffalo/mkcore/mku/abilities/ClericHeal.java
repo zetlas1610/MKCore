@@ -2,6 +2,7 @@ package com.chaosbuffalo.mkcore.mku.abilities;
 
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
+import com.chaosbuffalo.mkcore.abilities.MKAbilityMemories;
 import com.chaosbuffalo.mkcore.abilities.AbilityContext;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.ai.conditions.HealCondition;
@@ -10,7 +11,6 @@ import com.chaosbuffalo.mkcore.effects.SpellCast;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.mkcore.mku.effects.ClericHealEffect;
-import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkcore.utils.SoundUtils;
@@ -68,7 +68,7 @@ public class ClericHeal extends MKAbility {
     public void endCast(LivingEntity entity, IMKEntityData data, AbilityContext context) {
         super.endCast(entity, data, context);
 
-        context.getMemory(MKMemoryModuleTypes.ABILITY_TARGET).ifPresent(target -> {
+        context.getMemory(MKAbilityMemories.ABILITY_TARGET).ifPresent(target -> {
             MKCore.LOGGER.info("ClericHeal.endCast {} {}", data.getEntity(), target);
             int level = 1;
             SpellCast heal = ClericHealEffect.Create(entity, BASE_VALUE, VALUE_SCALE).setTarget(target);

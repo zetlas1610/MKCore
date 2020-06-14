@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy;
 
-import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
+import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKUMemoryModuleTypes;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.Brain;
@@ -23,7 +23,7 @@ public class FollowMovementStrategy extends MovementStrategy {
     @Override
     public void update(ServerWorld world, CreatureEntity entity) {
         Brain<?> brain = entity.getBrain();
-        Optional<LivingEntity> targetOpt = brain.getMemory(MKMemoryModuleTypes.MOVEMENT_TARGET);
+        Optional<LivingEntity> targetOpt = brain.getMemory(MKUMemoryModuleTypes.MOVEMENT_TARGET);
         if (targetOpt.isPresent()) {
             LivingEntity target = targetOpt.get();
             if (target.isEntityEqual(entity)) {
