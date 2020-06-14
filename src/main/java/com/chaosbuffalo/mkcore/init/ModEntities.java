@@ -19,6 +19,8 @@ public class ModEntities {
                 .setTrackingRange(64)
                 .setUpdateInterval(10)
                 .setShouldReceiveVelocityUpdates(true)
+                .disableSummoning()
+                .disableSerialization()
                 .build("mk_area_effect")
                 .setRegistryName(MKCore.makeRL("mk_area_effect")));
     }
