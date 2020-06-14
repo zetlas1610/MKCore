@@ -283,10 +283,10 @@ public class SpellTriggers {
                 livingTarget);
     }
 
-    static <T> void selectiveTrigger(LivingEntity entity, Map<SpellPotionBase, T> triggers, BiConsumer<T, EffectInstance> consumer) {
+    static <T> void selectiveTrigger(LivingEntity entity, Map<SpellEffectBase, T> triggers, BiConsumer<T, EffectInstance> consumer) {
         for (EffectInstance effectInstance : entity.getActivePotionEffects()) {
-            if (effectInstance.getPotion() instanceof SpellPotionBase) {
-                SpellPotionBase effect = (SpellPotionBase) effectInstance.getPotion();
+            if (effectInstance.getPotion() instanceof SpellEffectBase) {
+                SpellEffectBase effect = (SpellEffectBase) effectInstance.getPotion();
                 T trigger = triggers.get(effect);
                 if (trigger != null) {
                     consumer.accept(trigger, effectInstance);
