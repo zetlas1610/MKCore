@@ -58,7 +58,11 @@ public class AbilityExecutor {
                 context = ability.createAbilityContext(entityData);
             }
             if (context != null) {
-                ability.executeWithContext(entityData, context);
+                if (ability.isExecutableContext(context)) {
+                    ability.executeWithContext(entityData, context);
+                } else {
+                    MKCore.LOGGER.debug("Entity {} tried to execute ability {} with missing memories!", entityData.getEntity(), abilityId);
+                }
             } else {
                 MKCore.LOGGER.warn("Entity {} tried to execute ability {} with a null context!", entityData.getEntity(), abilityId);
             }

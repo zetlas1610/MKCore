@@ -11,11 +11,13 @@ import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.mkcore.utils.RayTraceUtils;
 import com.chaosbuffalo.targeting_api.Targeting;
 import com.chaosbuffalo.targeting_api.TargetingContext;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -29,6 +31,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
@@ -158,7 +161,7 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         return false;
     }
 
-    protected boolean isValidTarget(LivingEntity caster, LivingEntity target) {
+    public boolean isValidTarget(LivingEntity caster, LivingEntity target) {
         return Targeting.isValidTarget(getTargetContext(), caster, target);
     }
 
@@ -249,6 +252,14 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
 
     public AbilityContext createAbilityContext(IMKEntityData pData) {
         return AbilityContext.EMPTY;
+    }
+
+    public Set<MemoryModuleType<?>> getRequiredMemories() {
+        return ImmutableSet.of();
+    }
+
+    public boolean isExecutableContext(AbilityContext context) {
+        return getRequiredMemories().stream().allMatch(context::hasMemory);
     }
 
     public void continueCast(LivingEntity entity, IMKEntityData data, int castTimeLeft, AbilityContext context) {

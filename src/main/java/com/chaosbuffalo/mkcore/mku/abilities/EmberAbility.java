@@ -16,7 +16,9 @@ import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkcore.utils.SoundUtils;
 import com.chaosbuffalo.targeting_api.TargetingContext;
 import com.chaosbuffalo.targeting_api.TargetingContexts;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -25,6 +27,7 @@ import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
 import java.util.Random;
+import java.util.Set;
 
 
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -77,9 +80,9 @@ public class EmberAbility extends MKAbility {
     @Override
     public void endCast(LivingEntity entity, IMKEntityData data, AbilityContext context) {
         super.endCast(entity, data, context);
-        MKCore.LOGGER.info("In end cast ember");
+        MKCore.LOGGER.info("EmberAbility.endCast {}", entity);
         context.getMemory(MKAbilityMemories.ABILITY_TARGET).ifPresent(targetEntity -> {
-            MKCore.LOGGER.info("has target {}", targetEntity);
+            MKCore.LOGGER.info("with target {}", targetEntity);
             int burnDuration = burnTime.getValue();
             float amount = damage.getValue();
             MKCore.LOGGER.info("Ember damage {} burnTime {}", amount, burnDuration);
@@ -98,17 +101,22 @@ public class EmberAbility extends MKAbility {
     }
 
     @Override
+    public Set<MemoryModuleType<?>> getRequiredMemories() {
+        return ImmutableSet.of(MKAbilityMemories.ABILITY_TARGET);
+    }
+
+    @Override
     public AbilityContext createAbilityContext(IMKEntityData pData) {
-        MKCore.LOGGER.info("In cast ember selectTarget for {}", pData.getEntity());
         LivingEntity targetEntity = getSingleLivingTarget(pData.getEntity(), getDistance());
-        return targetEntity != null ? AbilityContext.singleTarget(targetEntity) : null;
+        MKCore.LOGGER.info("EmberAbility.createAbilityContext {} {}", pData.getEntity(), targetEntity);
+        return AbilityContext.singleTarget(targetEntity);
     }
 
     @Override
     public void executeWithContext(IMKEntityData entityData, AbilityContext context) {
-        MKCore.LOGGER.info("In cast ember executeWithContext {}", entityData.getEntity());
+        MKCore.LOGGER.info("EmberAbility.executeWithContext {}", entityData.getEntity());
         context.getMemory(MKAbilityMemories.ABILITY_TARGET).ifPresent(target -> {
-            MKCore.LOGGER.info("target {}", target);
+            MKCore.LOGGER.info("with target {}", target);
             entityData.startAbility(context, this);
         });
     }

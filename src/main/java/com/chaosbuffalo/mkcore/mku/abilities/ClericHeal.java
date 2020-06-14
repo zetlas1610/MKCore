@@ -16,7 +16,9 @@ import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkcore.utils.SoundUtils;
 import com.chaosbuffalo.targeting_api.TargetingContext;
 import com.chaosbuffalo.targeting_api.TargetingContexts;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -24,6 +26,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
+import java.util.Set;
 
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClericHeal extends MKAbility {
@@ -100,13 +103,18 @@ public class ClericHeal extends MKAbility {
     }
 
     @Override
-    protected boolean isValidTarget(LivingEntity caster, LivingEntity target) {
+    public boolean isValidTarget(LivingEntity caster, LivingEntity target) {
         return ClericHealEffect.INSTANCE.isValidTarget(getTargetContext(), caster, target);
     }
 
     @Override
     public int getCastTime() {
         return GameConstants.TICKS_PER_SECOND / 4;
+    }
+
+    @Override
+    public Set<MemoryModuleType<?>> getRequiredMemories() {
+        return ImmutableSet.of(MKAbilityMemories.ABILITY_TARGET);
     }
 
     @Override
@@ -118,7 +126,6 @@ public class ClericHeal extends MKAbility {
     @Override
     public AbilityContext createAbilityContext(IMKEntityData pData) {
         LivingEntity targetEntity = getSingleLivingTargetOrSelf(pData.getEntity(), getDistance(), true);
-
         MKCore.LOGGER.info("ClericHeal.selectTarget {} {}", pData.getEntity(), targetEntity);
         return AbilityContext.singleTarget(targetEntity);
     }

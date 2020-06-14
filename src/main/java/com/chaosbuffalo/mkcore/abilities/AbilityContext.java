@@ -21,11 +21,13 @@ public class AbilityContext {
         this.memories = memories;
     }
 
-    public <U> void setMemory(MemoryModuleType<U> memoryType, Optional<U> value) {
+    public <U> void setMemory(MemoryModuleType<U> memoryType,
+                              @SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<U> value) {
         memories.put(memoryType, value);
     }
 
-    public <U> AbilityContext withMemory(MemoryModuleType<U> memoryType, Optional<U> value) {
+    public <U> AbilityContext withMemory(MemoryModuleType<U> memoryType,
+                                         @SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<U> value) {
         setMemory(memoryType, value);
         return this;
     }
@@ -39,6 +41,11 @@ public class AbilityContext {
     @SuppressWarnings("unchecked")
     public <T> Optional<T> getMemory(MemoryModuleType<T> memory) {
         return (Optional<T>) memories.get(memory);
+    }
+
+    public <T> boolean hasMemory(MemoryModuleType<T> memory) {
+        Optional<T> type = getMemory(memory);
+        return type != null && type.isPresent();
     }
 
     public static AbilityContext singleTarget(LivingEntity target) {
