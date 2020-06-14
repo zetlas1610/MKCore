@@ -16,9 +16,7 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import java.util.function.*;
 
 public class StatCommand {
 
@@ -53,14 +51,14 @@ public class StatCommand {
     }
 
     static ArgumentBuilder<CommandSource, ?> createSimpleFloatStat(String name, Function<PlayerStatsModule, Float> getter, BiConsumer<PlayerStatsModule, Float> setter) {
-        Function<PlayerEntity, Integer> getAction = playerEntity -> {
+        ToIntFunction<PlayerEntity> getAction = playerEntity -> {
             playerEntity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap ->
                     TextUtils.sendPlayerChatMessage(playerEntity, String.format("%s is %f", name, getter.apply(cap.getStats()))));
 
             return Command.SINGLE_SUCCESS;
         };
 
-        BiFunction<PlayerEntity, Float, Integer> setAction;
+        ToIntBiFunction<PlayerEntity, Float> setAction;
         if (setter != null) {
             setAction = (playerEntity, value) -> {
                 playerEntity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap -> {
@@ -77,11 +75,12 @@ public class StatCommand {
                 return Command.SINGLE_SUCCESS;
             };
         }
+
         return createCore(name, getAction, setAction);
     }
 
     static ArgumentBuilder<CommandSource, ?> createAttributeStat(String name, IAttribute attribute) {
-        Function<PlayerEntity, Integer> getAction = playerEntity -> {
+        ToIntFunction<PlayerEntity> getAction = playerEntity -> {
             IAttributeInstance instance = playerEntity.getAttribute(attribute);
             //noinspection ConstantConditions
             if (instance != null) {
@@ -94,7 +93,7 @@ public class StatCommand {
             return Command.SINGLE_SUCCESS;
         };
 
-        BiFunction<PlayerEntity, Float, Integer> setAction = (playerEntity, value) -> {
+        ToIntBiFunction<PlayerEntity, Float> setAction = (playerEntity, value) -> {
             IAttributeInstance instance = playerEntity.getAttribute(attribute);
             //noinspection ConstantConditions
             if (instance != null) {
@@ -107,17 +106,16 @@ public class StatCommand {
             return Command.SINGLE_SUCCESS;
         };
 
-
         return createCore(name, getAction, setAction);
     }
 
-    static ArgumentBuilder<CommandSource, ?> createCore(String name, Function<PlayerEntity, Integer> getterAction, BiFunction<PlayerEntity, Float, Integer> setterAction) {
+    static ArgumentBuilder<CommandSource, ?> createCore(String name, ToIntFunction<PlayerEntity> getterAction, ToIntBiFunction<PlayerEntity, Float> setterAction) {
         return Commands.argument("player", EntityArgument.player())
                 .then(Commands.literal(name)
-                        .executes(ctx -> getterAction.apply(EntityArgument.getPlayer(ctx, "player")))
+                        .executes(ctx -> getterAction.applyAsInt(EntityArgument.getPlayer(ctx, "player")))
                         .then(Commands.argument("amount", FloatArgumentType.floatArg())
                                 .requires(s -> s.hasPermissionLevel(ServerLifecycleHooks.getCurrentServer().getOpPermissionLevel()))
-                                .executes(ctx -> setterAction.apply(EntityArgument.getPlayer(ctx, "player"),
+                                .executes(ctx -> setterAction.applyAsInt(EntityArgument.getPlayer(ctx, "player"),
                                         FloatArgumentType.getFloat(ctx, "amount")))));
     }
 }
