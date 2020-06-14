@@ -1,5 +1,7 @@
 package com.chaosbuffalo.mkcore.mku.entity;
 
+import com.chaosbuffalo.mkcore.Capabilities;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
 import com.chaosbuffalo.mkcore.mku.entity.ai.memory.ThreatMapEntry;
 import com.chaosbuffalo.mkcore.mku.entity.ai.sensor.MKSensorTypes;
@@ -21,9 +23,24 @@ import java.util.Map;
 import java.util.Optional;
 
 public abstract class MKEntity extends CreatureEntity {
+    private int castAnimTimer;
+    private VisualCastState visualCastState;
+    private MKAbility castingAbility;
+    public enum VisualCastState {
+        NONE,
+        CASTING,
+        RELEASE,
+    }
 
     protected MKEntity(EntityType<? extends CreatureEntity> type, World worldIn) {
         super(type, worldIn);
+        castAnimTimer = 0;
+        visualCastState = VisualCastState.NONE;
+        castingAbility = null;
+        getCapability(Capabilities.ENTITY_CAPABILITY).ifPresent((mkEntityData -> {
+            mkEntityData.getAbilityExecutor().setStartCastCallback(this::startCast);
+            mkEntityData.getAbilityExecutor().setCompleteAbilityCallback(this::endCast);
+        }));
     }
 
     public void addThreat(LivingEntity entity, int value) {
@@ -33,10 +50,45 @@ public abstract class MKEntity extends CreatureEntity {
         this.brain.setMemory(MKMemoryModuleTypes.THREAT_MAP, newMap);
     }
 
+    protected void updateEntityCastState(){
+        if (castAnimTimer > 0){
+            castAnimTimer--;
+            if (castAnimTimer == 0){
+                castingAbility = null;
+                visualCastState = VisualCastState.NONE;
+            }
+        }
+    }
+
+
     @Override
     public void livingTick() {
         updateArmSwingProgress();
+        updateEntityCastState();
         super.livingTick();
+    }
+
+    public VisualCastState getVisualCastState() {
+        return visualCastState;
+    }
+
+    public int getCastAnimTimer() {
+        return castAnimTimer;
+    }
+
+    public MKAbility getCastingAbility() {
+        return castingAbility;
+    }
+
+    public void startCast(MKAbility ability){
+        visualCastState = VisualCastState.CASTING;
+        castingAbility = ability;
+    }
+
+    public void endCast(MKAbility ability){
+        castingAbility = ability;
+        visualCastState = VisualCastState.RELEASE;
+        castAnimTimer = 15;
     }
 
     public abstract void enterDefaultMovementState(LivingEntity target);
