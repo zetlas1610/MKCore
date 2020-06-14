@@ -20,14 +20,27 @@ import net.minecraft.util.SoundEvent;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class AbilityExecutor {
     protected final IMKEntityData entityData;
     private EntityCastingState currentCast;
     private final Map<ResourceLocation, MKToggleAbility> activeToggleMap = new HashMap<>();
+    private Consumer<MKAbility> startCastCallback;
+    private Consumer<MKAbility> completeAbilityCallback;
 
     public AbilityExecutor(IMKEntityData entityData) {
         this.entityData = entityData;
+        startCastCallback = null;
+        completeAbilityCallback = null;
+    }
+
+    public void setCompleteAbilityCallback(Consumer<MKAbility> completeAbilityCallback) {
+        this.completeAbilityCallback = completeAbilityCallback;
+    }
+
+    public void setStartCastCallback(Consumer<MKAbility> startCastCallback) {
+        this.startCastCallback = startCastCallback;
     }
 
     protected boolean abilityExecutionCheck(MKAbility ability, MKAbilityInfo info) {
@@ -94,7 +107,9 @@ public class AbilityExecutor {
         MKCore.LOGGER.debug("startCast {} {}", abilityInfo.getId(), castTime);
         ServerCastingState serverCastingState = createServerCastingState(abilityInfo, castTime);
         currentCast = serverCastingState;
-
+        if (startCastCallback != null){
+            startCastCallback.accept(abilityInfo.getAbility());
+        }
         PacketHandler.sendToTrackingMaybeSelf(new EntityStartCastPacket(entityData, abilityInfo.getId(), castTime), entityData.getEntity());
 
         return serverCastingState.getAbilityCastState();
@@ -105,6 +120,9 @@ public class AbilityExecutor {
         MKAbility ability = MKCoreRegistry.getAbility(abilityId);
         if (ability != null) {
             currentCast = createClientCastingState(ability, castTicks);
+            if (startCastCallback != null){
+                startCastCallback.accept(ability);
+            }
         } else {
             clearCastingAbility();
         }
@@ -146,7 +164,9 @@ public class AbilityExecutor {
     protected void completeAbility(MKAbility ability, MKAbilityInfo info, CastState castState) {
         // Finish the cast
         ability.endCast(entityData.getEntity(), entityData, castState);
-
+        if (completeAbilityCallback != null){
+            completeAbilityCallback.accept(ability);
+        }
         int cooldown = MKCombatFormulas.applyCooldownReduction(entityData, ability.getCooldownTicks());
         setCooldown(ability.getAbilityId(), cooldown);
         SoundEvent sound = ability.getSpellCompleteSoundEvent();
@@ -272,6 +292,9 @@ public class AbilityExecutor {
             if (playing && sound != null) {
                 Minecraft.getInstance().getSoundHandler().stop(sound);
                 playing = false;
+            }
+            if (executor.completeAbilityCallback != null){
+                executor.completeAbilityCallback.accept(ability);
             }
         }
     }

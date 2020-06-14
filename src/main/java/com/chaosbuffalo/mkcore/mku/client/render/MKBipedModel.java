@@ -1,33 +1,43 @@
 package com.chaosbuffalo.mkcore.mku.client.render;
 
-import com.chaosbuffalo.mkcore.Capabilities;
+
+import com.chaosbuffalo.mkcore.mku.client.render.casting_animations.AdditionalBipedAnimation;
+import com.chaosbuffalo.mkcore.mku.client.render.casting_animations.BipedCastAnimation;
+import com.chaosbuffalo.mkcore.mku.client.render.casting_animations.BipedCompleteCastAnimation;
 import com.chaosbuffalo.mkcore.mku.entity.MKEntity;
 import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.util.math.MathHelper;
 
 public class MKBipedModel<T extends MKEntity> extends BipedModel<T> {
+    private final BipedCastAnimation castAnimation = new BipedCastAnimation(this);
+    private final BipedCompleteCastAnimation completeCastAnimation = new BipedCompleteCastAnimation(this);
+
+
     protected MKBipedModel(float modelSize, float yOffsetIn, int textureWidthIn, int textureHeightIn) {
         super(modelSize, yOffsetIn, textureWidthIn, textureHeightIn);
     }
 
     @Override
-    public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount,
+                                  float ageInTicks, float netHeadYaw, float headPitch) {
         super.setRotationAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        entityIn.getCapability(Capabilities.ENTITY_CAPABILITY).ifPresent(mkEntityData -> {
-            if (mkEntityData.getAbilityExecutor().isCasting()) {
-                int castTicks = mkEntityData.getAbilityExecutor().getCastTicks();
-                float castProgress = castTicks / 20.0f;
-                float armZ = MathHelper.sin((float) (Math.PI / 2.0f + castProgress * (float) Math.PI / 2.f)) * 1.0f * (float) Math.PI / 4.0f;
-                float angle = (float) ((float) (Math.PI / 2.0f) + MathHelper.sin((float) (castProgress * Math.PI)) * (Math.PI / 8.0f));
-                this.bipedRightArm.rotateAngleY = 0.0F;
-                this.bipedLeftArm.rotateAngleY = 0.0F;
-                this.bipedRightArm.rotateAngleZ = -armZ;
-                this.bipedLeftArm.rotateAngleZ = armZ;
-                this.bipedRightArm.rotateAngleX = -angle;
-                this.bipedLeftArm.rotateAngleX = -angle;
-            }
-        });
+        AdditionalBipedAnimation<MKEntity> animation = getAdditionalAnimation(entityIn);
+        if (animation != null){
+            animation.apply(entityIn);
+        }
     }
+
+    public AdditionalBipedAnimation<MKEntity> getAdditionalAnimation(T entityIn){
+        switch (entityIn.getVisualCastState()){
+            case CASTING:
+                return castAnimation;
+            case RELEASE:
+                return completeCastAnimation;
+            case NONE:
+            default:
+                return null;
+        }
+    }
+
 
     public MKBipedModel(float modelSize) {
         super(modelSize);

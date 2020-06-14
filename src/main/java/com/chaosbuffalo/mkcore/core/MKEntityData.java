@@ -2,6 +2,7 @@ package com.chaosbuffalo.mkcore.core;
 
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
+import com.chaosbuffalo.mkcore.mku.entity.MKEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.nbt.CompoundNBT;
@@ -22,6 +23,11 @@ public class MKEntityData implements IMKEntityData {
         knowledge = new EntityAbilityKnowledge(this);
         abilityExecutor = new AbilityExecutor(this);
         stats = new EntityStatsModule(this);
+        if (entity instanceof MKEntity){
+            MKEntity mkEntity = (MKEntity) entity;
+            abilityExecutor.setStartCastCallback(mkEntity::startCast);
+            abilityExecutor.setCompleteAbilityCallback(mkEntity::endCast);
+        }
         registerAttributes();
     }
 
