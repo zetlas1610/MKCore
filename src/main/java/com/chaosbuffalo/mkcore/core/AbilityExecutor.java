@@ -256,7 +256,8 @@ public class AbilityExecutor {
         void begin() {
             SoundEvent event = ability.getCastingSoundEvent();
             if (event != null) {
-                sound = new MovingSoundCasting(executor.entityData.getEntity(), event, SoundCategory.PLAYERS, castTicks);
+                sound = new MovingSoundCasting(executor.entityData.getEntity(), event,
+                        executor.entityData.getEntity().getSoundCategory(), castTicks);
                 Minecraft.getInstance().getSoundHandler().play(sound);
                 playing = true;
             }

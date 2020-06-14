@@ -1,6 +1,7 @@
 package com.chaosbuffalo.mkcore.client.sound;
 
 import com.chaosbuffalo.mkcore.MKCore;
+import com.chaosbuffalo.mkcore.core.AbilityExecutor;
 import com.chaosbuffalo.mkcore.core.PlayerAbilityExecutor;
 import net.minecraft.client.audio.TickableSound;
 import net.minecraft.entity.LivingEntity;
@@ -30,30 +31,30 @@ public class MovingSoundCasting extends TickableSound {
             return;
         }
 
-        if (caster instanceof PlayerEntity) {
-            donePlaying = MKCore.getPlayer(((PlayerEntity) caster)).map(cap -> {
-                PlayerAbilityExecutor executor = cap.getAbilityExecutor();
-                if (!executor.isCasting()) {
-                    return true;
-                }
 
-                int currentCast = executor.getCastTicks();
-                int lerpTime = (int) (castTime * .2f);
-                int timeCasting = castTime - currentCast;
-                int fadeOutPoint = castTime - lerpTime;
-                if (timeCasting <= lerpTime) {
-                    volume = lerp(0.0f, 1.0f,
-                            (float) timeCasting / (float) lerpTime);
-                } else if (timeCasting >= fadeOutPoint) {
-                    volume = lerp(1.0f, 0.0f,
-                            (float) (timeCasting - fadeOutPoint) / (float) lerpTime);
-                }
-                return false;
-            }).orElse(true);
+        donePlaying = MKCore.getEntityData((caster)).map(cap -> {
+            AbilityExecutor executor = cap.getAbilityExecutor();
+            if (!executor.isCasting()) {
+                return true;
+            }
 
-            if (donePlaying)
-                return;
-        }
+            int currentCast = executor.getCastTicks();
+            int lerpTime = (int) (castTime * .2f);
+            int timeCasting = castTime - currentCast;
+            int fadeOutPoint = castTime - lerpTime;
+            if (timeCasting <= lerpTime) {
+                volume = lerp(0.0f, 1.0f,
+                        (float) timeCasting / (float) lerpTime);
+            } else if (timeCasting >= fadeOutPoint) {
+                volume = lerp(1.0f, 0.0f,
+                        (float) (timeCasting - fadeOutPoint) / (float) lerpTime);
+            }
+            return false;
+        }).orElse(true);
+
+        if (donePlaying)
+            return;
+
         x = (float) caster.getPosX();
         y = (float) caster.getPosY();
         z = (float) caster.getPosZ();
