@@ -2,6 +2,7 @@ package com.chaosbuffalo.mkcore.mku.entity.ai;
 
 import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.MKCore;
+import com.chaosbuffalo.mkcore.abilities.ai.BrainAbilityContext;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityMemories;
 import com.chaosbuffalo.mkcore.abilities.AbilityContext;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
@@ -57,7 +58,7 @@ public class UseAbilityGoal extends Goal {
     public void startExecuting() {
         entity.faceEntity(target, 360.0f, 360.0f);
         entity.getLookController().setLookPositionWithEntity(target, 50.0f, 50.0f);
-        AbilityContext context = new AbilityContext().withBrainMemory(entity, MKAbilityMemories.ABILITY_TARGET);
+        AbilityContext context = new BrainAbilityContext(entity);
         MKCore.LOGGER.info("ai {} casting {} on {}", entity, currentAbility.getAbilityId(), target);
         entity.getCapability(Capabilities.ENTITY_CAPABILITY).ifPresent(
                 (entityData) -> entityData.getAbilityExecutor().executeAbilityWithContext(currentAbility.getAbilityId(), context));
