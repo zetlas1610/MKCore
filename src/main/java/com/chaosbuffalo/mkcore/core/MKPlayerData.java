@@ -20,6 +20,7 @@ public class MKPlayerData implements IMKEntityData {
     private PlayerStatsModule stats;
     private PersonaManager personaManager;
     private UpdateEngine updateEngine;
+    private PlayerAnimationModule animationModule;
     private final Set<String> spellTag = new HashSet<>();
 
     public MKPlayerData() {
@@ -38,6 +39,9 @@ public class MKPlayerData implements IMKEntityData {
         personaManager = PersonaManager.getPersonaManager(this);
         abilityExecutor = new PlayerAbilityExecutor(this);
         stats = new PlayerStatsModule(this);
+        animationModule = new PlayerAnimationModule(this);
+        abilityExecutor.setStartCastCallback(animationModule::startCast);
+        abilityExecutor.setCompleteAbilityCallback(animationModule::endCast);
         stats.attach(updateEngine);
 
         registerAttributes();
@@ -112,6 +116,10 @@ public class MKPlayerData implements IMKEntityData {
         return player;
     }
 
+    public PlayerAnimationModule getAnimationModule() {
+        return animationModule;
+    }
+
     private boolean isServerSide() {
         return player instanceof ServerPlayerEntity;
     }
@@ -119,6 +127,7 @@ public class MKPlayerData implements IMKEntityData {
     public void update() {
         getStats().tick();
         getAbilityExecutor().tick();
+        getAnimationModule().tick();
 
 //        MKCore.LOGGER.info("update {} {}", this.player, mana.get());
 

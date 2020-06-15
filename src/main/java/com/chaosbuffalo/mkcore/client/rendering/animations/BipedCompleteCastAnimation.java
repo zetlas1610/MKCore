@@ -1,20 +1,22 @@
-package com.chaosbuffalo.mkcore.mku.client.render.casting_animations;
+package com.chaosbuffalo.mkcore.client.rendering.animations;
 
-import com.chaosbuffalo.mkcore.mku.entity.MKEntity;
 import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.MathHelper;
 
-public class BipedCompleteCastAnimation extends AdditionalBipedAnimation<MKEntity> {
+public abstract class BipedCompleteCastAnimation<T extends LivingEntity> extends AdditionalBipedAnimation<T> {
     private static final float ANIM_TIME = 15.0f;
 
     public BipedCompleteCastAnimation(BipedModel<?> model) {
         super(model);
     }
 
+    protected abstract int getCastAnimTimer(T entity);
+
     @Override
-    public void apply(MKEntity entity) {
+    public void apply(T entity) {
         BipedModel<?> model = getModel();
-        int castTicks = entity.getCastAnimTimer();
+        int castTicks = getCastAnimTimer(entity);
         float progress = ANIM_TIME - castTicks / ANIM_TIME;
         float armZ = MathHelper.cos((float) (Math.PI / 2.0f + progress * (float) Math.PI)) * (float) Math.PI / 2.0f;
         model.bipedRightArm.rotateAngleY = 0.0F;
