@@ -1,20 +1,21 @@
-package com.chaosbuffalo.mkcore.mku.client.render.casting_animations;
+package com.chaosbuffalo.mkcore.client.rendering.animations;
 
 import com.chaosbuffalo.mkcore.Capabilities;
-import com.chaosbuffalo.mkcore.mku.entity.MKEntity;
+import com.chaosbuffalo.mkcore.MKCore;
 import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.MathHelper;
 
-public class BipedCastAnimation extends AdditionalBipedAnimation<MKEntity> {
+public class BipedCastAnimation<T extends LivingEntity> extends AdditionalBipedAnimation<T> {
 
     public BipedCastAnimation(BipedModel<?> model) {
         super(model);
     }
 
     @Override
-    public void apply(MKEntity entity) {
+    public void apply(T entity) {
         BipedModel<?> model = getModel();
-        entity.getCapability(Capabilities.ENTITY_CAPABILITY).ifPresent(mkEntityData -> {
+        MKCore.getEntityData(entity).ifPresent(mkEntityData -> {
             if (mkEntityData.getAbilityExecutor().isCasting()) {
                 int castTicks = mkEntityData.getAbilityExecutor().getCastTicks();
                 float castProgress = castTicks / 20.0f;

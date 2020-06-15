@@ -1,4 +1,4 @@
-package com.chaosbuffalo.mkcore.mku.client.render.casting_animations;
+package com.chaosbuffalo.mkcore.client.rendering.animations;
 
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.entity.LivingEntity;
