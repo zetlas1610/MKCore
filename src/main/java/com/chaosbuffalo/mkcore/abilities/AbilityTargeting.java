@@ -2,6 +2,7 @@ package com.chaosbuffalo.mkcore.abilities;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.LivingEntity;
 
 public class AbilityTargeting {
@@ -10,12 +11,15 @@ public class AbilityTargeting {
             .setDescription("Does not require a target");
 
     public static AbilityTargetSelector SELF = new AbilityTargetSelector(AbilityTargeting::selectSelf)
+            .setRequiredMemories(ImmutableSet.of(MKAbilityMemories.ABILITY_TARGET))
             .setDescription("Targets the caster");
 
     public static AbilityTargetSelector SINGLE_TARGET = new AbilityTargetSelector(AbilityTargeting::selectSingle)
+            .setRequiredMemories(ImmutableSet.of(MKAbilityMemories.ABILITY_TARGET))
             .setDescription("Single Target in front of the caster");
 
     public static AbilityTargetSelector SINGLE_TARGET_OR_SELF = new AbilityTargetSelector(AbilityTargeting::selectSingleOrSelf)
+            .setRequiredMemories(ImmutableSet.of(MKAbilityMemories.ABILITY_TARGET))
             .setDescription("Single Target in front of the caster, or the caster if no valid target found");
 
 

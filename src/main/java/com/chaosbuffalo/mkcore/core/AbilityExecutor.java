@@ -56,6 +56,12 @@ public class AbilityExecutor {
         if (abilityExecutionCheck(ability, info)) {
             if (context == null) {
                 context = ability.getTargetSelector().createContext(entityData, ability);
+            } else {
+                boolean validContext = ability.getTargetSelector().validateContext(entityData, context);
+                if (!validContext) {
+                    MKCore.LOGGER.warn("Entity {} tried to execute ability {} with a context that failed validation!", entityData.getEntity(), abilityId);
+                    return;
+                }
             }
             if (context != null) {
                 ability.executeWithContext(entityData, context);
