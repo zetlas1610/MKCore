@@ -2,8 +2,8 @@ package com.chaosbuffalo.mkcore.abilities;
 
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.abilities.ai.AbilityTarget;
-import com.chaosbuffalo.mkcore.abilities.ai.conditions.AbilityUseCondition;
 import com.chaosbuffalo.mkcore.abilities.ai.AbilityUseContext;
+import com.chaosbuffalo.mkcore.abilities.ai.conditions.AbilityUseCondition;
 import com.chaosbuffalo.mkcore.abilities.ai.conditions.StandardUseCondition;
 import com.chaosbuffalo.mkcore.abilities.attributes.IAbilityAttribute;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
@@ -11,11 +11,13 @@ import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.mkcore.utils.RayTraceUtils;
 import com.chaosbuffalo.targeting_api.Targeting;
 import com.chaosbuffalo.targeting_api.TargetingContext;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -29,6 +31,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
@@ -114,10 +117,6 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
 
     }
 
-    public CastState createCastState(int castTime) {
-        return new CastState(castTime);
-    }
-
     public int getCastTime() {
         return castTime;
     }
@@ -162,7 +161,7 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         return false;
     }
 
-    protected boolean isValidTarget(LivingEntity caster, LivingEntity target) {
+    public boolean isValidTarget(LivingEntity caster, LivingEntity target) {
         return Targeting.isValidTarget(getTargetContext(), caster, target);
     }
 
@@ -249,15 +248,29 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         return ModSounds.spell_cast_3;
     }
 
-    public abstract void execute(LivingEntity entity, IMKEntityData data);
+    public void executeWithContext(IMKEntityData entityData, AbilityContext context) {
+        entityData.startAbility(context, this);
+    }
 
-    public void continueCast(LivingEntity entity, IMKEntityData data, int castTimeLeft, CastState state) {
+    public AbilityTargetSelector getTargetSelector() {
+        return AbilityTargeting.NONE;
+    }
+
+    public Set<MemoryModuleType<?>> getRequiredMemories() {
+        return ImmutableSet.of();
+    }
+
+    public boolean isExecutableContext(AbilityContext context) {
+        return getRequiredMemories().stream().allMatch(context::hasMemory);
+    }
+
+    public void continueCast(LivingEntity entity, IMKEntityData data, int castTimeLeft, AbilityContext context) {
     }
 
     public void continueCastClient(LivingEntity entity, IMKEntityData data, int castTimeLeft) {
     }
 
-    public void endCast(LivingEntity entity, IMKEntityData data, CastState state) {
+    public void endCast(LivingEntity entity, IMKEntityData data, AbilityContext context) {
     }
 
     protected LivingEntity getSingleLivingTarget(LivingEntity caster, float distance) {

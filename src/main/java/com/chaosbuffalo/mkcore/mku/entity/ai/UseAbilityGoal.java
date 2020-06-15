@@ -1,9 +1,13 @@
 package com.chaosbuffalo.mkcore.mku.entity.ai;
 
 import com.chaosbuffalo.mkcore.Capabilities;
+import com.chaosbuffalo.mkcore.MKCore;
+import com.chaosbuffalo.mkcore.abilities.ai.BrainAbilityContext;
+import com.chaosbuffalo.mkcore.abilities.MKAbilityMemories;
+import com.chaosbuffalo.mkcore.abilities.AbilityContext;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.mku.entity.MKEntity;
-import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
+import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKUMemoryModuleTypes;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 
@@ -28,8 +32,8 @@ public class UseAbilityGoal extends Goal {
 
     @Override
     public boolean shouldExecute() {
-        Optional<MKAbility> abilityOptional = entity.getBrain().getMemory(MKMemoryModuleTypes.CURRENT_ABILITY);
-        Optional<LivingEntity> target = entity.getBrain().getMemory(MKMemoryModuleTypes.ABILITY_TARGET);
+        Optional<MKAbility> abilityOptional = entity.getBrain().getMemory(MKUMemoryModuleTypes.CURRENT_ABILITY);
+        Optional<LivingEntity> target = entity.getBrain().getMemory(MKAbilityMemories.ABILITY_TARGET);
         if (abilityOptional.isPresent() && target.isPresent()) {
             currentAbility = abilityOptional.get();
             this.target = target.get();
@@ -54,8 +58,10 @@ public class UseAbilityGoal extends Goal {
     public void startExecuting() {
         entity.faceEntity(target, 360.0f, 360.0f);
         entity.getLookController().setLookPositionWithEntity(target, 50.0f, 50.0f);
+        AbilityContext context = new BrainAbilityContext(entity);
+        MKCore.LOGGER.info("ai {} casting {} on {}", entity, currentAbility.getAbilityId(), target);
         entity.getCapability(Capabilities.ENTITY_CAPABILITY).ifPresent(
-                (entityData) -> entityData.getAbilityExecutor().executeAbility(currentAbility.getAbilityId()));
+                (entityData) -> entityData.getAbilityExecutor().executeAbilityWithContext(currentAbility.getAbilityId(), context));
     }
 
     @Override
@@ -69,6 +75,6 @@ public class UseAbilityGoal extends Goal {
         super.resetTask();
         currentAbility = null;
         target = null;
-        entity.getBrain().removeMemory(MKMemoryModuleTypes.CURRENT_ABILITY);
+        entity.getBrain().removeMemory(MKUMemoryModuleTypes.CURRENT_ABILITY);
     }
 }

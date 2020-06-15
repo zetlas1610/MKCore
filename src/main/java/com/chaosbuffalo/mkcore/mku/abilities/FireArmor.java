@@ -2,7 +2,7 @@ package com.chaosbuffalo.mkcore.mku.abilities;
 
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.abilities.CastState;
+import com.chaosbuffalo.mkcore.abilities.AbilityContext;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.ai.conditions.NeedsBuffCondition;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
@@ -58,8 +58,8 @@ public class FireArmor extends MKAbility {
 //    }
 
     @Override
-    public void endCast(LivingEntity entity, IMKEntityData data, CastState state) {
-        super.endCast(entity, data, state);
+    public void endCast(LivingEntity entity, IMKEntityData data, AbilityContext context) {
+        super.endCast(entity, data, context);
         int level = 1;
 
         // What to do for each target hit
@@ -95,10 +95,5 @@ public class FireArmor extends MKAbility {
                         entity.getPosX(), entity.getPosY() + 1.0,
                         entity.getPosZ(), 1.0, 1.0, 1.0, .1f,
                         entity.getLookVec()), entity);
-    }
-
-    @Override
-    public void execute(LivingEntity entity, IMKEntityData entityData) {
-        entityData.startAbility(this);
     }
 }

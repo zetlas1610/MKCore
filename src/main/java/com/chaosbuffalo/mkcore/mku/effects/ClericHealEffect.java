@@ -68,7 +68,7 @@ public class ClericHealEffect extends SpellEffectBase {
 
         if (target.isEntityUndead()) {
             if (MKConfig.healsDamageUndead.get()) {
-                float healDamageMultiplier = MKConfig.undeadHealDamageMultiplier.get();
+                float healDamageMultiplier = MKConfig.undeadHealDamageMultiplier.get().floatValue();
                 target.attackEntityFrom(MKDamageSource.causeAbilityDamage(ModDamageTypes.HolyDamage,
                         ClericHeal.INSTANCE.getAbilityId(), applier, caster), healDamageMultiplier * finalValue);
             }

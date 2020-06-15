@@ -2,9 +2,7 @@ package com.chaosbuffalo.mkcore.mku.abilities;
 
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.abilities.CastState;
-import com.chaosbuffalo.mkcore.abilities.MKAbility;
-import com.chaosbuffalo.mkcore.abilities.SingleTargetCastState;
+import com.chaosbuffalo.mkcore.abilities.*;
 import com.chaosbuffalo.mkcore.abilities.ai.conditions.HealCondition;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
@@ -16,7 +14,9 @@ import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkcore.utils.SoundUtils;
 import com.chaosbuffalo.targeting_api.TargetingContext;
 import com.chaosbuffalo.targeting_api.TargetingContexts;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -24,6 +24,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
+import java.util.Set;
+import java.util.function.BiFunction;
 
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClericHeal extends MKAbility {
@@ -49,11 +51,6 @@ public class ClericHeal extends MKAbility {
     }
 
     @Override
-    public CastState createCastState(int castTime) {
-        return new SingleTargetCastState(castTime);
-    }
-
-    @Override
     public TargetingContext getTargetContext() {
         return TargetingContexts.FRIENDLY;
     }
@@ -70,12 +67,11 @@ public class ClericHeal extends MKAbility {
     }
 
     @Override
-    public void endCast(LivingEntity entity, IMKEntityData data, CastState castState) {
-        super.endCast(entity, data, castState);
+    public void endCast(LivingEntity entity, IMKEntityData data, AbilityContext context) {
+        super.endCast(entity, data, context);
 
-        SingleTargetCastState singleTargetState = (SingleTargetCastState) castState;
-
-        singleTargetState.getTarget().ifPresent(target -> {
+        context.getMemory(MKAbilityMemories.ABILITY_TARGET).ifPresent(target -> {
+            MKCore.LOGGER.info("ClericHeal.endCast {} {}", data.getEntity(), target);
             int level = 1;
             SpellCast heal = ClericHealEffect.Create(entity, BASE_VALUE, VALUE_SCALE).setTarget(target);
             target.addPotionEffect(heal.toPotionEffect(level));
@@ -106,7 +102,7 @@ public class ClericHeal extends MKAbility {
     }
 
     @Override
-    protected boolean isValidTarget(LivingEntity caster, LivingEntity target) {
+    public boolean isValidTarget(LivingEntity caster, LivingEntity target) {
         return ClericHealEffect.INSTANCE.isValidTarget(getTargetContext(), caster, target);
     }
 
@@ -116,12 +112,12 @@ public class ClericHeal extends MKAbility {
     }
 
     @Override
-    public void execute(LivingEntity entity, IMKEntityData pData) {
-        LivingEntity targetEntity = getSingleLivingTargetOrSelf(entity, getDistance(), true);
-        CastState state = pData.startAbility(this);
-        SingleTargetCastState singleTargetState = (SingleTargetCastState) state;
-        if (singleTargetState != null) {
-            singleTargetState.setTarget(targetEntity);
-        }
+    public Set<MemoryModuleType<?>> getRequiredMemories() {
+        return ImmutableSet.of(MKAbilityMemories.ABILITY_TARGET);
+    }
+
+    @Override
+    public AbilityTargetSelector getTargetSelector() {
+        return AbilityTargeting.SINGLE_TARGET_OR_SELF;
     }
 }

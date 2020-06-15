@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkcore.mku.entity.ai;
 
 import com.chaosbuffalo.mkcore.mku.entity.MKEntity;
-import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
+import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKUMemoryModuleTypes;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.entity.ai.goal.Goal;
@@ -19,7 +19,7 @@ public class MKMeleeAttackGoal extends Goal {
     @Override
     public boolean shouldExecute() {
         Brain<?> brain = entity.getBrain();
-        Optional<LivingEntity> targetOpt = brain.getMemory(MKMemoryModuleTypes.THREAT_TARGET);
+        Optional<LivingEntity> targetOpt = brain.getMemory(MKUMemoryModuleTypes.THREAT_TARGET);
         if (targetOpt.isPresent()) {
             LivingEntity target = targetOpt.get();
             if (isInReach(target)) {
@@ -80,7 +80,7 @@ public class MKMeleeAttackGoal extends Goal {
     @Override
     public boolean shouldContinueExecuting() {
         Brain<?> brain = entity.getBrain();
-        Optional<LivingEntity> targetOpt = brain.getMemory(MKMemoryModuleTypes.THREAT_TARGET);
+        Optional<LivingEntity> targetOpt = brain.getMemory(MKUMemoryModuleTypes.THREAT_TARGET);
         return target != null && targetOpt.map((ent) -> ent.isEntityEqual(target) && isInReach(ent)).orElse(false);
     }
 

@@ -3,7 +3,7 @@ package com.chaosbuffalo.mkcore.mku.entity;
 import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.mku.entity.ai.*;
 import com.chaosbuffalo.mkcore.mku.entity.ai.controller.MovementStrategyController;
-import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
+import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKUMemoryModuleTypes;
 import com.chaosbuffalo.mkcore.mku.abilities.ClericHeal;
 import com.chaosbuffalo.mkcore.mku.abilities.EmberAbility;
 import com.chaosbuffalo.mkcore.mku.abilities.FireArmor;
@@ -75,7 +75,7 @@ public class GreenLadyEntity extends MKEntity {
 
     @Override
     public void enterDefaultMovementState(LivingEntity target) {
-        this.brain.setMemory(MKMemoryModuleTypes.MOVEMENT_TARGET, target);
+        this.brain.setMemory(MKUMemoryModuleTypes.MOVEMENT_TARGET, target);
         MovementStrategyController.enterCastingMode(this, 5.0);
     }
 }

@@ -46,13 +46,19 @@ public abstract class MKToggleAbility extends MKAbility {
     }
 
     @Override
-    public void execute(LivingEntity entity, IMKEntityData entityData) {
-        entityData.startAbility(this);
+    public void executeWithContext(IMKEntityData entityData, AbilityContext context) {
+        entityData.startAbility(context, this);
+        LivingEntity entity = entityData.getEntity();
         if (entity.getActivePotionEffect(getToggleEffect()) != null) {
             removeEffect(entity, entityData);
         } else {
             applyEffect(entity, entityData);
         }
+    }
+
+    @Override
+    public AbilityTargetSelector getTargetSelector() {
+        return AbilityTargeting.SELF;
     }
 
     @Override

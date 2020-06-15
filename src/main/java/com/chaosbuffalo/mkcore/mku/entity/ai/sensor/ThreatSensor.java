@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.mku.entity.ai.sensor;
 
-import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
+import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKUMemoryModuleTypes;
 import com.chaosbuffalo.mkcore.mku.entity.ai.memory.ThreatMapEntry;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.LivingEntity;
@@ -19,13 +19,13 @@ public class ThreatSensor extends Sensor<LivingEntity> {
 
     @Override
     protected void update(ServerWorld worldIn, LivingEntity entityIn) {
-        Optional<List<LivingEntity>> enemyOpt = entityIn.getBrain().getMemory(MKMemoryModuleTypes.VISIBLE_ENEMIES);
+        Optional<List<LivingEntity>> enemyOpt = entityIn.getBrain().getMemory(MKUMemoryModuleTypes.VISIBLE_ENEMIES);
         Optional<Map<LivingEntity, ThreatMapEntry>> opt = entityIn.getBrain().getMemory(
-                MKMemoryModuleTypes.THREAT_MAP);
+                MKUMemoryModuleTypes.THREAT_MAP);
         Map<LivingEntity, ThreatMapEntry> threatMap = opt.orElse(new HashMap<>());
-        Optional<LivingEntity> targetOpt = entityIn.getBrain().getMemory(MKMemoryModuleTypes.THREAT_TARGET);
+        Optional<LivingEntity> targetOpt = entityIn.getBrain().getMemory(MKUMemoryModuleTypes.THREAT_TARGET);
         if (targetOpt.isPresent() && !targetOpt.get().isAlive()) {
-            entityIn.getBrain().removeMemory(MKMemoryModuleTypes.THREAT_TARGET);
+            entityIn.getBrain().removeMemory(MKUMemoryModuleTypes.THREAT_TARGET);
         }
         if (enemyOpt.isPresent()) {
             List<LivingEntity> enemies = enemyOpt.get();
@@ -41,12 +41,12 @@ public class ThreatSensor extends Sensor<LivingEntity> {
             List<LivingEntity> sortedThreat = newThreatMap.entrySet().stream()
                     .sorted(Comparator.comparingInt(entry -> -entry.getValue().getCurrentThreat()))
                     .map(Map.Entry::getKey).collect(Collectors.toList());
-            entityIn.getBrain().setMemory(MKMemoryModuleTypes.THREAT_MAP, newThreatMap);
-            entityIn.getBrain().setMemory(MKMemoryModuleTypes.THREAT_LIST, sortedThreat);
+            entityIn.getBrain().setMemory(MKUMemoryModuleTypes.THREAT_MAP, newThreatMap);
+            entityIn.getBrain().setMemory(MKUMemoryModuleTypes.THREAT_LIST, sortedThreat);
             if (sortedThreat.size() > 0) {
-                entityIn.getBrain().setMemory(MKMemoryModuleTypes.THREAT_TARGET, sortedThreat.get(0));
+                entityIn.getBrain().setMemory(MKUMemoryModuleTypes.THREAT_TARGET, sortedThreat.get(0));
             } else {
-                entityIn.getBrain().removeMemory(MKMemoryModuleTypes.THREAT_TARGET);
+                entityIn.getBrain().removeMemory(MKUMemoryModuleTypes.THREAT_TARGET);
             }
         }
 
@@ -55,7 +55,7 @@ public class ThreatSensor extends Sensor<LivingEntity> {
 
     @Override
     public Set<MemoryModuleType<?>> getUsedMemories() {
-        return ImmutableSet.of(MKMemoryModuleTypes.THREAT_MAP, MKMemoryModuleTypes.VISIBLE_ENEMIES,
-                MKMemoryModuleTypes.THREAT_LIST);
+        return ImmutableSet.of(MKUMemoryModuleTypes.THREAT_MAP, MKUMemoryModuleTypes.VISIBLE_ENEMIES,
+                MKUMemoryModuleTypes.THREAT_LIST);
     }
 }

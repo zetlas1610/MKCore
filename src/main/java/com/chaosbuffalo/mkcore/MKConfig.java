@@ -27,7 +27,7 @@ public class MKConfig {
     public static ForgeConfigSpec.BooleanValue enablePlayerCastAnimations;
 
     public static ForgeConfigSpec.BooleanValue healsDamageUndead;
-    public static ForgeConfigSpec.ConfigValue<Float> undeadHealDamageMultiplier;
+    public static ForgeConfigSpec.ConfigValue<Double> undeadHealDamageMultiplier;
 
     private static void initClient(ForgeConfigSpec.Builder builder) {
         builder.comment("General settings").push("general");
@@ -57,7 +57,7 @@ public class MKConfig {
                 .define("healsDamageUndead", true);
         undeadHealDamageMultiplier = builder
                 .comment("Damage multiplier to use when healing spells damage undead entities (if healsDamageUndead is set)")
-                .define("undeadHealDamageMultiplier", 2.0f);
+                .define("undeadHealDamageMultiplier", 2.0);
         builder.pop();
     }
 }

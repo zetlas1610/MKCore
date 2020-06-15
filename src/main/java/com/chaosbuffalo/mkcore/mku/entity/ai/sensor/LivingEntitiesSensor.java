@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.mku.entity.ai.sensor;
 
-import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKMemoryModuleTypes;
+import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKUMemoryModuleTypes;
 import com.chaosbuffalo.targeting_api.Targeting;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.LivingEntity;
@@ -33,9 +33,9 @@ public class LivingEntitiesSensor extends Sensor<LivingEntity> {
                 .stream()
                 .sorted(this::sortByHealth)
                 .collect(Collectors.toList());
-        brain.setMemory(MKMemoryModuleTypes.ENEMIES, enemies);
-        brain.setMemory(MKMemoryModuleTypes.ALLIES, friends);
-        brain.setMemory(MKMemoryModuleTypes.VISIBLE_ENEMIES, enemies.stream().filter(entityIn::canEntityBeSeen)
+        brain.setMemory(MKUMemoryModuleTypes.ENEMIES, enemies);
+        brain.setMemory(MKUMemoryModuleTypes.ALLIES, friends);
+        brain.setMemory(MKUMemoryModuleTypes.VISIBLE_ENEMIES, enemies.stream().filter(entityIn::canEntityBeSeen)
                 .collect(Collectors.toList()));
     }
 
@@ -44,7 +44,7 @@ public class LivingEntitiesSensor extends Sensor<LivingEntity> {
     }
 
     public Set<MemoryModuleType<?>> getUsedMemories() {
-        return ImmutableSet.of(MKMemoryModuleTypes.ENEMIES, MKMemoryModuleTypes.ALLIES,
-                MKMemoryModuleTypes.VISIBLE_ENEMIES);
+        return ImmutableSet.of(MKUMemoryModuleTypes.ENEMIES, MKUMemoryModuleTypes.ALLIES,
+                MKUMemoryModuleTypes.VISIBLE_ENEMIES);
     }
 }
