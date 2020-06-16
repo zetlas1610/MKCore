@@ -4,11 +4,10 @@ import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityMemories;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
-import com.chaosbuffalo.mkcore.abilities.ai.AbilityTarget;
-import com.chaosbuffalo.mkcore.abilities.ai.AbilityUseContext;
+import com.chaosbuffalo.mkcore.abilities.ai.AbilityTargetingDecision;
+import com.chaosbuffalo.mkcore.abilities.ai.AbilityDecisionContext;
 import com.chaosbuffalo.mkcore.mku.entity.MKEntity;
 import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKUMemoryModuleTypes;
-import com.chaosbuffalo.targeting_api.Targeting;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
@@ -33,17 +32,14 @@ public class AbilityUseSensor extends Sensor<MKEntity> {
             return;
 
         entityIn.getCapability(Capabilities.ENTITY_CAPABILITY).ifPresent(mkEntityData -> {
-            AbilityUseContext context = createAIUseContext(entityIn);
+            AbilityDecisionContext context = createAbilityDecisionContext(entityIn);
             for (MKAbilityInfo ability : mkEntityData.getKnowledge().getAbilitiesPriorityOrder()) {
                 MKAbility mkAbility = ability.getAbility();
                 if (!mkEntityData.getAbilityExecutor().canActivateAbility(mkAbility))
                     continue;
 
-                if (!mkAbility.shouldAIUse(context))
-                    continue;
-
-                AbilityTarget targetSelection = mkAbility.getAbilityTarget(context);
-                if (targetSelection == null)
+                AbilityTargetingDecision targetSelection = mkAbility.getUseCondition().getDecision(context);
+                if (targetSelection == AbilityTargetingDecision.UNDECIDED)
                     continue;
 
                 if (mkAbility.isValidTarget(entityIn, targetSelection.getTargetEntity())) {
@@ -59,9 +55,9 @@ public class AbilityUseSensor extends Sensor<MKEntity> {
     }
 
     @Nonnull
-    private AbilityUseContext createAIUseContext(MKEntity entityIn) {
+    private AbilityDecisionContext createAbilityDecisionContext(MKEntity entityIn) {
         Optional<LivingEntity> targetOptional = entityIn.getBrain().getMemory(MKUMemoryModuleTypes.THREAT_TARGET);
-        return new AbilityUseContext(entityIn, targetOptional.orElse(null),
+        return new AbilityDecisionContext(entityIn, targetOptional.orElse(null),
                 entityIn.getBrain().getMemory(MKUMemoryModuleTypes.ALLIES).orElse(Collections.emptyList()),
                 entityIn.getBrain().getMemory(MKUMemoryModuleTypes.ENEMIES).orElse(Collections.emptyList()));
     }
