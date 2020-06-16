@@ -21,7 +21,7 @@ public class StandardUseCondition extends AbilityUseCondition {
     @Override
     public AbilityTargetingDecision getDecision(AbilityDecisionContext context) {
         LivingEntity threatTarget = context.getThreatTarget();
-        if (threatTarget != null && isInRange(context, threatTarget)) {
+        if (threatTarget != null) {
             return new AbilityTargetingDecision(threatTarget, movementStrategy);
         }
         return AbilityTargetingDecision.UNDECIDED;

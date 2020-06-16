@@ -42,7 +42,7 @@ public class NeedsBuffCondition extends AbilityUseCondition {
         }
         if (!selfOnly) {
             for (LivingEntity friendly : context.getFriendlies()) {
-                if (needsBuff(friendly) && isInRange(context, friendly)) {
+                if (needsBuff(friendly)) {
                     return new AbilityTargetingDecision(friendly, movementStrategy);
                 }
             }

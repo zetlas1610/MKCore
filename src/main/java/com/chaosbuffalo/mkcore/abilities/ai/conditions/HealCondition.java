@@ -44,7 +44,7 @@ public class HealCondition extends AbilityUseCondition {
         } else if (!selfOnly) {
             List<LivingEntity> friends = context.getFriendlies();
             for (LivingEntity target : friends) {
-                if (needsHealing(target) && isInRange(context, target)) {
+                if (needsHealing(target)) {
                     return new AbilityTargetingDecision(target, movementStrategy);
                 }
             }
