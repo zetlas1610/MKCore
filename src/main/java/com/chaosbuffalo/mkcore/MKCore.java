@@ -5,6 +5,7 @@ import com.chaosbuffalo.mkcore.client.gui.MKOverlay;
 import com.chaosbuffalo.mkcore.command.MKCommand;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
+import com.chaosbuffalo.mkcore.core.talents.TalentManager;
 import com.chaosbuffalo.mkcore.mku.MKUEntityTypes;
 import com.chaosbuffalo.mkcore.mku.RenderRegistry;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
@@ -32,6 +33,7 @@ public class MKCore {
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger();
     private AbilityManager abilityManager;
+    private final TalentManager talentManager;
 
     public static MKCore INSTANCE;
 
@@ -42,6 +44,7 @@ public class MKCore {
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
+        talentManager = new TalentManager();
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, MKConfig.CLIENT_CONFIG);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, MKConfig.SERVER_CONFIG);
@@ -60,6 +63,7 @@ public class MKCore {
         // some preinit code
         abilityManager = new AbilityManager(event.getServer());
         event.getServer().getResourceManager().addReloadListener(abilityManager);
+        event.getServer().getResourceManager().addReloadListener(talentManager);
         LOGGER.info("HELLO FROM ABOUTTOSTART");
     }
 
@@ -93,5 +97,9 @@ public class MKCore {
         } else {
             return entity.getCapability(Capabilities.ENTITY_CAPABILITY);
         }
+    }
+
+    public static TalentManager getTalentManager() {
+        return INSTANCE.talentManager;
     }
 }

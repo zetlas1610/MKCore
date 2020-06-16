@@ -74,11 +74,6 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
         return (float) getEntity().getAttribute(MKAttributes.HEAL_BONUS).getValue();
     }
 
-
-    private boolean isServerSide() {
-        return getEntity() instanceof ServerPlayerEntity;
-    }
-
     @Override
     public float getHealth() {
         return getEntity().getHealth();
@@ -119,7 +114,7 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
     public void tick() {
         abilityTracker.tick();
 
-        if (isServerSide()) {
+        if (playerData.isServerSide()) {
             updateMana();
         }
     }
