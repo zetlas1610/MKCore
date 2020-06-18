@@ -1,6 +1,7 @@
 package com.chaosbuffalo.mkcore;
 
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.client.gui.CharacterScreen;
 import com.chaosbuffalo.mkcore.network.ExecuteActiveAbilityPacket;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import net.minecraft.client.Minecraft;
@@ -91,6 +92,8 @@ public class ClientEventHandler {
 
         while (playerMenuBind.isPressed()) {
             MKCore.LOGGER.info("open player menu");
+            Minecraft.getInstance().displayGuiScreen(new CharacterScreen());
+
         }
 
         for (int i = 0; i < abilityBinds.length; i++) {
