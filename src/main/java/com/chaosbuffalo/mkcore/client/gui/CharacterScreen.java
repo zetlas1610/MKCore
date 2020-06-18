@@ -133,7 +133,7 @@ public class CharacterScreen extends MKScreen {
                 root.addWidget(statScrollView);
             }
         });
-        
+
         return root;
     }
 
