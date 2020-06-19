@@ -60,6 +60,7 @@ public class ModDamageTypes {
                 MKAttributes.NATURE_RESISTANCE, MKAttributes.SPELL_CRIT, MKAttributes.SPELL_CRIT_MULTIPLIER));
         evt.getRegistry().register(new MeleeDamageType(MKCore.makeRL("damage.melee")));
         evt.getRegistry().register(new MKDamageType(MKCore.makeRL("damage.elemental"), MKAttributes.ELEMENTAL_DAMAGE,
-                MKAttributes.ELEMENTAL_RESISTANCE, MKAttributes.SPELL_CRIT, MKAttributes.SPELL_CRIT_MULTIPLIER));
+                MKAttributes.ELEMENTAL_RESISTANCE, MKAttributes.SPELL_CRIT, MKAttributes.SPELL_CRIT_MULTIPLIER)
+                .setShouldDisplay(false));
     }
 }

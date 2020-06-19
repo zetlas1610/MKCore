@@ -2,6 +2,7 @@ package com.chaosbuffalo.mkcore.core.damage;
 
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.MKCombatFormulas;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
@@ -19,6 +20,7 @@ public class MKDamageType extends ForgeRegistryEntry<MKDamageType> {
     private final RangedAttribute critAttribute;
     private final RangedAttribute critMultiplierAttribute;
     private float critMultiplier;
+    private boolean shouldDisplay;
 
     public MKDamageType(ResourceLocation name, RangedAttribute damageAttribute,
                         RangedAttribute resistanceAttribute, RangedAttribute critAttribute,
@@ -29,11 +31,26 @@ public class MKDamageType extends ForgeRegistryEntry<MKDamageType> {
         this.critMultiplierAttribute = critMultiplierAttribute;
         this.critAttribute = critAttribute;
         this.critMultiplier = 1.0f;
+        this.shouldDisplay = true;
     }
 
     public MKDamageType setCritMultiplier(float value) {
         this.critMultiplier = value;
         return this;
+    }
+
+    public MKDamageType setShouldDisplay(boolean shouldDisplay) {
+        this.shouldDisplay = shouldDisplay;
+        return this;
+    }
+
+    public boolean shouldDisplay(){
+        return shouldDisplay;
+    }
+
+    public String getDisplayName(){
+        return I18n.format("%s.%s.name", getRegistryName().getNamespace(),
+                getRegistryName().getPath());
     }
 
 
