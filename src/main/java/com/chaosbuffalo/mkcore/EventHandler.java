@@ -47,6 +47,14 @@ public class EventHandler {
     }
 
     @SubscribeEvent
+    public static void onPlayerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        MKCore.LOGGER.info("PlayerChangedDimensionEvent {}", event::getEntity);
+        if (event.getEntity() instanceof PlayerEntity) {
+            MKCore.getPlayer(event.getEntity()).ifPresent(MKPlayerData::onJoinWorld);
+        }
+    }
+
+    @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone evt) {
         PlayerEntity player = evt.getPlayer();
         PlayerEntity oldPlayer = evt.getOriginal();
