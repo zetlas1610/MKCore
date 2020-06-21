@@ -20,7 +20,8 @@ public abstract class PassiveEffect extends SpellEffectBase implements IMKInfini
 
     @Override
     public void doEffect(Entity applier, Entity caster, LivingEntity target, int amplifier, SpellCast cast) {
-        attemptInfiniteEffectRefresh(target, this);
+        if (isInfiniteDuration())
+            attemptInfiniteEffectRefresh(target, this);
     }
 
     @Override
@@ -31,7 +32,7 @@ public abstract class PassiveEffect extends SpellEffectBase implements IMKInfini
     @Override
     public boolean isReady(int duration, int amplitude) {
         // Don't do anything until it's time to refresh
-        return needsInfiniteEffectRefresh(duration);
+        return isInfiniteDuration() && needsInfiniteEffectRefresh(duration);
     }
 
     @Override
@@ -41,6 +42,10 @@ public abstract class PassiveEffect extends SpellEffectBase implements IMKInfini
 
     @Override
     public boolean canPersistAcrossSessions() {
+        return false;
+    }
+
+    public boolean isInfiniteDuration() {
         return false;
     }
 

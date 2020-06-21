@@ -44,6 +44,11 @@ public class SkinLikeWoodEffect extends PassiveEffect {
     }
 
     @Override
+    public boolean isInfiniteDuration() {
+        return true;
+    }
+
+    @Override
     public ResourceLocation getIconTexture() {
         return MKCore.makeRL("textures/class/abilities/skin_like_wood.png");
     }
