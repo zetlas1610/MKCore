@@ -40,6 +40,13 @@ public class EventHandler {
     }
 
     @SubscribeEvent
+    public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
+        if (event.getEntity() instanceof PlayerEntity) {
+            MKCore.getPlayer(event.getEntity()).ifPresent(MKPlayerData::onJoinWorld);
+        }
+    }
+
+    @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone evt) {
         PlayerEntity player = evt.getPlayer();
         PlayerEntity oldPlayer = evt.getOriginal();
