@@ -14,7 +14,9 @@ public class MKCommand {
                 .then(AbilityCommand.register())
                 .then(EffectCommand.register())
                 .then(InfoCommand.register())
-                .then(PersonaCommand.register());
+                .then(PersonaCommand.register())
+                .then(TalentCommand.register())
+                .then(HotBarCommand.register());
         dispatcher.register(builder);
     }
 

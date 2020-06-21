@@ -37,10 +37,20 @@ import java.util.regex.Pattern;
 public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
 
     public enum AbilityType {
-        Active,
-        Toggle,
-        Passive,
-        Ultimate
+        Active(true),
+        Toggle(true),
+        Passive(false),
+        Ultimate(true);
+
+        boolean canSlot;
+
+        AbilityType(boolean canSlot) {
+            this.canSlot = canSlot;
+        }
+
+        public boolean canPlaceOnActionBar() {
+            return canSlot;
+        }
     }
 
     private int castTime;

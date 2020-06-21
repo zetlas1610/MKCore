@@ -42,7 +42,9 @@ public abstract class MKToggleAbility extends MKAbility {
 
     public void removeEffect(LivingEntity entity, IMKEntityData entityData) {
         entityData.getAbilityExecutor().clearToggleGroupAbility(getToggleGroupId());
-        entity.removePotionEffect(getToggleEffect());
+        if (entity.isPotionActive(getToggleEffect())) {
+            entity.removePotionEffect(getToggleEffect());
+        }
     }
 
     @Override

@@ -18,10 +18,6 @@ public class PlayerAbilityExecutor extends AbilityExecutor {
         return (MKPlayerData) entityData;
     }
 
-    private boolean isServerSide() {
-        return getPlayerData().getEntity() instanceof ServerPlayerEntity;
-    }
-
     public void executeHotBarAbility(int slot) {
         ResourceLocation abilityId = getPlayerData().getKnowledge().getActionBar().getAbilityInSlot(slot);
         if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))

@@ -20,10 +20,6 @@ public class UpdateEngine {
         this.player = playerEntity.getEntity();
     }
 
-    private boolean isServerSide() {
-        return player instanceof ServerPlayerEntity;
-    }
-
     public void addPublic(ISyncObject syncObject) {
         publicUpdater.add(syncObject);
         if (syncObject instanceof SyncGroup) {
@@ -53,7 +49,7 @@ public class UpdateEngine {
     }
 
     public void syncUpdates() {
-        if (!isServerSide())
+        if (!playerData.isServerSide())
             return;
 
         if (!readyForUpdates) {
@@ -81,7 +77,7 @@ public class UpdateEngine {
     }
 
     public void sendAll(ServerPlayerEntity otherPlayer) {
-        if (!isServerSide())
+        if (!playerData.isServerSide())
             return;
         CompoundNBT tag = new CompoundNBT();
         publicUpdater.serializeFull(tag);
@@ -106,7 +102,7 @@ public class UpdateEngine {
     }
 
     public void deserializeUpdate(CompoundNBT updateTag, boolean privateUpdate) {
-//        MKCore.LOGGER.info("deserializeClientUpdatePre private:{}", privateUpdate);
+//        MKCore.LOGGER.info("deserializeClientUpdatePre private:{} {}", privateUpdate, updateTag);
         publicUpdater.deserializeUpdate(updateTag);
         if (privateUpdate) {
             privateUpdater.deserializeUpdate(updateTag);

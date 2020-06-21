@@ -3,6 +3,7 @@ package com.chaosbuffalo.mkcore.core;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
+import com.chaosbuffalo.mkcore.core.talents.PlayerTalentModule;
 import com.chaosbuffalo.mkcore.sync.UpdateEngine;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -21,6 +22,7 @@ public class MKPlayerData implements IMKEntityData {
     private PersonaManager personaManager;
     private UpdateEngine updateEngine;
     private PlayerAnimationModule animationModule;
+    private PlayerTalentModule talentModule;
     private final Set<String> spellTag = new HashSet<>();
 
     public MKPlayerData() {
@@ -39,10 +41,13 @@ public class MKPlayerData implements IMKEntityData {
         personaManager = PersonaManager.getPersonaManager(this);
         abilityExecutor = new PlayerAbilityExecutor(this);
         stats = new PlayerStatsModule(this);
+        stats.attach(updateEngine);
+
         animationModule = new PlayerAnimationModule(this);
         abilityExecutor.setStartCastCallback(animationModule::startCast);
         abilityExecutor.setCompleteAbilityCallback(animationModule::endCast);
-        stats.attach(updateEngine);
+
+        talentModule = new PlayerTalentModule(this);
 
         registerAttributes();
         if (isServerSide())
@@ -77,6 +82,7 @@ public class MKPlayerData implements IMKEntityData {
 
     public void onJoinWorld() {
         getAbilityExecutor().onJoinWorld();
+        getTalentHandler().onJoinWorld();
         if (isServerSide()) {
             MKCore.LOGGER.info("server player joined world!");
             initialSync();
@@ -103,6 +109,10 @@ public class MKPlayerData implements IMKEntityData {
         return personaManager;
     }
 
+    public PlayerTalentModule getTalentHandler() {
+        return talentModule;
+    }
+
     public void clone(IMKEntityData previous, boolean death) {
         MKCore.LOGGER.info("onDeath!");
 
@@ -120,7 +130,7 @@ public class MKPlayerData implements IMKEntityData {
         return animationModule;
     }
 
-    private boolean isServerSide() {
+    public boolean isServerSide() {
         return player instanceof ServerPlayerEntity;
     }
 
@@ -158,12 +168,14 @@ public class MKPlayerData implements IMKEntityData {
     public void onPersonaActivated(PersonaManager.Persona persona) {
         persona.getKnowledge().attach(updateEngine);
         persona.getKnowledge().onPersonaActivated();
+        getTalentHandler().onPersonaActivated();
         getAbilityExecutor().onPersonaActivated();
     }
 
     public void onPersonaDeactivated(PersonaManager.Persona persona) {
         persona.getKnowledge().onPersonaDeactivated();
         persona.getKnowledge().detach(updateEngine);
+        getTalentHandler().onPersonaDeactivated();
         getAbilityExecutor().onPersonaDeactivated();
     }
 
@@ -175,6 +187,7 @@ public class MKPlayerData implements IMKEntityData {
 
     @Override
     public void deserialize(CompoundNBT nbt) {
+        MKCore.LOGGER.info("MKPlayerData.deserialize");
         personaManager.deserialize(nbt);
         getStats().deserialize(nbt);
     }
