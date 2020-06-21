@@ -4,17 +4,19 @@ import com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy.MovementStrategy;
 import com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy.StationaryMovementStrategy;
 import net.minecraft.entity.LivingEntity;
 
-public class AbilityTarget {
+public class AbilityTargetingDecision {
+    public static final AbilityTargetingDecision UNDECIDED = new AbilityTargetingDecision(null);
+
     private final LivingEntity target;
     private final MovementStrategy movementStrategy;
     private static final MovementStrategy STATIONARY = new StationaryMovementStrategy();
 
-    public AbilityTarget(LivingEntity target, MovementStrategy movementStrategy) {
+    public AbilityTargetingDecision(LivingEntity target, MovementStrategy movementStrategy) {
         this.target = target;
         this.movementStrategy = movementStrategy;
     }
 
-    public AbilityTarget(LivingEntity target) {
+    public AbilityTargetingDecision(LivingEntity target) {
         this(target, STATIONARY);
     }
 

@@ -1,14 +1,14 @@
 package com.chaosbuffalo.mkcore.abilities.ai.conditions;
 
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
-import com.chaosbuffalo.mkcore.abilities.ai.AbilityTarget;
-import com.chaosbuffalo.mkcore.abilities.ai.AbilityUseContext;
+import com.chaosbuffalo.mkcore.abilities.ai.AbilityTargetingDecision;
+import com.chaosbuffalo.mkcore.abilities.ai.AbilityDecisionContext;
 import com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy.FollowMovementStrategy;
 import com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy.MovementStrategy;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.Effect;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 public class NeedsBuffCondition extends AbilityUseCondition {
 
@@ -34,35 +34,20 @@ public class NeedsBuffCondition extends AbilityUseCondition {
         return entity.getActivePotionEffect(buffEffect) == null;
     }
 
+    @Nonnull
     @Override
-    public boolean test(AbilityUseContext context) {
+    public AbilityTargetingDecision getDecision(AbilityDecisionContext context) {
         if (getAbility().canSelfCast() && needsBuff(context.getCaster())) {
-            return true;
+            return new AbilityTargetingDecision(context.getCaster());
         }
         if (!selfOnly) {
             for (LivingEntity friendly : context.getFriendlies()) {
                 if (needsBuff(friendly)) {
-                    return true;
+                    return new AbilityTargetingDecision(friendly, movementStrategy);
                 }
             }
         }
-        return false;
-    }
-
-    @Nullable
-    @Override
-    public AbilityTarget getTarget(AbilityUseContext context) {
-        if (getAbility().canSelfCast() && needsBuff(context.getCaster())) {
-            return new AbilityTarget(context.getCaster());
-        }
-        if (!selfOnly) {
-            for (LivingEntity friendly : context.getFriendlies()) {
-                if (needsBuff(friendly)) {
-                    return new AbilityTarget(friendly, movementStrategy);
-                }
-            }
-        }
-        return null;
+        return AbilityTargetingDecision.UNDECIDED;
     }
 
 }

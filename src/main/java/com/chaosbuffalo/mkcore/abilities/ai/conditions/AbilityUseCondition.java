@@ -1,10 +1,11 @@
 package com.chaosbuffalo.mkcore.abilities.ai.conditions;
 
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
-import com.chaosbuffalo.mkcore.abilities.ai.AbilityTarget;
-import com.chaosbuffalo.mkcore.abilities.ai.AbilityUseContext;
+import com.chaosbuffalo.mkcore.abilities.ai.AbilityTargetingDecision;
+import com.chaosbuffalo.mkcore.abilities.ai.AbilityDecisionContext;
+import net.minecraft.entity.LivingEntity;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 public abstract class AbilityUseCondition {
     private final MKAbility ability;
@@ -17,8 +18,11 @@ public abstract class AbilityUseCondition {
         return ability;
     }
 
-    public abstract boolean test(AbilityUseContext context);
+    @Nonnull
+    public abstract AbilityTargetingDecision getDecision(AbilityDecisionContext context);
 
-    @Nullable
-    public abstract AbilityTarget getTarget(AbilityUseContext context);
+    protected boolean isInRange(AbilityDecisionContext context, LivingEntity target) {
+        float range = getAbility().getDistance();
+        return target.getDistanceSq(context.getCaster()) <= range * range;
+    }
 }
