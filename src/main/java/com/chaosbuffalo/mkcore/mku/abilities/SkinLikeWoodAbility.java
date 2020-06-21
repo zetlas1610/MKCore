@@ -35,6 +35,8 @@ public class SkinLikeWoodAbility extends MKToggleAbility {
     private SkinLikeWoodAbility() {
 
         super(MKCore.makeRL("ability.skin_like_wood"));
+        setCooldownSeconds(3);
+        setManaCost(2);
         setUseCondition(new NeedsBuffCondition(this, SkinLikeWoodEffect.INSTANCE).setSelfOnly(true));
     }
 

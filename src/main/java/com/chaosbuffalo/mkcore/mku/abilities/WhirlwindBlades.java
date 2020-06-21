@@ -1,5 +1,6 @@
 package com.chaosbuffalo.mkcore.mku.abilities;
 
+import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.AbilityContext;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
@@ -37,6 +38,9 @@ public class WhirlwindBlades extends MKAbility {
 
     private WhirlwindBlades() {
         super(MKCore.makeRL("ability.whirlwind_blades"));
+        setCastTime(GameConstants.TICKS_PER_SECOND * 3);
+        setCooldownSeconds(20);
+        setManaCost(6);
     }
 
     @Override
@@ -66,7 +70,7 @@ public class WhirlwindBlades extends MKAbility {
         int tickSpeed = 6;
         if (castTimeLeft % tickSpeed == 0) {
             int level = 1;
-            int totalDuration = getCastTime();
+            int totalDuration = getCastTime(data);
             int count = (totalDuration - castTimeLeft) / tickSpeed;
             float baseAmount = level > 1 ? 0.10f : 0.15f;
             float scaling = count * baseAmount;

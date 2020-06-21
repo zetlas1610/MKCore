@@ -40,14 +40,11 @@ public class ClericHeal extends MKAbility {
     public static float VALUE_SCALE = 5.0f;
 
     private ClericHeal() {
-
         super(MKCore.makeRL("ability.heal"));
+        setCastTime(GameConstants.TICKS_PER_SECOND / 4);
+        setCooldownSeconds(5);
+        setManaCost(4);
         setUseCondition(new HealCondition(this, .75f));
-    }
-
-    @Override
-    public int getCooldown() {
-        return 5;
     }
 
     @Override
@@ -92,11 +89,6 @@ public class ClericHeal extends MKAbility {
     }
 
     @Override
-    public float getManaCost() {
-        return 4;
-    }
-
-    @Override
     public float getDistance() {
         return 10.0f + 5.0f;
     }
@@ -104,11 +96,6 @@ public class ClericHeal extends MKAbility {
     @Override
     public boolean isValidTarget(LivingEntity caster, LivingEntity target) {
         return ClericHealEffect.INSTANCE.isValidTarget(getTargetContext(), caster, target);
-    }
-
-    @Override
-    public int getCastTime() {
-        return GameConstants.TICKS_PER_SECOND / 4;
     }
 
     @Override

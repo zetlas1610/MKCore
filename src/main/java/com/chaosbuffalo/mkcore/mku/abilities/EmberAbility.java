@@ -1,5 +1,6 @@
 package com.chaosbuffalo.mkcore.mku.abilities;
 
+import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.*;
 import com.chaosbuffalo.mkcore.abilities.attributes.FloatAttribute;
@@ -26,7 +27,6 @@ import net.minecraftforge.fml.common.Mod;
 import javax.annotation.Nullable;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.BiFunction;
 
 
 @Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -43,6 +43,9 @@ public class EmberAbility extends MKAbility {
 
     private EmberAbility() {
         super(MKCore.makeRL("ability.ember"));
+        setCastTime(GameConstants.TICKS_PER_SECOND / 2);
+        setCooldownSeconds(4);
+        setManaCost(6);
         addAttributes(damage, burnTime);
     }
 

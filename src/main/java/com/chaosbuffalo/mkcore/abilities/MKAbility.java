@@ -124,30 +124,32 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
 
     }
 
-    public int getCastTime() {
+    private int getCastTime() {
         return castTime;
     }
 
-    public MKAbility setCastTime(int newCastTime) {
-        castTime = newCastTime;
-        return this;
+    public int getCastTime(IMKEntityData entityData) {
+        return getCastTime();
+    }
+
+    protected void setCastTime(int castTicks) {
+        castTime = castTicks;
     }
 
     public float getDistance() {
         return 1.0f;
     }
 
+    private void setCooldownTicks(int ticks) {
+        this.cooldown = ticks;
+    }
+
+    protected void setCooldownSeconds(int seconds) {
+        this.cooldown = seconds * GameConstants.TICKS_PER_SECOND;
+    }
+
     public int getCooldown() {
         return cooldown;
-    }
-
-    public MKAbility setCooldown(int cooldown) {
-        this.cooldown = cooldown;
-        return this;
-    }
-
-    public int getCooldownTicks() {
-        return getCooldown() * GameConstants.TICKS_PER_SECOND;
     }
 
     public AbilityType getType() {
@@ -164,7 +166,7 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         return Targeting.isValidTarget(getTargetContext(), caster, target);
     }
 
-    public float getManaCost() {
+    private float getManaCost() {
         return manaCost;
     }
 
@@ -172,9 +174,8 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         return getManaCost();
     }
 
-    public MKAbility setManaCost(float newCost) {
-        manaCost = newCost;
-        return this;
+    protected void setManaCost(float cost) {
+        manaCost = cost;
     }
 
     public boolean meetsRequirements(IMKEntityData entityData) {
@@ -199,7 +200,7 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
 
     public void deserialize(CompoundNBT nbt) {
         if (nbt.contains("cooldown")) {
-            setCooldown(nbt.getInt("cooldown"));
+            setCooldownTicks(nbt.getInt("cooldown"));
         }
         if (nbt.contains("castTime")) {
             setCastTime(nbt.getInt("castTime"));
@@ -219,7 +220,7 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
 
     public void readFromDataPack(JsonObject obj) {
         if (obj.has("cooldown")) {
-            setCooldown(obj.get("cooldown").getAsInt());
+            setCooldownTicks(obj.get("cooldown").getAsInt());
         }
         if (obj.has("manaCost")) {
             setManaCost(obj.get("manaCost").getAsFloat());

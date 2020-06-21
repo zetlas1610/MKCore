@@ -4,7 +4,6 @@ import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
 import com.chaosbuffalo.mkcore.sync.SyncFloat;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -163,7 +162,7 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
 
     @Override
     public int getAbilityCooldown(MKAbility ability) {
-        int ticks = ability.getCooldownTicks();
+        int ticks = ability.getCooldown();
         return MKCombatFormulas.applyCooldownReduction(playerData, ticks);
     }
 
