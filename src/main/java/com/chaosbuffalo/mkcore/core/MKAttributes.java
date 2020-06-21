@@ -10,7 +10,7 @@ public class MKAttributes {
 
     public static final RangedAttribute MANA_REGEN = (RangedAttribute) new RangedAttribute(null, "mk.mana_regen", 0, 0, 1024)
             .setDescription("Mana Regen")
-            .setShouldWatch(false);
+            .setShouldWatch(true);
 
     public static final RangedAttribute MELEE_CRIT = (RangedAttribute) new RangedAttribute(null, "mk.melee_crit_chance", 0.00, 0.0, 1.0)
             .setDescription("Melee Critical Chance")
