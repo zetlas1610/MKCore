@@ -21,7 +21,6 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.*;
@@ -36,7 +35,7 @@ public class CharacterScreen extends MKScreen {
     private static final int POSITIVE_COLOR = 3334475;
     private static final int BASE_COLOR = 16777215;
     private boolean isDraggingAbility;
-    private ResourceLocation dragging;
+    private MKAbility dragging;
     private static final List<String> states = new ArrayList<>(Arrays.asList("stats", "damages", "abilities"));
     private static final ArrayList<IAttribute> STAT_PANEL_ATTRIBUTES = new ArrayList<>();
 
@@ -63,11 +62,11 @@ public class CharacterScreen extends MKScreen {
         dragging = null;
     }
 
-    public ResourceLocation getDragging() {
+    public MKAbility getDragging() {
         return dragging;
     }
 
-    public void setDragging(ResourceLocation dragging) {
+    public void setDragging(MKAbility dragging) {
         this.dragging = dragging;
         isDraggingAbility = true;
     }
@@ -170,7 +169,7 @@ public class CharacterScreen extends MKScreen {
                     .setMarginRight(4).setPaddingBot(2).setPaddingRight(2);
             stackLayout.doSetChildWidth(true);
             for (MKAbilityInfo ability : infos){
-                MKLayout abilityEntry = new AbilityListEntry(0, 0, 16, ability, infoWidget, font);
+                MKLayout abilityEntry = new AbilityListEntry(0, 0, 16, ability, infoWidget, font, this);
                 stackLayout.addWidget(abilityEntry);
                 MKRectangle div = new MKRectangle(0, 0,
                         abilitiesScrollView.getWidth() - 8, 1, 0x99ffffff);
@@ -264,7 +263,7 @@ public class CharacterScreen extends MKScreen {
         layout.setPaddings(2, 2, 0, 0);
         layout.setMargins(2, 2, 2, 2);
         for (int i = 0; i < count; i++){
-            AbilitySlotWidget slot = new AbilitySlotWidget(0, 0, slotType, i, false, this);
+            AbilitySlotWidget slot = new AbilitySlotWidget(0, 0, slotType, i,  this);
             layout.addWidget(slot);
         }
         return layout;

@@ -23,7 +23,7 @@ public class AbilityIconText extends IconText {
     public boolean onMousePressed(Minecraft minecraft, double mouseX, double mouseY, int mouseButton) {
         screen.setDragState(new WidgetHoldingDragState(new MKImage(0, 0, icon.getWidth(),
                 icon.getHeight(), icon.getImageLoc())));
-        screen.setDragging(ability.getRegistryName());
+        screen.setDragging(ability);
         return true;
     }
 }
