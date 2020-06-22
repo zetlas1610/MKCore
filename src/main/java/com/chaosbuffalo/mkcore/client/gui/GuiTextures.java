@@ -1,6 +1,7 @@
 package com.chaosbuffalo.mkcore.client.gui;
 
 import com.chaosbuffalo.mkcore.MKCore;
+import com.chaosbuffalo.mkwidgets.utils.ManualAtlas;
 
 public class GuiTextures {
 

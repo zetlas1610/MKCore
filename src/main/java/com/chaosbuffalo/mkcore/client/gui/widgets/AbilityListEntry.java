@@ -1,7 +1,8 @@
-package com.chaosbuffalo.mkcore.client.gui;
+package com.chaosbuffalo.mkcore.client.gui.widgets;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
+import com.chaosbuffalo.mkcore.client.gui.widgets.AbilityInfoWidget;
 import com.chaosbuffalo.mkwidgets.client.gui.constraints.CenterYConstraint;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutHorizontal;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKImage;
