@@ -14,6 +14,7 @@ import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutHorizontal;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutVertical;
 import com.chaosbuffalo.mkwidgets.client.gui.screens.MKScreen;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.*;
+import com.chaosbuffalo.mkwidgets.utils.TextureRegion;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -103,7 +104,7 @@ public class CharacterScreen extends MKScreen {
         MKLayout root = new MKLayout(xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
         root.setMargins(5, 5, 5, 5);
         root.setPaddingTop(5).setPaddingBot(5);
-        ManualAtlas.TextureRegion dataBoxRegion = GuiTextures.CORE_TEXTURES.getRegion(GuiTextures.DATA_BOX);
+        TextureRegion dataBoxRegion = GuiTextures.CORE_TEXTURES.getRegion(GuiTextures.DATA_BOX);
         int xOffset = GuiTextures.CORE_TEXTURES.getCenterXOffset(GuiTextures.DATA_BOX, GuiTextures.BACKGROUND_320_240);
         if (minecraft == null || minecraft.player == null || dataBoxRegion == null){
             return root;
@@ -276,7 +277,7 @@ public class CharacterScreen extends MKScreen {
         MKLayout root = new MKLayout(xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
         root.setMargins(5, 5, 5, 5);
         root.setPaddingTop(5).setPaddingBot(5);
-        ManualAtlas.TextureRegion dataBoxRegion = GuiTextures.CORE_TEXTURES.getRegion(GuiTextures.DATA_BOX);
+        TextureRegion dataBoxRegion = GuiTextures.CORE_TEXTURES.getRegion(GuiTextures.DATA_BOX);
         int xOffset = GuiTextures.CORE_TEXTURES.getCenterXOffset(GuiTextures.DATA_BOX, GuiTextures.BACKGROUND_320_240);
         if (minecraft == null || minecraft.player == null || dataBoxRegion == null){
             return root;
