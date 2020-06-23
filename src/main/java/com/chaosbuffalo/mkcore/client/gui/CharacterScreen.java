@@ -21,8 +21,11 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.*;
@@ -163,7 +166,7 @@ public class CharacterScreen extends MKScreen {
             // Stat Panel
             int slotsY = yPos + DATA_BOX_OFFSET - 28;
             int slotsX = xPos + xOffset + 4;
-            MKText activesLabel = new MKText(font, "Actives:");
+            MKText activesLabel = new MKText(font, new TranslationTextComponent("mkcore.gui.actives"));
             activesLabel.setX(slotsX);
             activesLabel.setY(slotsY - 12);
             root.addWidget(activesLabel);
@@ -176,19 +179,18 @@ public class CharacterScreen extends MKScreen {
                     GameConstants.MAX_ULTIMATES);
             root.addWidget(ultSlots);
             ultSlots.manualRecompute();
-            MKText ultLabel = new MKText(font, "Ultimates:");
+            MKText ultLabel = new MKText(font, new TranslationTextComponent("mkcore.gui.ultimates"));
             ultLabel.setX(ultSlotsX);
             ultLabel.setY(slotsY - 12);
             root.addWidget(ultLabel);
             int passiveSlotX = ultSlots.getX() + ultSlots.getWidth() + 30;
             MKLayout passiveSlots = getLayoutOfAbilitySlots(passiveSlotX, slotsY, MKAbility.AbilityType.Passive,
                     GameConstants.MAX_PASSIVES);
-            MKText passivesLabel = new MKText(font, "Passives:");
+            MKText passivesLabel = new MKText(font, new TranslationTextComponent("mkcore.gui.passives"));
             passivesLabel.setX(passiveSlotX);
             passivesLabel.setY(slotsY - 12);
             root.addWidget(passivesLabel);
             root.addWidget(passiveSlots);
-
             MKScrollView abilitiesScrollView = new MKScrollView(xPos + xOffset + 4,
                     yPos + DATA_BOX_OFFSET + 4,
                     Math.round((dataBoxRegion.width - 8) * .33f),
@@ -271,9 +273,26 @@ public class CharacterScreen extends MKScreen {
             String newText = String.format("%s: %.2f", I18n.format(String.format("attribute.name.%s",
                     attribute.getAttribute().getName())), attribute.getValue());
             textWidget.setText(newText);
-            if (attribute.getValue() < attribute.getBaseValue()) {
+            double baseValue = attribute.getBaseValue();
+            if (attr.equals(SharedMonsterAttributes.ATTACK_SPEED) && minecraft.player != null){
+                ItemStack itemInHand = minecraft.player.getHeldItemMainhand();
+                if (!itemInHand.equals(ItemStack.EMPTY)){
+                    if (itemInHand.getAttributeModifiers(EquipmentSlotType.MAINHAND).containsKey(attr.getName())){
+                        Collection<AttributeModifier> itemAttackSpeed = itemInHand.getAttributeModifiers(EquipmentSlotType.MAINHAND)
+                                .get(attr.getName());
+                        double attackSpeed = 4.0;
+                        for (AttributeModifier mod : itemAttackSpeed){
+                            if (mod.getOperation().equals(AttributeModifier.Operation.ADDITION)){
+                                attackSpeed += mod.getAmount();
+                            }
+                        }
+                        baseValue = attackSpeed;
+                    }
+                }
+            }
+            if (attribute.getValue() < baseValue) {
                 textWidget.setColor(NEGATIVE_COLOR);
-            } else if (attribute.getValue() > attribute.getBaseValue()) {
+            } else if (attribute.getValue() > baseValue) {
                 textWidget.setColor(POSITIVE_COLOR);
             } else {
                 textWidget.setColor(BASE_COLOR);
@@ -344,7 +363,6 @@ public class CharacterScreen extends MKScreen {
             statScrollView.setToTop();
             statScrollView.setToRight();
             root.addWidget(statScrollView);
-
         });
         return root;
     }

@@ -6,6 +6,7 @@ import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutVertical;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKText;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.util.text.TranslationTextComponent;
 
 public class AbilityInfoWidget extends MKStackLayoutVertical {
 
@@ -27,7 +28,7 @@ public class AbilityInfoWidget extends MKStackLayoutVertical {
 
     public void setup(){
         if (abilityInfo == null){
-            MKText noSelectPrompt = new MKText(fontRenderer,"Select An Ability to inspect it.");
+            MKText noSelectPrompt = new MKText(fontRenderer,new TranslationTextComponent("mkcore.gui.select_ability"));
             addWidget(noSelectPrompt);
         } else {
             IconText ability = new AbilityIconText(0, 0, 16,

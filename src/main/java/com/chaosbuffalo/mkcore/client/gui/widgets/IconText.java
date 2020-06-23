@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.client.gui.widgets;
 
-import com.chaosbuffalo.mkwidgets.client.gui.constraints.CenterYConstraint;
+import com.chaosbuffalo.mkcore.client.gui.constraints.CenterYWithOffsetConstraint;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutHorizontal;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKImage;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKText;
@@ -23,7 +23,7 @@ public class IconText extends MKStackLayoutHorizontal {
         text.setWidth(100);
         text.setColor(0xffffffff);
         addWidget(text);
-        addConstraintToWidget(new CenterYConstraint(), text);
+        addConstraintToWidget(new CenterYWithOffsetConstraint(2), text);
     }
 
     public MKText getText() {
