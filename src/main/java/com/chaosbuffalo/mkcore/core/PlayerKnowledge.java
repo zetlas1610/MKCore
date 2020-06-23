@@ -66,8 +66,14 @@ public class PlayerKnowledge extends PlayerSyncComponent implements IAbilityKnow
 
     @Override
     public boolean learnAbility(MKAbility ability) {
+        return learnAbility(ability, ability.getType().canPlaceOnActionBar());
+    }
+
+    public boolean learnAbility(MKAbility ability, boolean placeOnBar) {
         if (knownAbilities.learnAbility(ability)) {
-            actionBar.tryPlaceOnBar(ability.getAbilityId());
+            if (placeOnBar) {
+                actionBar.tryPlaceOnBar(ability.getAbilityId());
+            }
             return true;
         } else {
             MKCore.LOGGER.error("learnAbility({}) for {} failure", ability.getAbilityId(), getPlayer());

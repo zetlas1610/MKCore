@@ -1,6 +1,8 @@
 package com.chaosbuffalo.mkcore.network;
 
 import com.chaosbuffalo.mkcore.Capabilities;
+import com.chaosbuffalo.mkcore.MKCore;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -10,10 +12,12 @@ import java.util.function.Supplier;
 
 public class PlayerSlotAbilityPacket {
 
+    private final MKAbility.AbilityType type;
     private final ResourceLocation ability;
     private final int slotIndex;
 
-    public PlayerSlotAbilityPacket(int slotIndex, ResourceLocation ability) {
+    public PlayerSlotAbilityPacket(MKAbility.AbilityType type, int slotIndex, ResourceLocation ability) {
+        this.type = type;
         this.slotIndex = slotIndex;
         this.ability = ability;
     }
@@ -21,11 +25,13 @@ public class PlayerSlotAbilityPacket {
 
     public PlayerSlotAbilityPacket(PacketBuffer buf) {
         ability = buf.readResourceLocation();
+        type = buf.readEnumValue(MKAbility.AbilityType.class);
         slotIndex = buf.readInt();
     }
 
     public void toBytes(PacketBuffer buf) {
         buf.writeResourceLocation(ability);
+        buf.writeEnumValue(type);
         buf.writeInt(slotIndex);
     }
 
@@ -37,7 +43,14 @@ public class PlayerSlotAbilityPacket {
                 return;
             }
             entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(playerData -> {
-                playerData.getKnowledge().getActionBar().setAbilityInSlot(slotIndex, ability);
+                MKCore.LOGGER.info("PlayerSlotAbilityPacket.handle {} {} {}", type, slotIndex, ability);
+                if (type == MKAbility.AbilityType.Active) {
+                    playerData.getKnowledge().getActionBar().setAbilityInSlot(slotIndex, ability);
+                } else if (type == MKAbility.AbilityType.Passive) {
+                    playerData.getKnowledge().getTalentKnowledge().setActivePassiveAbility(slotIndex, ability);
+                } else if (type == MKAbility.AbilityType.Ultimate) {
+                    playerData.getKnowledge().getTalentKnowledge().setActiveUltimateAbility(slotIndex, ability);
+                }
             });
         });
         ctx.setPacketHandled(true);

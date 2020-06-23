@@ -2,6 +2,7 @@ package com.chaosbuffalo.mkcore.core.talents;
 
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.AbilityContext;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.PassiveTalentAbility;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.effects.PassiveEffect;
@@ -39,12 +40,25 @@ public class PassiveTalentHandler extends TalentTypeHandler {
 
     @Override
     public void onRecordUpdated(TalentRecord record) {
+        MKAbility ability = TalentManager.getTalentAbility(record.getNode().getTalent().getRegistryName());
+        if (ability == null)
+            return;
+
         if (!record.isKnown()) {
-            BaseTalent talent = record.getNode().getTalent();
-            if (talent instanceof PassiveTalent) {
-                PassiveTalentAbility ability = ((PassiveTalent) talent).getAbility();
-                playerData.getKnowledge().getTalentKnowledge().clearPassive(ability);
-            }
+            playerData.getKnowledge().getTalentKnowledge().clearPassive(ability);
+            playerData.getKnowledge().unlearnAbility(ability.getAbilityId());
+        } else {
+            tryLearn(record, ability);
+        }
+    }
+
+    @Override
+    public void onRecordLoaded(TalentRecord record) {
+        if (record.isKnown()) {
+            MKAbility ability = TalentManager.getTalentAbility(record.getNode().getTalent().getRegistryName());
+            if (ability == null)
+                return;
+            tryLearn(record, ability);
         }
     }
 
@@ -79,6 +93,14 @@ public class PassiveTalentHandler extends TalentTypeHandler {
     private void deactivatePassive(PassiveTalentAbility talent) {
 //        MKCore.LOGGER.info("PlayerTalentModule.deactivatePassive {}", talent);
         removePassiveEffect(talent.getPassiveEffect());
+    }
+
+    private void tryLearn(TalentRecord record, MKAbility ability) {
+//        MKCore.LOGGER.info("UltimateTalentHandler.tryLearn checking ability");
+        if (!playerData.getKnowledge().knowsAbility(ability.getAbilityId())) {
+//            MKCore.LOGGER.info("UltimateTalentHandler.tryLearn learning ability");
+            playerData.getKnowledge().learnAbility(ability, false);
+        }
     }
 
     public boolean getPassiveTalentsUnlocked() {

@@ -45,6 +45,11 @@ public class HealingRain extends MKAbility {
     }
 
     @Override
+    public AbilityType getType() {
+        return AbilityType.Ultimate;
+    }
+
+    @Override
     public TargetingContext getTargetContext() {
         return TargetingContexts.FRIENDLY;
     }
