@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 
 public class PlayerAbilityKnowledge extends PlayerSyncComponent {
@@ -41,6 +42,9 @@ public class PlayerAbilityKnowledge extends PlayerSyncComponent {
         return Collections.unmodifiableCollection(abilityInfoMap.values());
     }
 
+    public Stream<MKAbilityInfo> getKnownStream() {
+        return abilityInfoMap.values().stream().filter(MKAbilityInfo::isCurrentlyKnown);
+    }
 
     public boolean learnAbility(MKAbility ability) {
         MKAbilityInfo info = getAbilityInfo(ability.getAbilityId());

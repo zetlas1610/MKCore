@@ -9,8 +9,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PlayerKnowledge extends PlayerSyncComponent implements IAbilityKnowledge {
 
@@ -19,6 +22,7 @@ public class PlayerKnowledge extends PlayerSyncComponent implements IAbilityKnow
     private final PlayerActionBar actionBar;
     private final PlayerAbilityKnowledge knownAbilities;
     private final PlayerTalentKnowledge talentKnowledge;
+    private final Map<MKAbility.AbilityType, ISlottedAbilityContainer> abilitySlotContainers = new HashMap<>();
 
     public PlayerKnowledge(MKPlayerData playerData) {
         super("knowledge");
@@ -29,6 +33,9 @@ public class PlayerKnowledge extends PlayerSyncComponent implements IAbilityKnow
         addChild(actionBar);
         addChild(knownAbilities);
         addChild(talentKnowledge);
+        abilitySlotContainers.put(MKAbility.AbilityType.Active, actionBar);
+        abilitySlotContainers.put(MKAbility.AbilityType.Passive, talentKnowledge);
+        abilitySlotContainers.put(MKAbility.AbilityType.Ultimate, talentKnowledge);
     }
 
     PlayerEntity getPlayer() {
@@ -45,6 +52,15 @@ public class PlayerKnowledge extends PlayerSyncComponent implements IAbilityKnow
 
     public PlayerTalentKnowledge getTalentKnowledge() {
         return talentKnowledge;
+    }
+
+    @Nonnull
+    public ISlottedAbilityContainer getAbilityContainer(MKAbility.AbilityType type) {
+        return abilitySlotContainers.getOrDefault(type, ISlottedAbilityContainer.EMPTY);
+    }
+
+    public ResourceLocation getAbilityInSlot(MKAbility.AbilityType type, int slot) {
+        return getAbilityContainer(type).getAbilityInSlot(type, slot);
     }
 
     @Nullable
@@ -66,8 +82,14 @@ public class PlayerKnowledge extends PlayerSyncComponent implements IAbilityKnow
 
     @Override
     public boolean learnAbility(MKAbility ability) {
+        return learnAbility(ability, ability.getType().canPlaceOnActionBar());
+    }
+
+    public boolean learnAbility(MKAbility ability, boolean placeOnBar) {
         if (knownAbilities.learnAbility(ability)) {
-            actionBar.tryPlaceOnBar(ability.getAbilityId());
+            if (placeOnBar) {
+                actionBar.tryPlaceOnBar(ability.getAbilityId());
+            }
             return true;
         } else {
             MKCore.LOGGER.error("learnAbility({}) for {} failure", ability.getAbilityId(), getPlayer());

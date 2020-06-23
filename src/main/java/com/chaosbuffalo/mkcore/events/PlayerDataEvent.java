@@ -18,4 +18,11 @@ public class PlayerDataEvent extends Event {
     public MKPlayerData getPlayerData() {
         return data;
     }
+
+    public static class Updated extends PlayerDataEvent {
+
+        public Updated(MKPlayerData data) {
+            super(data);
+        }
+    }
 }

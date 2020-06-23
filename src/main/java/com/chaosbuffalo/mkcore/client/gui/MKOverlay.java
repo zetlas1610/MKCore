@@ -15,20 +15,15 @@ import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.gui.GuiUtils;
 
+import java.util.Arrays;
 
 public class MKOverlay {
 
-    private static final ResourceLocation barTexture = MKCore.makeRL("textures/gui/abilitybar.png");
     private static final ResourceLocation COOLDOWN_ICON = MKCore.makeRL("textures/class/abilities/cooldown.png");
 
-    private static final int SLOT_WIDTH = 19;
+    private static final int SLOT_WIDTH = 20;
     private static final int SLOT_HEIGHT = 20;
-    private static final int MANA_START_U = 21;
-    private static final int MANA_START_V = 0;
-    private static final int MANA_CELL_WIDTH = 3;
-    private static final int MANA_CELL_HEIGHT = 8;
     private static final int MIN_BAR_START_Y = 80;
     public static final int ABILITY_ICON_SIZE = 16;
 
@@ -41,7 +36,7 @@ public class MKOverlay {
     private void drawMana(MKPlayerData data) {
         int height = mc.getMainWindow().getScaledHeight();
 
-        mc.getTextureManager().bindTexture(barTexture);
+        GuiTextures.CORE_TEXTURES.bind(mc);
         RenderSystem.disableLighting();
 
         final int maxManaPerRow = 20;
@@ -54,8 +49,7 @@ public class MKOverlay {
         for (int i = 0; i < data.getStats().getMana(); i++) {
             int manaX = manaCellWidth * (i % maxManaPerRow);
             int manaY = (i / maxManaPerRow) * manaCellRowSize;
-            GuiUtils.drawTexturedModalRect(manaStartX + manaX, manaStartY + manaY, MANA_START_U, MANA_START_V,
-                    MANA_CELL_WIDTH, MANA_CELL_HEIGHT, 0f);
+            GuiTextures.CORE_TEXTURES.drawRegionAtPos(GuiTextures.MANA_REGION, manaStartX + manaX, manaStartY + manaY);
         }
     }
 
@@ -78,9 +72,9 @@ public class MKOverlay {
         int barSize = width * executor.getCastTicks() / ability.getCastTime(); // FIXME: this is wrong calc if we have spell haste
         int castStartX = mc.getMainWindow().getScaledWidth() / 2 - barSize / 2;
 
-        mc.getTextureManager().bindTexture(barTexture);
+        GuiTextures.CORE_TEXTURES.bind(mc);
         RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
-        GuiUtils.drawTexturedModalRect(castStartX, castStartY, 26, 21, barSize, 3, 0f);
+        GuiTextures.CORE_TEXTURES.drawRegionAtPosPartialWidth(GuiTextures.CAST_BAR_REGION, castStartX, castStartY, barSize);
     }
 
     private int getBarStartY(int slotCount) {
@@ -89,30 +83,44 @@ public class MKOverlay {
         return Math.max(barStart, MIN_BAR_START_Y);
     }
 
-    private void drawBarSlots(int slotCount) {
-        this.mc.getTextureManager().bindTexture(barTexture);
-        RenderSystem.disableLighting();
-
-        int xOffset = 0;
-        int yOffset = getBarStartY(slotCount);
-        for (int i = 0; i < slotCount; i++) {
-            GuiUtils.drawTexturedModalRect(xOffset, yOffset + i * SLOT_HEIGHT, 0, 0, SLOT_WIDTH, SLOT_HEIGHT, 0f);
+    private String getTextureForSlot(int i){
+        switch (i){
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+                return GuiTextures.ABILITY_BAR_REG;
+            default:
+                return GuiTextures.ABILITY_BAR_ULT;
         }
     }
 
-    private void drawAbilities(MKPlayerData data, int slotCount, float partialTicks) {
+    private void drawBarSlots(int slotCount) {
+        GuiTextures.CORE_TEXTURES.bind(mc);
+        RenderSystem.disableLighting();
+        int xOffset = 0;
+        int yOffset = getBarStartY(slotCount);
+        for (int i = 0; i < slotCount; i++) {
+            int yPos = yOffset - i + i * SLOT_HEIGHT;
+            GuiTextures.CORE_TEXTURES.drawRegionAtPos(getTextureForSlot(i), xOffset, yPos);
+        }
+    }
+
+    private int drawAbilities(MKPlayerData data, MKAbility.AbilityType type, int startingSlot, int totalSlots, float partialTicks) {
         RenderSystem.disableLighting();
 
-        final int slotAbilityOffsetX = 1;
+        final int slotAbilityOffsetX = 2;
         final int slotAbilityOffsetY = 2;
 
-        int barStartY = getBarStartY(slotCount);
+        int barStartY = getBarStartY(totalSlots);
+
+        int slotCount = data.getKnowledge().getAbilityContainer(type).getCurrentSlotCount(type);
 
         float globalCooldown = ClientEventHandler.getGlobalCooldown();
         PlayerAbilityExecutor executor = data.getAbilityExecutor();
 
         for (int i = 0; i < slotCount; i++) {
-            ResourceLocation abilityId = data.getKnowledge().getActionBar().getAbilityInSlot(i);
+            ResourceLocation abilityId = data.getKnowledge().getAbilityInSlot(type, i);
             if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
                 continue;
 
@@ -130,7 +138,7 @@ public class MKOverlay {
             }
 
             int slotX = slotAbilityOffsetX;
-            int slotY = barStartY + slotAbilityOffsetY + (i * SLOT_HEIGHT);
+            int slotY = barStartY + slotAbilityOffsetY - (startingSlot + i) + ((startingSlot + i) * SLOT_HEIGHT);
 
             mc.getTextureManager().bindTexture(ability.getAbilityIcon());
             AbstractGui.blit(slotX, slotY, 0, 0, ABILITY_ICON_SIZE, ABILITY_ICON_SIZE, ABILITY_ICON_SIZE, ABILITY_ICON_SIZE);
@@ -154,6 +162,8 @@ public class MKOverlay {
 
             ability.drawAbilityBarEffect(mc, slotX, slotY);
         }
+
+        return startingSlot + slotCount;
     }
 
     @SuppressWarnings("unused")
@@ -171,9 +181,15 @@ public class MKOverlay {
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             drawMana(cap);
             drawCastBar(cap);
-            int slotCount = cap.getKnowledge().getActionBar().getCurrentSize();
-            drawBarSlots(slotCount);
-            drawAbilities(cap, slotCount, event.getPartialTicks());
+
+            int totalSlots = Arrays.stream(MKAbility.AbilityType.values())
+                    .filter(MKAbility.AbilityType::canPlaceOnActionBar)
+                    .mapToInt(type -> cap.getKnowledge().getAbilityContainer(type).getCurrentSlotCount(type))
+                    .sum();
+
+            drawBarSlots(totalSlots);
+            int slot = drawAbilities(cap, MKAbility.AbilityType.Active, 0, totalSlots, event.getPartialTicks());
+            slot = drawAbilities(cap, MKAbility.AbilityType.Ultimate, slot, totalSlots, event.getPartialTicks());
         });
     }
 }

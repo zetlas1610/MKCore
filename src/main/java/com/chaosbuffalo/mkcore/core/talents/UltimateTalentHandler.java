@@ -30,7 +30,7 @@ public class UltimateTalentHandler extends TalentTypeHandler {
 //        MKCore.LOGGER.info("UltimateTalentHandler.tryLearn checking ability");
         if (!playerData.getKnowledge().knowsAbility(ability.getAbilityId())) {
 //            MKCore.LOGGER.info("UltimateTalentHandler.tryLearn learning ability");
-            playerData.getKnowledge().learnAbility(ability);
+            playerData.getKnowledge().learnAbility(ability, false);
         }
     }
 
@@ -49,7 +49,7 @@ public class UltimateTalentHandler extends TalentTypeHandler {
             playerData.getKnowledge().getActionBar().removeFromHotBar(oldAbilityId);
         }
         if (!newAbilityId.equals(MKCoreRegistry.INVALID_ABILITY)) {
-            playerData.getKnowledge().getActionBar().tryPlaceOnBar(newAbilityId);
+//            playerData.getKnowledge().getActionBar().tryPlaceOnBar(newAbilityId);
         }
     }
 }

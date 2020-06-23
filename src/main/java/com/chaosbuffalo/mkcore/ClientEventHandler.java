@@ -1,6 +1,7 @@
 package com.chaosbuffalo.mkcore;
 
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.client.gui.CharacterScreen;
 import com.chaosbuffalo.mkcore.network.ExecuteActiveAbilityPacket;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import net.minecraft.client.Minecraft;
@@ -21,7 +22,8 @@ import org.lwjgl.glfw.GLFW;
 public class ClientEventHandler {
 
     private static KeyBinding playerMenuBind;
-    private static KeyBinding[] abilityBinds;
+    private static KeyBinding[] activeAbilityBinds;
+    private static KeyBinding[] ultimateAbilityBinds;
 
     private static int currentGCDTicks;
 
@@ -29,15 +31,26 @@ public class ClientEventHandler {
         playerMenuBind = new KeyBinding("key.hud.playermenu", GLFW.GLFW_KEY_J, "key.mkcore.category");
         ClientRegistry.registerKeyBinding(playerMenuBind);
 
-        abilityBinds = new KeyBinding[GameConstants.ACTION_BAR_SIZE];
-        for (int i = 0; i < GameConstants.ACTION_BAR_SIZE; i++) {
-            String bindName = String.format("key.hud.ability%d", i + 1);
+        activeAbilityBinds = new KeyBinding[GameConstants.MAX_ACTIVES];
+        for (int i = 0; i < GameConstants.MAX_ACTIVES; i++) {
+            String bindName = String.format("key.hud.active_ability%d", i + 1);
             int key = GLFW.GLFW_KEY_1 + i;
             KeyBinding bind = new KeyBinding(bindName, KeyConflictContext.IN_GAME, KeyModifier.ALT,
                     InputMappings.getInputByCode(key, 0), "key.mkcore.abilitybar");
 
             ClientRegistry.registerKeyBinding(bind);
-            abilityBinds[i] = bind;
+            activeAbilityBinds[i] = bind;
+        }
+
+        ultimateAbilityBinds = new KeyBinding[GameConstants.MAX_ULTIMATES];
+        for (int i = 0; i < GameConstants.MAX_ULTIMATES; i++) {
+            String bindName = String.format("key.hud.ultimate_ability%d", i + 1);
+            int key = GLFW.GLFW_KEY_6 + i;
+            KeyBinding bind = new KeyBinding(bindName, KeyConflictContext.IN_GAME, KeyModifier.ALT,
+                    InputMappings.getInputByCode(key, 0), "key.mkcore.abilitybar");
+
+            ClientRegistry.registerKeyBinding(bind);
+            ultimateAbilityBinds[i] = bind;
         }
     }
 
@@ -68,18 +81,21 @@ public class ClientEventHandler {
     }
 
 
-    static void handleAbilityBarPressed(PlayerEntity player, int slot) {
+    static void handleAbilityBarPressed(PlayerEntity player, MKAbility.AbilityType type, int slot) {
         if (isOnGlobalCooldown())
             return;
 
         MKCore.getPlayer(player).ifPresent(pData -> {
-            ResourceLocation abilityId = pData.getKnowledge().getActionBar().getAbilityInSlot(slot);
+            ResourceLocation abilityId = pData.getKnowledge().getAbilityInSlot(type, slot);
+            if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
+                return;
+
             MKAbility ability = MKCoreRegistry.getAbility(abilityId);
             if (ability == null || !ability.meetsRequirements(pData))
                 return;
 
-            MKCore.LOGGER.info("sending execute ability {}", slot);
-            PacketHandler.sendMessageToServer(new ExecuteActiveAbilityPacket(slot));
+            MKCore.LOGGER.info("sending execute ability {} {}", type, slot);
+            PacketHandler.sendMessageToServer(new ExecuteActiveAbilityPacket(type, slot));
             startGlobalCooldown();
         });
     }
@@ -91,12 +107,21 @@ public class ClientEventHandler {
 
         while (playerMenuBind.isPressed()) {
             MKCore.LOGGER.info("open player menu");
+            Minecraft.getInstance().displayGuiScreen(new CharacterScreen());
+
         }
 
-        for (int i = 0; i < abilityBinds.length; i++) {
-            KeyBinding bind = abilityBinds[i];
+        for (int i = 0; i < activeAbilityBinds.length; i++) {
+            KeyBinding bind = activeAbilityBinds[i];
             while (bind.isPressed()) {
-                handleAbilityBarPressed(player, i);
+                handleAbilityBarPressed(player, MKAbility.AbilityType.Active, i);
+            }
+        }
+
+        for (int i = 0; i < ultimateAbilityBinds.length; i++) {
+            KeyBinding bind = ultimateAbilityBinds[i];
+            while (bind.isPressed()) {
+                handleAbilityBarPressed(player, MKAbility.AbilityType.Ultimate, i);
             }
         }
     }

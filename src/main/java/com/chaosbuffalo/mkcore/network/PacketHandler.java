@@ -47,6 +47,8 @@ public class PacketHandler {
                 TalentPointActionPacket::new, TalentPointActionPacket::handle);
         networkChannel.registerMessage(id++, TalentDefinitionSyncPacket.class, TalentDefinitionSyncPacket::toBytes,
                 TalentDefinitionSyncPacket::new, TalentDefinitionSyncPacket::handle);
+        networkChannel.registerMessage(id++, PlayerSlotAbilityPacket.class, PlayerSlotAbilityPacket::toBytes,
+                PlayerSlotAbilityPacket::new, PlayerSlotAbilityPacket::handle);
     }
 
     public static <T> void sendMessageToServer(T msg) {

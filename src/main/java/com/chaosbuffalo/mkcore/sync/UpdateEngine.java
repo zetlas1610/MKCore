@@ -2,11 +2,13 @@ package com.chaosbuffalo.mkcore.sync;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
+import com.chaosbuffalo.mkcore.events.PlayerDataEvent;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerDataSyncPacket;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.common.MinecraftForge;
 
 public class UpdateEngine {
     private final MKPlayerData playerData;
@@ -102,10 +104,12 @@ public class UpdateEngine {
     }
 
     public void deserializeUpdate(CompoundNBT updateTag, boolean privateUpdate) {
-//        MKCore.LOGGER.info("deserializeClientUpdatePre private:{} {}", privateUpdate, updateTag);
+        MKCore.LOGGER.info("deserializeClientUpdatePre private:{} {}", privateUpdate, updateTag);
         publicUpdater.deserializeUpdate(updateTag);
         if (privateUpdate) {
             privateUpdater.deserializeUpdate(updateTag);
         }
+
+        MinecraftForge.EVENT_BUS.post(new PlayerDataEvent.Updated(playerData));
     }
 }

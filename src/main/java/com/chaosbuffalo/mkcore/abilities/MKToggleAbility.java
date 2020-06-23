@@ -66,9 +66,9 @@ public abstract class MKToggleAbility extends MKAbility {
     @Override
     public void drawAbilityBarEffect(Minecraft mc, int slotX, int slotY) {
         if (mc.player != null && mc.player.isPotionActive(getToggleEffect())) {
-            int iconSize = MKOverlay.ABILITY_ICON_SIZE;
+            int iconSize = MKOverlay.ABILITY_ICON_SIZE + 2;
             mc.getTextureManager().bindTexture(TOGGLE_EFFECT);
-            AbstractGui.blit(slotX, slotY, 0, 0, iconSize, iconSize, iconSize, iconSize);
+            AbstractGui.blit(slotX - 1, slotY - 1, 0, 0, iconSize, iconSize, iconSize, iconSize);
         }
     }
 }

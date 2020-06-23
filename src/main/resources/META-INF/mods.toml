@@ -63,6 +63,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis lacinia magn
 [[dependencies.mkcore]]
     modId="mkwidgets"
     mandatory=true
-    versionRange="[1.0,)"
+    versionRange="[1.14,)"
     ordering="NONE"
     side="BOTH"

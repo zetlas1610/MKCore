@@ -5,6 +5,7 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.PassiveTalentAbility;
+import com.chaosbuffalo.mkcore.core.ISlottedAbilityContainer;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.core.PlayerSyncComponent;
 import com.chaosbuffalo.mkcore.sync.ResourceListUpdater;
@@ -21,13 +22,14 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class PlayerTalentKnowledge extends PlayerSyncComponent {
+public class PlayerTalentKnowledge extends PlayerSyncComponent implements ISlottedAbilityContainer {
     private final MKPlayerData playerData;
 
     private final SyncInt talentPoints = new SyncInt("points", 0);
@@ -63,12 +65,26 @@ public class PlayerTalentKnowledge extends PlayerSyncComponent {
         return Collections.unmodifiableList(loadedPassives);
     }
 
+    public ResourceLocation getActivePassive(int slot) {
+        if (slot < loadedPassives.size()) {
+            return loadedPassives.get(slot);
+        }
+        return MKCoreRegistry.INVALID_ABILITY;
+    }
+
     public int getAllowedActivePassiveCount() {
         return loadedPassives.size();
     }
 
     public List<ResourceLocation> getActiveUltimates() {
         return Collections.unmodifiableList(loadedUltimates);
+    }
+
+    public ResourceLocation getActiveUltimate(int slot) {
+        if (slot < loadedUltimates.size()) {
+            return loadedUltimates.get(slot);
+        }
+        return MKCoreRegistry.INVALID_ABILITY;
     }
 
     public int getAllowedActiveUltimateCount() {
@@ -228,22 +244,37 @@ public class PlayerTalentKnowledge extends PlayerSyncComponent {
                 return;
             }
 
-            ResourceLocation abilityId = ability.getAbilityId();
-            if (index < loadedPassives.size()) {
-                for (int i = 0; i < loadedPassives.size(); i++) {
-                    if (!abilityId.equals(MKCoreRegistry.INVALID_ABILITY) && i != index && abilityId.equals(loadedPassives.get(i))) {
-                        setPassiveSlot(i, loadedPassives.get(index));
-                    }
-                }
-                setPassiveSlot(index, abilityId);
-            }
+            setActivePassiveAbility(index, ability.getAbilityId());
         } else {
             MKCore.LOGGER.error("PlayerTalentKnowledge.setActivePassive {} {} - player does not know passive!", index, talentId);
             setPassiveSlot(index, MKCoreRegistry.INVALID_ABILITY);
         }
     }
 
-    public void clearPassive(PassiveTalentAbility ability) {
+    public void setActivePassiveAbility(int index, ResourceLocation abilityId) {
+        MKCore.LOGGER.info("setActivePassiveAbility({}, {})", index, abilityId);
+
+        if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY)) {
+            clearPassiveSlot(index);
+            return;
+        }
+
+        if (!playerData.getKnowledge().knowsAbility(abilityId)) {
+            MKCore.LOGGER.info("setActivePassiveAbility({}, {}) - player does not know ability!", index, abilityId);
+            return;
+        }
+
+        if (index < loadedPassives.size()) {
+            for (int i = 0; i < loadedPassives.size(); i++) {
+                if (!abilityId.equals(MKCoreRegistry.INVALID_ABILITY) && i != index && abilityId.equals(loadedPassives.get(i))) {
+                    setPassiveSlot(i, loadedPassives.get(index));
+                }
+            }
+            setPassiveSlot(index, abilityId);
+        }
+    }
+
+    public void clearPassive(MKAbility ability) {
 //        MKCore.LOGGER.info("PlayerTalentKnowledge.clearPassive {}", ability);
         ResourceLocation abilityId = ability.getAbilityId();
         for (int i = 0; i < loadedPassives.size(); i++) {
@@ -255,12 +286,17 @@ public class PlayerTalentKnowledge extends PlayerSyncComponent {
         }
     }
 
+    private void clearPassiveSlot(int index) {
+        setPassiveSlot(index, MKCoreRegistry.INVALID_ABILITY);
+    }
+
     private void setPassiveSlot(int index, ResourceLocation abilityId) {
 //        MKCore.LOGGER.info("PlayerTalentKnowledge.setPassiveSlot {} {}", index, abilityId);
         ResourceLocation previous = loadedPassives.set(index, abilityId);
         loadedPassivesUpdater.setDirty(index);
         if (playerData.getEntity().isAddedToWorld()) {
             playerData.getTalentHandler().getTypeHandler(TalentType.PASSIVE).onSlotChanged(index, previous, abilityId);
+            playerData.getAbilityExecutor().onSlotChanged(MKAbility.AbilityType.Passive, index, previous, abilityId);
         }
     }
 
@@ -294,19 +330,35 @@ public class PlayerTalentKnowledge extends PlayerSyncComponent {
             }
             ResourceLocation abilityId = ability.getAbilityId();
 
-            ResourceLocation currentAbility = loadedUltimates.get(index);
-            if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY) && !currentAbility.equals(MKCoreRegistry.INVALID_ABILITY)) {
-                // TODO: is this even reachable? UltimateTalent.getAbility would need to return INVALID_ABILITY
-                clearUltimateSlot(index);
-            } else {
-                if (!currentAbility.equals(MKCoreRegistry.INVALID_ABILITY)) {
-                    clearUltimateSlot(index);
-                }
-                setUltimateSlot(index, abilityId);
-            }
+            setActiveUltimateAbility(index, abilityId);
         } else {
             MKCore.LOGGER.error("PlayerTalentKnowledge.setActiveUltimate {} {} - player does not know ultimate!", index, talentId);
             clearUltimateSlot(index);
+        }
+    }
+
+    public void setActiveUltimateAbility(int index, ResourceLocation abilityId) {
+        MKCore.LOGGER.info("setActiveUltimateAbility({}, {})", index, abilityId);
+
+        if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY)) {
+            clearUltimateSlot(index);
+            return;
+        }
+
+        if (!playerData.getKnowledge().knowsAbility(abilityId)) {
+            MKCore.LOGGER.info("setActiveUltimateAbility({}, {}) - player does not know ability!", index, abilityId);
+            return;
+        }
+
+        ResourceLocation currentAbility = loadedUltimates.get(index);
+        if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY) && !currentAbility.equals(MKCoreRegistry.INVALID_ABILITY)) {
+            // TODO: is this even reachable? UltimateTalent.getAbility would need to return INVALID_ABILITY
+            clearUltimateSlot(index);
+        } else {
+            if (!currentAbility.equals(MKCoreRegistry.INVALID_ABILITY)) {
+                clearUltimateSlot(index);
+            }
+            setUltimateSlot(index, abilityId);
         }
     }
 
@@ -328,6 +380,7 @@ public class PlayerTalentKnowledge extends PlayerSyncComponent {
             loadedUltimatesUpdater.setDirty(index);
             if (playerData.getEntity().isAddedToWorld()) {
                 playerData.getTalentHandler().getTypeHandler(TalentType.ULTIMATE).onSlotChanged(index, previous, abilityId);
+                playerData.getAbilityExecutor().onSlotChanged(MKAbility.AbilityType.Ultimate, index, previous, abilityId);
             }
         }
     }
@@ -402,6 +455,46 @@ public class PlayerTalentKnowledge extends PlayerSyncComponent {
 
     public void deserializeNBT(INBT tag) {
         deserialize(new Dynamic<>(NBTDynamicOps.INSTANCE, tag));
+    }
+
+    @Override
+    public void setAbilityInSlot(MKAbility.AbilityType type, int index, ResourceLocation abilityId) {
+        if (type == MKAbility.AbilityType.Passive) {
+            setActivePassiveAbility(index, abilityId);
+        } else if (type == MKAbility.AbilityType.Ultimate) {
+            setActiveUltimateAbility(index, abilityId);
+        }
+    }
+
+    @Nonnull
+    @Override
+    public ResourceLocation getAbilityInSlot(MKAbility.AbilityType type, int slot) {
+        if (type == MKAbility.AbilityType.Passive) {
+            return getActivePassive(slot);
+        } else if (type == MKAbility.AbilityType.Ultimate) {
+            return getActiveUltimate(slot);
+        }
+        return MKCoreRegistry.INVALID_ABILITY;
+    }
+
+    @Override
+    public int getCurrentSlotCount(MKAbility.AbilityType type) {
+        if (type == MKAbility.AbilityType.Passive) {
+            return GameConstants.DEFAULT_PASSIVES;
+        } else if (type == MKAbility.AbilityType.Ultimate) {
+            return GameConstants.DEFAULT_ULTIMATES;
+        }
+        return 0;
+    }
+
+    @Override
+    public int getMaximumSlotCount(MKAbility.AbilityType type) {
+        if (type == MKAbility.AbilityType.Passive) {
+            return GameConstants.MAX_PASSIVES;
+        } else if (type == MKAbility.AbilityType.Ultimate) {
+            return GameConstants.MAX_ULTIMATES;
+        }
+        return 0;
     }
 
     private static class KnownTalentCache {

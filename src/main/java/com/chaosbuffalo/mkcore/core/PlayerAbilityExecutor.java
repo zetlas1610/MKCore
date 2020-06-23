@@ -1,6 +1,7 @@
 package com.chaosbuffalo.mkcore.core;
 
 import com.chaosbuffalo.mkcore.GameConstants;
+import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.*;
 import com.chaosbuffalo.mkcore.events.PlayerAbilityEvent;
@@ -18,8 +19,8 @@ public class PlayerAbilityExecutor extends AbilityExecutor {
         return (MKPlayerData) entityData;
     }
 
-    public void executeHotBarAbility(int slot) {
-        ResourceLocation abilityId = getPlayerData().getKnowledge().getActionBar().getAbilityInSlot(slot);
+    public void executeHotBarAbility(MKAbility.AbilityType type, int slot) {
+        ResourceLocation abilityId = getPlayerData().getKnowledge().getAbilityInSlot(type, slot);
         if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
             return;
 
@@ -78,6 +79,16 @@ public class PlayerAbilityExecutor extends AbilityExecutor {
                 MKToggleAbility toggle = (MKToggleAbility) ability;
                 if (entityData.getEntity().isPotionActive(toggle.getToggleEffect()))
                     setToggleGroupAbility(toggle.getToggleGroupId(), toggle);
+            }
+        }
+    }
+
+    public void onSlotChanged(MKAbility.AbilityType type, int index, ResourceLocation previous, ResourceLocation newAbility) {
+        MKCore.LOGGER.info("PlayerAbilityExecutor.onSlotChanged({}, {}, {}, {})", type, index, previous, newAbility);
+        if (!previous.equals(MKCoreRegistry.INVALID_ABILITY) && newAbility.equals(MKCoreRegistry.INVALID_ABILITY)) {
+            MKAbility ability = MKCoreRegistry.getAbility(previous);
+            if (ability instanceof MKToggleAbility) {
+                ((MKToggleAbility) ability).removeEffect(getPlayerData().getEntity(), getPlayerData());
             }
         }
     }
