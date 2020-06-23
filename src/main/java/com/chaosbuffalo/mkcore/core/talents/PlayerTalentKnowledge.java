@@ -22,6 +22,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -463,6 +464,7 @@ public class PlayerTalentKnowledge extends PlayerSyncComponent implements ISlott
         }
     }
 
+    @Nonnull
     @Override
     public ResourceLocation getAbilityInSlot(MKAbility.AbilityType type, int slot) {
         if (type == MKAbility.AbilityType.Passive) {

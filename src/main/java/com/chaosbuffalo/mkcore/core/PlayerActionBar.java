@@ -11,6 +11,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class PlayerActionBar extends PlayerSyncComponent implements ISlottedAbilityContainer {
@@ -154,6 +155,7 @@ public class PlayerActionBar extends PlayerSyncComponent implements ISlottedAbil
         }
     }
 
+    @Nonnull
     @Override
     public ResourceLocation getAbilityInSlot(MKAbility.AbilityType type, int slot) {
         if (type == MKAbility.AbilityType.Active) {

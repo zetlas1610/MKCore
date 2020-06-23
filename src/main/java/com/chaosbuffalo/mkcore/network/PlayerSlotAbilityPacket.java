@@ -45,10 +45,7 @@ public class PlayerSlotAbilityPacket {
             }
             entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(playerData -> {
                 MKCore.LOGGER.info("PlayerSlotAbilityPacket.handle {} {} {}", type, slotIndex, ability);
-                ISlottedAbilityContainer container = playerData.getKnowledge().getAbilityContainer(type);
-                if (container != null) {
-                    container.setAbilityInSlot(type, slotIndex, ability);
-                }
+                playerData.getKnowledge().getAbilityContainer(type).setAbilityInSlot(type, slotIndex, ability);
             });
         });
         ctx.setPacketHandled(true);

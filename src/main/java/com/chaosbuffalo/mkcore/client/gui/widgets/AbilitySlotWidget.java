@@ -69,12 +69,10 @@ public class AbilitySlotWidget extends MKLayout {
             removeWidget(background);
         }
         ISlottedAbilityContainer container = playerData.getKnowledge().getAbilityContainer(slotType);
-        if (container != null) {
-            unlocked = container.isSlotUnlocked(slotType, slotIndex);
-            background = getImageForSlotType(slotType, unlocked);
-            addWidget(background);
-            addConstraintToWidget(new FillConstraint(), background);
-        }
+        unlocked = container.isSlotUnlocked(slotType, slotIndex);
+        background = getImageForSlotType(slotType, unlocked);
+        addWidget(background);
+        addConstraintToWidget(new FillConstraint(), background);
     }
 
     private void setupIcon(ResourceLocation abilityName){

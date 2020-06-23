@@ -114,7 +114,7 @@ public class MKOverlay {
 
         int barStartY = getBarStartY(totalSlots);
 
-        int slotCount = data.getKnowledge().getCurrentAbilityTypeSlots(type);
+        int slotCount = data.getKnowledge().getAbilityContainer(type).getCurrentSlotCount(type);
 
         float globalCooldown = ClientEventHandler.getGlobalCooldown();
         PlayerAbilityExecutor executor = data.getAbilityExecutor();
@@ -184,7 +184,7 @@ public class MKOverlay {
 
             int totalSlots = Arrays.stream(MKAbility.AbilityType.values())
                     .filter(MKAbility.AbilityType::canPlaceOnActionBar)
-                    .mapToInt(type -> cap.getKnowledge().getCurrentAbilityTypeSlots(type))
+                    .mapToInt(type -> cap.getKnowledge().getAbilityContainer(type).getCurrentSlotCount(type))
                     .sum();
 
             drawBarSlots(totalSlots);

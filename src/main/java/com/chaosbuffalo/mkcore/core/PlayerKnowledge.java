@@ -9,6 +9,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,18 +54,13 @@ public class PlayerKnowledge extends PlayerSyncComponent implements IAbilityKnow
         return talentKnowledge;
     }
 
+    @Nonnull
     public ISlottedAbilityContainer getAbilityContainer(MKAbility.AbilityType type) {
-        return abilitySlotContainers.get(type);
+        return abilitySlotContainers.getOrDefault(type, ISlottedAbilityContainer.EMPTY);
     }
 
     public ResourceLocation getAbilityInSlot(MKAbility.AbilityType type, int slot) {
-        ISlottedAbilityContainer container = getAbilityContainer(type);
-        return container != null ? container.getAbilityInSlot(type, slot) : MKCoreRegistry.INVALID_ABILITY;
-    }
-
-    public int getCurrentAbilityTypeSlots(MKAbility.AbilityType type) {
-        ISlottedAbilityContainer container = getAbilityContainer(type);
-        return container != null ? container.getCurrentSlotCount(type) : 0;
+        return getAbilityContainer(type).getAbilityInSlot(type, slot);
     }
 
     @Nullable
