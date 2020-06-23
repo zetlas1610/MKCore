@@ -296,6 +296,7 @@ public class PlayerTalentKnowledge extends PlayerSyncComponent implements ISlott
         loadedPassivesUpdater.setDirty(index);
         if (playerData.getEntity().isAddedToWorld()) {
             playerData.getTalentHandler().getTypeHandler(TalentType.PASSIVE).onSlotChanged(index, previous, abilityId);
+            playerData.getAbilityExecutor().onSlotChanged(MKAbility.AbilityType.Passive, index, previous, abilityId);
         }
     }
 
@@ -379,6 +380,7 @@ public class PlayerTalentKnowledge extends PlayerSyncComponent implements ISlott
             loadedUltimatesUpdater.setDirty(index);
             if (playerData.getEntity().isAddedToWorld()) {
                 playerData.getTalentHandler().getTypeHandler(TalentType.ULTIMATE).onSlotChanged(index, previous, abilityId);
+                playerData.getAbilityExecutor().onSlotChanged(MKAbility.AbilityType.Ultimate, index, previous, abilityId);
             }
         }
     }

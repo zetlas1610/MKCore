@@ -83,12 +83,17 @@ public class PlayerActionBar extends PlayerSyncComponent implements ISlottedAbil
     }
 
     private void setSlotInternal(int index, ResourceLocation abilityId) {
-        abilities.set(index, abilityId);
+        ResourceLocation previous = abilities.set(index, abilityId);
         actionBarUpdater.setDirty(index);
+        onSlotChanged(index, previous, abilityId);
     }
 
     private void clearSlot(int index) {
         setSlotInternal(index, MKCoreRegistry.INVALID_ABILITY);
+    }
+
+    private void onSlotChanged(int index, ResourceLocation previous, ResourceLocation newAbility) {
+        playerData.getAbilityExecutor().onSlotChanged(MKAbility.AbilityType.Active, index, previous, newAbility);
     }
 
     public void removeFromHotBar(ResourceLocation abilityId) {
