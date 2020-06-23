@@ -6,6 +6,8 @@ import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.client.gui.CharacterScreen;
 import com.chaosbuffalo.mkcore.client.gui.GuiTextures;
+import com.chaosbuffalo.mkcore.core.ISlottedAbilityContainer;
+import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerSlotAbilityPacket;
 import com.chaosbuffalo.mkwidgets.client.gui.UIConstants;
@@ -35,11 +37,7 @@ public class AbilitySlotWidget extends MKLayout {
         this.slotIndex = slotIndex;
         this.setMargins(2, 2, 2, 2);
         this.abilityName = MKCoreRegistry.INVALID_ABILITY;
-        this.unlocked = getUnlocked(slotType, slotIndex);
         this.icon = null;
-        background = getImageForSlotType(slotType, unlocked);
-        addWidget(background);
-        addConstraintToWidget(new FillConstraint(), background);
         refreshSlot();
     }
 
@@ -61,8 +59,22 @@ public class AbilitySlotWidget extends MKLayout {
             return;
         MKCore.getPlayer(playerEntity).ifPresent((playerData -> {
             abilityName = playerData.getKnowledge().getAbilityInSlot(slotType, slotIndex);
+            setupBackground(playerData);
             setupIcon(abilityName);
         }));
+    }
+
+    private void setupBackground(MKPlayerData playerData) {
+        if (background != null) {
+            removeWidget(background);
+        }
+        ISlottedAbilityContainer container = playerData.getKnowledge().getAbilityContainer(slotType);
+        if (container != null) {
+            unlocked = container.isSlotUnlocked(slotType, slotIndex);
+            background = getImageForSlotType(slotType, unlocked);
+            addWidget(background);
+            addConstraintToWidget(new FillConstraint(), background);
+        }
     }
 
     private void setupIcon(ResourceLocation abilityName){

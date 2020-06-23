@@ -13,10 +13,10 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
 
-public class PlayerActionBar extends PlayerSyncComponent {
+public class PlayerActionBar extends PlayerSyncComponent implements ISlottedAbilityContainer {
 
     private final MKPlayerData playerData;
-    private final List<ResourceLocation> abilities = NonNullList.withSize(GameConstants.ACTION_BAR_SIZE, MKCoreRegistry.INVALID_ABILITY);
+    private final List<ResourceLocation> abilities = NonNullList.withSize(GameConstants.MAX_ACTIVES, MKCoreRegistry.INVALID_ABILITY);
     private final ResourceListUpdater actionBarUpdater = new ResourceListUpdater("active", () -> abilities);
 
     public PlayerActionBar(MKPlayerData playerData) {
@@ -145,5 +145,36 @@ public class PlayerActionBar extends PlayerSyncComponent {
 
     public void deserialize(CompoundNBT tag) {
         actionBarUpdater.deserializeStorage(tag);
+    }
+
+    @Override
+    public void setAbilityInSlot(MKAbility.AbilityType type, int index, ResourceLocation abilityId) {
+        if (type == MKAbility.AbilityType.Active) {
+            setAbilityInSlot(index, abilityId);
+        }
+    }
+
+    @Override
+    public ResourceLocation getAbilityInSlot(MKAbility.AbilityType type, int slot) {
+        if (type == MKAbility.AbilityType.Active) {
+            return getAbilityInSlot(slot);
+        }
+        return MKCoreRegistry.INVALID_ABILITY;
+    }
+
+    @Override
+    public int getCurrentSlotCount(MKAbility.AbilityType type) {
+        if (type == MKAbility.AbilityType.Active) {
+            return GameConstants.DEFAULT_ACTIVES;
+        }
+        return 0;
+    }
+
+    @Override
+    public int getMaximumSlotCount(MKAbility.AbilityType type) {
+        if (type == MKAbility.AbilityType.Active) {
+            return GameConstants.MAX_ACTIVES;
+        }
+        return 0;
     }
 }

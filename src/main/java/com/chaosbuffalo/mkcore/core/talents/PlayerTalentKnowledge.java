@@ -5,6 +5,7 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.PassiveTalentAbility;
+import com.chaosbuffalo.mkcore.core.ISlottedAbilityContainer;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.core.PlayerSyncComponent;
 import com.chaosbuffalo.mkcore.sync.ResourceListUpdater;
@@ -27,7 +28,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class PlayerTalentKnowledge extends PlayerSyncComponent {
+public class PlayerTalentKnowledge extends PlayerSyncComponent implements ISlottedAbilityContainer {
     private final MKPlayerData playerData;
 
     private final SyncInt talentPoints = new SyncInt("points", 0);
@@ -451,6 +452,45 @@ public class PlayerTalentKnowledge extends PlayerSyncComponent {
 
     public void deserializeNBT(INBT tag) {
         deserialize(new Dynamic<>(NBTDynamicOps.INSTANCE, tag));
+    }
+
+    @Override
+    public void setAbilityInSlot(MKAbility.AbilityType type, int index, ResourceLocation abilityId) {
+        if (type == MKAbility.AbilityType.Passive) {
+            setActivePassiveAbility(index, abilityId);
+        } else if (type == MKAbility.AbilityType.Ultimate) {
+            setActiveUltimateAbility(index, abilityId);
+        }
+    }
+
+    @Override
+    public ResourceLocation getAbilityInSlot(MKAbility.AbilityType type, int slot) {
+        if (type == MKAbility.AbilityType.Passive) {
+            return getActivePassive(slot);
+        } else if (type == MKAbility.AbilityType.Ultimate) {
+            return getActiveUltimate(slot);
+        }
+        return MKCoreRegistry.INVALID_ABILITY;
+    }
+
+    @Override
+    public int getCurrentSlotCount(MKAbility.AbilityType type) {
+        if (type == MKAbility.AbilityType.Passive) {
+            return GameConstants.DEFAULT_PASSIVES;
+        } else if (type == MKAbility.AbilityType.Ultimate) {
+            return GameConstants.DEFAULT_ULTIMATES;
+        }
+        return 0;
+    }
+
+    @Override
+    public int getMaximumSlotCount(MKAbility.AbilityType type) {
+        if (type == MKAbility.AbilityType.Passive) {
+            return GameConstants.MAX_PASSIVES;
+        } else if (type == MKAbility.AbilityType.Ultimate) {
+            return GameConstants.MAX_ULTIMATES;
+        }
+        return 0;
     }
 
     private static class KnownTalentCache {

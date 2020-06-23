@@ -108,9 +108,12 @@ public class SyncListUpdater<T> implements ISyncObject {
 
     public void deserializeStorage(CompoundNBT tag) {
         ListNBT list = tag.getList(name, nbtListType);
+        List<T> parentList = parent.get();
         for (int i = 0; i < list.size(); i++) {
             T decoded = valueDecoder.apply(list.get(i));
-            parent.get().set(i, decoded);
+            if (i < parentList.size()) {
+                parentList.set(i, decoded);
+            }
         }
     }
 }

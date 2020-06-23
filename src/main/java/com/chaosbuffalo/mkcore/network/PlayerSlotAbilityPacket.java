@@ -3,6 +3,7 @@ package com.chaosbuffalo.mkcore.network;
 import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.core.ISlottedAbilityContainer;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -44,12 +45,9 @@ public class PlayerSlotAbilityPacket {
             }
             entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(playerData -> {
                 MKCore.LOGGER.info("PlayerSlotAbilityPacket.handle {} {} {}", type, slotIndex, ability);
-                if (type == MKAbility.AbilityType.Active) {
-                    playerData.getKnowledge().getActionBar().setAbilityInSlot(slotIndex, ability);
-                } else if (type == MKAbility.AbilityType.Passive) {
-                    playerData.getKnowledge().getTalentKnowledge().setActivePassiveAbility(slotIndex, ability);
-                } else if (type == MKAbility.AbilityType.Ultimate) {
-                    playerData.getKnowledge().getTalentKnowledge().setActiveUltimateAbility(slotIndex, ability);
+                ISlottedAbilityContainer container = playerData.getKnowledge().getAbilityContainer(type);
+                if (container != null) {
+                    container.setAbilityInSlot(type, slotIndex, ability);
                 }
             });
         });

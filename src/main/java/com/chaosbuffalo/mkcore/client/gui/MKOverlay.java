@@ -15,7 +15,6 @@ import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.gui.GuiUtils;
 
 import java.util.Arrays;
 
@@ -115,7 +114,7 @@ public class MKOverlay {
 
         int barStartY = getBarStartY(totalSlots);
 
-        int slotCount = data.getKnowledge().getActiveAbilityCount(type);
+        int slotCount = data.getKnowledge().getCurrentAbilityTypeSlots(type);
 
         float globalCooldown = ClientEventHandler.getGlobalCooldown();
         PlayerAbilityExecutor executor = data.getAbilityExecutor();
@@ -185,7 +184,7 @@ public class MKOverlay {
 
             int totalSlots = Arrays.stream(MKAbility.AbilityType.values())
                     .filter(MKAbility.AbilityType::canPlaceOnActionBar)
-                    .mapToInt(type -> cap.getKnowledge().getActiveAbilityCount(type))
+                    .mapToInt(type -> cap.getKnowledge().getCurrentAbilityTypeSlots(type))
                     .sum();
 
             drawBarSlots(totalSlots);

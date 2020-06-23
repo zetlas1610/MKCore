@@ -11,6 +11,8 @@ import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PlayerKnowledge extends PlayerSyncComponent implements IAbilityKnowledge {
 
@@ -19,6 +21,7 @@ public class PlayerKnowledge extends PlayerSyncComponent implements IAbilityKnow
     private final PlayerActionBar actionBar;
     private final PlayerAbilityKnowledge knownAbilities;
     private final PlayerTalentKnowledge talentKnowledge;
+    private final Map<MKAbility.AbilityType, ISlottedAbilityContainer> abilitySlotContainers = new HashMap<>();
 
     public PlayerKnowledge(MKPlayerData playerData) {
         super("knowledge");
@@ -29,6 +32,9 @@ public class PlayerKnowledge extends PlayerSyncComponent implements IAbilityKnow
         addChild(actionBar);
         addChild(knownAbilities);
         addChild(talentKnowledge);
+        abilitySlotContainers.put(MKAbility.AbilityType.Active, actionBar);
+        abilitySlotContainers.put(MKAbility.AbilityType.Passive, talentKnowledge);
+        abilitySlotContainers.put(MKAbility.AbilityType.Ultimate, talentKnowledge);
     }
 
     PlayerEntity getPlayer() {
@@ -47,26 +53,18 @@ public class PlayerKnowledge extends PlayerSyncComponent implements IAbilityKnow
         return talentKnowledge;
     }
 
-    public ResourceLocation getAbilityInSlot(MKAbility.AbilityType type, int slot) {
-        if (type == MKAbility.AbilityType.Active) {
-            return getActionBar().getAbilityInSlot(slot);
-        } else if (type == MKAbility.AbilityType.Passive) {
-            return getTalentKnowledge().getActivePassive(slot);
-        } else if (type == MKAbility.AbilityType.Ultimate) {
-            return getTalentKnowledge().getActiveUltimate(slot);
-        }
-        return MKCoreRegistry.INVALID_ABILITY;
+    public ISlottedAbilityContainer getAbilityContainer(MKAbility.AbilityType type) {
+        return abilitySlotContainers.get(type);
     }
 
-    public int getActiveAbilityCount(MKAbility.AbilityType type) {
-        if (type == MKAbility.AbilityType.Active) {
-            return getActionBar().getCurrentSize();
-        } else if (type == MKAbility.AbilityType.Passive) {
-            return getTalentKnowledge().getAllowedActivePassiveCount();
-        } else if (type == MKAbility.AbilityType.Ultimate) {
-            return getTalentKnowledge().getAllowedActiveUltimateCount();
-        }
-        return 0;
+    public ResourceLocation getAbilityInSlot(MKAbility.AbilityType type, int slot) {
+        ISlottedAbilityContainer container = getAbilityContainer(type);
+        return container != null ? container.getAbilityInSlot(type, slot) : MKCoreRegistry.INVALID_ABILITY;
+    }
+
+    public int getCurrentAbilityTypeSlots(MKAbility.AbilityType type) {
+        ISlottedAbilityContainer container = getAbilityContainer(type);
+        return container != null ? container.getCurrentSlotCount(type) : 0;
     }
 
     @Nullable
