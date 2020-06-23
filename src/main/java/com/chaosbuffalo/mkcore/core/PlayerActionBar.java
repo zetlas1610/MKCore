@@ -27,10 +27,8 @@ public class PlayerActionBar extends PlayerSyncComponent {
 
     public int getCurrentSize() {
         // TODO: expandable
-        int ultimates = playerData.getKnowledge().getTalentKnowledge().getAllowedActiveUltimateCount();
-        return GameConstants.CLASS_ACTION_BAR_SIZE + ultimates;
+        return GameConstants.DEFAULT_ACTIVES;
     }
-
 
     public int getSlotForAbility(ResourceLocation abilityId) {
         int slot = abilities.indexOf(abilityId);

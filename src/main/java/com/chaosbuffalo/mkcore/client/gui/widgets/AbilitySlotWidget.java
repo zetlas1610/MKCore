@@ -1,13 +1,11 @@
 package com.chaosbuffalo.mkcore.client.gui.widgets;
 
-import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.client.gui.CharacterScreen;
 import com.chaosbuffalo.mkcore.client.gui.GuiTextures;
-import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerSlotAbilityPacket;
 import com.chaosbuffalo.mkwidgets.client.gui.UIConstants;
@@ -20,7 +18,6 @@ import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
-import java.util.List;
 
 public class AbilitySlotWidget extends MKLayout {
     private MKAbility.AbilityType slotType;
@@ -63,8 +60,7 @@ public class AbilitySlotWidget extends MKLayout {
         if (playerEntity == null)
             return;
         MKCore.getPlayer(playerEntity).ifPresent((playerData -> {
-            ResourceLocation abilityName = getAbilityInSlot(playerData, slotType, slotIndex);
-            this.abilityName = abilityName;
+            abilityName = playerData.getKnowledge().getAbilityInSlot(slotType, slotIndex);
             setupIcon(abilityName);
         }));
     }
@@ -83,18 +79,6 @@ public class AbilitySlotWidget extends MKLayout {
                 addConstraintToWidget(new MarginConstraint(MarginConstraint.MarginType.LEFT), icon);
             }
         }
-    }
-
-    private ResourceLocation getAbilityInSlot(MKPlayerData playerData, MKAbility.AbilityType type, int slotIndex) {
-        switch (type) {
-            case Active:
-                return playerData.getKnowledge().getActionBar().getAbilityInSlot(slotIndex);
-            case Passive:
-                return playerData.getKnowledge().getTalentKnowledge().getActivePassives().get(slotIndex);
-            case Ultimate:
-                return playerData.getKnowledge().getTalentKnowledge().getActiveUltimates().get(slotIndex);
-        }
-        return MKCoreRegistry.INVALID_ABILITY;
     }
 
     private boolean getUnlocked(MKAbility.AbilityType slotType, int slotIndex){
@@ -129,7 +113,7 @@ public class AbilitySlotWidget extends MKLayout {
         return abilityName;
     }
 
-    private void setSlotToAbility(ResourceLocation ability, boolean auto){
+    private void setSlotToAbility(ResourceLocation ability){
         PacketHandler.sendMessageToServer(new PlayerSlotAbilityPacket(slotType, slotIndex, ability));
     }
 
@@ -153,7 +137,7 @@ public class AbilitySlotWidget extends MKLayout {
                 return true;
             }
         } else if (mouseButton == UIConstants.MOUSE_BUTTON_RIGHT){
-            setSlotToAbility(MKCoreRegistry.INVALID_ABILITY, false);
+            setSlotToAbility(MKCoreRegistry.INVALID_ABILITY);
             return true;
         }
         return false;
@@ -165,7 +149,7 @@ public class AbilitySlotWidget extends MKLayout {
             MKCore.LOGGER.info("adding ability {} to slot {} {} {} {}", screen.getDragging(), slotIndex, unlocked, screen.getDragging().getType(), slotType);
             if (unlocked && screen.getDragging().getType().equals(slotType)){
                 ResourceLocation ability = screen.getDragging().getAbilityId();
-                setSlotToAbility(ability, false);
+                setSlotToAbility(ability);
             }
             screen.clearDragging();
             screen.clearDragState();

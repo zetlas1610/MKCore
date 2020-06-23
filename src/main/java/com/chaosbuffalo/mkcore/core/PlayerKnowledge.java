@@ -47,6 +47,28 @@ public class PlayerKnowledge extends PlayerSyncComponent implements IAbilityKnow
         return talentKnowledge;
     }
 
+    public ResourceLocation getAbilityInSlot(MKAbility.AbilityType type, int slot) {
+        if (type == MKAbility.AbilityType.Active) {
+            return getActionBar().getAbilityInSlot(slot);
+        } else if (type == MKAbility.AbilityType.Passive) {
+            return getTalentKnowledge().getActivePassive(slot);
+        } else if (type == MKAbility.AbilityType.Ultimate) {
+            return getTalentKnowledge().getActiveUltimate(slot);
+        }
+        return MKCoreRegistry.INVALID_ABILITY;
+    }
+
+    public int getActiveAbilityCount(MKAbility.AbilityType type) {
+        if (type == MKAbility.AbilityType.Active) {
+            return getActionBar().getCurrentSize();
+        } else if (type == MKAbility.AbilityType.Passive) {
+            return getTalentKnowledge().getAllowedActivePassiveCount();
+        } else if (type == MKAbility.AbilityType.Ultimate) {
+            return getTalentKnowledge().getAllowedActiveUltimateCount();
+        }
+        return 0;
+    }
+
     @Nullable
     @Override
     public MKAbilityInfo getAbilityInfo(ResourceLocation abilityId) {

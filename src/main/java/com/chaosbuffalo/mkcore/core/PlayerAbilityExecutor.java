@@ -18,8 +18,8 @@ public class PlayerAbilityExecutor extends AbilityExecutor {
         return (MKPlayerData) entityData;
     }
 
-    public void executeHotBarAbility(int slot) {
-        ResourceLocation abilityId = getPlayerData().getKnowledge().getActionBar().getAbilityInSlot(slot);
+    public void executeHotBarAbility(MKAbility.AbilityType type, int slot) {
+        ResourceLocation abilityId = getPlayerData().getKnowledge().getAbilityInSlot(type, slot);
         if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
             return;
 

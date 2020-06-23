@@ -63,12 +63,26 @@ public class PlayerTalentKnowledge extends PlayerSyncComponent {
         return Collections.unmodifiableList(loadedPassives);
     }
 
+    public ResourceLocation getActivePassive(int slot) {
+        if (slot < loadedPassives.size()) {
+            return loadedPassives.get(slot);
+        }
+        return MKCoreRegistry.INVALID_ABILITY;
+    }
+
     public int getAllowedActivePassiveCount() {
         return loadedPassives.size();
     }
 
     public List<ResourceLocation> getActiveUltimates() {
         return Collections.unmodifiableList(loadedUltimates);
+    }
+
+    public ResourceLocation getActiveUltimate(int slot) {
+        if (slot < loadedUltimates.size()) {
+            return loadedUltimates.get(slot);
+        }
+        return MKCoreRegistry.INVALID_ABILITY;
     }
 
     public int getAllowedActiveUltimateCount() {

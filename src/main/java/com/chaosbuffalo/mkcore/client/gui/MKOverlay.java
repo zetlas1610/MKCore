@@ -17,6 +17,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
+import java.util.Arrays;
 
 public class MKOverlay {
 
@@ -106,19 +107,21 @@ public class MKOverlay {
         }
     }
 
-    private void drawAbilities(MKPlayerData data, int slotCount, float partialTicks) {
+    private int drawAbilities(MKPlayerData data, MKAbility.AbilityType type, int startingSlot, int totalSlots, float partialTicks) {
         RenderSystem.disableLighting();
 
         final int slotAbilityOffsetX = 2;
         final int slotAbilityOffsetY = 2;
 
-        int barStartY = getBarStartY(slotCount);
+        int barStartY = getBarStartY(totalSlots);
+
+        int slotCount = data.getKnowledge().getActiveAbilityCount(type);
 
         float globalCooldown = ClientEventHandler.getGlobalCooldown();
         PlayerAbilityExecutor executor = data.getAbilityExecutor();
 
         for (int i = 0; i < slotCount; i++) {
-            ResourceLocation abilityId = data.getKnowledge().getActionBar().getAbilityInSlot(i);
+            ResourceLocation abilityId = data.getKnowledge().getAbilityInSlot(type, i);
             if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
                 continue;
 
@@ -136,7 +139,7 @@ public class MKOverlay {
             }
 
             int slotX = slotAbilityOffsetX;
-            int slotY = barStartY + slotAbilityOffsetY - i + (i * SLOT_HEIGHT);
+            int slotY = barStartY + slotAbilityOffsetY - (startingSlot + i) + ((startingSlot + i) * SLOT_HEIGHT);
 
             mc.getTextureManager().bindTexture(ability.getAbilityIcon());
             AbstractGui.blit(slotX, slotY, 0, 0, ABILITY_ICON_SIZE, ABILITY_ICON_SIZE, ABILITY_ICON_SIZE, ABILITY_ICON_SIZE);
@@ -160,6 +163,8 @@ public class MKOverlay {
 
             ability.drawAbilityBarEffect(mc, slotX, slotY);
         }
+
+        return startingSlot + slotCount;
     }
 
     @SuppressWarnings("unused")
@@ -177,9 +182,15 @@ public class MKOverlay {
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             drawMana(cap);
             drawCastBar(cap);
-            int slotCount = cap.getKnowledge().getActionBar().getCurrentSize();
-            drawBarSlots(slotCount);
-            drawAbilities(cap, slotCount, event.getPartialTicks());
+
+            int totalSlots = Arrays.stream(MKAbility.AbilityType.values())
+                    .filter(MKAbility.AbilityType::canPlaceOnActionBar)
+                    .mapToInt(type -> cap.getKnowledge().getActiveAbilityCount(type))
+                    .sum();
+
+            drawBarSlots(totalSlots);
+            int slot = drawAbilities(cap, MKAbility.AbilityType.Active, 0, totalSlots, event.getPartialTicks());
+            slot = drawAbilities(cap, MKAbility.AbilityType.Ultimate, slot, totalSlots, event.getPartialTicks());
         });
     }
 }

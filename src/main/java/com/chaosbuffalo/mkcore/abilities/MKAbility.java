@@ -36,11 +36,10 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
 
     public enum AbilityType {
         Active(true),
-        Toggle(true),
         Passive(false),
         Ultimate(true);
 
-        boolean canSlot;
+        final boolean canSlot;
 
         AbilityType(boolean canSlot) {
             this.canSlot = canSlot;
