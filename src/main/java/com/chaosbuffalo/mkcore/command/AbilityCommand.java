@@ -41,13 +41,14 @@ public class AbilityCommand {
                 ;
     }
 
-    static CompletableFuture<Suggestions> suggestKnownAbilities(final CommandContext<CommandSource> context, final SuggestionsBuilder builder) throws CommandSyntaxException {
+    public static CompletableFuture<Suggestions> suggestKnownAbilities(final CommandContext<CommandSource> context, final SuggestionsBuilder builder) throws CommandSyntaxException {
         ServerPlayerEntity player = context.getSource().asPlayer();
         return ISuggestionProvider.suggest(MKCore.getPlayer(player)
                         .map(playerData -> playerData.getKnowledge()
                                 .getKnownAbilities()
                                 .getAbilities()
                                 .stream()
+                                .filter(MKAbilityInfo::isCurrentlyKnown)
                                 .map(MKAbilityInfo::getId)
                                 .map(ResourceLocation::toString))
                         .orElse(Stream.empty()),
@@ -59,7 +60,7 @@ public class AbilityCommand {
         return ISuggestionProvider.suggest(MKCore.getPlayer(player)
                         .map(playerData -> {
                             Set<MKAbility> allAbilities = new HashSet<>(MKCoreRegistry.ABILITIES.getValues());
-                            allAbilities.removeIf(ability -> playerData.getKnowledge().getKnownAbilityInfo(ability.getAbilityId()) != null);
+                            allAbilities.removeIf(ability -> playerData.getKnowledge().knowsAbility(ability.getAbilityId()));
                             return allAbilities.stream().map(MKAbility::getAbilityId).map(ResourceLocation::toString);
                         })
                         .orElse(Stream.empty()),
@@ -89,7 +90,6 @@ public class AbilityCommand {
 
     static int listAbilities(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
         ServerPlayerEntity player = ctx.getSource().asPlayer();
-
 
         MKCore.getPlayer(player).ifPresent(cap -> {
             PlayerAbilityKnowledge knownAbilities = cap.getKnowledge().getKnownAbilities();

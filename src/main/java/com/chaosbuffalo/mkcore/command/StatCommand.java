@@ -11,12 +11,16 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntityArgument;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
-import java.util.function.*;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.ToIntBiFunction;
+import java.util.function.ToIntFunction;
 
 public class StatCommand {
 
@@ -24,6 +28,8 @@ public class StatCommand {
         return Commands.literal("stat")
                 .then(createSimpleFloatStat("mana", PlayerStatsModule::getMana, PlayerStatsModule::setMana))
                 .then(createSimpleFloatStat("health", PlayerStatsModule::getHealth, PlayerStatsModule::setHealth))
+                .then(createAttributeStat("max_health", SharedMonsterAttributes.MAX_HEALTH))
+                .then(createAttributeStat("armor", SharedMonsterAttributes.ARMOR))
                 .then(createAttributeStat("manaregen", MKAttributes.MANA_REGEN))
                 .then(createAttributeStat("maxmana", MKAttributes.MAX_MANA))
                 .then(createAttributeStat("cdr", MKAttributes.COOLDOWN))

@@ -36,11 +36,29 @@ public class UseAbilityGoal extends Goal {
         Optional<LivingEntity> target = entity.getBrain().getMemory(MKAbilityMemories.ABILITY_TARGET);
         if (abilityOptional.isPresent() && target.isPresent()) {
             currentAbility = abilityOptional.get();
-            this.target = target.get();
-            return entity.getEntitySenses().canSee(this.target) && canActivate();
+            LivingEntity targetEntity = target.get();
+
+            if (!canActivate())
+                return false;
+
+            if (entity != targetEntity) {
+                if (!isInRange(currentAbility, targetEntity))
+                    return false;
+                if (!entity.getEntitySenses().canSee(targetEntity))
+                    return false;
+            }
+
+            // Now we know we can actually start the cast
+            this.target = targetEntity;
+            return true;
         } else {
             return false;
         }
+    }
+
+    protected boolean isInRange(MKAbility ability, LivingEntity target) {
+        float range = ability.getDistance();
+        return target.getDistanceSq(entity) <= range * range;
     }
 
     public boolean canActivate() {

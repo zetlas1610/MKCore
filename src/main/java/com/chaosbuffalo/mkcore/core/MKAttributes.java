@@ -10,7 +10,7 @@ public class MKAttributes {
 
     public static final RangedAttribute MANA_REGEN = (RangedAttribute) new RangedAttribute(null, "mk.mana_regen", 0, 0, 1024)
             .setDescription("Mana Regen")
-            .setShouldWatch(false);
+            .setShouldWatch(true);
 
     public static final RangedAttribute MELEE_CRIT = (RangedAttribute) new RangedAttribute(null, "mk.melee_crit_chance", 0.00, 0.0, 1.0)
             .setDescription("Melee Critical Chance")
@@ -34,10 +34,12 @@ public class MKAttributes {
     // 1.5 max means the cooldown will progress at most 50% faster than the normal rate. This translates into a 50% reduction in the observed cooldown.
     // 0.25 minimum means that a cooldown can be increased up to 175% of the normal value. This translates into a 75% increase in the observed cooldown
     public static final RangedAttribute COOLDOWN = (RangedAttribute) new RangedAttribute(null, "mk.cooldown_rate", 1, 0.25, 1.5)
-            .setDescription("Cooldown Rate");
+            .setDescription("Cooldown Rate")
+            .setShouldWatch(false);
 
     public static final RangedAttribute HEAL_BONUS = (RangedAttribute) new RangedAttribute(null, "mk.heal_bonus", 1.0, 0.0, 2.0)
-            .setDescription("Heal Bonus Amount");
+            .setDescription("Heal Bonus Amount")
+            .setShouldWatch(false);
 
 
     public static final RangedAttribute ELEMENTAL_RESISTANCE = (RangedAttribute) new RangedAttribute(null, "mk.elemental_resistance", 0, -1.0, 1.0)

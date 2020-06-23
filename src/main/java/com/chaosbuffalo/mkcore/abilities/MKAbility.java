@@ -1,8 +1,6 @@
 package com.chaosbuffalo.mkcore.abilities;
 
 import com.chaosbuffalo.mkcore.GameConstants;
-import com.chaosbuffalo.mkcore.abilities.ai.AbilityTarget;
-import com.chaosbuffalo.mkcore.abilities.ai.AbilityUseContext;
 import com.chaosbuffalo.mkcore.abilities.ai.conditions.AbilityUseCondition;
 import com.chaosbuffalo.mkcore.abilities.ai.conditions.StandardUseCondition;
 import com.chaosbuffalo.mkcore.abilities.attributes.IAbilityAttribute;
@@ -37,10 +35,20 @@ import java.util.regex.Pattern;
 public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
 
     public enum AbilityType {
-        Active,
-        Toggle,
-        Passive,
-        Ultimate
+        Active(true),
+        Toggle(true),
+        Passive(false),
+        Ultimate(true);
+
+        boolean canSlot;
+
+        AbilityType(boolean canSlot) {
+            this.canSlot = canSlot;
+        }
+
+        public boolean canPlaceOnActionBar() {
+            return canSlot;
+        }
     }
 
     private int castTime;
@@ -124,14 +132,6 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
     public MKAbility setCastTime(int newCastTime) {
         castTime = newCastTime;
         return this;
-    }
-
-    public AbilityTarget getAbilityTarget(AbilityUseContext context) {
-        return getUseCondition().getTarget(context);
-    }
-
-    public boolean shouldAIUse(AbilityUseContext context) {
-        return getUseCondition().test(context);
     }
 
     public float getDistance() {

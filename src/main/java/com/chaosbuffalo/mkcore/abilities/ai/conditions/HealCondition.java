@@ -1,13 +1,14 @@
 package com.chaosbuffalo.mkcore.abilities.ai.conditions;
 
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
-import com.chaosbuffalo.mkcore.abilities.ai.AbilityTarget;
-import com.chaosbuffalo.mkcore.abilities.ai.AbilityUseContext;
+import com.chaosbuffalo.mkcore.abilities.ai.AbilityTargetingDecision;
+import com.chaosbuffalo.mkcore.abilities.ai.AbilityDecisionContext;
 import com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy.FollowMovementStrategy;
 import com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy.MovementStrategy;
 import net.minecraft.entity.LivingEntity;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
+import java.util.List;
 
 public class HealCondition extends AbilityUseCondition {
 
@@ -35,22 +36,19 @@ public class HealCondition extends AbilityUseCondition {
         return entity.getHealth() <= entity.getMaxHealth() * healThreshold;
     }
 
+    @Nonnull
     @Override
-    public boolean test(AbilityUseContext context) {
+    public AbilityTargetingDecision getDecision(AbilityDecisionContext context) {
         if (getAbility().canSelfCast() && needsHealing(context.getCaster())) {
-            return true;
-        }
-        return !selfOnly && context.getFriendlies().size() > 0 && needsHealing(context.getFriendlies().get(0));
-    }
-
-    @Nullable
-    @Override
-    public AbilityTarget getTarget(AbilityUseContext context) {
-        if (getAbility().canSelfCast() && needsHealing(context.getCaster())) {
-            return new AbilityTarget(context.getCaster());
+            return new AbilityTargetingDecision(context.getCaster());
         } else if (!selfOnly) {
-            return new AbilityTarget(context.getFriendlies().get(0), movementStrategy);
+            List<LivingEntity> friends = context.getFriendlies();
+            for (LivingEntity target : friends) {
+                if (needsHealing(target)) {
+                    return new AbilityTargetingDecision(target, movementStrategy);
+                }
+            }
         }
-        return null;
+        return AbilityTargetingDecision.UNDECIDED;
     }
 }

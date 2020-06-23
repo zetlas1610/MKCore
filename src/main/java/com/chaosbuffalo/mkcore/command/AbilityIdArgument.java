@@ -10,13 +10,9 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class AbilityIdArgument implements ArgumentType<ResourceLocation> {
-    private static final List<String> EXAMPLES = Arrays.asList("forge", "inventorysorter");
 
     public static AbilityIdArgument ability() {
         return new AbilityIdArgument();
@@ -30,10 +26,5 @@ public class AbilityIdArgument implements ArgumentType<ResourceLocation> {
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(final CommandContext<S> context, final SuggestionsBuilder builder) {
         return ISuggestionProvider.suggest(MKCoreRegistry.ABILITIES.getKeys().stream().map(ResourceLocation::toString), builder);
-    }
-
-    @Override
-    public Collection<String> getExamples() {
-        return EXAMPLES;
     }
 }

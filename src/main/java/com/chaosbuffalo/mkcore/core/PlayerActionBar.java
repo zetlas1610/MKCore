@@ -5,12 +5,11 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
-import com.chaosbuffalo.mkcore.sync.SyncListUpdater;
+import com.chaosbuffalo.mkcore.core.talents.PlayerTalentKnowledge;
+import com.chaosbuffalo.mkcore.sync.ResourceListUpdater;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
 
@@ -18,22 +17,18 @@ public class PlayerActionBar extends PlayerSyncComponent {
 
     private final MKPlayerData playerData;
     private final List<ResourceLocation> abilities = NonNullList.withSize(GameConstants.ACTION_BAR_SIZE, MKCoreRegistry.INVALID_ABILITY);
-    private final SyncListUpdater<ResourceLocation> hotBarUpdater =
-            new SyncListUpdater<>("active",
-                    () -> abilities,
-                    id -> StringNBT.valueOf(id.toString()),
-                    nbt -> new ResourceLocation(nbt.getString()),
-                    Constants.NBT.TAG_STRING);
+    private final ResourceListUpdater actionBarUpdater = new ResourceListUpdater("active", () -> abilities);
 
     public PlayerActionBar(MKPlayerData playerData) {
         super("action_bar");
         this.playerData = playerData;
-        addPrivate(hotBarUpdater);
+        addPrivate(actionBarUpdater);
     }
 
     public int getCurrentSize() {
         // TODO: expandable
-        return GameConstants.CLASS_ACTION_BAR_SIZE;
+        int ultimates = playerData.getKnowledge().getTalentKnowledge().getAllowedActiveUltimateCount();
+        return GameConstants.CLASS_ACTION_BAR_SIZE + ultimates;
     }
 
 
@@ -51,17 +46,55 @@ public class PlayerActionBar extends PlayerSyncComponent {
         return MKCoreRegistry.INVALID_ABILITY;
     }
 
+    private boolean canSlotKnownAbility(ResourceLocation abilityId) {
+        PlayerTalentKnowledge talentKnowledge = playerData.getKnowledge().getTalentKnowledge();
+        // TODO: see if this can be less tightly coupled
+        if (talentKnowledge.isKnownUltimateAbility(abilityId) && !talentKnowledge.isActiveUltimate(abilityId)) {
+            return false;
+        }
+        return true;
+    }
+
     public void setAbilityInSlot(int index, ResourceLocation abilityId) {
-        if (index < abilities.size()) {
-            abilities.set(index, abilityId);
-            hotBarUpdater.setDirty(index);
+        if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY)) {
+            clearSlot(index);
+        } else if (playerData.getKnowledge().knowsAbility(abilityId)) {
+            if (canSlotKnownAbility(abilityId)) {
+                setKnownAbilityInSlot(index, abilityId);
+            } else {
+                MKCore.LOGGER.error("PlayerActionBar.setAbilityInSlot({}, {}) - tried to slot ultimate that is not slotted!", index, abilityId);
+            }
+        } else {
+            MKCore.LOGGER.error("PlayerActionBar.setAbilityInSlot({}, {}) - tried to slot unknown ability!", index, abilityId);
         }
     }
 
-    private void removeFromHotBar(ResourceLocation abilityId) {
+    private void setKnownAbilityInSlot(int index, ResourceLocation abilityId) {
+//        MKCore.LOGGER.info("PlayerActionBar.setAbilityInSlotInternal({}, {})", index, abilityId);
+        if (index < abilities.size()) {
+            for (int i = 0; i < abilities.size(); i++) {
+                if (!abilityId.equals(MKCoreRegistry.INVALID_ABILITY) && i != index && abilityId.equals(abilities.get(i))) {
+//                    MKCore.LOGGER.info("PlayerActionBar.setAbilityInSlot({}, {}) - moving {} to {}", index, abilityId, abilities.get(i), i);
+                    setSlotInternal(i, abilities.get(index));
+                }
+            }
+            setSlotInternal(index, abilityId);
+        }
+    }
+
+    private void setSlotInternal(int index, ResourceLocation abilityId) {
+        abilities.set(index, abilityId);
+        actionBarUpdater.setDirty(index);
+    }
+
+    private void clearSlot(int index) {
+        setSlotInternal(index, MKCoreRegistry.INVALID_ABILITY);
+    }
+
+    public void removeFromHotBar(ResourceLocation abilityId) {
         int slot = getSlotForAbility(abilityId);
         if (slot != GameConstants.ACTION_BAR_INVALID_SLOT) {
-            setAbilityInSlot(slot, MKCoreRegistry.INVALID_ABILITY);
+            clearSlot(slot);
         }
     }
 
@@ -80,6 +113,12 @@ public class PlayerActionBar extends PlayerSyncComponent {
         }
 
         return slot;
+    }
+
+    public void resetBar() {
+        for (int i = 0; i < abilities.size(); i++) {
+            clearSlot(i);
+        }
     }
 
     public void onAbilityUnlearned(MKAbility ability) {
@@ -102,10 +141,10 @@ public class PlayerActionBar extends PlayerSyncComponent {
     }
 
     public void serialize(CompoundNBT tag) {
-        hotBarUpdater.serializeStorage(tag);
+        actionBarUpdater.serializeStorage(tag);
     }
 
     public void deserialize(CompoundNBT tag) {
-        hotBarUpdater.deserializeStorage(tag);
+        actionBarUpdater.deserializeStorage(tag);
     }
 }

@@ -78,7 +78,7 @@ public class PlayerAbilityKnowledge extends PlayerSyncComponent {
     }
 
     public boolean knowsAbility(ResourceLocation abilityId) {
-        return abilityInfoMap.containsKey(abilityId);
+        return getKnownAbilityInfo(abilityId) != null;
     }
 
     @Nullable

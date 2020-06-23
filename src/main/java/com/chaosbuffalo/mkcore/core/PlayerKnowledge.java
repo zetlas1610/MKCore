@@ -4,6 +4,7 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
+import com.chaosbuffalo.mkcore.core.talents.PlayerTalentKnowledge;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
@@ -17,14 +18,17 @@ public class PlayerKnowledge extends PlayerSyncComponent implements IAbilityKnow
 
     private final PlayerActionBar actionBar;
     private final PlayerAbilityKnowledge knownAbilities;
+    private final PlayerTalentKnowledge talentKnowledge;
 
     public PlayerKnowledge(MKPlayerData playerData) {
         super("knowledge");
         this.playerData = playerData;
         actionBar = new PlayerActionBar(playerData);
         knownAbilities = new PlayerAbilityKnowledge(playerData);
+        talentKnowledge = new PlayerTalentKnowledge(playerData);
         addChild(actionBar);
         addChild(knownAbilities);
+        addChild(talentKnowledge);
     }
 
     PlayerEntity getPlayer() {
@@ -37,6 +41,10 @@ public class PlayerKnowledge extends PlayerSyncComponent implements IAbilityKnow
 
     public PlayerAbilityKnowledge getKnownAbilities() {
         return knownAbilities;
+    }
+
+    public PlayerTalentKnowledge getTalentKnowledge() {
+        return talentKnowledge;
     }
 
     @Nullable
@@ -89,11 +97,13 @@ public class PlayerKnowledge extends PlayerSyncComponent implements IAbilityKnow
     }
 
     public void serialize(CompoundNBT tag) {
+        tag.put("talents", talentKnowledge.serializeNBT());
         knownAbilities.serialize(tag);
         actionBar.serialize(tag);
     }
 
     public void deserialize(CompoundNBT tag) {
+        talentKnowledge.deserializeNBT(tag.get("talents"));
         knownAbilities.deserialize(tag);
         actionBar.deserialize(tag);
     }

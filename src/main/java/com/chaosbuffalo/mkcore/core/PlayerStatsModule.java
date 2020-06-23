@@ -74,11 +74,6 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
         return (float) getEntity().getAttribute(MKAttributes.HEAL_BONUS).getValue();
     }
 
-
-    private boolean isServerSide() {
-        return getEntity() instanceof ServerPlayerEntity;
-    }
-
     @Override
     public float getHealth() {
         return getEntity().getHealth();
@@ -99,8 +94,12 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
     }
 
     public void setMana(float value) {
+        setMana(value, true);
+    }
+
+    private void setMana(float value, boolean sendUpdate) {
         value = MathHelper.clamp(value, 0, getMaxMana());
-        mana.set(value);
+        mana.set(value, sendUpdate);
     }
 
     public float getMaxMana() {
@@ -118,10 +117,7 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
 
     public void tick() {
         abilityTracker.tick();
-
-        if (isServerSide()) {
-            updateMana();
-        }
+        updateMana();
     }
 
     private void updateMana() {
@@ -133,12 +129,20 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
         if (getMana() > max)
             setMana(max);
 
-        regenTime += 1. / 20.;
+        if (getMana() == max)
+            return;
+
+        regenTime += 1 / 20f;
+
         // if getManaRegenRate == 1, this is 1 mana per 3 seconds
         float i_regen = 3.0f / getManaRegenRate();
-        if (regenTime >= i_regen) {
-            if (getMana() < max) {
-                addMana(1);
+        while (regenTime >= i_regen) {
+            float current = getMana();
+            if (current < max) {
+//                MKCore.LOGGER.info("regen {} {} {}", regenTime, i_regen, current);
+//                MKCore.LOGGER.info("Updating mana {} to {}", current, value);
+                float newValue = current + 1;
+                setMana(newValue, newValue == max);
             }
             regenTime -= i_regen;
         }
