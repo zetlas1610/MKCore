@@ -1,6 +1,7 @@
 package com.chaosbuffalo.mkcore.client.gui;
 
 import com.chaosbuffalo.mkcore.Capabilities;
+import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
@@ -15,6 +16,7 @@ import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutVertical;
 import com.chaosbuffalo.mkwidgets.client.gui.screens.MKScreen;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.*;
 import com.chaosbuffalo.mkwidgets.utils.TextureRegion;
+import com.google.common.collect.Sets;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -38,6 +40,40 @@ public class CharacterScreen extends MKScreen {
     private MKAbility dragging;
     private static final List<String> states = new ArrayList<>(Arrays.asList("stats", "damages", "abilities"));
     private static final ArrayList<IAttribute> STAT_PANEL_ATTRIBUTES = new ArrayList<>();
+    public class AbilitySlotKey {
+        public MKAbility.AbilityType type;
+        public int slot;
+
+        public AbilitySlotKey(MKAbility.AbilityType type, int index){
+            this.type = type;
+            this.slot = index;
+        }
+
+        @Override
+        public int hashCode() {
+            return slot + type.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other instanceof AbilitySlotKey){
+                AbilitySlotKey otherKey = (AbilitySlotKey)other;
+                return slot == otherKey.slot && type.equals(otherKey.type);
+            }
+            return false;
+        }
+    }
+    private final Map<AbilitySlotKey, AbilitySlotWidget> abilitySlots;
+
+    public List<AbilitySlotWidget> getSlotsForType(MKAbility.AbilityType slotType){
+        List<AbilitySlotWidget> widgets = new ArrayList<>();
+        for (AbilitySlotWidget slot : abilitySlots.values()){
+            if (slot.getSlotType().equals(slotType)){
+                widgets.add(slot);
+            }
+        }
+        return widgets;
+    }
 
     static {
         STAT_PANEL_ATTRIBUTES.add(SharedMonsterAttributes.MAX_HEALTH);
@@ -58,6 +94,7 @@ public class CharacterScreen extends MKScreen {
 
     public CharacterScreen() {
         super(new TranslationTextComponent("mk_character_screen.title"));
+        abilitySlots = new HashMap<>();
         isDraggingAbility = false;
         dragging = null;
     }
@@ -69,9 +106,20 @@ public class CharacterScreen extends MKScreen {
     public void setDragging(MKAbility dragging) {
         this.dragging = dragging;
         isDraggingAbility = true;
+        Set<MKAbility.AbilityType> types = Sets.newHashSet(MKAbility.AbilityType.Active, MKAbility.AbilityType.Passive,
+                MKAbility.AbilityType.Ultimate);
+        types.remove(dragging.getType());
+        for (MKAbility.AbilityType type : types){
+            for (AbilitySlotWidget widget : getSlotsForType(type)){
+                widget.setBackgroundColor(0xff555555);
+            }
+        }
     }
 
     public void clearDragging(){
+        for (AbilitySlotWidget widget : abilitySlots.values()){
+            widget.setBackgroundColor(0xffffffff);
+        }
         this.dragging = null;
         isDraggingAbility = false;
     }
@@ -119,11 +167,13 @@ public class CharacterScreen extends MKScreen {
             activesLabel.setX(slotsX);
             activesLabel.setY(slotsY - 12);
             root.addWidget(activesLabel);
-            MKLayout regularSlots = getLayoutOfAbilitySlots(slotsX, slotsY, MKAbility.AbilityType.Active, 5);
+            MKLayout regularSlots = getLayoutOfAbilitySlots(slotsX, slotsY, MKAbility.AbilityType.Active
+                    , GameConstants.MAX_ACTIVES);
             root.addWidget(regularSlots);
             regularSlots.manualRecompute();
             int ultSlotsX = regularSlots.getX() + regularSlots.getWidth() + 30;
-            MKLayout ultSlots = getLayoutOfAbilitySlots(ultSlotsX, slotsY, MKAbility.AbilityType.Ultimate, 2);
+            MKLayout ultSlots = getLayoutOfAbilitySlots(ultSlotsX, slotsY, MKAbility.AbilityType.Ultimate,
+                    GameConstants.MAX_ULTIMATES);
             root.addWidget(ultSlots);
             ultSlots.manualRecompute();
             MKText ultLabel = new MKText(font, "Ultimates:");
@@ -132,7 +182,7 @@ public class CharacterScreen extends MKScreen {
             root.addWidget(ultLabel);
             int passiveSlotX = ultSlots.getX() + ultSlots.getWidth() + 30;
             MKLayout passiveSlots = getLayoutOfAbilitySlots(passiveSlotX, slotsY, MKAbility.AbilityType.Passive,
-                    3);
+                    GameConstants.MAX_PASSIVES);
             MKText passivesLabel = new MKText(font, "Passives:");
             passivesLabel.setX(passiveSlotX);
             passivesLabel.setY(slotsY - 12);
@@ -264,6 +314,7 @@ public class CharacterScreen extends MKScreen {
         layout.setMargins(2, 2, 2, 2);
         for (int i = 0; i < count; i++){
             AbilitySlotWidget slot = new AbilitySlotWidget(0, 0, slotType, i,  this);
+            abilitySlots.put(new AbilitySlotKey(slot.getSlotType(), slot.getSlotIndex()), slot);
             layout.addWidget(slot);
         }
         return layout;

@@ -45,11 +45,12 @@ public class AbilityListEntry extends MKStackLayoutHorizontal {
     @Override
     public boolean onMousePressed(Minecraft minecraft, double mouseX, double mouseY, int mouseButton) {
         MKCore.LOGGER.info("On mouse press: {}", info.getAbility().getAbilityId());
-        infoWidget.setAbilityInfo(info);
-        if (this.isHovered() && this.getHoveredTicks() > (float)this.getLongHoverTicks()){
+        if (icon.isInBounds(mouseX, mouseY)){
             screen.setDragState(new WidgetHoldingDragState(new MKImage(0, 0, icon.getWidth(),
-                    icon.getHeight(), icon.getImageLoc())));
+                    icon.getHeight(), icon.getImageLoc())), this);
             screen.setDragging(info.getAbility());
+        } else {
+            infoWidget.setAbilityInfo(info);
         }
         return true;
     }
