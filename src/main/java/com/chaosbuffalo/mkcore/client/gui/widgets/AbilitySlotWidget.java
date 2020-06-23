@@ -7,6 +7,7 @@ import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.client.gui.CharacterScreen;
 import com.chaosbuffalo.mkcore.client.gui.GuiTextures;
+import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerSlotAbilityPacket;
 import com.chaosbuffalo.mkwidgets.client.gui.UIConstants;
@@ -17,6 +18,7 @@ import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKLayout;
 import com.chaosbuffalo.mkwidgets.client.gui.math.IntColor;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKImage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import java.util.List;
 
@@ -41,12 +43,7 @@ public class AbilitySlotWidget extends MKLayout {
         background = getImageForSlotType(slotType, unlocked);
         addWidget(background);
         addConstraintToWidget(new FillConstraint(), background);
-        Minecraft.getInstance().player.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent((playerData -> {
-            ResourceLocation abilityName = playerData.getKnowledge().getActionBar()
-                    .getAbilityInSlot(getSlotIndexForSlotType(slotType, slotIndex));
-            this.abilityName = abilityName;
-            setupIcon(abilityName);
-        }));
+        refreshSlot();
     }
 
     public void setBackgroundColor(int color){
@@ -59,6 +56,17 @@ public class AbilitySlotWidget extends MKLayout {
 
     public MKAbility.AbilityType getSlotType() {
         return slotType;
+    }
+
+    private void refreshSlot() {
+        PlayerEntity playerEntity = Minecraft.getInstance().player;
+        if (playerEntity == null)
+            return;
+        MKCore.getPlayer(playerEntity).ifPresent((playerData -> {
+            ResourceLocation abilityName = getAbilityInSlot(playerData, slotType, slotIndex);
+            this.abilityName = abilityName;
+            setupIcon(abilityName);
+        }));
     }
 
     private void setupIcon(ResourceLocation abilityName){
@@ -77,15 +85,16 @@ public class AbilitySlotWidget extends MKLayout {
         }
     }
 
-    private int getSlotIndexForSlotType(MKAbility.AbilityType slotType, int slotIndex){
-        switch (slotType){
-            case Ultimate:
-                return 4 + slotIndex;
+    private ResourceLocation getAbilityInSlot(MKPlayerData playerData, MKAbility.AbilityType type, int slotIndex) {
+        switch (type) {
+            case Active:
+                return playerData.getKnowledge().getActionBar().getAbilityInSlot(slotIndex);
             case Passive:
-                return 7 + slotIndex;
-            default:
-                return slotIndex;
+                return playerData.getKnowledge().getTalentKnowledge().getActivePassives().get(slotIndex);
+            case Ultimate:
+                return playerData.getKnowledge().getTalentKnowledge().getActiveUltimates().get(slotIndex);
         }
+        return MKCoreRegistry.INVALID_ABILITY;
     }
 
     private boolean getUnlocked(MKAbility.AbilityType slotType, int slotIndex){
@@ -121,25 +130,7 @@ public class AbilitySlotWidget extends MKLayout {
     }
 
     private void setSlotToAbility(ResourceLocation ability, boolean auto){
-        if (!auto){
-            if (screen.getDragSource() instanceof AbilitySlotWidget){
-                ((AbilitySlotWidget) screen.getDragSource()).setSlotToAbility(getAbilityName(), true);
-            } else if (!ability.equals(MKCoreRegistry.INVALID_ABILITY)){
-                List<AbilitySlotWidget> otherSlots = screen.getSlotsForType(getSlotType());
-                for (AbilitySlotWidget slot : otherSlots){
-                    if (slot.getAbilityName().equals(ability)){
-                        slot.setSlotToAbility(getAbilityName(), true);
-                    }
-                }
-            }
-        }
-        int typedSlotIndex = getSlotIndexForSlotType(slotType, slotIndex);
-        PacketHandler.sendMessageToServer(new PlayerSlotAbilityPacket(typedSlotIndex, ability));
-        this.abilityName = ability;
-        setupIcon(ability);
-        Minecraft.getInstance().player.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(playerData -> {
-            playerData.getKnowledge().getActionBar().setAbilityInSlot(typedSlotIndex, ability);
-        });
+        PacketHandler.sendMessageToServer(new PlayerSlotAbilityPacket(slotType, slotIndex, ability));
     }
 
     @Override
@@ -171,7 +162,7 @@ public class AbilitySlotWidget extends MKLayout {
     @Override
     public boolean onMouseRelease(double mouseX, double mouseY, int mouseButton) {
         if (screen.isDraggingAbility()){
-            MKCore.LOGGER.info("adding ability {} to slot {}", screen.getDragging(), slotIndex);
+            MKCore.LOGGER.info("adding ability {} to slot {} {} {} {}", screen.getDragging(), slotIndex, unlocked, screen.getDragging().getType(), slotType);
             if (unlocked && screen.getDragging().getType().equals(slotType)){
                 ResourceLocation ability = screen.getDragging().getAbilityId();
                 setSlotToAbility(ability, false);

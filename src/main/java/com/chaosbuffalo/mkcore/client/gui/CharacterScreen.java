@@ -2,6 +2,7 @@ package com.chaosbuffalo.mkcore.client.gui;
 
 import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.GameConstants;
+import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
@@ -32,7 +33,7 @@ import java.util.*;
 
 import java.util.function.BiFunction;
 
-public class CharacterScreen extends MKScreen {
+public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen {
     private final int PANEL_WIDTH = 320;
     private final int PANEL_HEIGHT = 240;
     private final int DATA_BOX_OFFSET = 78;
@@ -43,7 +44,7 @@ public class CharacterScreen extends MKScreen {
     private MKAbility dragging;
     private static final List<String> states = new ArrayList<>(Arrays.asList("stats", "damages", "abilities"));
     private static final ArrayList<IAttribute> STAT_PANEL_ATTRIBUTES = new ArrayList<>();
-    public class AbilitySlotKey {
+    public static class AbilitySlotKey {
         public MKAbility.AbilityType type;
         public int slot;
 
@@ -213,20 +214,20 @@ public class CharacterScreen extends MKScreen {
                     abilitiesScrollView.getX() + abilitiesScrollView.getWidth(),
                     yPos + DATA_BOX_OFFSET + 6, 1, dataBoxRegion.height - 12, 0xffffffff);
             root.addWidget(rect);
-            List<MKAbilityInfo> infos = new ArrayList<>(pData.getKnowledge().getAbilities());
-            infos.sort(Comparator.comparing((info) -> info.getAbility().getAbilityName()));
             MKStackLayoutVertical stackLayout = new MKStackLayoutVertical(0, 0,
                     abilitiesScrollView.getWidth());
             stackLayout.setMarginTop(4).setMarginBot(4).setPaddingTop(2).setMarginLeft(4)
                     .setMarginRight(4).setPaddingBot(2).setPaddingRight(2);
             stackLayout.doSetChildWidth(true);
-            for (MKAbilityInfo ability : infos){
-                MKLayout abilityEntry = new AbilityListEntry(0, 0, 16, ability, infoWidget, font, this);
-                stackLayout.addWidget(abilityEntry);
-                MKRectangle div = new MKRectangle(0, 0,
-                        abilitiesScrollView.getWidth() - 8, 1, 0x99ffffff);
-                stackLayout.addWidget(div);
-            }
+            pData.getKnowledge().getKnownAbilities().getKnownStream()
+                    .sorted(Comparator.comparing((info) -> info.getAbility().getAbilityName()))
+                    .forEach(ability -> {
+                        MKLayout abilityEntry = new AbilityListEntry(0, 0, 16, ability, infoWidget, font, this);
+                        stackLayout.addWidget(abilityEntry);
+                        MKRectangle div = new MKRectangle(0, 0,
+                                abilitiesScrollView.getWidth() - 8, 1, 0x99ffffff);
+                        stackLayout.addWidget(div);
+                    });
             abilitiesScrollView.addWidget(stackLayout);
         });
         return root;
@@ -401,5 +402,16 @@ public class CharacterScreen extends MKScreen {
         GuiTextures.CORE_TEXTURES.drawRegionAtPos(GuiTextures.DATA_BOX, xPos + xOffset, yPos + DATA_BOX_OFFSET);
         super.render(mouseX, mouseY, partialTicks);
         RenderSystem.enableLighting();
+    }
+
+    @Override
+    public void onPlayerDataUpdate() {
+        MKCore.LOGGER.info("CharacterScreen.onPlayerDataUpdate");
+        flagNeedSetup();
+    }
+
+    @Override
+    public boolean isPauseScreen() {
+        return false;
     }
 }

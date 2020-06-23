@@ -56,6 +56,7 @@ public class PlayerActionBar extends PlayerSyncComponent {
     }
 
     public void setAbilityInSlot(int index, ResourceLocation abilityId) {
+        MKCore.LOGGER.info("PlayerActionBar.setAbilityInSlot({}, {})", index, abilityId);
         if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY)) {
             clearSlot(index);
         } else if (playerData.getKnowledge().knowsAbility(abilityId)) {
@@ -70,11 +71,11 @@ public class PlayerActionBar extends PlayerSyncComponent {
     }
 
     private void setKnownAbilityInSlot(int index, ResourceLocation abilityId) {
-//        MKCore.LOGGER.info("PlayerActionBar.setAbilityInSlotInternal({}, {})", index, abilityId);
+        MKCore.LOGGER.info("PlayerActionBar.setAbilityInSlotInternal({}, {})", index, abilityId);
         if (index < abilities.size()) {
             for (int i = 0; i < abilities.size(); i++) {
                 if (!abilityId.equals(MKCoreRegistry.INVALID_ABILITY) && i != index && abilityId.equals(abilities.get(i))) {
-//                    MKCore.LOGGER.info("PlayerActionBar.setAbilityInSlot({}, {}) - moving {} to {}", index, abilityId, abilities.get(i), i);
+                    MKCore.LOGGER.info("PlayerActionBar.setAbilityInSlot({}, {}) - moving {} to {}", index, abilityId, abilities.get(i), i);
                     setSlotInternal(i, abilities.get(index));
                 }
             }
