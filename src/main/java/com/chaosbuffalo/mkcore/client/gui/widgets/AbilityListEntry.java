@@ -26,7 +26,15 @@ public class AbilityListEntry extends MKStackLayoutHorizontal {
         this.screen = screen;
         setPaddingRight(2);
         setPaddingLeft(2);
-        icon = new MKImage(0, 0, 16, 16, info.getAbility().getAbilityIcon());
+        icon = new MKImage(0, 0, 16, 16, info.getAbility().getAbilityIcon()) {
+            @Override
+            public boolean onMousePressed(Minecraft minecraft, double mouseX, double mouseY, int mouseButton) {
+                screen.setDragState(new WidgetHoldingDragState(new MKImage(0, 0, icon.getWidth(),
+                        icon.getHeight(), icon.getImageLoc())), this);
+                screen.setDragging(info.getAbility());
+                return true;
+            }
+        };
         addWidget(icon);
         MKText name = new MKText(font, info.getAbility().getAbilityName());
         name.setWidth(100);
@@ -45,13 +53,7 @@ public class AbilityListEntry extends MKStackLayoutHorizontal {
     @Override
     public boolean onMousePressed(Minecraft minecraft, double mouseX, double mouseY, int mouseButton) {
         MKCore.LOGGER.info("On mouse press: {}", info.getAbility().getAbilityId());
-        if (icon.isInBounds(mouseX, mouseY)){
-            screen.setDragState(new WidgetHoldingDragState(new MKImage(0, 0, icon.getWidth(),
-                    icon.getHeight(), icon.getImageLoc())), this);
-            screen.setDragging(info.getAbility());
-        } else {
-            infoWidget.setAbilityInfo(info);
-        }
+        infoWidget.setAbilityInfo(info);
         return true;
     }
 }
