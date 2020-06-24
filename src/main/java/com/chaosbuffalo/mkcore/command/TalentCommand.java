@@ -3,6 +3,7 @@ package com.chaosbuffalo.mkcore.command;
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
+import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.core.talents.*;
 import com.chaosbuffalo.mkcore.utils.TextUtils;
 import com.mojang.brigadier.Command;
@@ -24,9 +25,7 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
-import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -123,13 +122,14 @@ public class TalentCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    static int listActiveTalents(CommandContext<CommandSource> ctx, TalentType<?> type,
-                                 Function<PlayerTalentKnowledge, List<ResourceLocation>> mapper) throws CommandSyntaxException {
+    static int listActiveTalents(CommandContext<CommandSource> ctx,
+                                 Function<MKPlayerData, ActiveTalentAbilityContainer> mapper) throws CommandSyntaxException {
         ServerPlayerEntity player = ctx.getSource().asPlayer();
 
         MKCore.getPlayer(player).ifPresent(cap -> {
-            PlayerTalentKnowledge talentKnowledge = cap.getKnowledge().getTalentKnowledge();
-            List<ResourceLocation> knownTalents = mapper.apply(talentKnowledge);
+            ActiveTalentAbilityContainer container = mapper.apply(cap);
+            TalentType<?> type = container.getTalentType();
+            List<ResourceLocation> knownTalents = container.getAbilities();
             if (knownTalents.size() > 0) {
                 TextUtils.sendPlayerChatMessage(player, String.format("Active %s Talent Abilities", type.getName()));
                 for (int i = 0; i < knownTalents.size(); i++) {
@@ -145,43 +145,48 @@ public class TalentCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    static int setTalent(CommandContext<CommandSource> ctx,
-                         ToIntFunction<PlayerTalentKnowledge> limit,
-                         Function<PlayerTalentKnowledge, BiConsumer<Integer, ResourceLocation>> setAction) throws CommandSyntaxException {
+    static int setTalentWithArgument(CommandContext<CommandSource> ctx,
+                                     Function<MKPlayerData, ActiveTalentAbilityContainer> containerSupplier) throws CommandSyntaxException {
         ResourceLocation talentId = ctx.getArgument("talentId", ResourceLocation.class);
-        return setTalentInternal(ctx, limit, setAction, talentId);
+        return setTalentInternal(ctx, containerSupplier, talentId);
     }
 
     static int setTalentInternal(CommandContext<CommandSource> ctx,
-                                 ToIntFunction<PlayerTalentKnowledge> slotLimitGetter,
-                                 Function<PlayerTalentKnowledge, BiConsumer<Integer, ResourceLocation>> setAction,
+                                 Function<MKPlayerData, ActiveTalentAbilityContainer> containerSupplier,
                                  ResourceLocation talentId) throws CommandSyntaxException {
         ServerPlayerEntity player = ctx.getSource().asPlayer();
 
         int slot = IntegerArgumentType.getInteger(ctx, "slot");
 
         MKCore.getPlayer(player).ifPresent(playerData -> {
-            PlayerTalentKnowledge talentKnowledge = playerData.getKnowledge().getTalentKnowledge();
+            ActiveTalentAbilityContainer container = containerSupplier.apply(playerData);
 
-            int limit = slotLimitGetter.applyAsInt(talentKnowledge);
+            int limit = container.getCurrentSlotCount();
             if (slot >= limit) {
                 TextUtils.sendChatMessage(player, "Invalid slot");
                 return;
             }
 
-            setAction.apply(talentKnowledge).accept(slot, talentId);
+            container.setActiveTalent(slot, talentId);
         });
 
         return Command.SINGLE_SUCCESS;
     }
 
-    static int clearTalent(CommandContext<CommandSource> ctx, ToIntFunction<PlayerTalentKnowledge> limit,
-                           Function<PlayerTalentKnowledge, BiConsumer<Integer, ResourceLocation>> setAction) throws CommandSyntaxException {
-        return setTalentInternal(ctx, limit, setAction, MKCoreRegistry.INVALID_TALENT);
+    private static ActiveTalentAbilityContainer getUltimates(MKPlayerData playerData) {
+        return playerData.getKnowledge().getTalentKnowledge().getUltimateContainer();
+    }
+
+    private static ActiveTalentAbilityContainer getPassives(MKPlayerData playerData) {
+        return playerData.getKnowledge().getTalentKnowledge().getPassiveContainer();
+    }
+
+    static int clearTalent(CommandContext<CommandSource> ctx, Function<MKPlayerData, ActiveTalentAbilityContainer> containerSupplier) throws CommandSyntaxException {
+        return setTalentInternal(ctx, containerSupplier, MKCoreRegistry.INVALID_TALENT);
     }
 
     static int listActivePassives(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
-        return listActiveTalents(ctx, TalentType.PASSIVE, PlayerTalentKnowledge::getActivePassives);
+        return listActiveTalents(ctx, TalentCommand::getPassives);
     }
 
     static int listKnownPassives(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
@@ -189,15 +194,15 @@ public class TalentCommand {
     }
 
     static int setPassive(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
-        return setTalent(ctx, PlayerTalentKnowledge::getAllowedActivePassiveCount, t -> t::setActivePassive);
+        return setTalentWithArgument(ctx, TalentCommand::getPassives);
     }
 
     static int clearPassive(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
-        return clearTalent(ctx, PlayerTalentKnowledge::getAllowedActivePassiveCount, t -> t::setActivePassive);
+        return clearTalent(ctx, TalentCommand::getPassives);
     }
 
     static int listActiveUltimates(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
-        return listActiveTalents(ctx, TalentType.ULTIMATE, PlayerTalentKnowledge::getActiveUltimates);
+        return listActiveTalents(ctx, TalentCommand::getUltimates);
     }
 
     static int listKnownUltimates(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
@@ -205,11 +210,11 @@ public class TalentCommand {
     }
 
     static int setUltimate(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
-        return setTalent(ctx, PlayerTalentKnowledge::getAllowedActiveUltimateCount, t -> t::setActiveUltimate);
+        return setTalentWithArgument(ctx, TalentCommand::getUltimates);
     }
 
     static int clearUltimate(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
-        return clearTalent(ctx, PlayerTalentKnowledge::getAllowedActiveUltimateCount, t -> t::setActiveUltimate);
+        return clearTalent(ctx, TalentCommand::getUltimates);
     }
 
     static int ultimateInfo(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
@@ -219,7 +224,7 @@ public class TalentCommand {
             PlayerTalentKnowledge talentKnowledge = cap.getKnowledge().getTalentKnowledge();
             TextUtils.sendPlayerChatMessage(player, "Ultimate Talent Info");
 
-            TextUtils.sendChatMessage(player, String.format("Limit: %d", talentKnowledge.getAllowedActiveUltimateCount()));
+            TextUtils.sendChatMessage(player, String.format("Limit: %d", talentKnowledge.getUltimateContainer().getCurrentSlotCount()));
         });
 
         return Command.SINGLE_SUCCESS;
@@ -231,13 +236,14 @@ public class TalentCommand {
 
         MKCore.getPlayer(player).ifPresent(cap -> {
             PlayerTalentKnowledge talentKnowledge = cap.getKnowledge().getTalentKnowledge();
+            ActiveTalentAbilityContainer container = talentKnowledge.getUltimateContainer();
 
-            if (slot >= talentKnowledge.getAllowedActiveUltimateCount()) {
+            if (slot >= container.getCurrentSlotCount()) {
                 TextUtils.sendChatMessage(player, "Invalid slot");
                 return;
             }
 
-            ResourceLocation abilityId = talentKnowledge.getActiveUltimates().get(slot);
+            ResourceLocation abilityId = container.getAbilityInSlot(slot);
             cap.getAbilityExecutor().executeAbility(abilityId);
         });
 

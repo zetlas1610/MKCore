@@ -3,9 +3,11 @@ package com.chaosbuffalo.mkcore.core;
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
-import com.chaosbuffalo.mkcore.abilities.*;
+import com.chaosbuffalo.mkcore.abilities.AbilityContext;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
+import com.chaosbuffalo.mkcore.abilities.MKToggleAbility;
 import com.chaosbuffalo.mkcore.events.PlayerAbilityEvent;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -85,10 +87,15 @@ public class PlayerAbilityExecutor extends AbilityExecutor {
 
     public void onSlotChanged(MKAbility.AbilityType type, int index, ResourceLocation previous, ResourceLocation newAbility) {
         MKCore.LOGGER.info("PlayerAbilityExecutor.onSlotChanged({}, {}, {}, {})", type, index, previous, newAbility);
-        if (!previous.equals(MKCoreRegistry.INVALID_ABILITY) && newAbility.equals(MKCoreRegistry.INVALID_ABILITY)) {
-            MKAbility ability = MKCoreRegistry.getAbility(previous);
-            if (ability instanceof MKToggleAbility) {
-                ((MKToggleAbility) ability).removeEffect(getPlayerData().getEntity(), getPlayerData());
+
+        IActiveAbilityContainer container = getPlayerData().getKnowledge().getAbilityContainer(type);
+
+        if (!previous.equals(MKCoreRegistry.INVALID_ABILITY)) {
+            if (!container.isAbilitySlotted(previous)) {
+                MKAbility ability = MKCoreRegistry.getAbility(previous);
+                if (ability instanceof MKToggleAbility) {
+                    ((MKToggleAbility) ability).removeEffect(getPlayerData().getEntity(), getPlayerData());
+                }
             }
         }
     }

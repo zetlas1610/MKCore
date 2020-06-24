@@ -6,7 +6,7 @@ import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.client.gui.CharacterScreen;
 import com.chaosbuffalo.mkcore.client.gui.GuiTextures;
-import com.chaosbuffalo.mkcore.core.ISlottedAbilityContainer;
+import com.chaosbuffalo.mkcore.core.IActiveAbilityContainer;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerSlotAbilityPacket;
@@ -68,8 +68,8 @@ public class AbilitySlotWidget extends MKLayout {
         if (background != null) {
             removeWidget(background);
         }
-        ISlottedAbilityContainer container = playerData.getKnowledge().getAbilityContainer(slotType);
-        unlocked = container.isSlotUnlocked(slotType, slotIndex);
+        IActiveAbilityContainer container = playerData.getKnowledge().getAbilityContainer(slotType);
+        unlocked = container.isSlotUnlocked(slotIndex);
         background = getImageForSlotType(slotType, unlocked);
         addWidget(background);
         addConstraintToWidget(new FillConstraint(), background);
