@@ -1,12 +1,11 @@
 package com.chaosbuffalo.mkcore.sync;
 
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 
+import java.util.BitSet;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -17,7 +16,7 @@ public class SyncListUpdater<T> implements ISyncObject {
     private final Function<T, INBT> valueEncoder;
     private final Function<INBT, T> valueDecoder;
     private final int nbtListType;
-    private final IntSet dirtyEntries = new IntOpenHashSet();
+    private final BitSet dirtyEntries = new BitSet();
     private ISyncNotifier parentNotifier = ISyncNotifier.NONE;
 
     public SyncListUpdater(String name, Supplier<List<T>> list, Function<T, INBT> valueEncoder, Function<INBT, T> valueDecoder, int nbtListType) {
@@ -36,7 +35,7 @@ public class SyncListUpdater<T> implements ISyncObject {
     }
 
     public void setDirty(int index) {
-        dirtyEntries.add(index);
+        dirtyEntries.set(index);
         parentNotifier.notifyUpdate(this);
     }
 
@@ -47,7 +46,7 @@ public class SyncListUpdater<T> implements ISyncObject {
 
     @Override
     public boolean isDirty() {
-        return dirtyEntries.size() > 0;
+        return !dirtyEntries.isEmpty();
     }
 
     @Override
@@ -78,7 +77,7 @@ public class SyncListUpdater<T> implements ISyncObject {
         CompoundNBT root = new CompoundNBT();
         List<T> fullList = parent.get();
         ListNBT list = tag.getList(name, Constants.NBT.TAG_COMPOUND);
-        dirtyEntries.forEach((int i) -> list.add(makeEntry(i, fullList.get(i))));
+        dirtyEntries.stream().forEach(i -> list.add(makeEntry(i, fullList.get(i))));
         root.put("l", list);
         tag.put(name, root);
         dirtyEntries.clear();
