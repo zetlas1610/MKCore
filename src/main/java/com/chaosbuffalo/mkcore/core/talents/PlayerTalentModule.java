@@ -1,11 +1,6 @@
 package com.chaosbuffalo.mkcore.core.talents;
 
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
-import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
-import net.minecraft.entity.ai.attributes.AttributeMap;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,27 +27,6 @@ public class PlayerTalentModule {
         return (T) typeHandlerMap.computeIfAbsent(type, t -> type.createTypeHandler(playerData));
     }
 
-    private void dumpAttrInstance(IAttributeInstance instance) {
-        MKCore.LOGGER.info("\tAttribute {}", instance.getAttribute().getName());
-        for (AttributeModifier modifier : instance.func_225505_c_()) {
-            MKCore.LOGGER.info("\t\tmodifier {}", modifier);
-        }
-    }
-
-    private void dumpAttributes(String location) {
-        MKCore.LOGGER.info("All Attributes @ {}", location);
-        AbstractAttributeMap map = playerData.getEntity().getAttributes();
-        map.getAllAttributes().forEach(this::dumpAttrInstance);
-    }
-
-    private void dumpDirtyAttributes(String location) {
-        AttributeMap map = (AttributeMap) playerData.getEntity().getAttributes();
-
-        MKCore.LOGGER.info("Dirty Attributes @ {}", location);
-        map.getDirtyInstances().forEach(this::dumpAttrInstance);
-    }
-
-
     public void onPersonaActivated() {
 //        MKCore.LOGGER.info("PlayerTalentModule.onPersonaActivated");
         typeHandlerMap.clear();
@@ -63,8 +37,6 @@ public class PlayerTalentModule {
                 .forEach(r -> getRecordHandler(r).onRecordLoaded(r));
 
         typeHandlerMap.values().forEach(TalentTypeHandler::onPersonaActivated);
-
-//        dumpDirtyAttributes("onPersonaActivated");
     }
 
     public void onPersonaDeactivated() {

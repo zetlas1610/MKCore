@@ -51,7 +51,7 @@ public class SyncMapUpdater<K, V extends IMKSerializable<CompoundNBT>> implement
     public void deserializeUpdate(CompoundNBT tag) {
         CompoundNBT root = tag.getCompound(rootName);
 
-        if (tag.getBoolean("f")) {
+        if (root.getBoolean("f")) {
             mapSupplier.get().clear();
         }
 
