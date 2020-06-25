@@ -4,8 +4,6 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.sync.ISyncNotifier;
 import com.chaosbuffalo.mkcore.sync.ISyncObject;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.MultimapBuilder;
 import com.mojang.datafixers.Dynamic;
 import com.mojang.datafixers.types.DynamicOps;
 import net.minecraft.nbt.CompoundNBT;
@@ -15,10 +13,7 @@ import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -32,7 +27,7 @@ public class TalentTreeRecord {
 
     public TalentTreeRecord(TalentTreeDefinition tree) {
         this.tree = tree;
-        updater = new TalentTreeUpdater(this);
+        updater = new TalentTreeUpdater();
     }
 
     @Nonnull
@@ -192,7 +187,7 @@ public class TalentTreeRecord {
         return null;
     }
 
-    static class TalentLineRecord {
+    private static class TalentLineRecord {
         private final TalentTreeDefinition.TalentLineDefinition lineDefinition;
         private final List<TalentRecord> lineRecords;
 
@@ -238,19 +233,18 @@ public class TalentTreeRecord {
         }
     }
 
-    private static class TalentTreeUpdater implements ISyncObject {
-        private final TalentTreeRecord treeRecord;
-        private final Multimap<String, Integer> updated = MultimapBuilder.hashKeys().hashSetValues().build();
+    private class TalentTreeUpdater implements ISyncObject {
+        private final HashMap<String, BitSet> updatedLines = new HashMap<>();
         private ISyncNotifier parentNotifier = ISyncNotifier.NONE;
         private Consumer<CompoundNBT> deserializationCallback;
 
-        public TalentTreeUpdater(TalentTreeRecord record) {
-            this.treeRecord = record;
+        public void markUpdated(String lineName, int index) {
+            getLineUpdater(lineName).set(index);
+            parentNotifier.notifyUpdate(this);
         }
 
-        public void markUpdated(String lineName, int index) {
-            updated.put(lineName, index);
-            parentNotifier.notifyUpdate(this);
+        private BitSet getLineUpdater(String line) {
+            return updatedLines.computeIfAbsent(line, k -> new BitSet());
         }
 
         @Override
@@ -260,31 +254,34 @@ public class TalentTreeRecord {
 
         @Override
         public boolean isDirty() {
-            return updated.size() > 0;
+            return !updatedLines.isEmpty();
         }
 
         @Override
         public void deserializeUpdate(CompoundNBT tag) {
-            CompoundNBT root = tag.getCompound(treeRecord.getTreeDefinition().getTreeId().toString());
+            CompoundNBT root = tag.getCompound(getTreeDefinition().getTreeId().toString());
 
 //            MKCore.LOGGER.info("TalentTreeUpdater.deserialize {}", tag);
 
             if (root.getBoolean("f")) {
-                treeRecord.lines.clear();
+                lines.clear();
             }
 
             if (root.contains("u")) {
                 CompoundNBT updated = root.getCompound("u");
 
                 for (String line : updated.keySet()) {
-                    TalentLineRecord lineRecord = treeRecord.getLineRecord(line);
+                    TalentLineRecord lineRecord = getLineRecord(line);
                     if (lineRecord == null) {
                         MKCore.LOGGER.warn("TalentTreeUpdater.deserializeUpdate unknown line {}", line);
                         continue;
                     }
                     updated.getList(line, Constants.NBT.TAG_COMPOUND).forEach(nbt -> {
                         int index = ((CompoundNBT) nbt).getInt("i");
-                        lineRecord.getRecord(index).deserialize(new Dynamic<>(NBTDynamicOps.INSTANCE, nbt));
+                        TalentRecord record = lineRecord.getRecord(index);
+                        if (record != null) {
+                            record.deserialize(new Dynamic<>(NBTDynamicOps.INSTANCE, nbt));
+                        }
                     });
                 }
             }
@@ -304,23 +301,25 @@ public class TalentTreeRecord {
             CompoundNBT root = new CompoundNBT();
 
             CompoundNBT updateTag = new CompoundNBT();
-            updated.keySet().forEach(line -> updateTag.put(line, new ListNBT()));
-            updated.entries().forEach(kv -> {
-                TalentLineRecord lineRecord = treeRecord.getLineRecord(kv.getKey());
+            updatedLines.forEach((key, bits) -> {
+                TalentLineRecord lineRecord = getLineRecord(key);
                 if (lineRecord == null) {
                     return;
                 }
-                TalentRecord rec = lineRecord.getRecord(kv.getValue());
-                CompoundNBT recTag = writeNode(rec);
-                updateTag.getList(kv.getKey(), Constants.NBT.TAG_COMPOUND).add(recTag);
+
+                ListNBT list = bits.stream()
+                        .mapToObj(lineRecord::getRecord)
+                        .map(this::writeNode)
+                        .collect(Collectors.toCollection(ListNBT::new));
+                updateTag.put(key, list);
             });
 
             root.put("u", updateTag);
-            tag.put(treeRecord.getTreeDefinition().getTreeId().toString(), root);
+            tag.put(getTreeDefinition().getTreeId().toString(), root);
 
 //            MKCore.LOGGER.info("TalentTreeUpdater.serializeUpdate {}", tag);
 
-            updated.clear();
+            updatedLines.clear();
         }
 
         @Override
@@ -330,23 +329,20 @@ public class TalentTreeRecord {
 
             CompoundNBT updateTag = new CompoundNBT();
 
-            treeRecord.lines.keySet().forEach(line -> updateTag.put(line, new ListNBT()));
-
-            for (TalentLineRecord line : treeRecord.lines.values()) {
+            lines.values().forEach(line -> {
                 String lineName = line.getLineDefinition().getName();
                 ListNBT list = line.getRecords().stream()
                         .map(this::writeNode)
                         .collect(Collectors.toCollection(ListNBT::new));
-
                 updateTag.put(lineName, list);
-            }
+            });
 
             root.put("u", updateTag);
-            tag.put(treeRecord.getTreeDefinition().getTreeId().toString(), root);
+            tag.put(getTreeDefinition().getTreeId().toString(), root);
 
 //            MKCore.LOGGER.info("TalentTreeUpdater.serializeFull {}", tag);
 
-            updated.clear();
+            updatedLines.clear();
         }
     }
 }
