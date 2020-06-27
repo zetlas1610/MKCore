@@ -1,5 +1,5 @@
 {
-  "cooldown": 135,
   "castTime": 20,
-  "manaCost": 12
+  "cooldown": 2700,
+  "manaCost": 12.0
 }
