@@ -74,7 +74,6 @@ public class TalentTreeWidget extends MKLayout {
                     if (talentIndex > largestIndex) {
                         largestIndex = talentIndex;
                     }
-                    talentIndex++;
                 }
                 i++;
                 columnOffsetTotal += columnOffset;
