@@ -20,6 +20,10 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
 
     @Override
     public void serialize(CompoundNBT tag) {
+        if (activePersona == null) {
+            // When creating a new character it comes to serialize first, so create the default persona here if none is active
+            loadPersona(DEFAULT_PERSONA_NAME);
+        }
 
         CompoundNBT personaRoot = new CompoundNBT();
         personas.forEach((name, persona) -> {
@@ -30,6 +34,11 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
 
         tag.put("personas", personaRoot);
         tag.putString("activePersona", getActivePersona().getName());
+    }
+
+    private void loadPersona(String name) {
+        // Look for the specified persona, or create a new persona if it does not exist
+        activatePersonaInternal(personas.computeIfAbsent(name, this::createNewPersona), true);
     }
 
     @Override
@@ -51,10 +60,7 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
             activePersonaName = tag.getString("activePersona");
         }
 
-        // Look for the specified persona, or create a new persona if it does not exist
-        Persona persona = personas.computeIfAbsent(activePersonaName, this::createNewPersona);
-
-        activatePersonaInternal(persona, true);
+        loadPersona(activePersonaName);
         return true;
     }
 
