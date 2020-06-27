@@ -42,6 +42,13 @@ public class PlayerSyncComponent {
     }
 
     protected void addPrivate(ISyncObject syncObject) {
+        addPrivate(syncObject, false);
+    }
+
+    protected void addPrivate(ISyncObject syncObject, boolean forceUpdate) {
         privateUpdater.add(syncObject);
+        if (forceUpdate) {
+            privateUpdater.forceDirty();
+        }
     }
 }

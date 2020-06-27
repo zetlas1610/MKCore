@@ -85,7 +85,7 @@ public class PlayerTalentKnowledge extends PlayerSyncComponent {
     public boolean unlockTree(ResourceLocation treeId) {
         TalentTreeRecord record = unlockTreeInternal(treeId);
         if (record != null) {
-            addPrivate(record.getUpdater());
+            addPrivate(record.getUpdater(), true);
             return true;
         }
         return false;
