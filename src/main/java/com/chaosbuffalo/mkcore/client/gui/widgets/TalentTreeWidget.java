@@ -24,8 +24,8 @@ public class TalentTreeWidget extends MKLayout {
     private TalentTreeRecord treeRecord;
     private final FontRenderer fontRenderer;
     private final CharacterScreen screen;
-    private int originalWidth;
-    private int oringalHeight;
+    private final int originalWidth;
+    private final int oringalHeight;
 
     public TalentTreeWidget(int x, int y, int width, int height,
                             MKPlayerData data, FontRenderer fontRenderer, CharacterScreen screen) {
