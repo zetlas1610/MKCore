@@ -21,6 +21,7 @@ public class AbilityInfoWidget extends MKStackLayoutVertical {
         this.screen = screen;
         this.playerData = playerData;
         this.fontRenderer = fontRenderer;
+        abilityInfo = null;
         setMargins(4, 4, 4, 4);
         doSetChildWidth(true);
         setup();
