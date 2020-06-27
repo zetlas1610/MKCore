@@ -5,7 +5,9 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.sync.ResourceListUpdater;
+import com.chaosbuffalo.mkcore.sync.SyncInt;
 import com.chaosbuffalo.mkcore.sync.SyncListUpdater;
+import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.Dynamic;
 import com.mojang.datafixers.types.DynamicOps;
 import net.minecraft.util.NonNullList;
@@ -21,18 +23,19 @@ public class ActiveAbilityContainer extends PlayerSyncComponent implements IActi
     protected final String name;
     private final List<ResourceLocation> activeAbilities;
     private final SyncListUpdater<ResourceLocation> activeUpdater;
+    private final SyncInt slots;
     protected final MKAbility.AbilityType type;
-    protected int currentSize;
 
     public ActiveAbilityContainer(MKPlayerData playerData, String name, MKAbility.AbilityType type, int defaultSize, int max) {
         super(name);
         this.playerData = playerData;
         this.name = name;
+        this.type = type;
         activeAbilities = NonNullList.withSize(max, MKCoreRegistry.INVALID_ABILITY);
         activeUpdater = new ResourceListUpdater("active", () -> activeAbilities);
-        this.type = type;
-        this.currentSize = defaultSize;
+        slots = new SyncInt("slots", defaultSize);
         addPrivate(activeUpdater);
+        addPrivate(slots);
     }
 
     public MKAbility.AbilityType getType() {
@@ -42,6 +45,37 @@ public class ActiveAbilityContainer extends PlayerSyncComponent implements IActi
     @Override
     public List<ResourceLocation> getAbilities() {
         return Collections.unmodifiableList(activeAbilities);
+    }
+
+    @Override
+    public boolean setSlots(int newSlotCount) {
+        if (newSlotCount < 0 || newSlotCount > getMaximumSlotCount()) {
+            MKCore.LOGGER.error("setSlots({}, {}) - bad count", newSlotCount, getMaximumSlotCount());
+            return false;
+        }
+
+        int currentCount = getCurrentSlotCount();
+        slots.set(newSlotCount);
+
+        if (newSlotCount > currentCount) {
+            for (int i = currentCount; i < newSlotCount; i++) {
+                onSlotUnlocked(i);
+            }
+        } else if (newSlotCount < currentCount) {
+            for (int i = newSlotCount; i < currentCount; i++) {
+                onSlotLocked(i);
+            }
+        }
+        return true;
+    }
+
+    protected void onSlotLocked(int slot) {
+        MKCore.LOGGER.info("onSlotDeactivated({}, {})", getType(), slot);
+        clearSlot(slot);
+    }
+
+    protected void onSlotUnlocked(int slot) {
+        MKCore.LOGGER.info("onSlotActivated({}, {})", getType(), slot);
     }
 
     protected boolean canSlotAbility(int slot, ResourceLocation abilityId) {
@@ -126,7 +160,7 @@ public class ActiveAbilityContainer extends PlayerSyncComponent implements IActi
 
     @Override
     public int getCurrentSlotCount() {
-        return currentSize;
+        return slots.get();
     }
 
     @Override
@@ -135,11 +169,19 @@ public class ActiveAbilityContainer extends PlayerSyncComponent implements IActi
     }
 
     public <T> T serialize(DynamicOps<T> ops) {
-        return ops.createList(activeAbilities.stream().map(ResourceLocation::toString).map(ops::createString));
+        return ops.createMap(
+                ImmutableMap.of(
+                        ops.createString("slots"),
+                        ops.createInt(getCurrentSlotCount()),
+                        ops.createString("abilities"),
+                        ops.createList(activeAbilities.stream().map(ResourceLocation::toString).map(ops::createString))
+                )
+        );
     }
 
     public <T> void deserialize(Dynamic<T> dynamic) {
-        deserializeAbilityList(dynamic, this::setSlotInternal);
+        slots.set(dynamic.get("slots").asInt(getCurrentSlotCount()));
+        deserializeAbilityList(dynamic.get("abilities").orElseEmptyList(), this::setSlotInternal);
     }
 
     private <T> void deserializeAbilityList(Dynamic<T> dynamic, BiConsumer<Integer, ResourceLocation> consumer) {
