@@ -8,8 +8,10 @@ import com.chaosbuffalo.mkcore.core.talents.TalentTreeRecord;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.TalentPointActionPacket;
 import com.chaosbuffalo.mkwidgets.client.gui.UIConstants;
+import com.chaosbuffalo.mkwidgets.client.gui.constraints.MarginConstraint;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKLayout;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKButton;
+import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKRectangle;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKText;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -34,6 +36,7 @@ public class TalentTreeWidget extends MKLayout {
         this.screen = screen;
         this.originalWidth = width;
         this.oringalHeight = height;
+        setMargins(6, 6, 6, 6);
         setup();
     }
 
@@ -41,19 +44,22 @@ public class TalentTreeWidget extends MKLayout {
         if (treeRecord == null){
             MKText noSelectPrompt = new MKText(fontRenderer,
                     new TranslationTextComponent("mkcore.gui.select_talent_tree"));
+            addConstraintToWidget(new MarginConstraint(MarginConstraint.MarginType.TOP), noSelectPrompt);
+            addConstraintToWidget(new MarginConstraint(MarginConstraint.MarginType.LEFT), noSelectPrompt);
+            noSelectPrompt.setColor(0xffffffff);
             addWidget(noSelectPrompt);
             setWidth(originalWidth);
             setHeight(oringalHeight);
         } else {
-            int treeRenderingMarginX = 10;
-            int treeRenderingPaddingX = 10;
+            int treeRenderingMarginX = getMarginRight() + getMarginLeft();
+            int treeRenderingPaddingX = 5;
             int talentButtonHeight = TalentButton.HEIGHT;
             int talentButtonWidth = TalentButton.WIDTH;
-            int talentButtonYMargin = 6;
+            int talentButtonYMargin = getMarginTop();
             Map<String, TalentTreeDefinition.TalentLineDefinition> lineDefs = treeRecord
                     .getTreeDefinition().getTalentLines();
             int count =  lineDefs.size();
-            int talentWidth = talentButtonWidth * count + treeRenderingMarginX * 2 + (count - 1) * treeRenderingPaddingX;
+            int talentWidth = talentButtonWidth * count + treeRenderingMarginX + (count - 1) * treeRenderingPaddingX;
             int spacePerColumn = talentWidth / count;
             int columnOffset = (spacePerColumn - talentButtonWidth) / 2;
             int i = 0;
@@ -65,6 +71,22 @@ public class TalentTreeWidget extends MKLayout {
                 TalentTreeDefinition.TalentLineDefinition lineDef = lineDefs.get(name);
                 for (int talentIndex = 0; talentIndex < lineDef.getLength(); talentIndex++) {
                     TalentRecord record = treeRecord.getNodeRecord(name, talentIndex);
+                    if (record == null){
+                        continue;
+                    }
+                    TalentRecord nextRecord = treeRecord.getNodeRecord(name, talentIndex + 1);
+                    if (nextRecord != null){
+                        int lineColor = nextRecord.isKnown() ? 0x99ffffff : 0xff555555;
+                        MKRectangle rect = new MKRectangle(
+                                getX() + spacePerColumn * i + columnOffsetTotal + TalentButton.SLOT_X_OFFSET
+                                        + TalentButton.SLOT_WIDTH / 2 - 1,
+                                getY() + talentIndex * talentButtonHeight + talentButtonYMargin
+                                        + TalentButton.SLOT_Y_OFFSET + TalentButton.SLOT_HEIGHT / 2,
+                                2, talentButtonHeight + talentButtonYMargin,
+                                lineColor
+                                );
+                        addWidget(rect);
+                    }
                     TalentButton button = new TalentButton(talentIndex, name, record,
                             getX() + spacePerColumn * i + columnOffsetTotal,
                             getY() + talentIndex * talentButtonHeight + talentButtonYMargin
@@ -79,7 +101,8 @@ public class TalentTreeWidget extends MKLayout {
                 columnOffsetTotal += columnOffset;
             }
             setWidth(talentWidth);
-            setHeight((largestIndex + 1) * talentButtonHeight + talentButtonYMargin);
+            setWidth(Math.max(talentWidth, originalWidth));
+            setHeight(Math.max((largestIndex + 1) * talentButtonHeight + talentButtonYMargin, oringalHeight));
         }
     }
 

@@ -20,6 +20,7 @@ import com.chaosbuffalo.mkwidgets.client.gui.widgets.*;
 import com.chaosbuffalo.mkwidgets.utils.TextureRegion;
 import com.google.common.collect.Sets;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
@@ -48,6 +49,7 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
     private TalentTreeWidget talentTreeWidget;
     private TalentTreeRecord currentTree;
     private ScrollingListPanelLayout currentScrollingPanel;
+    boolean wasResized;
     private int scrollOffsetX;
     private int scrollOffsetY;
     private static final List<String> states = new ArrayList<>(Arrays.asList(
@@ -112,6 +114,7 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
         dragging = null;
         scrollOffsetX = 0;
         scrollOffsetY = 0;
+        wasResized = false;
     }
 
     public MKAbility getDragging() {
@@ -473,6 +476,12 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
     }
 
     @Override
+    public void resize(Minecraft minecraft, int width, int height) {
+        super.resize(minecraft, width, height);
+        wasResized = true;
+    }
+
+    @Override
     public void addRestoreStateCallbacks() {
         String state = getState();
         super.addRestoreStateCallbacks();
@@ -480,7 +489,6 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
         if (currentScrollingPanel != null){
             double offsetX = currentScrollingPanel.getContentScrollView().getOffsetX();
             double offsetY = currentScrollingPanel.getContentScrollView().getOffsetY();
-
             double listOffsetX = currentScrollingPanel.getListScrollView().getOffsetX();
             double listOffsetY = currentScrollingPanel.getListScrollView().getOffsetY();
             addPostSetupCallback(() -> {
@@ -489,7 +497,19 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
                     currentScrollingPanel.getContentScrollView().setOffsetY(offsetY);
                     currentScrollingPanel.getListScrollView().setOffsetX(listOffsetX);
                     currentScrollingPanel.getListScrollView().setOffsetY(listOffsetY);
+                    if (wasResized){
+                        MKCore.LOGGER.info("Setting scrollviews back to top because resize");
+                        currentScrollingPanel.getListScrollView().setToRight();
+                        currentScrollingPanel.getListScrollView().setToTop();
+                        currentScrollingPanel.getContentScrollView().setToTop();
+                        currentScrollingPanel.getContentScrollView().setToRight();
+                        wasResized = false;
+                    }
                 }
+            });
+        } else {
+            addPostSetupCallback(() -> {
+                wasResized = false;
             });
         }
         if (state.equals("abilities")){

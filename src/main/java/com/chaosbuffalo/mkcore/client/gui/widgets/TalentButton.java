@@ -19,12 +19,12 @@ public class TalentButton extends MKButton {
             "textures/talents/talent_slot.png");
     private static final ResourceLocation TALENT_SLOT_OVERLAY = new ResourceLocation(MKCore.MOD_ID,
             "textures/talents/talent_slot_complete.png");
-    private static final int SLOT_WIDTH = 16;
-    private static final int SLOT_HEIGHT = 16;
+    public static final int SLOT_WIDTH = 16;
+    public static final int SLOT_HEIGHT = 16;
     private static final int OVERLAY_WIDTH = 2;
     private static final int OVERLAY_HEIGHT = 2;
-    public static final int HEIGHT = 50;
-    public static final int WIDTH = 80;
+    public static final int HEIGHT = 42;
+    public static final int WIDTH = 42;
     public static final int SLOT_Y_OFFSET = 4;
     public static final int TEXT_OFFSET = 4;
     public static final int SLOT_X_OFFSET = (WIDTH - SLOT_WIDTH) / 2;
@@ -53,10 +53,10 @@ public class TalentButton extends MKButton {
         if (this.skipBoundsCheck()) {
             return true;
         }
-        return x >= this.getX() + 20 &&
-                y >= this.getY() + 10 &&
-                x < this.getX() + this.getWidth() - 20 &&
-                y < this.getY() + this.getHeight() - 20;
+        return x >= this.getX() + SLOT_X_OFFSET &&
+                y >= this.getY() + SLOT_Y_OFFSET &&
+                x < this.getX() + SLOT_X_OFFSET + SLOT_WIDTH &&
+                y < this.getY() + SLOT_Y_OFFSET + SLOT_HEIGHT;
     }
 
 
@@ -100,15 +100,18 @@ public class TalentButton extends MKButton {
             } else if (isHovered()) {
                 textColor = 16777120;
             }
-            this.drawCenteredString(fontrenderer, this.buttonText, this.getX() + this.getWidth() / 2,
-                    this.getY() + SLOT_Y_OFFSET + SLOT_HEIGHT + OVERLAY_HEIGHT + TEXT_OFFSET, textColor);
+//            this.drawCenteredString(fontrenderer, this.buttonText, this.getX() + this.getWidth() / 2,
+//                    this.getY() + SLOT_Y_OFFSET + SLOT_HEIGHT + OVERLAY_HEIGHT + TEXT_OFFSET, textColor);
             int rank = record.getRank();
             int maxRank = record.getNode().getMaxRanks();
+            int rankOffset = SLOT_Y_OFFSET + SLOT_HEIGHT + OVERLAY_HEIGHT + TEXT_OFFSET;
+            mkFill(this.getX(), this.getY() + rankOffset - 2,
+                    getX() + getWidth(), getY() + rankOffset + fontrenderer.FONT_HEIGHT + 2,
+                    0xff264747);
             String rankText = String.format("%d/%d", rank, maxRank);
             this.drawCenteredString(fontrenderer, rankText,
                     this.getX() + this.getWidth() / 2,
-                    this.getY() + SLOT_Y_OFFSET + SLOT_HEIGHT + OVERLAY_HEIGHT + TEXT_OFFSET
-                            + fontrenderer.FONT_HEIGHT + 2,
+                    this.getY() + SLOT_Y_OFFSET + SLOT_HEIGHT + OVERLAY_HEIGHT + TEXT_OFFSET,
                     textColor);
             if (isHovered()) {
                 if (getScreen() != null) {
