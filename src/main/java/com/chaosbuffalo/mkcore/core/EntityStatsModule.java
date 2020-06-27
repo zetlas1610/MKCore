@@ -54,11 +54,6 @@ public class EntityStatsModule implements IStatsModule {
     }
 
     @Override
-    public float getAbilityManaCost(MKAbility ability) {
-        return 0;
-    }
-
-    @Override
     public boolean canActivateAbility(MKAbility ability) {
         return true;
     }
