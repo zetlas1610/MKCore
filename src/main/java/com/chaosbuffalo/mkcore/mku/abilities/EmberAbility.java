@@ -5,6 +5,8 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.*;
 import com.chaosbuffalo.mkcore.abilities.attributes.FloatAttribute;
 import com.chaosbuffalo.mkcore.abilities.attributes.IntAttribute;
+import com.chaosbuffalo.mkcore.abilities.description.AbilityDescription;
+import com.chaosbuffalo.mkcore.abilities.description.AbilityDescriptions;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageSource;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
@@ -20,6 +22,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -47,6 +50,18 @@ public class EmberAbility extends MKAbility {
         setCooldownSeconds(4);
         setManaCost(6);
         addAttributes(damage, burnTime);
+    }
+
+    @Override
+    protected void buildDescription() {
+        super.buildDescription();
+        addDescription(AbilityDescriptions.getRangeDescription(this));
+        addDescription(new AbilityDescription<>(this, (mkAbility, mkEntityData) ->
+                new TranslationTextComponent("mkcore.ability.description.ember",
+                        String.format("%.1f (%.1f)", mkAbility.damage.getValue(), mkEntityData.getStats()
+                                .getDamageTypeBonus(ModDamageTypes.FireDamage) + mkAbility.damage.getValue()),
+                        ModDamageTypes.FireDamage.getDisplayName(),
+                        mkAbility.burnTime.getValue())));
     }
 
     @Override

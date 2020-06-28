@@ -4,6 +4,8 @@ import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.abilities.ai.conditions.AbilityUseCondition;
 import com.chaosbuffalo.mkcore.abilities.ai.conditions.StandardUseCondition;
 import com.chaosbuffalo.mkcore.abilities.attributes.IAbilityAttribute;
+import com.chaosbuffalo.mkcore.abilities.description.AbilityDescription;
+import com.chaosbuffalo.mkcore.abilities.description.AbilityDescriptions;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.mkcore.utils.RayTraceUtils;
@@ -22,6 +24,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
@@ -31,6 +34,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
 
@@ -55,6 +59,7 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
     private float manaCost;
     private final List<IAbilityAttribute<?>> attributes;
     private AbilityUseCondition useCondition;
+    private final List<AbilityDescription<?>> descriptions;
 
 
     public MKAbility(String domain, String id) {
@@ -67,7 +72,28 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         this.castTime = 0;
         this.manaCost = 1;
         this.attributes = new ArrayList<>();
+        this.descriptions = new ArrayList<>();
         setUseCondition(new StandardUseCondition(this));
+        buildDescription();
+    }
+
+    protected void addDescription(AbilityDescription<?> desc){
+        descriptions.add(desc);
+    }
+
+    protected void buildDescription(){
+        addDescription(AbilityDescriptions.getManaCostDescription(this));
+        addDescription(AbilityDescriptions.getCooldownDescription(this));
+        addDescription(AbilityDescriptions.getCastTimeDescription(this));
+    }
+
+    protected List<AbilityDescription<?>> getDescriptions() {
+        return descriptions;
+    }
+
+    public List<ITextComponent> getDescriptionsForEntity(IMKEntityData entityData){
+        return getDescriptions().stream().map((desc) -> desc.getDescriptionForEntity(entityData))
+                .collect(Collectors.toList());
     }
 
     public void setUseCondition(AbilityUseCondition useCondition) {

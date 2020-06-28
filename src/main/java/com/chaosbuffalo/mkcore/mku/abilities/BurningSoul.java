@@ -27,4 +27,5 @@ public class BurningSoul extends PassiveTalentAbility {
     public PassiveTalentEffect getPassiveEffect() {
         return BurningSoulPotion.INSTANCE;
     }
+
 }
