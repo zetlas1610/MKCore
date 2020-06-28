@@ -62,6 +62,7 @@ public class TalentTreeWidget extends MKLayout {
             int talentWidth = talentButtonWidth * count + treeRenderingMarginX + (count - 1) * treeRenderingPaddingX;
             int spacePerColumn = talentWidth / count;
             int columnOffset = (spacePerColumn - talentButtonWidth) / 2;
+            int talentXOffset = getWidth() > talentWidth ? (getWidth() - talentWidth) / 2 : 0;
             int i = 0;
             String[] keys = lineDefs.keySet().toArray(new String[0]);
             Arrays.sort(keys);
@@ -78,7 +79,7 @@ public class TalentTreeWidget extends MKLayout {
                     if (nextRecord != null){
                         int lineColor = nextRecord.isKnown() ? 0x99ffffff : 0xff555555;
                         MKRectangle rect = new MKRectangle(
-                                getX() + spacePerColumn * i + columnOffsetTotal + TalentButton.SLOT_X_OFFSET
+                                getX() + talentXOffset + spacePerColumn * i + columnOffsetTotal + TalentButton.SLOT_X_OFFSET
                                         + TalentButton.SLOT_WIDTH / 2 - 1,
                                 getY() + talentIndex * talentButtonHeight + talentButtonYMargin
                                         + TalentButton.SLOT_Y_OFFSET + TalentButton.SLOT_HEIGHT / 2,
@@ -88,7 +89,7 @@ public class TalentTreeWidget extends MKLayout {
                         addWidget(rect);
                     }
                     TalentButton button = new TalentButton(talentIndex, name, record,
-                            getX() + spacePerColumn * i + columnOffsetTotal,
+                            getX() + talentXOffset + spacePerColumn * i + columnOffsetTotal,
                             getY() + talentIndex * talentButtonHeight + talentButtonYMargin
                     );
                     button.setPressedCallback(this::pressTalentButton);

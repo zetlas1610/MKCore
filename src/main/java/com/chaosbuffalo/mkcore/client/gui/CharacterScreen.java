@@ -49,6 +49,8 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
     private TalentTreeWidget talentTreeWidget;
     private TalentTreeRecord currentTree;
     private ScrollingListPanelLayout currentScrollingPanel;
+    private ScrollingListPanelLayout talentScrollPanel;
+    private ScrollingListPanelLayout abilitiesScrollPanel;
     boolean wasResized;
     private int scrollOffsetX;
     private int scrollOffsetY;
@@ -197,6 +199,7 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
             ScrollingListPanelLayout panel = new ScrollingListPanelLayout(
                     contentX, contentY, contentWidth, contentHeight);
             currentScrollingPanel = panel;
+            talentScrollPanel = panel;
             TalentTreeWidget treeWidget = new TalentTreeWidget(0, 0,
                     panel.getContentScrollView().getWidth(),
                     panel.getContentScrollView().getHeight(), pData, font, this);
@@ -270,6 +273,7 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
             ScrollingListPanelLayout panel = new ScrollingListPanelLayout(
                     contentX, contentY, contentWidth, contentHeight);
             currentScrollingPanel = panel;
+            abilitiesScrollPanel = panel;
             AbilityInfoWidget infoWidget = new AbilityInfoWidget(0, 0,
                     panel.getContentScrollView().getWidth(), pData, font, this);
             this.infoWidget = infoWidget;
@@ -430,6 +434,16 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
     }
 
     @Override
+    public void pushState(String newState) {
+        super.pushState(newState);
+        if (newState.equals("talents")){
+            currentScrollingPanel = talentScrollPanel;
+        } else if (newState.equals("abilities")){
+            currentScrollingPanel = abilitiesScrollPanel;
+        }
+    }
+
+    @Override
     public void setupScreen() {
         super.setupScreen();
         infoWidget = null;
@@ -441,7 +455,6 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
         addState("abilities", this::createAbilitiesPage);
         addState("talents", this::createTalentsPage);
         pushState("stats");
-
     }
 
     @Override
@@ -485,7 +498,22 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
     public void addRestoreStateCallbacks() {
         String state = getState();
         super.addRestoreStateCallbacks();
-        final MKAbilityInfo abilityInf = getAbilityInfo();
+        if (state.equals("abilities")){
+            final MKAbilityInfo abilityInf = getAbilityInfo();
+            addPostSetupCallback(() -> {
+                if (infoWidget != null){
+                    infoWidget.setAbilityInfo(abilityInf);
+
+                }
+            });
+        } else if (state.equals("talents")){
+            final TalentTreeRecord current = getCurrentTree();
+            addPostSetupCallback(() -> {
+                if (talentTreeWidget != null){
+                    talentTreeWidget.setTreeRecord(current);
+                }
+            });
+        }
         if (currentScrollingPanel != null){
             double offsetX = currentScrollingPanel.getContentScrollView().getOffsetX();
             double offsetY = currentScrollingPanel.getContentScrollView().getOffsetY();
@@ -510,22 +538,6 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
         } else {
             addPostSetupCallback(() -> {
                 wasResized = false;
-            });
-        }
-        if (state.equals("abilities")){
-
-            addPostSetupCallback(() -> {
-                if (infoWidget != null){
-                    infoWidget.setAbilityInfo(abilityInf);
-
-                }
-            });
-        } else if (state.equals("talents")){
-            final TalentTreeRecord current = getCurrentTree();
-            addPostSetupCallback(() -> {
-                if (talentTreeWidget != null){
-                    talentTreeWidget.setTreeRecord(current);
-                }
             });
         }
     }
