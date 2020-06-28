@@ -36,6 +36,16 @@ public class AbilityDescriptions {
     public static AbilityDescription<MKAbility> getRangeDescription(MKAbility ability){
         return new AbilityDescription<>(ability, ((mkAbility, entityData) ->
                 new TranslationTextComponent("mkcore.ability.description.range",
-                        String.format("%.1f", ability.getDistance()))));
+                        String.format("%.1f", mkAbility.getDistance()))));
+    }
+
+    public static AbilityDescription<MKAbility> getTargetingDescription(MKAbility ability){
+        return new AbilityDescription<>(ability, ((mkAbility, entityData) ->
+                mkAbility.getTargetSelector().getLocalizedDescriptionForContext()));
+    }
+
+    public static AbilityDescription<MKAbility> getTargetTypeDescription(MKAbility ability){
+        return new AbilityDescription<>(ability, (((mkAbility, entityData) ->
+                mkAbility.getTargetContextLocalization())));
     }
 }

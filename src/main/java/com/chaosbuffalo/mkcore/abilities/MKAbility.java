@@ -11,6 +11,7 @@ import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.mkcore.utils.RayTraceUtils;
 import com.chaosbuffalo.targeting_api.Targeting;
 import com.chaosbuffalo.targeting_api.TargetingContext;
+import com.chaosbuffalo.targeting_api.TargetingContexts;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
 import net.minecraft.client.Minecraft;
@@ -25,6 +26,7 @@ import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
@@ -85,6 +87,8 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         addDescription(AbilityDescriptions.getManaCostDescription(this));
         addDescription(AbilityDescriptions.getCooldownDescription(this));
         addDescription(AbilityDescriptions.getCastTimeDescription(this));
+        addDescription(AbilityDescriptions.getTargetingDescription(this));
+        addDescription(AbilityDescriptions.getTargetTypeDescription(this));
     }
 
     protected List<AbilityDescription<?>> getDescriptions() {
@@ -276,6 +280,35 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
 
     public void executeWithContext(IMKEntityData entityData, AbilityContext context) {
         entityData.startAbility(context, this);
+    }
+
+    private String getLocalizationKeyForContext(TargetingContext context){
+        if (context.equals(TargetingContexts.ALL)){
+            return "mkcore.targeting_context.all";
+        } else if (context.equals(TargetingContexts.ALL_AROUND)){
+            return "mkcore.targeting_context.all_around";
+        } else if (context.equals(TargetingContexts.ENEMY)){
+            return "mkcore.targeting_context.enemy";
+        } else if (context.equals(TargetingContexts.FRIENDLY)){
+            return "mkcore.targeting_context.friend";
+        } else if (context.equals(TargetingContexts.FRIENDLY_AROUND)){
+            return "mkcore.targeting_context.friend_around";
+        } else if (context.equals(TargetingContexts.NEUTRAL)){
+            return "mkcore.targeting_context.neutral";
+        } else if (context.equals(TargetingContexts.PLAYERS)){
+            return "mkcore.targeting_context.players";
+        } else if (context.equals(TargetingContexts.PLAYERS_AROUND)){
+            return "mkcore.targeting_context.players_around";
+        } else if (context.equals(TargetingContexts.SELF)){
+            return "mkcore.targeting_context.self";
+        } else {
+            return "mkcore.targeting_context.default";
+        }
+    }
+
+    public ITextComponent getTargetContextLocalization(){
+        return new TranslationTextComponent("mkcore.ability_description.target_type",
+                I18n.format(getLocalizationKeyForContext(getTargetContext())));
     }
 
     public AbilityTargetSelector getTargetSelector() {

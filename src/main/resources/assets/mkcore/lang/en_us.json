@@ -52,6 +52,21 @@
   "mkcore.ability.description.instant": "Instant",
   "mkcore.ability.description.passive": "Passive",
   "mkcore.ability.description.ember": "Deals %s %s to your target and sets them ablaze for %s seconds.",
-  "mkcore.ability.description.range": "Range: %s"
-
+  "mkcore.ability.description.range": "Range: %s",
+  "mkcore.ability_target.single_target": "Single Target in front of the caster",
+  "mkcore.abiltiy_target.single_target_self": "Single Target in front of the caster, or the caster if no valid target found",
+  "mkcore.ability_target.self": "Targets the caster",
+  "mkcore.ability_target.none": "Does not require a target",
+  "mkcore.ability_description.target": "Targeting: %s",
+  "mkcore.ability_description.target_type": "Target Type: %s",
+  "mkcore.targeting_context.all": "Target",
+  "mkcore.targeting_context.all_around": "Non-caster Target",
+  "mkcore.targeting_context.enemy": "Enemy",
+  "mkcore.targeting_context.friend": "Friend",
+  "mkcore.targeting_context.friend_around": "Non-caster Friend",
+  "mkcore.targeting_context.neutral": "Neutral",
+  "mkcore.targeting_context.players": "Player",
+  "mkcore.targeting_context.players_around": "Non-caster Player",
+  "mkcore.targeting_context.self": "Self",
+  "mkcore.targeting_context.default": "Target"
 }

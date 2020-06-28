@@ -8,19 +8,19 @@ import net.minecraft.entity.LivingEntity;
 public class AbilityTargeting {
 
     public static AbilityTargetSelector NONE = new AbilityTargetSelector((entityData, ability) -> AbilityContext.EMPTY)
-            .setDescription("Does not require a target");
+            .setDescriptionKey("mkcore.ability_target.none");
 
     public static AbilityTargetSelector SELF = new AbilityTargetSelector(AbilityTargeting::selectSelf)
             .setRequiredMemories(ImmutableSet.of(MKAbilityMemories.ABILITY_TARGET))
-            .setDescription("Targets the caster");
+            .setDescriptionKey("mkcore.ability_target.self");
 
     public static AbilityTargetSelector SINGLE_TARGET = new AbilityTargetSelector(AbilityTargeting::selectSingle)
             .setRequiredMemories(ImmutableSet.of(MKAbilityMemories.ABILITY_TARGET))
-            .setDescription("Single Target in front of the caster");
+            .setDescriptionKey("mkcore.ability_target.single_target");
 
     public static AbilityTargetSelector SINGLE_TARGET_OR_SELF = new AbilityTargetSelector(AbilityTargeting::selectSingleOrSelf)
             .setRequiredMemories(ImmutableSet.of(MKAbilityMemories.ABILITY_TARGET))
-            .setDescription("Single Target in front of the caster, or the caster if no valid target found");
+            .setDescriptionKey("mkcore.ability_target.single_target_self");
 
 
     private static AbilityContext selectSelf(IMKEntityData entityData, MKAbility ability) {
