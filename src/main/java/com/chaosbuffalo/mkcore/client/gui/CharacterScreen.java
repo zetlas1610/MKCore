@@ -465,7 +465,7 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
             clearDragState();
             return true;
         }
-        return super.mouseReleased(mouseX, mouseY, mouseButton);
+        return handled;
     }
 
     @Override
