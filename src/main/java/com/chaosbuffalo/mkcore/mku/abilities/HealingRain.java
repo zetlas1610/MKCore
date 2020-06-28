@@ -38,10 +38,9 @@ public class HealingRain extends MKAbility {
 
     public HealingRain() {
         super(MKCore.makeRL("ability.healing_rain"));
-
         setCastTime(2 * GameConstants.TICKS_PER_SECOND);
         setManaCost(10);
-        setCooldown(20);
+        setCooldownSeconds(20);
     }
 
     @Override

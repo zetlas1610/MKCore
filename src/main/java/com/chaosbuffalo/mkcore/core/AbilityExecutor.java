@@ -168,7 +168,7 @@ public class AbilityExecutor {
 
         consumeResource(ability);
 
-        int castTime = ability.getCastTime();
+        int castTime = ability.getCastTime(entityData);
         startCast(context, info, castTime);
         if (castTime > 0) {
             return true;
@@ -184,7 +184,7 @@ public class AbilityExecutor {
         if (completeAbilityCallback != null){
             completeAbilityCallback.accept(ability);
         }
-        int cooldown = MKCombatFormulas.applyCooldownReduction(entityData, ability.getCooldownTicks());
+        int cooldown = MKCombatFormulas.applyCooldownReduction(entityData, ability.getCooldown());
         setCooldown(ability.getAbilityId(), cooldown);
         SoundEvent sound = ability.getSpellCompleteSoundEvent();
         if (sound != null) {

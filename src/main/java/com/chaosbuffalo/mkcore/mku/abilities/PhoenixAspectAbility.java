@@ -39,12 +39,10 @@ public class PhoenixAspectAbility extends MKAbility {
     public static int DURATION_SCALE = 60;
 
     private PhoenixAspectAbility() {
-        super(MKCore.MOD_ID, "ability.phoenix_aspect");
-    }
-
-    @Override
-    public int getCooldown() {
-        return 500 - 100;
+        super(MKCore.makeRL("ability.phoenix_aspect"));
+        setCastTime(GameConstants.TICKS_PER_SECOND * 3);
+        setCooldownSeconds(400);
+        setManaCost(15);
     }
 
     @Override
@@ -53,18 +51,8 @@ public class PhoenixAspectAbility extends MKAbility {
     }
 
     @Override
-    public float getManaCost() {
-        return 10 + 5;
-    }
-
-    @Override
     public float getDistance() {
         return 10.0f + 2.0f * 1;
-    }
-
-    @Override
-    public int getCastTime() {
-        return GameConstants.TICKS_PER_SECOND * 3;
     }
 
     @Override

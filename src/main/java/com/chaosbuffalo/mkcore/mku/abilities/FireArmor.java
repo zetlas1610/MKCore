@@ -37,6 +37,9 @@ public class FireArmor extends MKAbility {
 
     private FireArmor() {
         super(MKCore.makeRL("ability.fire_armor"));
+        setCastTime(GameConstants.TICKS_PER_SECOND);
+        setCooldownSeconds(135);
+        setManaCost(12);
         setUseCondition(new NeedsBuffCondition(this, Effects.FIRE_RESISTANCE));
     }
 
