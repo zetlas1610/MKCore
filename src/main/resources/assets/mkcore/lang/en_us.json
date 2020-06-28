@@ -55,7 +55,7 @@
   "mkcore.ability.ember.description": "Deals %s %s to your target and sets them ablaze for %s seconds.",
   "mkcore.ability.description.range": "Range: %s",
   "mkcore.ability_target.single_target": "Single Target",
-  "mkcore.abiltiy_target.single_target_self": "Single Target or Self",
+  "mkcore.ability_target.single_target_self": "Single Target or Self",
   "mkcore.ability_target.self": "Self",
   "mkcore.ability_target.none": "None",
   "mkcore.ability_description.target": "Targeting: %s",

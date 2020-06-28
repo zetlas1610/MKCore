@@ -81,7 +81,6 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         return new ArrayList<>();
     }
 
-
     protected List<AbilityDescription<?>> getDescriptions() {
         List<AbilityDescription<?>> descriptions = new ArrayList<>();
         descriptions.add(AbilityDescriptions.getManaCostDescription(this));
