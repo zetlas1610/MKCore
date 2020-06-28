@@ -14,7 +14,7 @@ public class AbilityIconText extends IconText {
 
     public AbilityIconText(int x, int y, int height, String text, ResourceLocation iconLoc,
                            FontRenderer font, int iconWidth, CharacterScreen screen, MKAbility ability) {
-        super(x, y, height, text, iconLoc, font, iconWidth);
+        super(x, y, height, text, iconLoc, font, iconWidth, 1);
         this.screen = screen;
         this.ability = ability;
     }

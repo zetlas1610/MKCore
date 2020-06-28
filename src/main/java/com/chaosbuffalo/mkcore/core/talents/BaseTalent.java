@@ -33,7 +33,7 @@ public abstract class BaseTalent extends ForgeRegistryEntry<BaseTalent> {
 
     public String getTalentTypeName() {
         return TextFormatting.GOLD + I18n.format(String.format("%s.talent_type.%s.name",
-                MKCore.MOD_ID, getTalentType().toString().toLowerCase()));
+                MKCore.MOD_ID, getTalentType().getName().toLowerCase()));
     }
 
     public ResourceLocation getIcon() {

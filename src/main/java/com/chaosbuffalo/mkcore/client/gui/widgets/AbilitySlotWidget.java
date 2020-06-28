@@ -41,6 +41,12 @@ public class AbilitySlotWidget extends MKLayout {
         refreshSlot();
     }
 
+    public void setIconColor(int color) {
+        if (icon != null){
+            icon.setColor(new IntColor(color));
+        }
+    }
+
     public void setBackgroundColor(int color){
         background.setColor(new IntColor(color));
     }

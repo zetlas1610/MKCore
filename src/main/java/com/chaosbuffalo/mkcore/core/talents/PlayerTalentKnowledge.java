@@ -112,7 +112,7 @@ public class PlayerTalentKnowledge extends PlayerSyncComponent {
         return talentTreeRecordMap.containsKey(treeId);
     }
 
-    private TalentTreeRecord getTree(ResourceLocation treeId) {
+    public TalentTreeRecord getTree(ResourceLocation treeId) {
         return talentTreeRecordMap.get(treeId);
     }
 

@@ -21,7 +21,8 @@ public class AbilityInfoWidget extends MKStackLayoutVertical {
         this.screen = screen;
         this.playerData = playerData;
         this.fontRenderer = fontRenderer;
-        setMargins(4, 4, 4, 4);
+        abilityInfo = null;
+        setMargins(6, 6, 6, 6);
         doSetChildWidth(true);
         setup();
     }
@@ -29,6 +30,7 @@ public class AbilityInfoWidget extends MKStackLayoutVertical {
     public void setup(){
         if (abilityInfo == null){
             MKText noSelectPrompt = new MKText(fontRenderer,new TranslationTextComponent("mkcore.gui.select_ability"));
+            noSelectPrompt.setColor(0xffffffff);
             addWidget(noSelectPrompt);
         } else {
             IconText ability = new AbilityIconText(0, 0, 16,

@@ -3,8 +3,8 @@ package com.chaosbuffalo.mkcore.client.gui.widgets;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.client.gui.CharacterScreen;
+import com.chaosbuffalo.mkcore.client.gui.constraints.CenterYWithOffsetConstraint;
 import com.chaosbuffalo.mkwidgets.client.gui.actions.WidgetHoldingDragState;
-import com.chaosbuffalo.mkwidgets.client.gui.constraints.CenterYConstraint;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutHorizontal;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKImage;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKText;
@@ -40,7 +40,7 @@ public class AbilityListEntry extends MKStackLayoutHorizontal {
         name.setWidth(100);
         name.setColor(0xffffffff);
         addWidget(name);
-        addConstraintToWidget(new CenterYConstraint(), name);
+        addConstraintToWidget(new CenterYWithOffsetConstraint(1), name);
     }
 
     @Override
@@ -48,12 +48,16 @@ public class AbilityListEntry extends MKStackLayoutHorizontal {
         if (isHovered()){
             mkFill(x, y, x + width, y + height, 0x55ffffff);
         }
+        if (info.equals(screen.getAbilityInfo())){
+            mkFill(x, y, x + width, y + height, 0x99ffffff);
+        }
     }
 
     @Override
     public boolean onMousePressed(Minecraft minecraft, double mouseX, double mouseY, int mouseButton) {
         MKCore.LOGGER.info("On mouse press: {}", info.getAbility().getAbilityId());
         infoWidget.setAbilityInfo(info);
+        screen.setAbilityInfo(info);
         return true;
     }
 }
