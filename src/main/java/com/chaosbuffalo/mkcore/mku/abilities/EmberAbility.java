@@ -28,6 +28,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -53,16 +54,19 @@ public class EmberAbility extends MKAbility {
     }
 
     @Override
-    protected void buildDescription() {
-        super.buildDescription();
-        addDescription(AbilityDescriptions.getRangeDescription(this));
-        addDescription(new AbilityDescription<>(this, (mkAbility, mkEntityData) ->
+    protected List<AbilityDescription<?>> getDescriptions() {
+        List<AbilityDescription<?>> ret = super.getDescriptions();
+        ret.add(AbilityDescriptions.getRangeDescription(this));
+        ret.add(new AbilityDescription<>(this, (mkAbility, mkEntityData) ->
                 new TranslationTextComponent("mkcore.ability.description.ember",
                         String.format("%.1f (%.1f)", mkAbility.damage.getValue(), mkEntityData.getStats()
                                 .getDamageTypeBonus(ModDamageTypes.FireDamage) + mkAbility.damage.getValue()),
                         ModDamageTypes.FireDamage.getDisplayName(),
                         mkAbility.burnTime.getValue())));
+
+        return ret;
     }
+
 
     @Override
     public TargetingContext getTargetContext() {

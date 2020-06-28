@@ -61,7 +61,6 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
     private float manaCost;
     private final List<IAbilityAttribute<?>> attributes;
     private AbilityUseCondition useCondition;
-    private final List<AbilityDescription<?>> descriptions;
 
 
     public MKAbility(String domain, String id) {
@@ -74,24 +73,17 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         this.castTime = 0;
         this.manaCost = 1;
         this.attributes = new ArrayList<>();
-        this.descriptions = new ArrayList<>();
         setUseCondition(new StandardUseCondition(this));
-        buildDescription();
     }
 
-    protected void addDescription(AbilityDescription<?> desc){
-        descriptions.add(desc);
-    }
-
-    protected void buildDescription(){
-        addDescription(AbilityDescriptions.getManaCostDescription(this));
-        addDescription(AbilityDescriptions.getCooldownDescription(this));
-        addDescription(AbilityDescriptions.getCastTimeDescription(this));
-        addDescription(AbilityDescriptions.getTargetingDescription(this));
-        addDescription(AbilityDescriptions.getTargetTypeDescription(this));
-    }
 
     protected List<AbilityDescription<?>> getDescriptions() {
+        List<AbilityDescription<?>> descriptions = new ArrayList<>();
+        descriptions.add(AbilityDescriptions.getManaCostDescription(this));
+        descriptions.add(AbilityDescriptions.getCooldownDescription(this));
+        descriptions.add(AbilityDescriptions.getCastTimeDescription(this));
+        descriptions.add(AbilityDescriptions.getTargetingDescription(this));
+        descriptions.add(AbilityDescriptions.getTargetTypeDescription(this));
         return descriptions;
     }
 
@@ -135,10 +127,6 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         return I18n.format(getTranslationKey());
     }
 
-    public String getAbilityDescription() {
-        ResourceLocation abilityId = getRegistryName();
-        return I18n.format(String.format("%s.%s.description", abilityId.getNamespace(), abilityId.getPath()));
-    }
 
     public String getTranslationKey() {
         ResourceLocation abilityId = getRegistryName();
@@ -282,33 +270,9 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         entityData.startAbility(context, this);
     }
 
-    private String getLocalizationKeyForContext(TargetingContext context){
-        if (context.equals(TargetingContexts.ALL)){
-            return "mkcore.targeting_context.all";
-        } else if (context.equals(TargetingContexts.ALL_AROUND)){
-            return "mkcore.targeting_context.all_around";
-        } else if (context.equals(TargetingContexts.ENEMY)){
-            return "mkcore.targeting_context.enemy";
-        } else if (context.equals(TargetingContexts.FRIENDLY)){
-            return "mkcore.targeting_context.friend";
-        } else if (context.equals(TargetingContexts.FRIENDLY_AROUND)){
-            return "mkcore.targeting_context.friend_around";
-        } else if (context.equals(TargetingContexts.NEUTRAL)){
-            return "mkcore.targeting_context.neutral";
-        } else if (context.equals(TargetingContexts.PLAYERS)){
-            return "mkcore.targeting_context.players";
-        } else if (context.equals(TargetingContexts.PLAYERS_AROUND)){
-            return "mkcore.targeting_context.players_around";
-        } else if (context.equals(TargetingContexts.SELF)){
-            return "mkcore.targeting_context.self";
-        } else {
-            return "mkcore.targeting_context.default";
-        }
-    }
-
     public ITextComponent getTargetContextLocalization(){
         return new TranslationTextComponent("mkcore.ability_description.target_type",
-                I18n.format(getLocalizationKeyForContext(getTargetContext())));
+                getTargetContext().getLocalizedDescription());
     }
 
     public AbilityTargetSelector getTargetSelector() {

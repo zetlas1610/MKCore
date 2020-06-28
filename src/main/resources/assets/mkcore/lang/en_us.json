@@ -58,15 +58,5 @@
   "mkcore.ability_target.self": "Targets the caster",
   "mkcore.ability_target.none": "Does not require a target",
   "mkcore.ability_description.target": "Targeting: %s",
-  "mkcore.ability_description.target_type": "Target Type: %s",
-  "mkcore.targeting_context.all": "Target",
-  "mkcore.targeting_context.all_around": "Non-caster Target",
-  "mkcore.targeting_context.enemy": "Enemy",
-  "mkcore.targeting_context.friend": "Friend",
-  "mkcore.targeting_context.friend_around": "Non-caster Friend",
-  "mkcore.targeting_context.neutral": "Neutral",
-  "mkcore.targeting_context.players": "Player",
-  "mkcore.targeting_context.players_around": "Non-caster Player",
-  "mkcore.targeting_context.self": "Self",
-  "mkcore.targeting_context.default": "Target"
+  "mkcore.ability_description.target_type": "Target Type: %s"
 }
