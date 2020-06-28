@@ -3,6 +3,8 @@ package com.chaosbuffalo.mkcore.mku.abilities;
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.AbilityContext;
+import com.chaosbuffalo.mkcore.abilities.AbilityTargetSelector;
+import com.chaosbuffalo.mkcore.abilities.AbilityTargeting;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.effects.AreaEffectBuilder;
@@ -53,6 +55,11 @@ public class PhoenixAspectAbility extends MKAbility {
     @Override
     public float getDistance() {
         return 10.0f + 2.0f * 1;
+    }
+
+    @Override
+    public AbilityTargetSelector getTargetSelector() {
+        return AbilityTargeting.PBAOE;
     }
 
     @Override

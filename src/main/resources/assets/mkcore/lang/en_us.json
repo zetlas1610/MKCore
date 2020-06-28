@@ -51,12 +51,14 @@
   "mkcore.ability.description.mana_cost": "Mana Cost: %s",
   "mkcore.ability.description.instant": "Instant",
   "mkcore.ability.description.passive": "Passive",
-  "mkcore.ability.description.ember": "Deals %s %s to your target and sets them ablaze for %s seconds.",
+  "mkcore.ability.ember.name": "Ember",
+  "mkcore.ability.ember.description": "Deals %s %s to your target and sets them ablaze for %s seconds.",
   "mkcore.ability.description.range": "Range: %s",
-  "mkcore.ability_target.single_target": "Single Target in front of the caster",
-  "mkcore.abiltiy_target.single_target_self": "Single Target in front of the caster, or the caster if no valid target found",
-  "mkcore.ability_target.self": "Targets the caster",
-  "mkcore.ability_target.none": "Does not require a target",
+  "mkcore.ability_target.single_target": "Single Target",
+  "mkcore.abiltiy_target.single_target_self": "Single Target or Self",
+  "mkcore.ability_target.self": "Self",
+  "mkcore.ability_target.none": "None",
   "mkcore.ability_description.target": "Targeting: %s",
-  "mkcore.ability_description.target_type": "Target Type: %s"
+  "mkcore.ability_description.target_type": "Target Type: %s",
+  "mkcore.ability_target.pbaoe": "PBAoE"
 }

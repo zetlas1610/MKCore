@@ -7,6 +7,7 @@ import com.chaosbuffalo.mkcore.abilities.attributes.IAbilityAttribute;
 import com.chaosbuffalo.mkcore.abilities.description.AbilityDescription;
 import com.chaosbuffalo.mkcore.abilities.description.AbilityDescriptions;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
+import com.chaosbuffalo.mkcore.init.ModDamageTypes;
 import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.mkcore.utils.RayTraceUtils;
 import com.chaosbuffalo.targeting_api.Targeting;
@@ -76,14 +77,18 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         setUseCondition(new StandardUseCondition(this));
     }
 
+    protected List<Object> getDescriptionArgs(IMKEntityData entityData){
+        return new ArrayList<>();
+    }
+
 
     protected List<AbilityDescription<?>> getDescriptions() {
         List<AbilityDescription<?>> descriptions = new ArrayList<>();
         descriptions.add(AbilityDescriptions.getManaCostDescription(this));
         descriptions.add(AbilityDescriptions.getCooldownDescription(this));
-        descriptions.add(AbilityDescriptions.getCastTimeDescription(this));
-        descriptions.add(AbilityDescriptions.getTargetingDescription(this));
-        descriptions.add(AbilityDescriptions.getTargetTypeDescription(this));
+        descriptions.add(AbilityDescriptions.getCastTimeDescription(this));;
+        getTargetSelector().addDescriptionToAbilityDescriptions(descriptions, this);
+        descriptions.add(AbilityDescriptions.getAbilityDescription(this, this::getDescriptionArgs));
         return descriptions;
     }
 
@@ -131,6 +136,11 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
     public String getTranslationKey() {
         ResourceLocation abilityId = getRegistryName();
         return String.format("%s.%s.name", abilityId.getNamespace(), abilityId.getPath());
+    }
+
+    public String getDescriptionTranslationKey(){
+        ResourceLocation abilityId = getRegistryName();
+        return String.format("%s.%s.description", abilityId.getNamespace(), abilityId.getPath());
     }
 
     public ResourceLocation getAbilityIcon() {

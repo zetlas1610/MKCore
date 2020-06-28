@@ -28,6 +28,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -54,19 +55,14 @@ public class EmberAbility extends MKAbility {
     }
 
     @Override
-    protected List<AbilityDescription<?>> getDescriptions() {
-        List<AbilityDescription<?>> ret = super.getDescriptions();
-        ret.add(AbilityDescriptions.getRangeDescription(this));
-        ret.add(new AbilityDescription<>(this, (mkAbility, mkEntityData) ->
-                new TranslationTextComponent("mkcore.ability.description.ember",
-                        String.format("%.1f (%.1f)", mkAbility.damage.getValue(), mkEntityData.getStats()
-                                .getDamageTypeBonus(ModDamageTypes.FireDamage) + mkAbility.damage.getValue()),
-                        ModDamageTypes.FireDamage.getDisplayName(),
-                        mkAbility.burnTime.getValue())));
-
-        return ret;
+    protected List<Object> getDescriptionArgs(IMKEntityData entityData) {
+        List<Object> args = super.getDescriptionArgs(entityData);
+        args.add(String.format("%.1f (%.1f)", damage.getValue(), entityData.getStats()
+                .getDamageTypeBonus(ModDamageTypes.FireDamage) + damage.getValue()));
+        args.add(ModDamageTypes.FireDamage.getDisplayName());
+        args.add(burnTime.getValue());
+        return args;
     }
-
 
     @Override
     public TargetingContext getTargetContext() {

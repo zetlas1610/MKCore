@@ -3,8 +3,14 @@ package com.chaosbuffalo.mkcore.abilities.description;
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.PassiveTalentAbility;
+import com.chaosbuffalo.mkcore.core.IMKEntityData;
+import com.chaosbuffalo.mkcore.init.ModDamageTypes;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TranslationTextComponent;
+
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class AbilityDescriptions {
 
@@ -39,13 +45,15 @@ public class AbilityDescriptions {
                         String.format("%.1f", mkAbility.getDistance()))));
     }
 
-    public static AbilityDescription<MKAbility> getTargetingDescription(MKAbility ability){
-        return new AbilityDescription<>(ability, ((mkAbility, entityData) ->
-                mkAbility.getTargetSelector().getLocalizedDescriptionForContext()));
-    }
-
     public static AbilityDescription<MKAbility> getTargetTypeDescription(MKAbility ability){
         return new AbilityDescription<>(ability, (((mkAbility, entityData) ->
                 mkAbility.getTargetContextLocalization())));
+    }
+
+    public static AbilityDescription<MKAbility> getAbilityDescription(MKAbility ability,
+                                                                      Function<IMKEntityData, List<Object>> argsProvider){
+        return new AbilityDescription<>(ability, (mkAbility, mkEntityData) ->
+                new TranslationTextComponent(ability.getDescriptionTranslationKey(),
+                        argsProvider.apply(mkEntityData).toArray()));
     }
 }

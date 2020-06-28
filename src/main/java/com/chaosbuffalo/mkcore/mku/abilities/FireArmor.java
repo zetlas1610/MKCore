@@ -3,6 +3,8 @@ package com.chaosbuffalo.mkcore.mku.abilities;
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.AbilityContext;
+import com.chaosbuffalo.mkcore.abilities.AbilityTargetSelector;
+import com.chaosbuffalo.mkcore.abilities.AbilityTargeting;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.ai.conditions.NeedsBuffCondition;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
@@ -48,6 +50,10 @@ public class FireArmor extends MKAbility {
         return TargetingContexts.FRIENDLY;
     }
 
+    @Override
+    public AbilityTargetSelector getTargetSelector() {
+        return AbilityTargeting.PBAOE;
+    }
 
     @Override
     public float getDistance() {
