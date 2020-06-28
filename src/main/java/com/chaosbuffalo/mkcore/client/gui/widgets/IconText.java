@@ -13,7 +13,7 @@ public class IconText extends MKStackLayoutHorizontal {
     protected MKImage icon;
 
     public IconText(int x, int y, int height, String textStr, ResourceLocation iconLoc,
-                    FontRenderer font, int iconWidth) {
+                    FontRenderer font, int iconWidth, int offset) {
         super(x, y, height);
         setPaddingRight(2);
         setPaddingLeft(2);
@@ -23,7 +23,7 @@ public class IconText extends MKStackLayoutHorizontal {
         text.setWidth(100);
         text.setColor(0xffffffff);
         addWidget(text);
-        addConstraintToWidget(new CenterYWithOffsetConstraint(2), text);
+        addConstraintToWidget(new CenterYWithOffsetConstraint(offset), text);
     }
 
     public MKText getText() {

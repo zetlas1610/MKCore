@@ -52,10 +52,8 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
     private ScrollingListPanelLayout talentScrollPanel;
     private ScrollingListPanelLayout abilitiesScrollPanel;
     boolean wasResized;
-    private int scrollOffsetX;
-    private int scrollOffsetY;
     private static final List<String> states = new ArrayList<>(Arrays.asList(
-            "stats", "damages", "abilities", "talents"));
+            "stats", "abilities", "talents", "damages"));
     private static final ArrayList<IAttribute> STAT_PANEL_ATTRIBUTES = new ArrayList<>();
     public static class AbilitySlotKey {
         public MKAbility.AbilityType type;
@@ -114,8 +112,6 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
         abilitySlots = new HashMap<>();
         isDraggingAbility = false;
         dragging = null;
-        scrollOffsetX = 0;
-        scrollOffsetY = 0;
         wasResized = false;
     }
 
@@ -132,6 +128,7 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
         for (MKAbility.AbilityType type : types){
             for (AbilitySlotWidget widget : getSlotsForType(type)){
                 widget.setBackgroundColor(0xff555555);
+                widget.setIconColor(0xff555555);
             }
         }
     }
@@ -147,6 +144,7 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
     public void clearDragging(){
         for (AbilitySlotWidget widget : abilitySlots.values()){
             widget.setBackgroundColor(0xffffffff);
+            widget.setIconColor(0xffffffff);
         }
         this.dragging = null;
         isDraggingAbility = false;
@@ -196,6 +194,20 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
             int contentY = yPos + DATA_BOX_OFFSET;
             int contentWidth = dataBoxRegion.width;
             int contentHeight = dataBoxRegion.height;
+            MKStackLayoutHorizontal fieldTray = new MKStackLayoutHorizontal(contentX, contentY - 16, 12);
+            fieldTray.setPaddingLeft(10);
+            fieldTray.setPaddingRight(10);
+            fieldTray.setMargins(10, 10, 0, 0);
+            root.addWidget(fieldTray);
+            NamedField totalTalents = new NamedField(0, 0, "Total Talents:",
+                    0xff000000,
+                    Integer.toString(pData.getKnowledge().getTalentKnowledge().getTotalTalentPoints()),
+                    0xff000000, font);
+            NamedField unspentTalents = new NamedField(0, 0, "Unspent Talents:", 0xff000000,
+                    Integer.toString(pData.getKnowledge().getTalentKnowledge().getUnspentTalentPoints()),
+                    0xff000000, font);
+            fieldTray.addWidget(unspentTalents);
+            fieldTray.addWidget(totalTalents);
             ScrollingListPanelLayout panel = new ScrollingListPanelLayout(
                     contentX, contentY, contentWidth, contentHeight);
             currentScrollingPanel = panel;
@@ -309,7 +321,7 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
         for (MKDamageType damageType : damageTypes){
             if (damageType.shouldDisplay()){
                 IconText iconText = new IconText(0, 0, 16,
-                        damageType.getDisplayName(), damageType.getIcon(), font, 16);
+                        damageType.getDisplayName(), damageType.getIcon(), font, 16, 2);
                 iconText.getText().setColor(0xffffffff);
                 stackLayout.addConstraintToWidget(new LayoutRelativeWidthConstraint(1.0f), iconText);
                 stackLayout.addWidget(iconText);
