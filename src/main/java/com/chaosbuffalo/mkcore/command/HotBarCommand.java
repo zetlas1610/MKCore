@@ -50,7 +50,29 @@ public class HotBarCommand {
                                 .then(Commands.argument("abilityId", AbilityIdArgument.ability())
                                         .suggests(HotBarCommand::suggestKnownAbilities)
                                         .executes(HotBarCommand::addActionBar))))
+                .then(Commands.literal("slots")
+                        .then(Commands.argument("type", AbilityTypeArgument.abilityType())
+                                .then(Commands.argument("count", IntegerArgumentType.integer())
+                                        .executes(HotBarCommand::setSlots))))
                 ;
+    }
+
+    static int setSlots(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
+        ServerPlayerEntity player = ctx.getSource().asPlayer();
+
+        MKAbility.AbilityType type = ctx.getArgument("type", MKAbility.AbilityType.class);
+        int count = IntegerArgumentType.getInteger(ctx, "count");
+
+        MKCore.getPlayer(player).ifPresent(playerData -> {
+            IActiveAbilityContainer container = playerData.getKnowledge().getAbilityContainer(type);
+            if (container.setSlots(count)) {
+                MKCore.LOGGER.info("Updated slot count for {}", type);
+            } else {
+                MKCore.LOGGER.info("Failed to update slot count for {}", type);
+            }
+        });
+
+        return Command.SINGLE_SUCCESS;
     }
 
     static int setActionBar(CommandContext<CommandSource> ctx) throws CommandSyntaxException {

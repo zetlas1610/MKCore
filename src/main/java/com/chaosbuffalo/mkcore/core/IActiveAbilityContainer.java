@@ -31,6 +31,8 @@ public interface IActiveAbilityContainer {
 
     int getMaximumSlotCount();
 
+    boolean setSlots(int count);
+
     void clearSlot(int slot);
 
     void clearAbility(ResourceLocation abilityId);
@@ -84,6 +86,11 @@ public interface IActiveAbilityContainer {
 
         public int getMaximumSlotCount() {
             return 0;
+        }
+
+        @Override
+        public boolean setSlots(int count) {
+            return false;
         }
 
         @Override

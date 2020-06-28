@@ -251,8 +251,8 @@ public class PlayerTalentKnowledge extends PlayerSyncComponent {
                 .asMap(Dynamic::asString, Function.identity())
                 .forEach((idOpt, dyn) -> idOpt.map(ResourceLocation::new).ifPresent(id -> deserializeTree(id, dyn)));
 
-        passiveContainer.deserialize(dynamic.get("loadedPassives").orElseEmptyList());
-        ultimateContainer.deserialize(dynamic.get("loadedUltimates").orElseEmptyList());
+        passiveContainer.deserialize(dynamic.get("loadedPassives").orElseEmptyMap());
+        ultimateContainer.deserialize(dynamic.get("loadedUltimates").orElseEmptyMap());
 
         talentCache.invalidate();
     }

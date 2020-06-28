@@ -1,10 +1,7 @@
 package com.chaosbuffalo.mkcore.client.gui;
 
 
-import com.chaosbuffalo.mkcore.Capabilities;
-import com.chaosbuffalo.mkcore.ClientEventHandler;
-import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.MKCoreRegistry;
+import com.chaosbuffalo.mkcore.*;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
@@ -83,26 +80,26 @@ public class MKOverlay {
         return Math.max(barStart, MIN_BAR_START_Y);
     }
 
-    private String getTextureForSlot(int i){
-        switch (i){
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-                return GuiTextures.ABILITY_BAR_REG;
-            default:
-                return GuiTextures.ABILITY_BAR_ULT;
+    private String getTextureForType(MKAbility.AbilityType type) {
+        if (type == MKAbility.AbilityType.Active) {
+            return GuiTextures.ABILITY_BAR_REG;
+        } else if (type == MKAbility.AbilityType.Ultimate) {
+            return GuiTextures.ABILITY_BAR_ULT;
         }
+        return null;
     }
 
-    private void drawBarSlots(int slotCount) {
+    private void drawBarSlots(MKAbility.AbilityType type, int startSlot, int slotCount, int totalSlots) {
         GuiTextures.CORE_TEXTURES.bind(mc);
         RenderSystem.disableLighting();
         int xOffset = 0;
-        int yOffset = getBarStartY(slotCount);
-        for (int i = 0; i < slotCount; i++) {
+        int yOffset = getBarStartY(totalSlots);
+        for (int i = startSlot; i < (startSlot + slotCount); i++) {
             int yPos = yOffset - i + i * SLOT_HEIGHT;
-            GuiTextures.CORE_TEXTURES.drawRegionAtPos(getTextureForSlot(i), xOffset, yPos);
+            String texture = getTextureForType(type);
+            if (texture != null) {
+                GuiTextures.CORE_TEXTURES.drawRegionAtPos(texture, xOffset, yPos);
+            }
         }
     }
 
@@ -115,6 +112,7 @@ public class MKOverlay {
         int barStartY = getBarStartY(totalSlots);
 
         int slotCount = data.getKnowledge().getAbilityContainer(type).getCurrentSlotCount();
+        drawBarSlots(type, startingSlot, slotCount, totalSlots);
 
         float globalCooldown = ClientEventHandler.getGlobalCooldown();
         PlayerAbilityExecutor executor = data.getAbilityExecutor();
@@ -187,7 +185,6 @@ public class MKOverlay {
                     .mapToInt(type -> cap.getKnowledge().getAbilityContainer(type).getCurrentSlotCount())
                     .sum();
 
-            drawBarSlots(totalSlots);
             int slot = drawAbilities(cap, MKAbility.AbilityType.Active, 0, totalSlots, event.getPartialTicks());
             slot = drawAbilities(cap, MKAbility.AbilityType.Ultimate, slot, totalSlots, event.getPartialTicks());
         });
