@@ -50,10 +50,14 @@ public class AbilityDescriptions {
         return new TranslationTextComponent(ability.getDescriptionTranslationKey(), argsProvider.apply(entityData).toArray());
     }
 
-    public static List<ITextComponent> getEffectDescription(Effect effect, IMKEntityData entityData){
+    public static List<ITextComponent> getEffectDescription(Effect effect, IMKEntityData entityData, boolean showName){
         List<ITextComponent> desc = new ArrayList<>();
-        desc.add(new TranslationTextComponent("mkcore.ability.description.effect",
-                effect.getDisplayName().getFormattedText()));
+        if (showName){
+            desc.add(new TranslationTextComponent("mkcore.ability.description.effect_with_name",
+                    effect.getDisplayName().getFormattedText()));
+        } else {
+            desc.add(new TranslationTextComponent("mkcore.ability.description.effect"));
+        }
         for (Map.Entry<IAttribute, AttributeModifier> entry : effect.getAttributeModifierMap().entrySet()){
             desc.add(new StringTextComponent(String.format("    %s: %s%.2f", I18n.format(String.format("attribute.name.%s",
                     entry.getKey().getName())), entry.getValue().getAmount() > 0 ? "+" : "", entry.getValue().getAmount())));

@@ -61,5 +61,6 @@
   "mkcore.ability_description.target": "Targeting: %s",
   "mkcore.ability_description.target_type": "Target Type: %s",
   "mkcore.ability_target.pbaoe": "PBAoE",
-  "mkcore.ability.description.effect": "Adds Effect: %s"
+  "mkcore.ability.description.effect_with_name": "Adds Effect: %s",
+  "mkcore.ability.description.effect": "Effect: "
 }

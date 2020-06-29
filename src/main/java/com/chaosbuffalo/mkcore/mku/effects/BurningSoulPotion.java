@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.UUID;
 
-@Mod.EventBusSubscriber(modid = MKCore.MOD_ID)
+@Mod.EventBusSubscriber(modid = MKCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class BurningSoulPotion extends PassiveTalentEffect {
 
     public static final UUID MODIFIER_ID = UUID.fromString("1f7540cb-a9c3-4a11-866d-24547723dd06");
