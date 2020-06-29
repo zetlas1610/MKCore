@@ -4,15 +4,12 @@ import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.abilities.ai.conditions.AbilityUseCondition;
 import com.chaosbuffalo.mkcore.abilities.ai.conditions.StandardUseCondition;
 import com.chaosbuffalo.mkcore.abilities.attributes.IAbilityAttribute;
-import com.chaosbuffalo.mkcore.abilities.description.AbilityDescription;
 import com.chaosbuffalo.mkcore.abilities.description.AbilityDescriptions;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
-import com.chaosbuffalo.mkcore.init.ModDamageTypes;
 import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.mkcore.utils.RayTraceUtils;
 import com.chaosbuffalo.targeting_api.Targeting;
 import com.chaosbuffalo.targeting_api.TargetingContext;
-import com.chaosbuffalo.targeting_api.TargetingContexts;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
 import net.minecraft.client.Minecraft;
@@ -37,7 +34,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
 
@@ -81,19 +77,14 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         return new ArrayList<>();
     }
 
-    protected List<AbilityDescription<?>> getDescriptions() {
-        List<AbilityDescription<?>> descriptions = new ArrayList<>();
-        descriptions.add(AbilityDescriptions.getManaCostDescription(this));
-        descriptions.add(AbilityDescriptions.getCooldownDescription(this));
-        descriptions.add(AbilityDescriptions.getCastTimeDescription(this));;
-        getTargetSelector().addDescriptionToAbilityDescriptions(descriptions, this);
-        descriptions.add(AbilityDescriptions.getAbilityDescription(this, this::getDescriptionArgs));
-        return descriptions;
-    }
-
     public List<ITextComponent> getDescriptionsForEntity(IMKEntityData entityData){
-        return getDescriptions().stream().map((desc) -> desc.getDescriptionForEntity(entityData))
-                .collect(Collectors.toList());
+        List<ITextComponent> descriptions = new ArrayList<>();
+        descriptions.add(AbilityDescriptions.getManaCostDescription(this, entityData));
+        descriptions.add(AbilityDescriptions.getCooldownDescription(this, entityData));
+        descriptions.add(AbilityDescriptions.getCastTimeDescription(this, entityData));
+        getTargetSelector().fillAbilityDescription(descriptions, this, entityData);
+        descriptions.add(AbilityDescriptions.getAbilityDescription(this, entityData, this::getDescriptionArgs));
+        return descriptions;
     }
 
     public void setUseCondition(AbilityUseCondition useCondition) {

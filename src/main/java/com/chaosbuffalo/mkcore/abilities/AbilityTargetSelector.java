@@ -1,7 +1,6 @@
 package com.chaosbuffalo.mkcore.abilities;
 
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.abilities.description.AbilityDescription;
 import com.chaosbuffalo.mkcore.abilities.description.AbilityDescriptions;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.targeting_api.TargetingContext;
@@ -23,7 +22,7 @@ public class AbilityTargetSelector {
     private final BiFunction<IMKEntityData, MKAbility, AbilityContext> selector;
     private Set<MemoryModuleType<?>> requiredMemories;
     private String descriptionKey;
-    private final List<Function<MKAbility, AbilityDescription<?>>> additionalDescriptors;
+    private final List<BiFunction<MKAbility, IMKEntityData, ITextComponent>> additionalDescriptors;
     private boolean showTargetType;
 
     public AbilityTargetSelector(BiFunction<IMKEntityData, MKAbility, AbilityContext> selector) {
@@ -43,7 +42,7 @@ public class AbilityTargetSelector {
         return this;
     }
 
-    public AbilityTargetSelector addDescription(Function<MKAbility, AbilityDescription<?>> description){
+    public AbilityTargetSelector addDescription(BiFunction<MKAbility, IMKEntityData, ITextComponent> description){
         additionalDescriptors.add(description);
         return this;
     }
@@ -52,18 +51,14 @@ public class AbilityTargetSelector {
         return showTargetType;
     }
 
-    public void addDescriptionToAbilityDescriptions(List<AbilityDescription<?>> descriptions, MKAbility ability){
-        descriptions.add(new AbilityDescription<>(ability, ((mkAbility, entityData) ->
-                this.getLocalizedDescriptionForContext())));
-        if (doShowTargetType()){
+    public void fillAbilityDescription(List<ITextComponent> descriptions, MKAbility ability, IMKEntityData entityData) {
+        descriptions.add(getLocalizedDescriptionForContext());
+        if (doShowTargetType()) {
             descriptions.add(AbilityDescriptions.getTargetTypeDescription(ability));
         }
-        descriptions.addAll(
-                additionalDescriptors
-                .stream()
-                .map(factory -> factory.apply(ability))
-                .collect(Collectors.toList())
-        );
+        additionalDescriptors.forEach(func -> {
+            descriptions.add(func.apply(ability, entityData));
+        });
     }
 
     public ITextComponent getLocalizedDescriptionForContext(){
