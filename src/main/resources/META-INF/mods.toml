@@ -57,7 +57,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis lacinia magn
 [[dependencies.mkcore]]
     modId="targeting_api"
     mandatory=true
-    versionRange="[0.20,)"
+    versionRange="[0.21,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.mkcore]]

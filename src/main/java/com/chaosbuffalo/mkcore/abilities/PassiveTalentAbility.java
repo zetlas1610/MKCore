@@ -1,5 +1,6 @@
 package com.chaosbuffalo.mkcore.abilities;
 
+import com.chaosbuffalo.mkcore.abilities.description.AbilityDescriptions;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.effects.PassiveTalentEffect;
 import com.chaosbuffalo.targeting_api.TargetingContext;
@@ -7,6 +8,11 @@ import com.chaosbuffalo.targeting_api.TargetingContexts;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class PassiveTalentAbility extends MKAbility {
     public PassiveTalentAbility(ResourceLocation abilityId) {
@@ -24,6 +30,15 @@ public abstract class PassiveTalentAbility extends MKAbility {
     }
 
     public abstract PassiveTalentEffect getPassiveEffect();
+
+    @Override
+    public List<ITextComponent> getDescriptionsForEntity(IMKEntityData entityData) {
+        List<ITextComponent> descriptions = new ArrayList<>();
+        descriptions.add(new TranslationTextComponent("mkcore.ability.description.passive"));
+        descriptions.add(AbilityDescriptions.getTargetTypeDescription(this));
+        descriptions.add(AbilityDescriptions.getAbilityDescription(this, entityData, this::getDescriptionArgs));
+        return descriptions;
+    }
 
     @Override
     public void executeWithContext(IMKEntityData entityData, AbilityContext context) {

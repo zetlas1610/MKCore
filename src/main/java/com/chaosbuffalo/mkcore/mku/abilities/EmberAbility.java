@@ -20,11 +20,14 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -47,6 +50,16 @@ public class EmberAbility extends MKAbility {
         setCooldownSeconds(4);
         setManaCost(6);
         addAttributes(damage, burnTime);
+    }
+
+    @Override
+    protected List<Object> getDescriptionArgs(IMKEntityData entityData) {
+        List<Object> args = super.getDescriptionArgs(entityData);
+        args.add(String.format("%.1f (%.1f)", damage.getValue(), entityData.getStats()
+                .getDamageTypeBonus(ModDamageTypes.FireDamage) + damage.getValue()));
+        args.add(ModDamageTypes.FireDamage.getDisplayName());
+        args.add(burnTime.getValue());
+        return args;
     }
 
     @Override

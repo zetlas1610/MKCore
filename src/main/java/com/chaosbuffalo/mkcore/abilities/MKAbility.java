@@ -4,6 +4,7 @@ import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.abilities.ai.conditions.AbilityUseCondition;
 import com.chaosbuffalo.mkcore.abilities.ai.conditions.StandardUseCondition;
 import com.chaosbuffalo.mkcore.abilities.attributes.IAbilityAttribute;
+import com.chaosbuffalo.mkcore.abilities.description.AbilityDescriptions;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.mkcore.utils.RayTraceUtils;
@@ -22,6 +23,8 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
@@ -70,6 +73,20 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         setUseCondition(new StandardUseCondition(this));
     }
 
+    protected List<Object> getDescriptionArgs(IMKEntityData entityData){
+        return new ArrayList<>();
+    }
+
+    public List<ITextComponent> getDescriptionsForEntity(IMKEntityData entityData){
+        List<ITextComponent> descriptions = new ArrayList<>();
+        descriptions.add(AbilityDescriptions.getManaCostDescription(this, entityData));
+        descriptions.add(AbilityDescriptions.getCooldownDescription(this, entityData));
+        descriptions.add(AbilityDescriptions.getCastTimeDescription(this, entityData));
+        getTargetSelector().fillAbilityDescription(descriptions, this, entityData);
+        descriptions.add(AbilityDescriptions.getAbilityDescription(this, entityData, this::getDescriptionArgs));
+        return descriptions;
+    }
+
     public void setUseCondition(AbilityUseCondition useCondition) {
         this.useCondition = useCondition;
     }
@@ -105,14 +122,15 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         return I18n.format(getTranslationKey());
     }
 
-    public String getAbilityDescription() {
-        ResourceLocation abilityId = getRegistryName();
-        return I18n.format(String.format("%s.%s.description", abilityId.getNamespace(), abilityId.getPath()));
-    }
 
     public String getTranslationKey() {
         ResourceLocation abilityId = getRegistryName();
         return String.format("%s.%s.name", abilityId.getNamespace(), abilityId.getPath());
+    }
+
+    public String getDescriptionTranslationKey(){
+        ResourceLocation abilityId = getRegistryName();
+        return String.format("%s.%s.description", abilityId.getNamespace(), abilityId.getPath());
     }
 
     public ResourceLocation getAbilityIcon() {
@@ -250,6 +268,11 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
 
     public void executeWithContext(IMKEntityData entityData, AbilityContext context) {
         entityData.startAbility(context, this);
+    }
+
+    public ITextComponent getTargetContextLocalization(){
+        return new TranslationTextComponent("mkcore.ability_description.target_type",
+                getTargetContext().getLocalizedDescription());
     }
 
     public AbilityTargetSelector getTargetSelector() {

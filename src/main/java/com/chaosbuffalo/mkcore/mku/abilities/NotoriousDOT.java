@@ -1,6 +1,8 @@
 package com.chaosbuffalo.mkcore.mku.abilities;
 
 import com.chaosbuffalo.mkcore.MKCore;
+import com.chaosbuffalo.mkcore.abilities.AbilityTargetSelector;
+import com.chaosbuffalo.mkcore.abilities.AbilityTargeting;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKSongAbility;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
@@ -49,6 +51,11 @@ public class NotoriousDOT extends MKSongAbility {
     @Override
     public TargetingContext getTargetContext() {
         return TargetingContexts.SELF;
+    }
+
+    @Override
+    public AbilityTargetSelector getTargetSelector() {
+        return AbilityTargeting.PBAOE;
     }
 
     @Override

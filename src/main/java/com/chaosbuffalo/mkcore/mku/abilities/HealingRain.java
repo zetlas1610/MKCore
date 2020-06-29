@@ -3,6 +3,8 @@ package com.chaosbuffalo.mkcore.mku.abilities;
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.AbilityContext;
+import com.chaosbuffalo.mkcore.abilities.AbilityTargetSelector;
+import com.chaosbuffalo.mkcore.abilities.AbilityTargeting;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.effects.AreaEffectBuilder;
@@ -61,6 +63,11 @@ public class HealingRain extends MKAbility {
     @Override
     public float getDistance() {
         return 5.0f + 1.0f;
+    }
+
+    @Override
+    public AbilityTargetSelector getTargetSelector() {
+        return AbilityTargeting.PBAOE;
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutVertical;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKText;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 public class AbilityInfoWidget extends MKStackLayoutVertical {
@@ -23,6 +24,7 @@ public class AbilityInfoWidget extends MKStackLayoutVertical {
         this.fontRenderer = fontRenderer;
         abilityInfo = null;
         setMargins(6, 6, 6, 6);
+        setPaddings(0, 0, 2, 2);
         doSetChildWidth(true);
         setup();
     }
@@ -38,6 +40,12 @@ public class AbilityInfoWidget extends MKStackLayoutVertical {
                     abilityInfo.getAbility().getAbilityIcon(),
                     fontRenderer, 16, screen, abilityInfo.getAbility());
             addWidget(ability);
+            for (ITextComponent desc : abilityInfo.getAbility().getDescriptionsForEntity(playerData)){
+                MKText text = new MKText(fontRenderer, desc);
+                text.setColor(0xaaffffff);
+                text.setMultiline(true);
+                addWidget(text);
+            }
         }
     }
 
