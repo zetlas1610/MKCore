@@ -62,6 +62,6 @@ public class ClericHealEffect extends SpellEffectBase {
     @Override
     public void doEffect(Entity applier, Entity caster, LivingEntity target, int amplifier, SpellCast cast) {
         float value = cast.getScaledValue(amplifier);
-        MKHealing.healEntityFrom(target, value, new MKHealSource(ClericHeal.INSTANCE.getAbilityId(), applier, caster));
+        MKHealing.healEntityFrom(target, value, MKHealSource.getHolyHeal(ClericHeal.INSTANCE.getAbilityId(), applier, caster));
     }
 }

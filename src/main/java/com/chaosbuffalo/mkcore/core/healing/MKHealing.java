@@ -18,7 +18,7 @@ public class MKHealing {
         if (!MinecraftForge.EVENT_BUS.post(event)){
             if (MKConfig.healsDamageUndead.get() && target.isEntityUndead() && healSource.doesDamageUndead()) {
                 float healDamageMultiplier = MKConfig.undeadHealDamageMultiplier.get().floatValue();
-                target.attackEntityFrom(MKDamageSource.causeAbilityDamage(ModDamageTypes.HolyDamage,
+                target.attackEntityFrom(MKDamageSource.causeAbilityDamage(healSource.getDamageType(),
                         healSource.getAbilityId(), healSource.getImmediateSource(), healSource.getTrueSource()),
                         healDamageMultiplier * event.getAmount());
             } else {
