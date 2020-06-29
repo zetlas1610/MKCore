@@ -4,15 +4,19 @@ import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.client.gui.CharacterScreen;
 import com.chaosbuffalo.mkcore.network.ExecuteActiveAbilityPacket;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
+import com.chaosbuffalo.mkcore.item.ArmorClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -131,6 +135,20 @@ public class ClientEventHandler {
         if (event.phase == TickEvent.Phase.START) {
             if (currentGCDTicks > 0) {
                 currentGCDTicks--;
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void doArmorClassTooltip(ItemTooltipEvent event) {
+        if (!MKConfig.showArmorClassOnTooltip.get())
+            return;
+
+        if (event.getItemStack().getItem() instanceof ArmorItem) {
+            ArmorClass armorClass = ArmorClass.getItemArmorClass(((ArmorItem) event.getItemStack().getItem()));
+            if (armorClass != null) {
+                String msg = String.format("%s: %s", "Armor Class", armorClass.getName());
+                event.getToolTip().add(new StringTextComponent(msg));
             }
         }
     }

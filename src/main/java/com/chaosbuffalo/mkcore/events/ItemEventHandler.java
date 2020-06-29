@@ -19,6 +19,7 @@ public class ItemEventHandler {
         ServerPlayerEntity player = (ServerPlayerEntity) event.getEntityLiving();
 
         player.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent((playerData) -> {
+            playerData.getEquipment().onEquipmentChange(event.getSlot(), event.getFrom(), event.getTo());
             SpellTriggers.PLAYER_EQUIPMENT_CHANGE.onEquipmentChange(event, playerData, player);
         });
     }

@@ -62,5 +62,8 @@
   "mkcore.ability_description.target_type": "Target Type: %s",
   "mkcore.ability_target.pbaoe": "PBAoE",
   "mkcore.ability.description.effect_with_name": "%s Modifiers:",
-  "mkcore.ability.description.effect": "Modifiers:"
+  "mkcore.ability.description.effect": "Modifiers:",
+  "mkcore.armor_class.light.name": "Light",
+  "mkcore.armor_class.medium.name": "Medium",
+  "mkcore.armor_class.heavy.name": "Heavy"
 }
