@@ -267,7 +267,7 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
     }
 
     public void executeWithContext(IMKEntityData entityData, AbilityContext context) {
-        entityData.startAbility(context, this);
+        entityData.getAbilityExecutor().startAbility(context, this);
     }
 
     public ITextComponent getTargetContextLocalization(){

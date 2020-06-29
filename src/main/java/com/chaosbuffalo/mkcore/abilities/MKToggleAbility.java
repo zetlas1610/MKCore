@@ -43,6 +43,15 @@ public abstract class MKToggleAbility extends MKAbility {
     }
 
     @Override
+    public int getCastTime(IMKEntityData entityData) {
+        // Active effects can be disabled instantly
+        if (entityData.getEntity().isPotionActive(getToggleEffect())) {
+            return 0;
+        }
+        return super.getCastTime(entityData);
+    }
+
+    @Override
     public AbilityType getType() {
         return AbilityType.Active;
     }
@@ -59,9 +68,7 @@ public abstract class MKToggleAbility extends MKAbility {
     }
 
     @Override
-    public void executeWithContext(IMKEntityData entityData, AbilityContext context) {
-        entityData.startAbility(context, this);
-        LivingEntity entity = entityData.getEntity();
+    public void endCast(LivingEntity entity, IMKEntityData entityData, AbilityContext context) {
         if (entity.getActivePotionEffect(getToggleEffect()) != null) {
             removeEffect(entity, entityData);
         } else {
