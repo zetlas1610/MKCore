@@ -14,37 +14,50 @@ public class MKHealSource {
     private final ResourceLocation abilityId;
     private boolean damagesUndead;
     private MKDamageType damageType;
+    private float modifierScaling;
 
 
     public MKHealSource(ResourceLocation abilityId, Entity source, @Nullable Entity trueSourceIn,
-                        MKDamageType damageType){
+                        MKDamageType damageType, float modifierScaling){
         this.trueSource = trueSourceIn;
         this.immediateSource = source;
         this.abilityId = abilityId;
         this.damagesUndead = true;
         this.damageType = damageType;
+        this.modifierScaling = modifierScaling;
     }
 
     public static MKHealSource getHolyHeal(ResourceLocation abilityId, Entity source,
-                                           @Nullable Entity trueSourceIn){
-        return new MKHealSource(abilityId, source, trueSourceIn, ModDamageTypes.HolyDamage);
+                                           @Nullable Entity trueSourceIn, float modifierScaling){
+        return new MKHealSource(abilityId, source, trueSourceIn, ModDamageTypes.HolyDamage, modifierScaling);
     }
 
     public static MKHealSource getNatureHeal(ResourceLocation abilityId, Entity source,
-                                             @Nullable Entity trueSourceIn){
-        return new MKHealSource(abilityId, source, trueSourceIn, ModDamageTypes.NatureDamage);
+                                             @Nullable Entity trueSourceIn, float modifierScaling){
+        return new MKHealSource(abilityId, source, trueSourceIn, ModDamageTypes.NatureDamage, modifierScaling);
     }
 
     public MKDamageType getDamageType() {
         return damageType;
     }
 
-    public void setDamageType(MKDamageType damageType) {
-        this.damageType = damageType;
+    public float getModifierScaling() {
+        return modifierScaling;
     }
 
-    public void setDamageUndead(boolean damagesUndead) {
+    public MKHealSource setModifierScaling(float modifierScaling) {
+        this.modifierScaling = modifierScaling;
+        return this;
+    }
+
+    public MKHealSource setDamageType(MKDamageType damageType) {
+        this.damageType = damageType;
+        return this;
+    }
+
+    public MKHealSource setDamageUndead(boolean damagesUndead) {
         this.damagesUndead = damagesUndead;
+        return this;
     }
 
     public boolean doesDamageUndead() {
