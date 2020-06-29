@@ -4,6 +4,8 @@ import com.chaosbuffalo.mkcore.MKConfig;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.core.MKCombatFormulas;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageSource;
+import com.chaosbuffalo.mkcore.core.healing.MKHealSource;
+import com.chaosbuffalo.mkcore.core.healing.MKHealing;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
 import com.chaosbuffalo.mkcore.effects.SpellEffectBase;
 import com.chaosbuffalo.mkcore.init.ModDamageTypes;
@@ -59,21 +61,8 @@ public class ClericHealEffect extends SpellEffectBase {
 
     @Override
     public void doEffect(Entity applier, Entity caster, LivingEntity target, int amplifier, SpellCast cast) {
-
         float value = cast.getScaledValue(amplifier);
-
-        float finalValue = MKCore.getPlayer(caster)
-                .map(data -> MKCombatFormulas.applyHealBonus(data, value))
-                .orElse(value);
-
-        if (target.isEntityUndead()) {
-            if (MKConfig.healsDamageUndead.get()) {
-                float healDamageMultiplier = MKConfig.undeadHealDamageMultiplier.get().floatValue();
-                target.attackEntityFrom(MKDamageSource.causeAbilityDamage(ModDamageTypes.HolyDamage,
-                        ClericHeal.INSTANCE.getAbilityId(), applier, caster), healDamageMultiplier * finalValue);
-            }
-        } else {
-            target.heal(finalValue);
-        }
+        MKHealing.healEntityFrom(target, value,
+                MKHealSource.getHolyHeal(ClericHeal.INSTANCE.getAbilityId(), applier, caster, 1.0f));
     }
 }
