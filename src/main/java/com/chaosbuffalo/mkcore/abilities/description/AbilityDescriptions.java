@@ -50,8 +50,11 @@ public class AbilityDescriptions {
         return new TranslationTextComponent(ability.getDescriptionTranslationKey(), argsProvider.apply(entityData).toArray());
     }
 
-    public static List<ITextComponent> getEffectDescription(Effect effect, IMKEntityData entityData, boolean showName){
+    public static List<ITextComponent> getEffectModifiers(Effect effect, IMKEntityData entityData, boolean showName){
         List<ITextComponent> desc = new ArrayList<>();
+        if (effect.getAttributeModifierMap().isEmpty()){
+            return desc;
+        }
         if (showName){
             desc.add(new TranslationTextComponent("mkcore.ability.description.effect_with_name",
                     effect.getDisplayName().getFormattedText()));
