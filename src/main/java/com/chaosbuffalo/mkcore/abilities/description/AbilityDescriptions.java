@@ -52,6 +52,9 @@ public class AbilityDescriptions {
 
     public static List<ITextComponent> getEffectDescription(Effect effect, IMKEntityData entityData, boolean showName){
         List<ITextComponent> desc = new ArrayList<>();
+        if (effect.getAttributeModifierMap().isEmpty()){
+            return desc;
+        }
         if (showName){
             desc.add(new TranslationTextComponent("mkcore.ability.description.effect_with_name",
                     effect.getDisplayName().getFormattedText()));
