@@ -1,6 +1,7 @@
 package com.chaosbuffalo.mkcore.client.gui.widgets;
 
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
+import com.chaosbuffalo.mkcore.client.gui.AbilityPanelScreen;
 import com.chaosbuffalo.mkcore.client.gui.CharacterScreen;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutVertical;
@@ -14,10 +15,10 @@ public class AbilityInfoWidget extends MKStackLayoutVertical {
     private final MKPlayerData playerData;
     private MKAbilityInfo abilityInfo;
     private final FontRenderer fontRenderer;
-    private final CharacterScreen screen;
+    private final AbilityPanelScreen screen;
 
     public AbilityInfoWidget(int x, int y, int width, MKPlayerData playerData,
-                             FontRenderer fontRenderer, CharacterScreen screen) {
+                             FontRenderer fontRenderer, AbilityPanelScreen screen) {
         super(x, y, width);
         this.screen = screen;
         this.playerData = playerData;
