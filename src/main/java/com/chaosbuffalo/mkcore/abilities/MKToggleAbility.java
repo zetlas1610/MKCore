@@ -38,7 +38,7 @@ public abstract class MKToggleAbility extends MKAbility {
     @Override
     public List<ITextComponent> getDescriptionsForEntity(IMKEntityData entityData) {
         List<ITextComponent> ret = super.getDescriptionsForEntity(entityData);
-        ret.addAll(AbilityDescriptions.getEffectDescription(getToggleEffect(), entityData, false));
+        ret.addAll(AbilityDescriptions.getEffectModifiers(getToggleEffect(), entityData, false));
         return ret;
     }
 
