@@ -172,6 +172,12 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
     }
 
     @Override
+    public int getAbilityCastTime(MKAbility ability) {
+        int ticks = ability.getCastTime(playerData);
+        return MKCombatFormulas.applyCastTimeReduction(playerData, ticks);
+    }
+
+    @Override
     public boolean canActivateAbility(MKAbility ability) {
         if (getMana() < getAbilityManaCost(ability))
             return false;

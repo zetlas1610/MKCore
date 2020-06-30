@@ -19,6 +19,8 @@ public interface IStatsModule {
 
     int getAbilityCooldown(MKAbility ability);
 
+    int getAbilityCastTime(MKAbility ability);
+
     boolean canActivateAbility(MKAbility ability);
 
     void setTimer(ResourceLocation id, int cooldown);

@@ -63,6 +63,9 @@ public class MKPlayerData implements IMKEntityData {
 
         AttributeModifier mod3 = new AttributeModifier("test cdr", 0.1, AttributeModifier.Operation.ADDITION).setSaved(false);
         player.getAttribute(MKAttributes.COOLDOWN).applyModifier(mod3);
+
+        AttributeModifier mod4 = new AttributeModifier("test haste", 0.1, AttributeModifier.Operation.ADDITION).setSaved(false);
+        player.getAttribute(MKAttributes.CASTING_SPEED).applyModifier(mod4);
     }
 
     private void registerAttributes() {
@@ -70,6 +73,7 @@ public class MKPlayerData implements IMKEntityData {
         attributes.registerAttribute(MKAttributes.MAX_MANA);
         attributes.registerAttribute(MKAttributes.MANA_REGEN);
         attributes.registerAttribute(MKAttributes.COOLDOWN);
+        attributes.registerAttribute(MKAttributes.CASTING_SPEED);
         attributes.registerAttribute(MKAttributes.MELEE_CRIT);
         attributes.registerAttribute(MKAttributes.MELEE_CRIT_MULTIPLIER);
         attributes.registerAttribute(MKAttributes.SPELL_CRIT);

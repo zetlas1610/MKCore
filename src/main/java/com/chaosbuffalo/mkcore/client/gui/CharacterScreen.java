@@ -101,6 +101,7 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
         STAT_PANEL_ATTRIBUTES.add(SharedMonsterAttributes.ATTACK_SPEED);
         STAT_PANEL_ATTRIBUTES.add(SharedMonsterAttributes.MOVEMENT_SPEED);
         STAT_PANEL_ATTRIBUTES.add(MKAttributes.COOLDOWN);
+        STAT_PANEL_ATTRIBUTES.add(MKAttributes.CASTING_SPEED);
         STAT_PANEL_ATTRIBUTES.add(MKAttributes.MELEE_CRIT);
         STAT_PANEL_ATTRIBUTES.add(MKAttributes.MELEE_CRIT_MULTIPLIER);
         STAT_PANEL_ATTRIBUTES.add(MKAttributes.SPELL_CRIT);

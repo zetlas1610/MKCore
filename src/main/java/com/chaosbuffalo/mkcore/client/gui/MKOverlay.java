@@ -60,14 +60,14 @@ public class MKOverlay {
             return;
         }
         MKAbility ability = info.getAbility();
-        int castTime = ability.getCastTime(data);
+        int castTime = data.getStats().getAbilityCastTime(ability);
         if (castTime == 0) {
             return;
         }
         int height = mc.getMainWindow().getScaledHeight();
         int castStartY = height / 2 + 8;
         int width = 50;
-        int barSize = width * executor.getCastTicks() / castTime; // FIXME: this is wrong calc if we have spell haste
+        int barSize = width * executor.getCastTicks() / castTime;
         int castStartX = mc.getMainWindow().getScaledWidth() / 2 - barSize / 2;
 
         GuiTextures.CORE_TEXTURES.bind(mc);

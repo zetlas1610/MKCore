@@ -2,7 +2,6 @@ package com.chaosbuffalo.mkcore.core;
 
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
-import com.chaosbuffalo.mkcore.mku.entity.MKEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.nbt.CompoundNBT;
@@ -29,6 +28,7 @@ public class MKEntityData implements IMKEntityData {
     private void registerAttributes() {
         AbstractAttributeMap attributes = entity.getAttributes();
         attributes.registerAttribute(MKAttributes.COOLDOWN);
+        attributes.registerAttribute(MKAttributes.CASTING_SPEED);
         attributes.registerAttribute(MKAttributes.HEAL_BONUS);
         for (MKDamageType damageType : MKCoreRegistry.DAMAGE_TYPES.getValues()) {
             damageType.addAttributes(attributes);

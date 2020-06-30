@@ -168,7 +168,7 @@ public class AbilityExecutor {
 
         consumeResource(ability);
 
-        int castTime = ability.getCastTime(entityData);
+        int castTime = entityData.getStats().getAbilityCastTime(ability);
         startCast(context, info, castTime);
         if (castTime > 0) {
             return true;
