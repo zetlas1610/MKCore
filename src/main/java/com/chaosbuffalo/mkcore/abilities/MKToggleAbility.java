@@ -1,6 +1,7 @@
 package com.chaosbuffalo.mkcore.abilities;
 
 import com.chaosbuffalo.mkcore.MKCore;
+import com.chaosbuffalo.mkcore.abilities.description.AbilityDescriptions;
 import com.chaosbuffalo.mkcore.client.gui.MKOverlay;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import net.minecraft.client.Minecraft;
@@ -8,6 +9,9 @@ import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+
+import java.util.List;
 
 public abstract class MKToggleAbility extends MKAbility {
 
@@ -29,6 +33,13 @@ public abstract class MKToggleAbility extends MKAbility {
             return 0f;
         }
         return super.getManaCost(entityData);
+    }
+
+    @Override
+    public List<ITextComponent> getDescriptionsForEntity(IMKEntityData entityData) {
+        List<ITextComponent> ret = super.getDescriptionsForEntity(entityData);
+        ret.addAll(AbilityDescriptions.getEffectDescription(getToggleEffect(), entityData, false));
+        return ret;
     }
 
     @Override
