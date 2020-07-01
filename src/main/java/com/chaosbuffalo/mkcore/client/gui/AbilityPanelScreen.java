@@ -3,7 +3,6 @@ package com.chaosbuffalo.mkcore.client.gui;
 import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
-import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.client.gui.widgets.AbilityInfoWidget;
 import com.chaosbuffalo.mkcore.client.gui.widgets.AbilityListEntry;
 import com.chaosbuffalo.mkcore.client.gui.widgets.ScrollingListPanelLayout;
@@ -17,6 +16,7 @@ import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKRectangle;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKScrollView;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKWidget;
 import com.chaosbuffalo.mkwidgets.utils.TextureRegion;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.ITextComponent;
@@ -39,7 +39,7 @@ public abstract class AbilityPanelScreen extends MKScreen implements IPlayerData
     protected MKAbility dragging;
     protected AbilityInfoWidget infoWidget;
     protected ScrollingListPanelLayout abilitiesScrollPanel;
-    private MKAbilityInfo abilityInfo;
+    private MKAbility ability;
     private boolean doAbilityDrag;
 
     public AbilityPanelScreen(ITextComponent title) {
@@ -58,12 +58,14 @@ public abstract class AbilityPanelScreen extends MKScreen implements IPlayerData
         this.doAbilityDrag = doAbilityDrag;
     }
 
-    protected MKLayout getRootLayout(int xPos, int yPos, int xOffset, int width){
+    protected MKLayout getRootLayout(int xPos, int yPos, int xOffset, int width, boolean addStateButtons){
         MKLayout root = new MKLayout(xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
         root.setMargins(5, 5, 5, 5);
         root.setPaddingTop(5).setPaddingBot(5);
-        MKLayout statebuttons = getStateButtons(xPos + xOffset, yPos + 8, width);
-        root.addWidget(statebuttons);
+        if (addStateButtons){
+            MKLayout statebuttons = getStateButtons(xPos + xOffset, yPos + 8, width);
+            root.addWidget(statebuttons);
+        }
         return root;
     }
 
@@ -109,13 +111,13 @@ public abstract class AbilityPanelScreen extends MKScreen implements IPlayerData
         root.addWidget(statebuttons);
         minecraft.player.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent((pData) -> {
             // Stat Panel
-            MKScrollView statScrollView = new MKScrollView(xPos + xOffset + 4,
+            MKScrollView scrollView = new MKScrollView(xPos + xOffset + 4,
                     yPos + DATA_BOX_OFFSET + 4,
                     dataBoxRegion.width - 8, dataBoxRegion.height - 8, true);
-            statScrollView.addWidget(contentCreator.apply(pData, dataBoxRegion.width - 8));
-            statScrollView.setToTop();
-            statScrollView.setToRight();
-            root.addWidget(statScrollView);
+            scrollView.addWidget(contentCreator.apply(pData, dataBoxRegion.width - 8));
+            scrollView.setToTop();
+            scrollView.setToRight();
+            root.addWidget(scrollView);
         });
         return root;
     }
@@ -149,7 +151,22 @@ public abstract class AbilityPanelScreen extends MKScreen implements IPlayerData
         }
     }
 
-    public ScrollingListPanelLayout getAbilityScrollPanel(int xPos, int yPos, int width, int height, MKPlayerData pData){
+    @Override
+    public void render(int mouseX, int mouseY, float partialTicks) {
+        int xPos = width / 2 - PANEL_WIDTH / 2;
+        int yPos = height / 2 - PANEL_HEIGHT / 2;
+        RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
+        GuiTextures.CORE_TEXTURES.bind(getMinecraft());
+        RenderSystem.disableLighting();
+        GuiTextures.CORE_TEXTURES.drawRegionAtPos(GuiTextures.BACKGROUND_320_240, xPos, yPos);
+        int xOffset = GuiTextures.CORE_TEXTURES.getCenterXOffset(GuiTextures.DATA_BOX, GuiTextures.BACKGROUND_320_240);
+        GuiTextures.CORE_TEXTURES.drawRegionAtPos(GuiTextures.DATA_BOX, xPos + xOffset, yPos + DATA_BOX_OFFSET);
+        super.render(mouseX, mouseY, partialTicks);
+        RenderSystem.enableLighting();
+    }
+
+    public ScrollingListPanelLayout getAbilityScrollPanel(int xPos, int yPos, int width, int height,
+                                                          MKPlayerData pData, List<MKAbility> abilities){
         ScrollingListPanelLayout panel = new ScrollingListPanelLayout(
                 xPos, yPos, width, height);
         AbilityInfoWidget infoWidget = new AbilityInfoWidget(0, 0,
@@ -161,11 +178,11 @@ public abstract class AbilityPanelScreen extends MKScreen implements IPlayerData
         stackLayout.setMarginTop(4).setMarginBot(4).setPaddingTop(2).setMarginLeft(4)
                 .setMarginRight(4).setPaddingBot(2).setPaddingRight(2);
         stackLayout.doSetChildWidth(true);
-        pData.getKnowledge().getKnownAbilities().getKnownStream()
-                .sorted(Comparator.comparing((info) -> info.getAbility().getAbilityName()))
+        abilities.stream()
+                .sorted(Comparator.comparing(MKAbility::getAbilityName))
                 .forEach(ability -> {
-                    MKLayout abilityEntry = new AbilityListEntry(0, 0, 16, ability,
-                            infoWidget, font, this);
+                    MKLayout abilityEntry = new AbilityListEntry(0, 0, 16,
+                            ability, infoWidget, font, this);
                     stackLayout.addWidget(abilityEntry);
                     MKRectangle div = new MKRectangle(0, 0,
                             panel.getListScrollView().getWidth() - 8, 1, 0x99ffffff);
@@ -201,12 +218,12 @@ public abstract class AbilityPanelScreen extends MKScreen implements IPlayerData
         isDraggingAbility = true;
     }
 
-    public void setAbilityInfo(MKAbilityInfo abilityInfo) {
-        this.abilityInfo = abilityInfo;
+    public void setAbility(MKAbility ability) {
+        this.ability = ability;
     }
 
-    public MKAbilityInfo getAbilityInfo() {
-        return abilityInfo;
+    public MKAbility getAbility() {
+        return ability;
     }
 
     public void clearDragging(){

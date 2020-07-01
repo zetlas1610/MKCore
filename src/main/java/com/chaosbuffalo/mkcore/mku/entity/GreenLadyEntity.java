@@ -1,15 +1,16 @@
 package com.chaosbuffalo.mkcore.mku.entity;
 
 import com.chaosbuffalo.mkcore.Capabilities;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.mku.abilities.*;
 import com.chaosbuffalo.mkcore.mku.entity.ai.*;
 import com.chaosbuffalo.mkcore.mku.entity.ai.controller.MovementStrategyController;
 import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKUMemoryModuleTypes;
-import com.chaosbuffalo.mkcore.mku.abilities.ClericHeal;
-import com.chaosbuffalo.mkcore.mku.abilities.EmberAbility;
-import com.chaosbuffalo.mkcore.mku.abilities.FireArmor;
-import com.chaosbuffalo.mkcore.mku.abilities.SkinLikeWoodAbility;
+import com.chaosbuffalo.mkcore.network.OpenLearnAbilitiesGuiPacket;
+import com.chaosbuffalo.mkcore.network.PacketHandler;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -19,6 +20,8 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class GreenLadyEntity extends MKEntity {
@@ -49,14 +52,10 @@ public class GreenLadyEntity extends MKEntity {
     @Override
     public ActionResultType applyPlayerInteraction(PlayerEntity player, Vec3d vec, Hand hand) {
         if (!player.getEntityWorld().isRemote()) {
-            if (timesDone % 3 == 0) {
-                MovementStrategyController.enterMeleeMode(this, 1);
-            } else if (timesDone % 3 == 1) {
-                MovementStrategyController.enterCastingMode(this, 8.0);
-            } else {
-                MovementStrategyController.enterStationary(this);
-            }
-            timesDone++;
+            List<MKAbility> abilities = new ArrayList<>();
+            abilities.add(ClericHeal.INSTANCE);
+            abilities.add(WhirlwindBlades.INSTANCE);
+            PacketHandler.sendMessage(new OpenLearnAbilitiesGuiPacket(abilities), (ServerPlayerEntity) player);
         }
         return ActionResultType.SUCCESS;
     }

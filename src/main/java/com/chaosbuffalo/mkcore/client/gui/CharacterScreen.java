@@ -29,6 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CharacterScreen extends AbilityPanelScreen {
     private TalentTreeWidget talentTreeWidget;
@@ -119,7 +120,7 @@ public class CharacterScreen extends AbilityPanelScreen {
         }
         int xOffset = GuiTextures.CORE_TEXTURES.getCenterXOffset(
                 GuiTextures.DATA_BOX, GuiTextures.BACKGROUND_320_240);
-        MKLayout root = getRootLayout(xPos, yPos, xOffset, dataBoxRegion.width);
+        MKLayout root = getRootLayout(xPos, yPos, xOffset, dataBoxRegion.width, true);
         minecraft.player.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent((pData) -> {
             int contentX = xPos + xOffset;
             int contentY = yPos + DATA_BOX_OFFSET;
@@ -179,7 +180,7 @@ public class CharacterScreen extends AbilityPanelScreen {
         }
         int xOffset = GuiTextures.CORE_TEXTURES.getCenterXOffset(
                 GuiTextures.DATA_BOX, GuiTextures.BACKGROUND_320_240);
-        MKLayout root = getRootLayout(xPos, yPos, xOffset, dataBoxRegion.width);
+        MKLayout root = getRootLayout(xPos, yPos, xOffset, dataBoxRegion.width, true);
         minecraft.player.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent((pData) -> {
             // Stat Panel
             int slotsY = yPos + DATA_BOX_OFFSET - 28;
@@ -214,7 +215,8 @@ public class CharacterScreen extends AbilityPanelScreen {
             int contentWidth = dataBoxRegion.width;
             int contentHeight = dataBoxRegion.height;
             ScrollingListPanelLayout panel = getAbilityScrollPanel(contentX, contentY,
-                    contentWidth, contentHeight, pData);
+                    contentWidth, contentHeight, pData, pData.getKnowledge().getKnownAbilities()
+                            .getKnownStream().map(MKAbilityInfo::getAbility).collect(Collectors.toList()));
             currentScrollingPanel = panel;
             abilitiesScrollPanel = panel;
             root.addWidget(panel);
@@ -363,28 +365,14 @@ public class CharacterScreen extends AbilityPanelScreen {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
-        int xPos = width / 2 - PANEL_WIDTH / 2;
-        int yPos = height / 2 - PANEL_HEIGHT / 2;
-        RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
-        GuiTextures.CORE_TEXTURES.bind(getMinecraft());
-        RenderSystem.disableLighting();
-        GuiTextures.CORE_TEXTURES.drawRegionAtPos(GuiTextures.BACKGROUND_320_240, xPos, yPos);
-        int xOffset = GuiTextures.CORE_TEXTURES.getCenterXOffset(GuiTextures.DATA_BOX, GuiTextures.BACKGROUND_320_240);
-        GuiTextures.CORE_TEXTURES.drawRegionAtPos(GuiTextures.DATA_BOX, xPos + xOffset, yPos + DATA_BOX_OFFSET);
-        super.render(mouseX, mouseY, partialTicks);
-        RenderSystem.enableLighting();
-    }
-
-    @Override
     public void addRestoreStateCallbacks() {
         String state = getState();
         super.addRestoreStateCallbacks();
         if (state.equals("abilities")){
-            final MKAbilityInfo abilityInf = getAbilityInfo();
+            final MKAbility abilityInf = getAbility();
             addPostSetupCallback(() -> {
                 if (infoWidget != null){
-                    infoWidget.setAbilityInfo(abilityInf);
+                    infoWidget.setAbility(abilityInf);
 
                 }
             });
