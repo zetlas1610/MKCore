@@ -184,7 +184,7 @@ public class AbilityExecutor {
         if (completeAbilityCallback != null){
             completeAbilityCallback.accept(ability);
         }
-        int cooldown = MKCombatFormulas.applyCooldownReduction(entityData, ability.getCooldown());
+        int cooldown = entityData.getStats().getAbilityCooldown(ability);
         setCooldown(ability.getAbilityId(), cooldown);
         SoundEvent sound = ability.getSpellCompleteSoundEvent();
         if (sound != null) {
