@@ -69,6 +69,24 @@ public abstract class AbilityPanelScreen extends MKScreen implements IPlayerData
         return root;
     }
 
+    @Override
+    public void setupScreen() {
+        super.setupScreen();
+        this.ability = null;
+    }
+
+    @Override
+    public void addRestoreStateCallbacks() {
+        super.addRestoreStateCallbacks();
+        if (ability != null){
+            final MKAbility abilityInf = getAbility();
+            addPostSetupCallback(() -> {
+                setAbility(abilityInf);
+            });
+        }
+        restoreScrollingPanelState();
+    }
+
     private MKLayout getStateButtons(int xPos, int yPos, int width){
         MKLayout layout = new MKStackLayoutHorizontal(xPos, yPos, 24);
         layout.setMarginLeft(4).setMarginRight(4).setMarginTop(2).setMarginBot(2)

@@ -373,7 +373,6 @@ public class CharacterScreen extends AbilityPanelScreen {
             addPostSetupCallback(() -> {
                 if (infoWidget != null){
                     infoWidget.setAbility(abilityInf);
-
                 }
             });
         } else if (state.equals("talents")){
