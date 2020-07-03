@@ -233,7 +233,6 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
     @Override
     public void deserialize(CompoundNBT nbt) {
         abilityTracker.deserialize(nbt);
-        // TODO: activate persona here
         if (nbt.contains("mana")) {
             setMana(nbt.getFloat("mana"));
         }
