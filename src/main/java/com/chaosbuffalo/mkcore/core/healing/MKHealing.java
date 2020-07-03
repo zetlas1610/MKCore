@@ -15,8 +15,8 @@ public class MKHealing {
                 .orElse(amount);
         MKAbilityHealEvent event = new MKAbilityHealEvent(target, finalValue, healSource);
         if (!MinecraftForge.EVENT_BUS.post(event)){
-            if (MKConfig.healsDamageUndead.get() && target.isEntityUndead() && healSource.doesDamageUndead()) {
-                float healDamageMultiplier = MKConfig.undeadHealDamageMultiplier.get().floatValue();
+            if (MKConfig.SERVER.healsDamageUndead.get() && target.isEntityUndead() && healSource.doesDamageUndead()) {
+                float healDamageMultiplier = MKConfig.SERVER.undeadHealDamageMultiplier.get().floatValue();
                 target.attackEntityFrom(MKDamageSource.causeAbilityDamage(healSource.getDamageType(),
                         healSource.getAbilityId(), healSource.getImmediateSource(), healSource.getTrueSource()),
                         healDamageMultiplier * event.getAmount());

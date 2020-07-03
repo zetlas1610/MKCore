@@ -13,7 +13,7 @@ public class RenderRegistry {
                 MKUEntityTypes.GREEN_LADY.get(),
                 GreenLadyRenderer::new);
 
-        if (MKConfig.enablePlayerCastAnimations.get()) {
+        if (MKConfig.CLIENT.enablePlayerCastAnimations.get()) {
             Minecraft.getInstance().getRenderManager().skinMap.put("default",
                     new MKPlayerRenderer(Minecraft.getInstance().getRenderManager(), false));
             Minecraft.getInstance().getRenderManager().skinMap.put("slim",

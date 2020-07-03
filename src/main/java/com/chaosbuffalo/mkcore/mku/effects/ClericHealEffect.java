@@ -51,7 +51,7 @@ public class ClericHealEffect extends SpellEffectBase {
     @Override
     public boolean isValidTarget(TargetingContext targetContext, Entity caster, LivingEntity target) {
         return super.isValidTarget(targetContext, caster, target) ||
-                (target.isEntityUndead() && MKConfig.healsDamageUndead.get());
+                (target.isEntityUndead() && MKConfig.SERVER.healsDamageUndead.get());
     }
 
     @Override
