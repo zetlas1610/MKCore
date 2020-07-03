@@ -23,6 +23,7 @@ public class MKPlayerData implements IMKEntityData {
     private UpdateEngine updateEngine;
     private PlayerAnimationModule animationModule;
     private PlayerTalentModule talentModule;
+    private PlayerEquipmentModule equipmentModule;
     private final Set<String> spellTag = new HashSet<>();
 
     public MKPlayerData() {
@@ -48,6 +49,7 @@ public class MKPlayerData implements IMKEntityData {
         abilityExecutor.setCompleteAbilityCallback(animationModule::endCast);
 
         talentModule = new PlayerTalentModule(this);
+        equipmentModule = new PlayerEquipmentModule(this);
 
         registerAttributes();
         if (isServerSide())
@@ -115,6 +117,10 @@ public class MKPlayerData implements IMKEntityData {
 
     public PlayerTalentModule getTalentHandler() {
         return talentModule;
+    }
+
+    public PlayerEquipmentModule getEquipment() {
+        return equipmentModule;
     }
 
     public void clone(IMKEntityData previous, boolean death) {

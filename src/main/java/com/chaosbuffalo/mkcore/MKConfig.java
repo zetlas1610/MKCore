@@ -25,6 +25,7 @@ public class MKConfig {
     public static ForgeConfigSpec.BooleanValue showMyCrits;
     public static ForgeConfigSpec.BooleanValue showOthersCrits;
     public static ForgeConfigSpec.BooleanValue enablePlayerCastAnimations;
+    public static ForgeConfigSpec.BooleanValue showArmorClassOnTooltip;
 
     public static ForgeConfigSpec.BooleanValue healsDamageUndead;
     public static ForgeConfigSpec.ConfigValue<Double> undeadHealDamageMultiplier;
@@ -41,6 +42,9 @@ public class MKConfig {
                 .comment("Enable player cast animations. Requires client restart to take effect")
                 .worldRestart()
                 .define("enablePlayerCastAnimations", true);
+        showArmorClassOnTooltip = builder
+                .comment("Show armor class on the item tooltip")
+                .define("showArmorClassOnTooltip", true);
         builder.pop();
     }
 
