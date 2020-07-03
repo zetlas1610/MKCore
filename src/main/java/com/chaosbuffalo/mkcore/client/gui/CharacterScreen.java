@@ -2,7 +2,6 @@ package com.chaosbuffalo.mkcore.client.gui;
 
 import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.GameConstants;
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
@@ -15,12 +14,10 @@ import com.chaosbuffalo.mkwidgets.client.gui.constraints.LayoutRelativeWidthCons
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKLayout;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutHorizontal;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutVertical;
-import com.chaosbuffalo.mkwidgets.client.gui.screens.MKScreen;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.*;
 import com.chaosbuffalo.mkwidgets.utils.TextureRegion;
 import com.google.common.collect.Sets;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
@@ -32,28 +29,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-import java.util.function.BiFunction;
-
-public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen {
-    private final int PANEL_WIDTH = 320;
-    private final int PANEL_HEIGHT = 240;
-    private final int DATA_BOX_OFFSET = 78;
-    private static final int NEGATIVE_COLOR = 13111115;
-    private static final int POSITIVE_COLOR = 3334475;
-    private static final int BASE_COLOR = 16777215;
-    private boolean isDraggingAbility;
-    private MKAbility dragging;
-    private AbilityInfoWidget infoWidget;
-    private MKAbilityInfo abilityInfo;
+public class CharacterScreen extends AbilityPanelScreen {
     private TalentTreeWidget talentTreeWidget;
     private TalentTreeRecord currentTree;
-    private ScrollingListPanelLayout currentScrollingPanel;
     private ScrollingListPanelLayout talentScrollPanel;
-    private ScrollingListPanelLayout abilitiesScrollPanel;
-    boolean wasResized;
-    private static final List<String> states = new ArrayList<>(Arrays.asList(
-            "stats", "abilities", "talents", "damages"));
     private static final ArrayList<IAttribute> STAT_PANEL_ATTRIBUTES = new ArrayList<>();
     public static class AbilitySlotKey {
         public MKAbility.AbilityType type;
@@ -110,48 +91,8 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
     public CharacterScreen() {
         super(new TranslationTextComponent("mk_character_screen.title"));
         abilitySlots = new HashMap<>();
-        isDraggingAbility = false;
-        dragging = null;
-        wasResized = false;
-    }
-
-    public MKAbility getDragging() {
-        return dragging;
-    }
-
-    public void setDragging(MKAbility dragging) {
-        this.dragging = dragging;
-        isDraggingAbility = true;
-        Set<MKAbility.AbilityType> types = Sets.newHashSet(MKAbility.AbilityType.Active, MKAbility.AbilityType.Passive,
-                MKAbility.AbilityType.Ultimate);
-        types.remove(dragging.getType());
-        for (MKAbility.AbilityType type : types){
-            for (AbilitySlotWidget widget : getSlotsForType(type)){
-                widget.setBackgroundColor(0xff555555);
-                widget.setIconColor(0xff555555);
-            }
-        }
-    }
-
-    public void setAbilityInfo(MKAbilityInfo abilityInfo) {
-        this.abilityInfo = abilityInfo;
-    }
-
-    public MKAbilityInfo getAbilityInfo() {
-        return abilityInfo;
-    }
-
-    public void clearDragging(){
-        for (AbilitySlotWidget widget : abilitySlots.values()){
-            widget.setBackgroundColor(0xffffffff);
-            widget.setIconColor(0xffffffff);
-        }
-        this.dragging = null;
-        isDraggingAbility = false;
-    }
-
-    public boolean isDraggingAbility() {
-        return isDraggingAbility;
+        states.addAll(Arrays.asList("stats", "abilities", "talents", "damages"));
+        setDoAbilityDrag(true);
     }
 
     private MKWidget createStatList(MKPlayerData pData, int panelWidth, List<IAttribute> toDisplay) {
@@ -170,15 +111,6 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
         return stackLayout;
     }
 
-    private MKLayout getRootLayout(int xPos, int yPos, int xOffset, int width){
-        MKLayout root = new MKLayout(xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
-        root.setMargins(5, 5, 5, 5);
-        root.setPaddingTop(5).setPaddingBot(5);
-        MKLayout statebuttons = getStateButtons(xPos + xOffset, yPos + 8, width);
-        root.addWidget(statebuttons);
-        return root;
-    }
-
     private MKWidget createTalentsPage(){
         int xPos = width / 2 - PANEL_WIDTH / 2;
         int yPos = height / 2 - PANEL_HEIGHT / 2;
@@ -188,7 +120,7 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
         }
         int xOffset = GuiTextures.CORE_TEXTURES.getCenterXOffset(
                 GuiTextures.DATA_BOX, GuiTextures.BACKGROUND_320_240);
-        MKLayout root = getRootLayout(xPos, yPos, xOffset, dataBoxRegion.width);
+        MKLayout root = getRootLayout(xPos, yPos, xOffset, dataBoxRegion.width, true);
         minecraft.player.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent((pData) -> {
             int contentX = xPos + xOffset;
             int contentY = yPos + DATA_BOX_OFFSET;
@@ -248,7 +180,7 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
         }
         int xOffset = GuiTextures.CORE_TEXTURES.getCenterXOffset(
                 GuiTextures.DATA_BOX, GuiTextures.BACKGROUND_320_240);
-        MKLayout root = getRootLayout(xPos, yPos, xOffset, dataBoxRegion.width);
+        MKLayout root = getRootLayout(xPos, yPos, xOffset, dataBoxRegion.width, true);
         minecraft.player.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent((pData) -> {
             // Stat Panel
             int slotsY = yPos + DATA_BOX_OFFSET - 28;
@@ -282,29 +214,11 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
             int contentY = yPos + DATA_BOX_OFFSET;
             int contentWidth = dataBoxRegion.width;
             int contentHeight = dataBoxRegion.height;
-            ScrollingListPanelLayout panel = new ScrollingListPanelLayout(
-                    contentX, contentY, contentWidth, contentHeight);
+            ScrollingListPanelLayout panel = getAbilityScrollPanel(contentX, contentY,
+                    contentWidth, contentHeight, pData, pData.getKnowledge().getKnownAbilities()
+                            .getKnownStream().map(MKAbilityInfo::getAbility).collect(Collectors.toList()));
             currentScrollingPanel = panel;
             abilitiesScrollPanel = panel;
-            AbilityInfoWidget infoWidget = new AbilityInfoWidget(0, 0,
-                    panel.getContentScrollView().getWidth(), pData, font, this);
-            this.infoWidget = infoWidget;
-            panel.setContent(infoWidget);
-            MKStackLayoutVertical stackLayout = new MKStackLayoutVertical(0, 0,
-                    panel.getListScrollView().getWidth());
-            stackLayout.setMarginTop(4).setMarginBot(4).setPaddingTop(2).setMarginLeft(4)
-                    .setMarginRight(4).setPaddingBot(2).setPaddingRight(2);
-            stackLayout.doSetChildWidth(true);
-            pData.getKnowledge().getKnownAbilities().getKnownStream()
-                    .sorted(Comparator.comparing((info) -> info.getAbility().getAbilityName()))
-                    .forEach(ability -> {
-                        MKLayout abilityEntry = new AbilityListEntry(0, 0, 16, ability, infoWidget, font, this);
-                        stackLayout.addWidget(abilityEntry);
-                        MKRectangle div = new MKRectangle(0, 0,
-                                panel.getListScrollView().getWidth() - 8, 1, 0x99ffffff);
-                        stackLayout.addWidget(div);
-                    });
-            panel.setList(stackLayout);
             root.addWidget(panel);
         });
         return root;
@@ -379,32 +293,6 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
        return textWidget;
     }
 
-    private MKLayout getStateButtons(int xPos, int yPos, int width){
-        MKLayout layout = new MKStackLayoutHorizontal(xPos, yPos, 24);
-        layout.setMarginLeft(4).setMarginRight(4).setMarginTop(2).setMarginBot(2)
-                .setPaddingLeft(2).setPaddingRight(2);
-        for (String state : states){
-            MKButton button = new MKButton(I18n.format(String.format("mkcore.gui.character.%s", state)));
-            button.setWidth(60);
-            if (getState().equals(state)){
-                button.setEnabled(false);
-            }
-            addPreDrawRunnable(() -> {
-                if (state.equals(getState())){
-                    button.setEnabled(false);
-                } else {
-                    button.setEnabled(true);
-                }
-            });
-            button.setPressedCallback((btn, mouseButton)-> {
-                pushState(state);
-                return true;
-            });
-            layout.addWidget(button);
-        }
-        return layout;
-    }
-
     private MKLayout getLayoutOfAbilitySlots(int x, int y, MKAbility.AbilityType slotType, int count){
         MKStackLayoutHorizontal layout = new MKStackLayoutHorizontal(x, y, 24);
         layout.setPaddings(2, 2, 0, 0);
@@ -417,33 +305,6 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
         return layout;
     }
 
-
-    private MKLayout createScrollingPanelWithContent(BiFunction<MKPlayerData, Integer, MKWidget> contentCreator){
-        int xPos = width / 2 - PANEL_WIDTH / 2;
-        int yPos = height / 2 - PANEL_HEIGHT / 2;
-        MKLayout root = new MKLayout(xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
-        root.setMargins(5, 5, 5, 5);
-        root.setPaddingTop(5).setPaddingBot(5);
-        TextureRegion dataBoxRegion = GuiTextures.CORE_TEXTURES.getRegion(GuiTextures.DATA_BOX);
-        int xOffset = GuiTextures.CORE_TEXTURES.getCenterXOffset(GuiTextures.DATA_BOX, GuiTextures.BACKGROUND_320_240);
-        if (minecraft == null || minecraft.player == null || dataBoxRegion == null){
-            return root;
-        }
-        MKLayout statebuttons = getStateButtons(xPos + xOffset, yPos + 8,
-                dataBoxRegion.width);
-        root.addWidget(statebuttons);
-        minecraft.player.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent((pData) -> {
-            // Stat Panel
-            MKScrollView statScrollView = new MKScrollView(xPos + xOffset + 4,
-                    yPos + DATA_BOX_OFFSET + 4,
-                    dataBoxRegion.width - 8, dataBoxRegion.height - 8, true);
-            statScrollView.addWidget(contentCreator.apply(pData, dataBoxRegion.width - 8));
-            statScrollView.setToTop();
-            statScrollView.setToRight();
-            root.addWidget(statScrollView);
-        });
-        return root;
-    }
 
     @Override
     public void pushState(String newState) {
@@ -481,29 +342,26 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
-        int xPos = width / 2 - PANEL_WIDTH / 2;
-        int yPos = height / 2 - PANEL_HEIGHT / 2;
-        RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
-        GuiTextures.CORE_TEXTURES.bind(getMinecraft());
-        RenderSystem.disableLighting();
-        GuiTextures.CORE_TEXTURES.drawRegionAtPos(GuiTextures.BACKGROUND_320_240, xPos, yPos);
-        int xOffset = GuiTextures.CORE_TEXTURES.getCenterXOffset(GuiTextures.DATA_BOX, GuiTextures.BACKGROUND_320_240);
-        GuiTextures.CORE_TEXTURES.drawRegionAtPos(GuiTextures.DATA_BOX, xPos + xOffset, yPos + DATA_BOX_OFFSET);
-        super.render(mouseX, mouseY, partialTicks);
-        RenderSystem.enableLighting();
+    public void clearDragging() {
+        for (AbilitySlotWidget widget : abilitySlots.values()){
+            widget.setBackgroundColor(0xffffffff);
+            widget.setIconColor(0xffffffff);
+        }
+        super.clearDragging();
     }
 
     @Override
-    public void onPlayerDataUpdate() {
-        MKCore.LOGGER.info("CharacterScreen.onPlayerDataUpdate");
-        flagNeedSetup();
-    }
-
-    @Override
-    public void resize(Minecraft minecraft, int width, int height) {
-        super.resize(minecraft, width, height);
-        wasResized = true;
+    public void setDragging(MKAbility dragging) {
+        super.setDragging(dragging);
+        Set<MKAbility.AbilityType> types = Sets.newHashSet(MKAbility.AbilityType.Active, MKAbility.AbilityType.Passive,
+                MKAbility.AbilityType.Ultimate);
+        types.remove(dragging.getType());
+        for (MKAbility.AbilityType type : types){
+            for (AbilitySlotWidget widget : getSlotsForType(type)){
+                widget.setBackgroundColor(0xff555555);
+                widget.setIconColor(0xff555555);
+            }
+        }
     }
 
     @Override
@@ -511,11 +369,10 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
         String state = getState();
         super.addRestoreStateCallbacks();
         if (state.equals("abilities")){
-            final MKAbilityInfo abilityInf = getAbilityInfo();
+            final MKAbility abilityInf = getAbility();
             addPostSetupCallback(() -> {
                 if (infoWidget != null){
-                    infoWidget.setAbilityInfo(abilityInf);
-
+                    infoWidget.setAbility(abilityInf);
                 }
             });
         } else if (state.equals("talents")){
@@ -526,32 +383,7 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
                 }
             });
         }
-        if (currentScrollingPanel != null){
-            double offsetX = currentScrollingPanel.getContentScrollView().getOffsetX();
-            double offsetY = currentScrollingPanel.getContentScrollView().getOffsetY();
-            double listOffsetX = currentScrollingPanel.getListScrollView().getOffsetX();
-            double listOffsetY = currentScrollingPanel.getListScrollView().getOffsetY();
-            addPostSetupCallback(() -> {
-                if (currentScrollingPanel != null){
-                    currentScrollingPanel.getContentScrollView().setOffsetX(offsetX);
-                    currentScrollingPanel.getContentScrollView().setOffsetY(offsetY);
-                    currentScrollingPanel.getListScrollView().setOffsetX(listOffsetX);
-                    currentScrollingPanel.getListScrollView().setOffsetY(listOffsetY);
-                    if (wasResized){
-                        MKCore.LOGGER.info("Setting scrollviews back to top because resize");
-                        currentScrollingPanel.getListScrollView().setToRight();
-                        currentScrollingPanel.getListScrollView().setToTop();
-                        currentScrollingPanel.getContentScrollView().setToTop();
-                        currentScrollingPanel.getContentScrollView().setToRight();
-                        wasResized = false;
-                    }
-                }
-            });
-        } else {
-            addPostSetupCallback(() -> {
-                wasResized = false;
-            });
-        }
+        restoreScrollingPanelState();
     }
 
     public TalentTreeRecord getCurrentTree() {
@@ -562,8 +394,4 @@ public class CharacterScreen extends MKScreen implements IPlayerDataAwareScreen 
         this.currentTree = currentTree;
     }
 
-    @Override
-    public boolean isPauseScreen() {
-        return false;
-    }
 }

@@ -49,6 +49,10 @@ public class PacketHandler {
                 TalentDefinitionSyncPacket::new, TalentDefinitionSyncPacket::handle);
         networkChannel.registerMessage(id++, PlayerSlotAbilityPacket.class, PlayerSlotAbilityPacket::toBytes,
                 PlayerSlotAbilityPacket::new, PlayerSlotAbilityPacket::handle);
+        networkChannel.registerMessage(id++, OpenLearnAbilitiesGuiPacket.class, OpenLearnAbilitiesGuiPacket::toBytes,
+                OpenLearnAbilitiesGuiPacket::new, OpenLearnAbilitiesGuiPacket::handle);
+        networkChannel.registerMessage(id++, PlayerLearnAbilityRequestPacket.class, PlayerLearnAbilityRequestPacket::toBytes,
+                PlayerLearnAbilityRequestPacket::new, PlayerLearnAbilityRequestPacket::handle);
     }
 
     public static <T> void sendMessageToServer(T msg) {
