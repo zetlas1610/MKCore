@@ -41,6 +41,9 @@ public class MKAttributes {
             .setDescription("Heal Bonus Amount")
             .setShouldWatch(true);
 
+    public static final RangedAttribute CASTING_SPEED = (RangedAttribute) new RangedAttribute(null, "mk.casting_speed", 1, 0.25, 1.5)
+            .setDescription("Casting Speed")
+            .setShouldWatch(true);
 
     public static final RangedAttribute ELEMENTAL_RESISTANCE = (RangedAttribute) new RangedAttribute(null, "mk.elemental_resistance", 0, -1.0, 1.0)
             .setDescription("Elemental Resistance")

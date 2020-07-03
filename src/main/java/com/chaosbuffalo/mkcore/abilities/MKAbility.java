@@ -142,12 +142,12 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
 
     }
 
-    private int getCastTime() {
+    protected int getBaseCastTime() {
         return castTime;
     }
 
     public int getCastTime(IMKEntityData entityData) {
-        return getCastTime();
+        return getBaseCastTime();
     }
 
     protected void setCastTime(int castTicks) {
@@ -158,7 +158,7 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         return 1.0f;
     }
 
-    private void setCooldownTicks(int ticks) {
+    protected void setCooldownTicks(int ticks) {
         this.cooldown = ticks;
     }
 
@@ -166,8 +166,12 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         this.cooldown = seconds * GameConstants.TICKS_PER_SECOND;
     }
 
-    public int getCooldown() {
+    protected int getBaseCooldown() {
         return cooldown;
+    }
+
+    public int getCooldown(IMKEntityData entityData) {
+        return getBaseCooldown();
     }
 
     public AbilityType getType() {
@@ -184,12 +188,12 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         return Targeting.isValidTarget(getTargetContext(), caster, target);
     }
 
-    private float getManaCost() {
+    protected float getBaseManaCost() {
         return manaCost;
     }
 
     public float getManaCost(IMKEntityData entityData) {
-        return getManaCost();
+        return getBaseManaCost();
     }
 
     protected void setManaCost(float cost) {
@@ -203,9 +207,9 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
 
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
-        tag.putInt("cooldown", getCooldown());
-        tag.putInt("castTime", getCastTime());
-        tag.putFloat("manaCost", getManaCost());
+        tag.putInt("cooldown", getBaseCooldown());
+        tag.putInt("castTime", getBaseCastTime());
+        tag.putFloat("manaCost", getBaseManaCost());
         if (getAttributes().size() > 0) {
             CompoundNBT attributes = new CompoundNBT();
             for (IAbilityAttribute<?> attr : getAttributes()) {

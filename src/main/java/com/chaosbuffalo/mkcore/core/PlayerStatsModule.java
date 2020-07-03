@@ -162,13 +162,19 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
 
     @Override
     public int getAbilityCooldown(MKAbility ability) {
-        int ticks = ability.getCooldown();
+        int ticks = ability.getCooldown(playerData);
         return MKCombatFormulas.applyCooldownReduction(playerData, ticks);
     }
 
     public float getAbilityManaCost(MKAbility ability) {
         float manaCost = ability.getManaCost(playerData);
         return MKCombatFormulas.applyManaCostReduction(playerData, manaCost);
+    }
+
+    @Override
+    public int getAbilityCastTime(MKAbility ability) {
+        int ticks = ability.getCastTime(playerData);
+        return MKCombatFormulas.applyCastTimeReduction(playerData, ticks);
     }
 
     @Override

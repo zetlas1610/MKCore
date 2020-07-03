@@ -49,8 +49,14 @@ public class EntityStatsModule implements IStatsModule {
 
     @Override
     public int getAbilityCooldown(MKAbility ability) {
-        int ticks = ability.getCooldown();
+        int ticks = ability.getCooldown(entityData);
         return MKCombatFormulas.applyCooldownReduction(entityData, ticks);
+    }
+
+    @Override
+    public int getAbilityCastTime(MKAbility ability) {
+        int ticks = ability.getCastTime(entityData);
+        return MKCombatFormulas.applyCastTimeReduction(entityData, ticks);
     }
 
     @Override

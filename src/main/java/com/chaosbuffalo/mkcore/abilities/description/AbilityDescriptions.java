@@ -25,8 +25,9 @@ public class AbilityDescriptions {
     }
 
     public static ITextComponent getCastTimeDescription(MKAbility ability, IMKEntityData entityData) {
-        String time = ability.getCastTime(entityData) > 0 ?
-                String.format("%.1f seconds", (float) ability.getCastTime(entityData) / GameConstants.TICKS_PER_SECOND)
+        int castTicks = entityData.getStats().getAbilityCastTime(ability);
+        String time = castTicks > 0 ?
+                String.format("%.1f seconds", (float) castTicks / GameConstants.TICKS_PER_SECOND)
                 : I18n.format("mkcore.ability.description.instant");
         return new TranslationTextComponent("mkcore.ability.description.cast_time", time);
     }
