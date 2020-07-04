@@ -4,6 +4,7 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.core.MKAttributes;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
 import com.chaosbuffalo.mkcore.core.damage.MeleeDamageType;
+import com.chaosbuffalo.mkcore.core.damage.RangedDamageType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -40,6 +41,9 @@ public class ModDamageTypes {
     @ObjectHolder("damage.elemental")
     public static MKDamageType ElementalDamage;
 
+    @ObjectHolder("damage.ranged")
+    public static RangedDamageType RANGED;
+
 
     @SubscribeEvent
     public static void registerDamageTypes(RegistryEvent.Register<MKDamageType> evt) {
@@ -59,6 +63,7 @@ public class ModDamageTypes {
         evt.getRegistry().register(new MKDamageType(MKCore.makeRL("damage.nature"), MKAttributes.NATURE_DAMAGE,
                 MKAttributes.NATURE_RESISTANCE, MKAttributes.SPELL_CRIT, MKAttributes.SPELL_CRIT_MULTIPLIER));
         evt.getRegistry().register(new MeleeDamageType(MKCore.makeRL("damage.melee")));
+        evt.getRegistry().register(new RangedDamageType(MKCore.makeRL("damage.ranged")));
         evt.getRegistry().register(new MKDamageType(MKCore.makeRL("damage.elemental"), MKAttributes.ELEMENTAL_DAMAGE,
                 MKAttributes.ELEMENTAL_RESISTANCE, MKAttributes.SPELL_CRIT, MKAttributes.SPELL_CRIT_MULTIPLIER)
                 .setShouldDisplay(false));

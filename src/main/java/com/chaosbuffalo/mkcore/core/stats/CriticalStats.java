@@ -15,6 +15,14 @@ public class CriticalStats<T> {
         this.defaultMultiplier = defaultMultiplier;
     }
 
+    public float getDefaultChance() {
+        return defaultRate;
+    }
+
+    public float getDefaultMultiplier() {
+        return defaultMultiplier;
+    }
+
     public void addCriticalStats(Class<? extends T> objClass, int priority, float criticalChance, float damageMultiplier) {
         criticalEntries.add(new CriticalEntry<>(objClass, priority, criticalChance, damageMultiplier));
         Collections.sort(criticalEntries);

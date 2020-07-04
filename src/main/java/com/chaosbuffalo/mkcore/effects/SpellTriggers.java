@@ -158,11 +158,10 @@ public class SpellTriggers {
                                                    ServerPlayerEntity playerSource, IMKEntityData sourceData,
                                                    MKDamageSource source, String typeTag,
                                                    List<PlayerHurtEntityTrigger> playerHurtTriggers) {
-            event.setAmount(source.getMKDamageType().applyDamage(playerSource, livingTarget, event.getAmount(),
-                    source.getModifierScaling()));
-            if (source.getMKDamageType().rollCrit(playerSource, livingTarget)) {
-                float newDamage = source.getMKDamageType().applyCritDamage(playerSource, livingTarget, event.getAmount());
-                event.setAmount(newDamage);
+            Entity immediate = source.getImmediateSource() != null ? source.getImmediateSource() : playerSource;
+            float newDamage = source.getMKDamageType().applyDamage(playerSource, livingTarget, immediate, event.getAmount(), source.getModifierScaling());
+            if (source.getMKDamageType().rollCrit(playerSource, livingTarget, immediate)) {
+                newDamage = source.getMKDamageType().applyCritDamage(playerSource, livingTarget, immediate, event.getAmount());
                 MKAbility ability = MKCoreRegistry.getAbility(source.getAbilityId());
                 ResourceLocation abilityName;
                 if (ability != null) {
@@ -174,6 +173,7 @@ public class SpellTriggers {
                         new CritMessagePacket(livingTarget.getEntityId(), playerSource.getUniqueID(), newDamage,
                                 abilityName, source.getMKDamageType()));
             }
+            event.setAmount(newDamage);
 
             if (!startTrigger(playerSource, typeTag))
                 return;
@@ -183,18 +183,14 @@ public class SpellTriggers {
 
         private static void handleProjectile(LivingHurtEvent event, DamageSource source, LivingEntity livingTarget,
                                              ServerPlayerEntity playerSource, IMKEntityData sourceData) {
-            if (source.getImmediateSource() != null &&
-                    MKCombatFormulas.checkCrit(playerSource, MKCombatFormulas.getRangedCritChanceForEntity(sourceData,
-                            playerSource, source.getImmediateSource()))) {
-                float damageMultiplier = EntityUtils.ENTITY_CRIT.getMultiplier(source.getImmediateSource());
-                if (livingTarget.isGlowing()) {
-                    damageMultiplier += 1.0f;
-                }
-                float newDamage = event.getAmount() * damageMultiplier;
+
+            Entity projectile = source.getImmediateSource();
+            if (projectile != null && ModDamageTypes.RANGED.rollCrit(playerSource, livingTarget, projectile)) {
+                float newDamage = ModDamageTypes.RANGED.applyCritDamage(playerSource, livingTarget, projectile, event.getAmount());
                 event.setAmount(newDamage);
                 sendCritPacket(livingTarget, playerSource,
                         new CritMessagePacket(livingTarget.getEntityId(), playerSource.getUniqueID(), newDamage,
-                                source.getImmediateSource().getEntityId()));
+                                projectile.getEntityId()));
             }
         }
 

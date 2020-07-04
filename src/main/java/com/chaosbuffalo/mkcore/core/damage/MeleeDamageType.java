@@ -4,6 +4,7 @@ import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.MKAttributes;
 import com.chaosbuffalo.mkcore.core.MKCombatFormulas;
 import com.chaosbuffalo.mkcore.utils.ItemUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
@@ -51,15 +52,15 @@ public class MeleeDamageType extends MKDamageType {
     }
 
     @Override
-    public float getCritChance(LivingEntity source, LivingEntity target) {
+    public float getCritChance(LivingEntity source, LivingEntity target, Entity immediate) {
         ItemStack mainHand = source.getHeldItemMainhand();
-        return super.getCritChance(source, target) + MKCombatFormulas.getCritChanceForItem(mainHand);
+        return super.getCritChance(source, target, immediate) + MKCombatFormulas.getCritChanceForItem(mainHand);
     }
 
     @Override
-    public float getCritMultiplier(LivingEntity source, LivingEntity target) {
+    public float getCritMultiplier(LivingEntity source, LivingEntity target, Entity immediate) {
         ItemStack mainHand = source.getHeldItemMainhand();
-        return super.getCritMultiplier(source, target) + ItemUtils.getCritMultiplierForItem(mainHand);
+        return super.getCritMultiplier(source, target, immediate) + ItemUtils.getCritMultiplierForItem(mainHand);
     }
 
     @Override
