@@ -20,14 +20,27 @@ import java.util.*;
 public class ArmorClass {
 
     public static final ArmorClass LIGHT = new ArmorClass(MKCore.makeRL("armor_class.light"), ModTags.Items.LIGHT_ARMOR)
-            .addPositiveEffect(SharedMonsterAttributes.MOVEMENT_SPEED, 0.10, AttributeModifier.Operation.MULTIPLY_TOTAL)
-            .addPositiveEffect(MKAttributes.MAX_MANA, 4, AttributeModifier.Operation.ADDITION)
-            .addNegativeEffect(SharedMonsterAttributes.ATTACK_SPEED, -0.10, AttributeModifier.Operation.MULTIPLY_TOTAL);
+            .addPositiveEffect(SharedMonsterAttributes.MOVEMENT_SPEED, 0.025, AttributeModifier.Operation.MULTIPLY_TOTAL)
+            .addPositiveEffect(MKAttributes.CASTING_SPEED, 0.025, AttributeModifier.Operation.MULTIPLY_TOTAL)
+            .addPositiveEffect(MKAttributes.MANA_REGEN, 0.025, AttributeModifier.Operation.MULTIPLY_TOTAL)
+            .addNegativeEffect(SharedMonsterAttributes.ARMOR, -0.04, AttributeModifier.Operation.MULTIPLY_TOTAL);
     public static final ArmorClass MEDIUM = new ArmorClass(MKCore.makeRL("armor_class.medium"), ModTags.Items.MEDIUM_ARMOR)
-            .addPositiveEffect(MKAttributes.MELEE_CRIT, 0.03, AttributeModifier.Operation.ADDITION);
+            .addPositiveEffect(MKAttributes.MELEE_CRIT, 0.03, AttributeModifier.Operation.ADDITION)
+            .addPositiveEffect(SharedMonsterAttributes.ATTACK_SPEED, 0.03, AttributeModifier.Operation.MULTIPLY_TOTAL)
+            .addNegativeEffect(MKAttributes.COOLDOWN, -0.02, AttributeModifier.Operation.MULTIPLY_TOTAL)
+            .addNegativeEffect(MKAttributes.CASTING_SPEED, -0.02, AttributeModifier.Operation.MULTIPLY_TOTAL);
     public static final ArmorClass HEAVY = new ArmorClass(MKCore.makeRL("armor_class.heavy"), ModTags.Items.HEAVY_ARMOR)
-            .addPositiveEffect(SharedMonsterAttributes.ATTACK_DAMAGE, 0.04, AttributeModifier.Operation.MULTIPLY_TOTAL)
-            .addNegativeEffect(SharedMonsterAttributes.MOVEMENT_SPEED, -0.04, AttributeModifier.Operation.MULTIPLY_TOTAL);
+            .addPositiveEffect(SharedMonsterAttributes.ATTACK_DAMAGE, 0.025, AttributeModifier.Operation.MULTIPLY_TOTAL)
+            .addPositiveEffect(MKAttributes.ARCANE_RESISTANCE, 0.015, AttributeModifier.Operation.MULTIPLY_TOTAL)
+            .addPositiveEffect(MKAttributes.FIRE_RESISTANCE, 0.015, AttributeModifier.Operation.MULTIPLY_TOTAL)
+            .addPositiveEffect(MKAttributes.FROST_RESISTANCE, 0.015, AttributeModifier.Operation.MULTIPLY_TOTAL)
+            .addPositiveEffect(MKAttributes.NATURE_RESISTANCE, 0.015, AttributeModifier.Operation.MULTIPLY_TOTAL)
+            .addPositiveEffect(MKAttributes.POISON_RESISTANCE, 0.015, AttributeModifier.Operation.MULTIPLY_TOTAL)
+            .addPositiveEffect(SharedMonsterAttributes.ARMOR_TOUGHNESS, 0.025, AttributeModifier.Operation.MULTIPLY_TOTAL)
+            .addNegativeEffect(SharedMonsterAttributes.MOVEMENT_SPEED, -0.025, AttributeModifier.Operation.MULTIPLY_TOTAL)
+            .addNegativeEffect(MKAttributes.COOLDOWN, -0.04, AttributeModifier.Operation.MULTIPLY_TOTAL)
+            .addNegativeEffect(MKAttributes.CASTING_SPEED, -0.04, AttributeModifier.Operation.MULTIPLY_TOTAL)
+            .addNegativeEffect(SharedMonsterAttributes.ATTACK_SPEED, -0.025, AttributeModifier.Operation.MULTIPLY_TOTAL);
     private static final List<ArmorClass> CHECK_ORDER = Arrays.asList(LIGHT, MEDIUM, HEAVY);
 
     private final ResourceLocation location;
