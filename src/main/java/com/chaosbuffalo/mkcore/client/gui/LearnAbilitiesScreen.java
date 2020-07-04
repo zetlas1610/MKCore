@@ -12,31 +12,36 @@ import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKWidget;
 import com.chaosbuffalo.mkwidgets.utils.TextureRegion;
 import net.minecraft.util.text.ITextComponent;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class LearnAbilitiesScreen extends AbilityPanelScreen {
-    private List<MKAbility> abilities;
+    private final Map<MKAbility, List<ITextComponent>> abilities;
+    private final int entityId;
     private LearnAbilityTray abilityTray;
 
-    public LearnAbilitiesScreen(ITextComponent title, List<MKAbility> abilities) {
+    public LearnAbilitiesScreen(ITextComponent title, Map<MKAbility, List<ITextComponent>> abilities, int entityId) {
         super(title);
         this.abilities = abilities;
+        this.entityId = entityId;
         states.add("choose_ability");
     }
 
     @Override
     public void setAbility(MKAbility ability) {
         super.setAbility(ability);
-        if (abilityTray != null){
-            abilityTray.setAbility(ability);
+        if (abilityTray != null) {
+            abilityTray.setAbility(ability, abilities.getOrDefault(ability, Collections.emptyList()));
         }
     }
 
-    private MKWidget createAbilitiesPage(){
+    private MKWidget createAbilitiesPage() {
         int xPos = width / 2 - PANEL_WIDTH / 2;
         int yPos = height / 2 - PANEL_HEIGHT / 2;
         TextureRegion dataBoxRegion = GuiTextures.CORE_TEXTURES.getRegion(GuiTextures.DATA_BOX);
-        if (minecraft == null || minecraft.player == null || dataBoxRegion == null){
+        if (minecraft == null || minecraft.player == null || dataBoxRegion == null) {
             return new MKLayout(xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
         }
         int xOffset = GuiTextures.CORE_TEXTURES.getCenterXOffset(
@@ -47,11 +52,11 @@ public class LearnAbilitiesScreen extends AbilityPanelScreen {
             int contentY = yPos + DATA_BOX_OFFSET;
             int contentWidth = dataBoxRegion.width;
             int contentHeight = dataBoxRegion.height;
-            LearnAbilityTray tray = new LearnAbilityTray(contentX, contentY - 20, 20, pData, font);
+            LearnAbilityTray tray = new LearnAbilityTray(contentX, contentY - 20, 20, pData, font, entityId);
             abilityTray = tray;
             root.addWidget(tray);
             ScrollingListPanelLayout panel = getAbilityScrollPanel(contentX, contentY,
-                    contentWidth, contentHeight, pData, abilities);
+                    contentWidth, contentHeight, pData, new ArrayList<>(abilities.keySet()));
             currentScrollingPanel = panel;
             abilitiesScrollPanel = panel;
             root.addWidget(panel);
@@ -73,12 +78,12 @@ public class LearnAbilitiesScreen extends AbilityPanelScreen {
     public void addRestoreStateCallbacks() {
         String state = getState();
         super.addRestoreStateCallbacks();
-        if (state.equals("choose_ability")){
+        if (state.equals("choose_ability")) {
             final MKAbility abilityInf = getAbility();
             addPostSetupCallback(() -> {
-                if (infoWidget != null){
+                if (infoWidget != null) {
                     infoWidget.setAbility(abilityInf);
-                    abilityTray.setAbility(abilityInf);
+                    abilityTray.setAbility(abilityInf, abilities.getOrDefault(abilityInf, Collections.emptyList()));
                 }
             });
         }

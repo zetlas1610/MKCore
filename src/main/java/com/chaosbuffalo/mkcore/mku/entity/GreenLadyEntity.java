@@ -1,7 +1,8 @@
 package com.chaosbuffalo.mkcore.mku.entity;
 
 import com.chaosbuffalo.mkcore.Capabilities;
-import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.MKCore;
+import com.chaosbuffalo.mkcore.abilities.training.*;
 import com.chaosbuffalo.mkcore.mku.abilities.*;
 import com.chaosbuffalo.mkcore.mku.entity.ai.*;
 import com.chaosbuffalo.mkcore.mku.entity.ai.controller.MovementStrategyController;
@@ -11,6 +12,7 @@ import com.chaosbuffalo.mkcore.network.PacketHandler;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -24,12 +26,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class GreenLadyEntity extends MKEntity {
+public class GreenLadyEntity extends MKEntity implements IAbilityTrainingEntity {
     private int timesDone;
+    private final EntityAbilityTrainer abilityTrainer;
 
     public GreenLadyEntity(EntityType<? extends GreenLadyEntity> type, World worldIn) {
         super(type, worldIn);
         timesDone = 0;
+        abilityTrainer = new EntityAbilityTrainer(this);
+        abilityTrainer.addTrainedAbility(EmberAbility.INSTANCE);
+        abilityTrainer.addTrainedAbility(ClericHeal.INSTANCE)
+                .addRequirement(new HeldItemRequirement(Items.ROTTEN_FLESH, Hand.MAIN_HAND))
+                .addRequirement(new HeldItemRequirement(Items.ROTTEN_FLESH, Hand.OFF_HAND));
+        abilityTrainer.addTrainedAbility(WhirlwindBlades.INSTANCE)
+                .addRequirement(new HeldItemRequirement(Items.DIAMOND_SWORD, Hand.MAIN_HAND))
+                .addRequirement(new ExperienceLevelRequirement(30));
     }
 
     @Nullable
@@ -52,12 +63,11 @@ public class GreenLadyEntity extends MKEntity {
     @Override
     public ActionResultType applyPlayerInteraction(PlayerEntity player, Vec3d vec, Hand hand) {
         if (!player.getEntityWorld().isRemote()) {
-            List<MKAbility> abilities = new ArrayList<>();
-            abilities.add(ClericHeal.INSTANCE);
-            abilities.add(WhirlwindBlades.INSTANCE);
-            PacketHandler.sendMessage(new OpenLearnAbilitiesGuiPacket(abilities), (ServerPlayerEntity) player);
+            MKCore.getPlayer(player).ifPresent(playerData -> {
+                PacketHandler.sendMessage(new OpenLearnAbilitiesGuiPacket(playerData, abilityTrainer), (ServerPlayerEntity) player);
+            });
         }
-        return ActionResultType.SUCCESS;
+        return ActionResultType.PASS;
     }
 
 
@@ -76,5 +86,10 @@ public class GreenLadyEntity extends MKEntity {
     public void enterDefaultMovementState(LivingEntity target) {
         this.brain.setMemory(MKUMemoryModuleTypes.MOVEMENT_TARGET, target);
         MovementStrategyController.enterCastingMode(this, 5.0);
+    }
+
+    @Override
+    public IAbilityTrainer getAbilityTrainer() {
+        return abilityTrainer;
     }
 }
