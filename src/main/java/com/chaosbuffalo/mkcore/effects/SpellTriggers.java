@@ -207,15 +207,9 @@ public class SpellTriggers {
 
         private static void handleVanillaMelee(LivingHurtEvent event, DamageSource source, LivingEntity livingTarget,
                                                ServerPlayerEntity playerSource, IMKEntityData sourceData) {
-            ItemStack mainHand = playerSource.getHeldItemMainhand();
-            float critChance = MKCombatFormulas.getCritChanceForItem(mainHand);
             if (sourceData instanceof MKPlayerData) {
-                MKPlayerData playerData = (MKPlayerData) sourceData;
-                if (MKCombatFormulas.checkCrit(playerSource,
-                        critChance + playerData.getStats().getMeleeCritChance())) {
-                    float critMultiplier = ItemUtils.getCritDamageForItem(mainHand);
-                    critMultiplier += playerData.getStats().getMeleeCritDamage();
-                    float newDamage = event.getAmount() * critMultiplier;
+                if (ModDamageTypes.MeleeDamage.rollCrit(playerSource, livingTarget)) {
+                    float newDamage = ModDamageTypes.MeleeDamage.applyCritDamage(playerSource, livingTarget, event.getAmount());
                     event.setAmount(newDamage);
                     sendCritPacket(livingTarget, playerSource,
                             new CritMessagePacket(livingTarget.getEntityId(), playerSource.getUniqueID(), newDamage,
