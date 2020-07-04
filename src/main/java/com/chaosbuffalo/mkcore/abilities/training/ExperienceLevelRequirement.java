@@ -16,7 +16,7 @@ public class ExperienceLevelRequirement implements IAbilityLearnRequirement {
     @Override
     public boolean check(IMKEntityData entityData, MKAbility ability) {
         if (entityData.getEntity() instanceof PlayerEntity) {
-            PlayerEntity playerEntity = (PlayerEntity)entityData.getEntity();
+            PlayerEntity playerEntity = (PlayerEntity) entityData.getEntity();
             return playerEntity.experienceLevel >= requiredLevel;
         }
         return false;

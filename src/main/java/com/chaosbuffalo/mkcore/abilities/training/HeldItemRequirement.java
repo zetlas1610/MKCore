@@ -36,6 +36,6 @@ public class HeldItemRequirement implements IAbilityLearnRequirement {
         String handName = hand == Hand.MAIN_HAND ? "Main" : "Off";
         return new StringTextComponent("You must be holding a ")
                 .appendSibling(item.getName())
-                .appendSibling(new StringTextComponent(String.format("in your %s hand", handName)));
+                .appendSibling(new StringTextComponent(String.format(" in your %s hand", handName)));
     }
 }
