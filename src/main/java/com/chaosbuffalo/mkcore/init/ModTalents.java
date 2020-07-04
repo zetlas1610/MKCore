@@ -100,14 +100,14 @@ public class ModTalents {
         event.getRegistry().register(spellCrit);
 
         AttributeTalent meleeCritDamage = new AttributeTalent(
-                MKCore.makeRL("talent.melee_crit_damage"), // FIXME: rename to multiplier
+                MKCore.makeRL("talent.melee_crit_multiplier"),
                 MKAttributes.MELEE_CRIT_MULTIPLIER,
                 UUID.fromString("0032d49a-ed71-4dfb-a9f5-f0d3dd183e96"))
                 .setDisplayAsPercentage(true);
         event.getRegistry().register(meleeCritDamage);
 
         AttributeTalent spellCritDamage = new AttributeTalent(
-                MKCore.makeRL("talent.spell_crit_damage"),
+                MKCore.makeRL("talent.spell_crit_multiplier"),
                 MKAttributes.SPELL_CRIT_MULTIPLIER,
                 UUID.fromString("a9d6069c-98b9-454d-b59f-c5a6e81966d5"))
                 .setDisplayAsPercentage(true);
