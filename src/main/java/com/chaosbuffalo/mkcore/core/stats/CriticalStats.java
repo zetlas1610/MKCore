@@ -2,24 +2,33 @@ package com.chaosbuffalo.mkcore.core.stats;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class CriticalStats<T> {
 
-    private float defaultRate;
-    private float defaultDamage;
-    private final ArrayList<CriticalEntry> criticalEntries = new ArrayList<>();
+    private final float defaultRate;
+    private final float defaultMultiplier;
+    private final List<CriticalEntry<T>> criticalEntries = new ArrayList<>();
 
-    public CriticalStats(float defaultRate, float defaultDamage) {
+    public CriticalStats(float defaultRate, float defaultMultiplier) {
         this.defaultRate = defaultRate;
-        this.defaultDamage = defaultDamage;
+        this.defaultMultiplier = defaultMultiplier;
+    }
+
+    public float getDefaultChance() {
+        return defaultRate;
+    }
+
+    public float getDefaultMultiplier() {
+        return defaultMultiplier;
     }
 
     public void addCriticalStats(Class<? extends T> objClass, int priority, float criticalChance, float damageMultiplier) {
-        criticalEntries.add(new CriticalEntry(objClass, priority, criticalChance, damageMultiplier));
+        criticalEntries.add(new CriticalEntry<>(objClass, priority, criticalChance, damageMultiplier));
         Collections.sort(criticalEntries);
     }
 
-    private boolean objectMatches(CriticalEntry stat, T obj) {
+    private boolean objectMatches(CriticalEntry<T> stat, T obj) {
         Class<? extends T> entityClass = stat.entity;
         return entityClass.isInstance(obj);
     }
@@ -28,7 +37,7 @@ public class CriticalStats<T> {
         if (obj == null) {
             return defaultRate;
         }
-        for (CriticalEntry stat : criticalEntries) {
+        for (CriticalEntry<T> stat : criticalEntries) {
             if (objectMatches(stat, obj)) {
                 return stat.chance;
             }
@@ -36,23 +45,23 @@ public class CriticalStats<T> {
         return defaultRate;
     }
 
-    public float getDamage(T obj) {
+    public float getMultiplier(T obj) {
         if (obj == null) {
-            return defaultDamage;
+            return defaultMultiplier;
         }
-        for (CriticalEntry stat : criticalEntries) {
+        for (CriticalEntry<T> stat : criticalEntries) {
             if (objectMatches(stat, obj)) {
                 return stat.damageMultiplier;
             }
         }
-        return defaultDamage;
+        return defaultMultiplier;
     }
 
     public boolean hasChance(T obj) {
         return criticalEntries.stream().anyMatch(stat -> objectMatches(stat, obj));
     }
 
-    private class CriticalEntry implements Comparable<CriticalEntry> {
+    private static class CriticalEntry<T> implements Comparable<CriticalEntry<T>> {
 
         public final Class<? extends T> entity;
         final int priority;
@@ -67,7 +76,7 @@ public class CriticalStats<T> {
         }
 
         @Override
-        public int compareTo(CriticalEntry o) {
+        public int compareTo(CriticalEntry<T> o) {
             return o.priority - priority;
         }
     }

@@ -3,6 +3,7 @@ package com.chaosbuffalo.mkcore.core.damage;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.MKCombatFormulas;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
@@ -47,35 +48,38 @@ public class MKDamageType extends ForgeRegistryEntry<MKDamageType> {
         return this;
     }
 
-    public boolean shouldDisplay(){
+    public boolean shouldDisplay() {
         return shouldDisplay;
     }
 
-    public String getDisplayName(){
+    public String getDisplayName() {
         return I18n.format(String.format("%s.%s.name", getRegistryName().getNamespace(),
                 getRegistryName().getPath()));
     }
 
-    public ResourceLocation getIcon(){
+    public ResourceLocation getIcon() {
         return iconLoc;
-    }
-
-
-    public void addAttributes(AbstractAttributeMap attributeMap) {
-        attributeMap.registerAttribute(getDamageAttribute());
-        attributeMap.registerAttribute(getResistanceAttribute());
     }
 
     public RangedAttribute getDamageAttribute() {
         return damageAttribute;
     }
 
-    public float applyDamage(LivingEntity source, LivingEntity target, float originalDamage, float modifierScaling) {
-        return (float) (originalDamage + source.getAttribute(getDamageAttribute()).getValue() * modifierScaling);
-    }
-
     public RangedAttribute getCritChanceAttribute() {
         return critAttribute;
+    }
+
+    public RangedAttribute getCritMultiplierAttribute() {
+        return critMultiplierAttribute;
+    }
+
+    public RangedAttribute getResistanceAttribute() {
+        return resistanceAttribute;
+    }
+
+    public void addAttributes(AbstractAttributeMap attributeMap) {
+        attributeMap.registerAttribute(getDamageAttribute());
+        attributeMap.registerAttribute(getResistanceAttribute());
     }
 
     public ITextComponent getCritMessage(LivingEntity source, LivingEntity target, float damage,
@@ -98,33 +102,48 @@ public class MKDamageType extends ForgeRegistryEntry<MKDamageType> {
         return new StringTextComponent(msg).setStyle(messageStyle);
     }
 
-    public float applyResistance(LivingEntity target, float originalDamage) {
-        return (float) (originalDamage - (originalDamage * target.getAttribute(getResistanceAttribute()).getValue()));
-
+    public float applyDamage(LivingEntity source, LivingEntity target, float originalDamage, float modifierScaling) {
+        return applyDamage(source, target, source, originalDamage, modifierScaling);
     }
 
-    public RangedAttribute getCritMultiplierAttribute() {
-        return critMultiplierAttribute;
+    public float applyDamage(LivingEntity source, LivingEntity target, Entity immediate, float originalDamage, float modifierScaling) {
+        return (float) (originalDamage + source.getAttribute(getDamageAttribute()).getValue() * modifierScaling);
+    }
+
+    public float applyResistance(LivingEntity target, float originalDamage) {
+        return (float) (originalDamage - (originalDamage * target.getAttribute(getResistanceAttribute()).getValue()));
     }
 
     public boolean rollCrit(LivingEntity source, LivingEntity target) {
-        float critChance = getCritChance(source, target);
+        return rollCrit(source, target, source);
+    }
+
+    public boolean rollCrit(LivingEntity source, LivingEntity target, Entity immediate) {
+        float critChance = getCritChance(source, target, immediate);
         return MKCombatFormulas.checkCrit(source, critChance);
     }
 
     public float applyCritDamage(LivingEntity source, LivingEntity target, float originalDamage) {
-        return originalDamage * getCritMultiplier(source, target);
+        return applyCritDamage(source, target, source, originalDamage);
+    }
+
+    public float applyCritDamage(LivingEntity source, LivingEntity target, Entity immediate, float originalDamage) {
+        return originalDamage * getCritMultiplier(source, target, immediate);
     }
 
     public float getCritMultiplier(LivingEntity source, LivingEntity target) {
+        return getCritMultiplier(source, target, source);
+    }
+
+    public float getCritMultiplier(LivingEntity source, LivingEntity target, Entity immediate) {
         return (float) source.getAttribute(getCritMultiplierAttribute()).getValue();
     }
 
     public float getCritChance(LivingEntity source, LivingEntity target) {
-        return (float) source.getAttribute(getCritChanceAttribute()).getValue() * critMultiplier;
+        return getCritChance(source, target, source);
     }
 
-    public RangedAttribute getResistanceAttribute() {
-        return resistanceAttribute;
+    public float getCritChance(LivingEntity source, LivingEntity target, Entity immediate) {
+        return (float) source.getAttribute(getCritChanceAttribute()).getValue() * critMultiplier;
     }
 }

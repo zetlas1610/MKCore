@@ -16,6 +16,10 @@ public class MKAttributes {
             .setDescription("Melee Critical Chance")
             .setShouldWatch(true);
 
+    public static final RangedAttribute RANGED_CRIT = (RangedAttribute) new RangedAttribute(null, "mk.ranged_crit_chance", 0.00, 0.0, 1.0)
+            .setDescription("Ranged Critical Chance")
+            .setShouldWatch(true);
+
     public static final RangedAttribute SPELL_CRIT = (RangedAttribute) new RangedAttribute(null, "mk.spell_crit_chance", 0.1, 0.0, 1.0)
             .setDescription("Spell Critical Chance")
             .setShouldWatch(true);
@@ -26,6 +30,18 @@ public class MKAttributes {
 
     public static final RangedAttribute MELEE_CRIT_MULTIPLIER = (RangedAttribute) new RangedAttribute(null, "mk.melee_crit_multiplier", 0.0, 0.0, 10.0)
             .setDescription("Melee Critical Multiplier")
+            .setShouldWatch(true);
+
+    public static final RangedAttribute RANGED_CRIT_MULTIPLIER = (RangedAttribute) new RangedAttribute(null, "mk.ranged_crit_multiplier", 0.0, 0.0, 10.0)
+            .setDescription("Ranged Critical Multiplier")
+            .setShouldWatch(true);
+
+    public static final RangedAttribute RANGED_DAMAGE = (RangedAttribute) new RangedAttribute(null, "mk.ranged_damage", 0.0, 0.0, 2048)
+            .setDescription("Ranged Damage Bonus")
+            .setShouldWatch(true);
+
+    public static final RangedAttribute RANGED_RESISTANCE = (RangedAttribute) new RangedAttribute(null, "mk.ranged_resistance", 0, -1.0, 1.0)
+            .setDescription("Ranged Resistance")
             .setShouldWatch(true);
 
     // Everyone Attributes

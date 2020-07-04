@@ -16,8 +16,8 @@ import java.util.function.Function;
 public class ItemUtils {
     public static final UUID OFFHAND_UUID = UUID.fromString("80df259e-29f8-4779-bd46-94a24e313c2d");
     private static final float DEFAULT_CRIT_RATE = .0f;
-    private static final float DEFAULT_CRIT_DAMAGE = 1.5f;
-    public static CriticalStats<Item> CRIT = new CriticalStats<>(DEFAULT_CRIT_RATE, DEFAULT_CRIT_DAMAGE);
+    private static final float DEFAULT_CRIT_MULTIPLIER = 1.5f;
+    public static CriticalStats<Item> CRIT = new CriticalStats<>(DEFAULT_CRIT_RATE, DEFAULT_CRIT_MULTIPLIER);
 
     public static ArrayList<Function<Item, Boolean>> IS_TWO_HANDED_CALLBACKS = new ArrayList<>();
 
@@ -51,19 +51,19 @@ public class ItemUtils {
 
 
     public static float getCritChanceForItem(ItemStack itemInHand) {
-        if (itemInHand.equals(ItemStack.EMPTY)) {
+        if (itemInHand.isEmpty()) {
             return DEFAULT_CRIT_RATE;
         }
         Item item = itemInHand.getItem();
         return CRIT.getChance(item);
     }
 
-    public static float getCritDamageForItem(ItemStack itemInHand) {
-        if (itemInHand.equals(ItemStack.EMPTY)) {
-            return DEFAULT_CRIT_DAMAGE;
+    public static float getCritMultiplierForItem(ItemStack itemInHand) {
+        if (itemInHand.isEmpty()) {
+            return DEFAULT_CRIT_MULTIPLIER;
         }
         Item item = itemInHand.getItem();
-        return CRIT.getDamage(item);
+        return CRIT.getMultiplier(item);
     }
 
     public static Multimap<String, AttributeModifier> getOffhandModifiersForItem(ItemStack item) {
