@@ -59,7 +59,7 @@ public class MeleeDamageType extends MKDamageType {
     @Override
     public float getCritMultiplier(LivingEntity source, LivingEntity target) {
         ItemStack mainHand = source.getHeldItemMainhand();
-        return super.getCritMultiplier(source, target) + ItemUtils.getCritDamageForItem(mainHand);
+        return super.getCritMultiplier(source, target) + ItemUtils.getCritMultiplierForItem(mainHand);
     }
 
     @Override

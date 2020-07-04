@@ -9,16 +9,15 @@ import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageSource;
 import com.chaosbuffalo.mkcore.events.ServerSideLeftClickEmpty;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
+import com.chaosbuffalo.mkcore.init.ModDamageTypes;
 import com.chaosbuffalo.mkcore.network.CritMessagePacket;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkcore.utils.EntityUtils;
-import com.chaosbuffalo.mkcore.utils.ItemUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
@@ -187,7 +186,7 @@ public class SpellTriggers {
             if (source.getImmediateSource() != null &&
                     MKCombatFormulas.checkCrit(playerSource, MKCombatFormulas.getRangedCritChanceForEntity(sourceData,
                             playerSource, source.getImmediateSource()))) {
-                float damageMultiplier = EntityUtils.ENTITY_CRIT.getDamage(source.getImmediateSource());
+                float damageMultiplier = EntityUtils.ENTITY_CRIT.getMultiplier(source.getImmediateSource());
                 if (livingTarget.isGlowing()) {
                     damageMultiplier += 1.0f;
                 }
