@@ -52,7 +52,7 @@ public class LearnAbilitiesScreen extends AbilityPanelScreen {
             int contentY = yPos + DATA_BOX_OFFSET;
             int contentWidth = dataBoxRegion.width;
             int contentHeight = dataBoxRegion.height;
-            LearnAbilityTray tray = new LearnAbilityTray(contentX, contentY - 20, 20, pData, font, entityId);
+            LearnAbilityTray tray = new LearnAbilityTray(contentX, yPos + 3,  contentWidth, pData, font, entityId);
             abilityTray = tray;
             root.addWidget(tray);
             ScrollingListPanelLayout panel = getAbilityScrollPanel(contentX, contentY,
