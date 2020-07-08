@@ -17,7 +17,7 @@ public class MKCombatFormulas {
         return (int) newTicks;
     }
 
-    public static int applyCastTimeReduction(IMKEntityData entityData, int originalCastTicks) {
+    public static int applyCastTimeModifier(IMKEntityData entityData, int originalCastTicks) {
         final float MAX_RATE = 2.0f; // Maximum rate improvement is 200%
         float castSpeed = (float) entityData.getEntity().getAttribute(MKAttributes.CASTING_SPEED).getValue();
         float mod = MAX_RATE - castSpeed;

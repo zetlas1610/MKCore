@@ -58,6 +58,7 @@ public class StatCommand {
                 .then(createAttributeStat("ranged_crit", MKAttributes.RANGED_CRIT))
                 .then(createAttributeStat("ranged_crit_multiplier", MKAttributes.RANGED_CRIT_MULTIPLIER))
                 .then(createAttributeStat("ranged_resist", MKAttributes.RANGED_RESISTANCE))
+                .then(createAttributeStat("cast_speed", MKAttributes.CASTING_SPEED))
                 ;
     }
 

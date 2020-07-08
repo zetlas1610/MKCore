@@ -46,6 +46,11 @@ public class WhirlwindBlades extends MKAbility {
     }
 
     @Override
+    public boolean canApplyCastingSpeedModifier() {
+        return false;
+    }
+
+    @Override
     public AbilityTargetSelector getTargetSelector() {
         return AbilityTargeting.PBAOE;
     }
