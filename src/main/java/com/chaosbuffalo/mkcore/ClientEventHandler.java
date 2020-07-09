@@ -2,16 +2,22 @@ package com.chaosbuffalo.mkcore;
 
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.client.gui.CharacterScreen;
+import com.chaosbuffalo.mkcore.core.MKRangedAttribute;
+import com.chaosbuffalo.mkcore.item.ArmorClass;
 import com.chaosbuffalo.mkcore.network.ExecuteActiveAbilityPacket;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
-import com.chaosbuffalo.mkcore.item.ArmorClass;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
@@ -21,6 +27,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.List;
 
 @Mod.EventBusSubscriber
 public class ClientEventHandler {
@@ -110,7 +118,6 @@ public class ClientEventHandler {
             return;
 
         while (playerMenuBind.isPressed()) {
-            MKCore.LOGGER.info("open player menu");
             Minecraft.getInstance().displayGuiScreen(new CharacterScreen());
 
         }
@@ -145,11 +152,58 @@ public class ClientEventHandler {
             return;
 
         if (event.getItemStack().getItem() instanceof ArmorItem) {
-            ArmorClass armorClass = ArmorClass.getItemArmorClass(((ArmorItem) event.getItemStack().getItem()));
-            if (armorClass != null) {
-                String msg = String.format("%s: %s", "Armor Class", armorClass.getName());
-                event.getToolTip().add(new StringTextComponent(msg));
+            ArmorItem armorItem = (ArmorItem) event.getItemStack().getItem();
+            ArmorClass armorClass = ArmorClass.getItemArmorClass(armorItem);
+            if (armorClass == null) {
+                return;
+            }
+
+            event.getToolTip().add(new TranslationTextComponent("mkcore.gui.item.armor_class.name")
+                    .appendText(": ")
+                    .appendSibling(armorClass.getName()));
+
+            if (MKConfig.CLIENT.showArmorClassEffectsOnTooltip.get()) {
+                List<ITextComponent> tooltip = event.getToolTip();
+                if (Screen.hasShiftDown()) {
+                    armorClass.getPositiveModifierMap(armorItem.getEquipmentSlot()).forEach(((attribute, modifier) -> {
+                        addAttributeToTooltip(tooltip, attribute, modifier, TextFormatting.GREEN);
+                    }));
+                    armorClass.getNegativeModifierMap(armorItem.getEquipmentSlot()).forEach(((attribute, modifier) -> {
+                        addAttributeToTooltip(tooltip, attribute, modifier, TextFormatting.RED);
+                    }));
+                } else {
+                    tooltip.add(new TranslationTextComponent("mkcore.gui.item.armor_class.effect_prompt"));
+                }
             }
         }
+    }
+
+    private static void addAttributeToTooltip(List<ITextComponent> tooltip, IAttribute attribute,
+                                              AttributeModifier modifier, TextFormatting color) {
+        String suffix = "";
+        double amount = modifier.getAmount();
+        if (modifier.getOperation() == AttributeModifier.Operation.ADDITION) {
+            if (attribute instanceof MKRangedAttribute) {
+                if (((MKRangedAttribute) attribute).displayAdditionAsPercentage()) {
+                    suffix = "%";
+                    amount *= 100;
+                }
+            }
+        }
+        if (modifier.getOperation() == AttributeModifier.Operation.MULTIPLY_TOTAL) {
+            amount *= 100;
+            suffix = "%";
+        } else if (modifier.getOperation() == AttributeModifier.Operation.MULTIPLY_BASE) {
+            amount *= 100;
+            suffix = "% of base";
+        }
+        String prefix = amount > 0 ? "+" : "";
+
+        ITextComponent component = new TranslationTextComponent("mkcore.gui.item.armor_class.effect.name")
+                .applyTextStyle(color)
+                .appendText(String.format(": %s%.2f%s ", prefix, amount, suffix))
+                .appendSibling(new TranslationTextComponent("attribute.name." + attribute.getName()));
+
+        tooltip.add(component);
     }
 }
