@@ -105,4 +105,10 @@ public class EventHandler {
             }
         }
     }
+
+    @SubscribeEvent
+    public static void onEntityJump(LivingEvent.LivingJumpEvent event) {
+        MKCore.getEntityData(event.getEntity()).ifPresent(entityData ->
+                entityData.getAbilityExecutor().interruptCast());
+    }
 }
