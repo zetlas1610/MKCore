@@ -304,6 +304,10 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
     public void endCast(LivingEntity entity, IMKEntityData data, AbilityContext context) {
     }
 
+    public boolean isInterruptible() {
+        return true;
+    }
+
     protected LivingEntity getSingleLivingTarget(LivingEntity caster, float distance) {
         return getSingleLivingTarget(caster, distance, true);
     }

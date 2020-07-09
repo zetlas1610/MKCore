@@ -144,8 +144,10 @@ public class AbilityExecutor {
         if (!isCasting())
             return;
 
-        currentCast.interrupt();
-        clearCastingAbility();
+        if (currentCast.getAbility().isInterruptible()) {
+            currentCast.interrupt();
+            clearCastingAbility();
+        }
     }
 
     protected void onAbilityInterrupted(MKAbility ability, int ticks) {
@@ -234,6 +236,10 @@ public class AbilityExecutor {
 
         public int getCastTicks() {
             return castTicks;
+        }
+
+        public MKAbility getAbility() {
+            return ability;
         }
 
         public ResourceLocation getAbilityId() {

@@ -51,6 +51,11 @@ public class WhirlwindBlades extends MKAbility {
     }
 
     @Override
+    public boolean isInterruptible() {
+        return false;
+    }
+
+    @Override
     public AbilityTargetSelector getTargetSelector() {
         return AbilityTargeting.PBAOE;
     }
