@@ -5,7 +5,6 @@ import com.chaosbuffalo.mkcore.core.MKAttributes;
 import com.chaosbuffalo.mkcore.effects.PassiveTalentEffect;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.potion.Effect;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -32,8 +31,4 @@ public class BurningSoulPotion extends PassiveTalentEffect {
         setRegistryName("effect.burning_soul");
     }
 
-    @Override
-    public ResourceLocation getIconTexture() {
-        return new ResourceLocation(MKCore.MOD_ID, "textures/class/abilities/burning_soul.png");
-    }
 }

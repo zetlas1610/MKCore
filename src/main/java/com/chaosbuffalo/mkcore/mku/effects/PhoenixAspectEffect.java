@@ -11,7 +11,6 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectType;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -41,11 +40,6 @@ public class PhoenixAspectEffect extends PassiveEffect {
     private PhoenixAspectEffect() {
         super(EffectType.BENEFICIAL, 4393423);
         setRegistryName("effect.phoenix_aspect");
-    }
-
-    @Override
-    public ResourceLocation getIconTexture() {
-        return MKCore.makeRL("textures/class/abilities/phoenix_aspect.png");
     }
 
     @Override
