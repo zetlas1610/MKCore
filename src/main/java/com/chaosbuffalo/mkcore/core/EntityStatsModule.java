@@ -8,9 +8,8 @@ import net.minecraft.util.ResourceLocation;
 
 public class EntityStatsModule implements IStatsModule {
 
-    private final IMKEntityData entityData;
-    private final AbilityTracker abilityTracker;
-
+    protected final IMKEntityData entityData;
+    protected final AbilityTracker abilityTracker;
 
     public EntityStatsModule(IMKEntityData data) {
         entityData = data;
@@ -46,7 +45,6 @@ public class EntityStatsModule implements IStatsModule {
         return getEntity().getMaxHealth();
     }
 
-
     @Override
     public int getAbilityCooldown(MKAbility ability) {
         int ticks = ability.getCooldown(entityData);
@@ -56,7 +54,9 @@ public class EntityStatsModule implements IStatsModule {
     @Override
     public int getAbilityCastTime(MKAbility ability) {
         int ticks = ability.getCastTime(entityData);
-        return ability.canApplyCastingSpeedModifier() ? MKCombatFormulas.applyCastTimeModifier(entityData, ticks) : ticks;
+        return ability.canApplyCastingSpeedModifier() ?
+                MKCombatFormulas.applyCastTimeModifier(entityData, ticks) :
+                ticks;
     }
 
     @Override
