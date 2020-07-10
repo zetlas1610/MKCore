@@ -161,33 +161,4 @@ public abstract class SpellEffectBase extends Effect {
         return new SpellCast(this, caster);
     }
 
-    public ResourceLocation getIconTexture() {
-        return null;
-    }
-
-    @Override
-    public boolean shouldRenderInvText(EffectInstance p_shouldRenderInvText_1_) {
-        return false;
-    }
-
-    @Override
-    public void renderInventoryEffect(EffectInstance effect, DisplayEffectsScreen<?> gui, int x, int y, float partialTicks) {
-        if (gui != null && getIconTexture() != null) {
-            Minecraft.getInstance().getTextureManager().bindTexture(getIconTexture());
-            AbstractGui.blit(x + 6, y + 7, 0, 0, 16, 16, 16, 16);
-//            GuiUtils.drawTexturedModalRect(x + 6, y + 7, 0, 0, 16, 16, 16, 16);
-
-            String s1 = I18n.format(this.getName());
-            if (effect.getAmplifier() == 2) {
-                s1 = s1 + " " + I18n.format("enchantment.level.2");
-            } else if (effect.getAmplifier() == 3) {
-                s1 = s1 + " " + I18n.format("enchantment.level.3");
-            } else if (effect.getAmplifier() == 4) {
-                s1 = s1 + " " + I18n.format("enchantment.level.4");
-            }
-            Minecraft.getInstance().fontRenderer.drawStringWithShadow(s1, x + 10 + 18, y + 6, 16777215);
-            String s = EffectUtils.getPotionDurationString(effect, 1.0F);
-            Minecraft.getInstance().fontRenderer.drawStringWithShadow(s, x + 10 + 18, y + 6 + 10, 8355711);
-        }
-    }
 }

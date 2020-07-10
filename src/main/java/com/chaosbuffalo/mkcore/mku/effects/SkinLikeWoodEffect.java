@@ -13,7 +13,6 @@ import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.EffectType;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -46,11 +45,6 @@ public class SkinLikeWoodEffect extends PassiveEffect {
     @Override
     public boolean isInfiniteDuration() {
         return true;
-    }
-
-    @Override
-    public ResourceLocation getIconTexture() {
-        return MKCore.makeRL("textures/class/abilities/skin_like_wood.png");
     }
 
     @Override
