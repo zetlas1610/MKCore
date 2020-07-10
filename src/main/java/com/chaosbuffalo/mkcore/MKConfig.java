@@ -33,6 +33,7 @@ public class MKConfig {
         public ForgeConfigSpec.BooleanValue showOthersCrits;
         public ForgeConfigSpec.BooleanValue enablePlayerCastAnimations;
         public ForgeConfigSpec.BooleanValue showArmorClassOnTooltip;
+        public ForgeConfigSpec.BooleanValue showArmorClassEffectsOnTooltip;
 
         public Client(ForgeConfigSpec.Builder builder) {
             builder.comment("General settings").push("general");
@@ -49,6 +50,9 @@ public class MKConfig {
             showArmorClassOnTooltip = builder
                     .comment("Show armor class on the item tooltip")
                     .define("showArmorClassOnTooltip", true);
+            showArmorClassEffectsOnTooltip = builder
+                    .comment("Show armor class effects on the item tooltip")
+                    .define("showArmorClassEffectsOnTooltip", true);
             builder.pop();
         }
     }

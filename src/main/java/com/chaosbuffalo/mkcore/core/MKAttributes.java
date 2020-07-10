@@ -12,15 +12,18 @@ public class MKAttributes {
             .setDescription("Mana Regen")
             .setShouldWatch(true);
 
-    public static final RangedAttribute MELEE_CRIT = (RangedAttribute) new RangedAttribute(null, "mk.melee_crit_chance", 0.00, 0.0, 1.0)
+    public static final RangedAttribute MELEE_CRIT = (RangedAttribute) new MKRangedAttribute("mk.melee_crit_chance", 0.00, 0.0, 1.0)
+            .setAdditionIsPercentage(true)
             .setDescription("Melee Critical Chance")
             .setShouldWatch(true);
 
-    public static final RangedAttribute RANGED_CRIT = (RangedAttribute) new RangedAttribute(null, "mk.ranged_crit_chance", 0.00, 0.0, 1.0)
+    public static final RangedAttribute RANGED_CRIT = (RangedAttribute) new MKRangedAttribute("mk.ranged_crit_chance", 0.00, 0.0, 1.0)
+            .setAdditionIsPercentage(true)
             .setDescription("Ranged Critical Chance")
             .setShouldWatch(true);
 
-    public static final RangedAttribute SPELL_CRIT = (RangedAttribute) new RangedAttribute(null, "mk.spell_crit_chance", 0.1, 0.0, 1.0)
+    public static final RangedAttribute SPELL_CRIT = (RangedAttribute) new MKRangedAttribute("mk.spell_crit_chance", 0.1, 0.0, 1.0)
+            .setAdditionIsPercentage(true)
             .setDescription("Spell Critical Chance")
             .setShouldWatch(true);
 

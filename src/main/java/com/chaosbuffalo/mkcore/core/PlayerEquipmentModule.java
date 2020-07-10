@@ -1,16 +1,11 @@
 package com.chaosbuffalo.mkcore.core;
 
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.item.ArmorClass;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 public class PlayerEquipmentModule {
@@ -24,29 +19,29 @@ public class PlayerEquipmentModule {
     };
 
     private final MKPlayerData playerData;
-    private final Map<EquipmentSlotType, Map<IAttribute, AttributeModifier>> positiveModifierMap = new EnumMap<>(EquipmentSlotType.class);
-    private final Map<EquipmentSlotType, Map<IAttribute, AttributeModifier>> negativeModifierMap = new EnumMap<>(EquipmentSlotType.class);
 
     public PlayerEquipmentModule(MKPlayerData playerData) {
         this.playerData = playerData;
     }
 
     public void onEquipmentChange(EquipmentSlotType slot, ItemStack from, ItemStack to) {
-        MKCore.LOGGER.info("PlayerEquipmentModule.onEquipmentChange({}, {}, {})", slot, from, to);
+//        MKCore.LOGGER.info("PlayerEquipmentModule.onEquipmentChange({}, {}, {})", slot, from, to);
         if (slot.getSlotType() == EquipmentSlotType.Group.ARMOR) {
             handleArmorChange(slot, from, to);
         }
     }
 
-    private void handleArmorChange(EquipmentSlotType slot, ItemStack from, ItemStack to) {
-        if (!from.isEmpty()) {
-            removeSlot(slot);
-        }
-        checkSlot(slot);
+    public UUID getSlotUUID(EquipmentSlotType slot) {
+        return UUID_BY_SLOT[slot.ordinal()];
     }
 
-    private void checkSlot(EquipmentSlotType slot) {
-        ItemStack to = playerData.getEntity().getItemStackFromSlot(slot);
+    private void handleArmorChange(EquipmentSlotType slot, ItemStack from, ItemStack to) {
+        if (!from.isEmpty() && from.getItem() instanceof ArmorItem) {
+            ArmorClass itemClass = ArmorClass.getItemArmorClass((ArmorItem) from.getItem());
+            if (itemClass != null) {
+                removeSlot(slot, itemClass);
+            }
+        }
         if (!to.isEmpty() && to.getItem() instanceof ArmorItem) {
             ArmorClass armorClass = ArmorClass.getItemArmorClass((ArmorItem) to.getItem());
             if (armorClass != null) {
@@ -56,42 +51,27 @@ public class PlayerEquipmentModule {
     }
 
     private AttributeModifier createSlotModifier(EquipmentSlotType slot, AttributeModifier mod) {
-        return new AttributeModifier(UUID_BY_SLOT[slot.ordinal()], mod::getName, mod.getAmount(), mod.getOperation()).setSaved(false);
+        return new AttributeModifier(getSlotUUID(slot), mod::getName, mod.getAmount(), mod.getOperation()).setSaved(false);
     }
 
     private void addSlot(EquipmentSlotType slot, ArmorClass itemClass) {
-        MKCore.LOGGER.info("PlayerEquipmentModule.addSlot({}, {})", slot, itemClass.getLocation());
-        removeSlot(slot);
+//        MKCore.LOGGER.debug("PlayerEquipmentModule.addSlot({}, {})", slot, itemClass.getLocation());
 
-        applyMap(slot, itemClass.getPositiveModifierMap(slot), positiveModifierMap);
-        applyMap(slot, itemClass.getNegativeModifierMap(slot), negativeModifierMap);
-    }
-
-    private void applyMap(EquipmentSlotType slot,
-                          Map<IAttribute, AttributeModifier> toApply,
-                          Map<EquipmentSlotType, Map<IAttribute, AttributeModifier>> modifierMap) {
-        Map<IAttribute, AttributeModifier> existing = modifierMap.computeIfAbsent(slot, (s) -> new HashMap<>());
-        existing.clear();
-
-        MKCore.LOGGER.info("\tapplying {} effects {}", toApply.size(), slot);
-        toApply.forEach((attr, mod) -> {
+        itemClass.getPositiveModifierMap(slot).forEach((attr, mod) -> {
             AttributeModifier dup = createSlotModifier(slot, mod);
             playerData.getEntity().getAttribute(attr).applyModifier(dup);
-            existing.put(attr, dup);
+        });
+        itemClass.getNegativeModifierMap(slot).forEach((attr, mod) -> {
+            AttributeModifier dup = createSlotModifier(slot, mod);
+            playerData.getEntity().getAttribute(attr).applyModifier(dup);
         });
     }
 
-    private void removeSlot(EquipmentSlotType slot) {
-//        MKCore.LOGGER.info("PlayerEquipmentModule.removeSlot({})", slot);
-        Map<IAttribute, AttributeModifier> posMod = positiveModifierMap.remove(slot);
-        if (posMod != null) {
-            MKCore.LOGGER.info("\tRemoving {} positive effects from {}", posMod.size(), slot);
-            posMod.forEach((attr, mod) -> playerData.getEntity().getAttribute(attr).removeModifier(mod));
-        }
-        Map<IAttribute, AttributeModifier> negMod = negativeModifierMap.remove(slot);
-        if (negMod != null) {
-            MKCore.LOGGER.info("\tRemoving {} negative effects from {}", negMod.size(), slot);
-            negMod.forEach((attr, mod) -> playerData.getEntity().getAttribute(attr).removeModifier(mod));
-        }
+    private void removeSlot(EquipmentSlotType slot, ArmorClass itemClass) {
+        UUID uuid = getSlotUUID(slot);
+        itemClass.getPositiveModifierMap(slot).keySet()
+                .forEach(attr -> playerData.getEntity().getAttribute(attr).removeModifier(uuid));
+        itemClass.getNegativeModifierMap(slot).keySet()
+                .forEach(attr -> playerData.getEntity().getAttribute(attr).removeModifier(uuid));
     }
 }

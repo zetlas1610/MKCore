@@ -3,7 +3,6 @@ package com.chaosbuffalo.mkcore.item;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.core.MKAttributes;
 import com.chaosbuffalo.mkcore.init.ModTags;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
@@ -13,6 +12,8 @@ import net.minecraft.item.IArmorMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.*;
 
@@ -92,8 +93,8 @@ public class ArmorClass {
         return String.format("%s.%s.name", location.getNamespace(), location.getPath());
     }
 
-    public String getName() {
-        return I18n.format(getTranslationKey());
+    public ITextComponent getName() {
+        return new TranslationTextComponent(getTranslationKey());
     }
 
     public ResourceLocation getLocation() {

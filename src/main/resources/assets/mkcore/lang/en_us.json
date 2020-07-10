@@ -71,5 +71,10 @@
   "mkcore.ability.description.effect": "Modifiers:",
   "mkcore.armor_class.light.name": "Light",
   "mkcore.armor_class.medium.name": "Medium",
-  "mkcore.armor_class.heavy.name": "Heavy"
+  "mkcore.armor_class.heavy.name": "Heavy",
+  "mkcore.gui.item.armor_class.name": "Armor Class",
+  "mkcore.gui.item.armor_class.effect_prompt": "Hold <shift> to see Armor Class Effects",
+  "mkcore.gui.item.armor_class.effect.name": "Effect",
+
+  "mkcore.THISNEEDSTOBELAST": "ITBETTERBELAST"
 }
