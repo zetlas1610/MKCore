@@ -46,8 +46,7 @@ public class MKCore {
         MinecraftForge.EVENT_BUS.register(this);
         talentManager = new TalentManager();
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, MKConfig.CLIENT_CONFIG);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, MKConfig.SERVER_CONFIG);
+        MKConfig.init();
         MKUEntityTypes.ENTITY_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 

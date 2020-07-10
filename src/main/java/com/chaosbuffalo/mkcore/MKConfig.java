@@ -1,67 +1,71 @@
 package com.chaosbuffalo.mkcore;
 
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
+import org.apache.commons.lang3.tuple.Pair;
 
 @Mod.EventBusSubscriber
 public class MKConfig {
 
-    private static final ForgeConfigSpec.Builder SERVER_BUILDER = new ForgeConfigSpec.Builder();
-    private static final ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
-
-    public static final ForgeConfigSpec SERVER_CONFIG;
-    public static final ForgeConfigSpec CLIENT_CONFIG;
-
+    public static final Client CLIENT;
+    private static final ForgeConfigSpec CLIENT_SPEC;
+    public static final Server SERVER;
+    private static final ForgeConfigSpec SERVER_SPEC;
     static {
-        initClient(CLIENT_BUILDER);
-        initServer(SERVER_BUILDER);
+        final Pair<Client, ForgeConfigSpec> clientSpecPair = new ForgeConfigSpec.Builder().configure(Client::new);
+        CLIENT_SPEC = clientSpecPair.getRight();
+        CLIENT = clientSpecPair.getLeft();
 
-        SERVER_CONFIG = SERVER_BUILDER.build();
-        CLIENT_CONFIG = CLIENT_BUILDER.build();
+        final Pair<Server, ForgeConfigSpec> serverSpecPair = new ForgeConfigSpec.Builder().configure(Server::new);
+        SERVER_SPEC = serverSpecPair.getRight();
+        SERVER = serverSpecPair.getLeft();
     }
 
-    public static ForgeConfigSpec.IntValue talentPointLimit;
-
-    public static ForgeConfigSpec.BooleanValue showMyCrits;
-    public static ForgeConfigSpec.BooleanValue showOthersCrits;
-    public static ForgeConfigSpec.BooleanValue enablePlayerCastAnimations;
-    public static ForgeConfigSpec.BooleanValue showArmorClassOnTooltip;
-
-    public static ForgeConfigSpec.BooleanValue healsDamageUndead;
-    public static ForgeConfigSpec.ConfigValue<Double> undeadHealDamageMultiplier;
-
-    private static void initClient(ForgeConfigSpec.Builder builder) {
-        builder.comment("General settings").push("general");
-        showMyCrits = builder
-                .comment("Show your own crit messages")
-                .define("showMyCrits", true);
-        showOthersCrits = builder
-                .comment("Show other's crit messages")
-                .define("showOthersCrits", true);
-        enablePlayerCastAnimations = builder
-                .comment("Enable player cast animations. Requires client restart to take effect")
-                .worldRestart()
-                .define("enablePlayerCastAnimations", true);
-        showArmorClassOnTooltip = builder
-                .comment("Show armor class on the item tooltip")
-                .define("showArmorClassOnTooltip", true);
-        builder.pop();
+    public static void init() {
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CLIENT_SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
     }
 
-    private static void initServer(ForgeConfigSpec.Builder builder) {
-        builder.comment("General settings").push("general");
-        builder.pop();
+    public static class Client {
+        public ForgeConfigSpec.BooleanValue showMyCrits;
+        public ForgeConfigSpec.BooleanValue showOthersCrits;
+        public ForgeConfigSpec.BooleanValue enablePlayerCastAnimations;
+        public ForgeConfigSpec.BooleanValue showArmorClassOnTooltip;
 
-        builder.comment("Gameplay settings").push("gameplay");
-        talentPointLimit = builder
-                .comment("Max number of talents (-1 for unlimited)")
-                .defineInRange("talentPointLimit", -1, -1, Integer.MAX_VALUE);
-        healsDamageUndead = builder
-                .comment("Should healing spells damage undead entities")
-                .define("healsDamageUndead", true);
-        undeadHealDamageMultiplier = builder
-                .comment("Damage multiplier to use when healing spells damage undead entities (if healsDamageUndead is set)")
-                .define("undeadHealDamageMultiplier", 2.0);
-        builder.pop();
+        public Client(ForgeConfigSpec.Builder builder) {
+            builder.comment("General settings").push("general");
+            showMyCrits = builder
+                    .comment("Show your own crit messages")
+                    .define("showMyCrits", true);
+            showOthersCrits = builder
+                    .comment("Show other's crit messages")
+                    .define("showOthersCrits", true);
+            enablePlayerCastAnimations = builder
+                    .comment("Enable player cast animations. Requires client restart to take effect")
+                    .worldRestart()
+                    .define("enablePlayerCastAnimations", true);
+            showArmorClassOnTooltip = builder
+                    .comment("Show armor class on the item tooltip")
+                    .define("showArmorClassOnTooltip", true);
+            builder.pop();
+        }
+    }
+
+    public static class Server {
+        public ForgeConfigSpec.BooleanValue healsDamageUndead;
+        public ForgeConfigSpec.ConfigValue<Double> undeadHealDamageMultiplier;
+
+        public Server(ForgeConfigSpec.Builder builder) {
+            builder.comment("Gameplay settings").push("gameplay");
+            healsDamageUndead = builder
+                    .comment("Should healing spells damage undead entities")
+                    .define("healsDamageUndead", true);
+            undeadHealDamageMultiplier = builder
+                    .comment("Damage multiplier to use when healing spells damage undead entities (if healsDamageUndead is set)")
+                    .define("undeadHealDamageMultiplier", 2.0);
+            builder.pop();
+        }
     }
 }

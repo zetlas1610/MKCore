@@ -141,7 +141,7 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public static void doArmorClassTooltip(ItemTooltipEvent event) {
-        if (!MKConfig.showArmorClassOnTooltip.get())
+        if (!MKConfig.CLIENT.showArmorClassOnTooltip.get())
             return;
 
         if (event.getItemStack().getItem() instanceof ArmorItem) {

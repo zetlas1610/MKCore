@@ -102,11 +102,11 @@ public class CritMessagePacket {
             }
             boolean isSelfTarget = player.getEntityId() == targetId;
             if (isSelf || isSelfTarget) {
-                if (!MKConfig.showMyCrits.get()) {
+                if (!MKConfig.CLIENT.showMyCrits.get()) {
                     return;
                 }
             } else {
-                if (!MKConfig.showOthersCrits.get()) {
+                if (!MKConfig.CLIENT.showOthersCrits.get()) {
                     return;
                 }
             }
