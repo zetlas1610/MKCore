@@ -11,19 +11,24 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
 
-public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModule {
+public class PlayerStatsModule implements IStatsModule, IPlayerSyncComponentProvider {
     private final MKPlayerData playerData;
+    private final PlayerSyncComponent sync = new PlayerSyncComponent("stats");
     private float regenTime;
     private final AbilityTracker abilityTracker;
     private final SyncFloat mana = new SyncFloat("mana", 0f);
 
     public PlayerStatsModule(MKPlayerData playerData) {
-        super("stats");
         this.playerData = playerData;
         regenTime = 0f;
-        addPublic(mana);
+        addSyncPublic(mana);
         abilityTracker = AbilityTracker.getTracker(playerData.getEntity());
-        addPrivate(abilityTracker);
+        addSyncPrivate(abilityTracker);
+    }
+
+    @Override
+    public PlayerSyncComponent getSyncComponent() {
+        return sync;
     }
 
     public float getCritChanceForDamageType(MKDamageType damageType) {

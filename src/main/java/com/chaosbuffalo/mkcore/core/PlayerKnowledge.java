@@ -15,27 +15,31 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PlayerKnowledge extends PlayerSyncComponent implements IAbilityKnowledge {
+public class PlayerKnowledge implements IAbilityKnowledge, IPlayerSyncComponentProvider {
 
     private final MKPlayerData playerData;
-
+    private final PlayerSyncComponent sync = new PlayerSyncComponent("knowledge");
     private final PlayerActionBar actionBar;
     private final PlayerAbilityKnowledge knownAbilities;
     private final PlayerTalentKnowledge talentKnowledge;
     private final Map<MKAbility.AbilityType, IActiveAbilityContainer> abilitySlotContainers = new HashMap<>();
 
     public PlayerKnowledge(MKPlayerData playerData) {
-        super("knowledge");
         this.playerData = playerData;
         actionBar = new PlayerActionBar(playerData);
         knownAbilities = new PlayerAbilityKnowledge(playerData);
         talentKnowledge = new PlayerTalentKnowledge(playerData);
-        addChild(actionBar);
-        addChild(knownAbilities);
-        addChild(talentKnowledge);
+        addSyncChild(actionBar);
+        addSyncChild(knownAbilities);
+        addSyncChild(talentKnowledge);
         registerAbilityContainer(MKAbility.AbilityType.Active, actionBar);
         registerAbilityContainer(MKAbility.AbilityType.Passive, talentKnowledge.getPassiveContainer());
         registerAbilityContainer(MKAbility.AbilityType.Ultimate, talentKnowledge.getUltimateContainer());
+    }
+
+    @Override
+    public PlayerSyncComponent getSyncComponent() {
+        return sync;
     }
 
     PlayerEntity getPlayer() {

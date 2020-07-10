@@ -30,19 +30,13 @@ public class MKPlayerData implements IMKEntityData {
 
     }
 
-
-    @Override
-    public PlayerStatsModule getStats() {
-        return stats;
-    }
-
     public void attach(PlayerEntity newPlayer) {
         player = newPlayer;
         updateEngine = new UpdateEngine(this);
         personaManager = PersonaManager.getPersonaManager(this);
         abilityExecutor = new PlayerAbilityExecutor(this);
         stats = new PlayerStatsModule(this);
-        stats.attach(updateEngine);
+        stats.getSyncComponent().attach(updateEngine);
 
         animationModule = new PlayerAnimationModule(this);
         abilityExecutor.setStartCastCallback(animationModule::startCast);
@@ -95,6 +89,11 @@ public class MKPlayerData implements IMKEntityData {
         } else {
             MKCore.LOGGER.info("client player joined world!");
         }
+    }
+
+    @Override
+    public PlayerStatsModule getStats() {
+        return stats;
     }
 
     @Override
@@ -176,7 +175,7 @@ public class MKPlayerData implements IMKEntityData {
     }
 
     public void onPersonaActivated(PersonaManager.Persona persona) {
-        persona.getKnowledge().attach(updateEngine);
+        persona.getKnowledge().getSyncComponent().attach(updateEngine);
         persona.getKnowledge().onPersonaActivated();
         getTalentHandler().onPersonaActivated();
         getAbilityExecutor().onPersonaActivated();
@@ -184,7 +183,7 @@ public class MKPlayerData implements IMKEntityData {
 
     public void onPersonaDeactivated(PersonaManager.Persona persona) {
         persona.getKnowledge().onPersonaDeactivated();
-        persona.getKnowledge().detach(updateEngine);
+        persona.getKnowledge().getSyncComponent().detach(updateEngine);
         getTalentHandler().onPersonaDeactivated();
         getAbilityExecutor().onPersonaDeactivated();
     }
