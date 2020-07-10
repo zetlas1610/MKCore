@@ -1,10 +1,7 @@
 package com.chaosbuffalo.mkcore.core;
 
-import com.chaosbuffalo.mkcore.utils.EntityUtils;
 import com.chaosbuffalo.mkcore.utils.ItemUtils;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 
 public class MKCombatFormulas {
@@ -34,19 +31,16 @@ public class MKCombatFormulas {
         return amount + mod * modifierScaling;
     }
 
-    public static float getCritChanceForItem(ItemStack item) {
-        return ItemUtils.getCritChanceForItem(item);
+    public static int applyBuffDurationModifier(IMKEntityData entityData, float amount) {
+        float mod = entityData.getStats().getBuffDurationModifier();
+        return (int) (amount * mod);
     }
 
-    public static float getRangedCritChanceForEntity(IMKEntityData data, ServerPlayerEntity player, Entity entity) {
-        return EntityUtils.ENTITY_CRIT.getChance(entity);
+    public static float getCritChanceForItem(ItemStack item) {
+        return ItemUtils.getCritChanceForItem(item);
     }
 
     public static boolean checkCrit(LivingEntity entity, float chance) {
         return entity.getRNG().nextFloat() >= 1.0f - chance;
     }
-
-//    public static int applyBuffDurationBonus(IPlayerData data, int duration) {
-//        return (int) (duration * data.getBuffDurationBonus());
-//    }
 }

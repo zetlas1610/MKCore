@@ -8,6 +8,7 @@ import com.chaosbuffalo.mkcore.abilities.AbilityTargeting;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.ai.conditions.NeedsBuffCondition;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
+import com.chaosbuffalo.mkcore.core.MKCombatFormulas;
 import com.chaosbuffalo.mkcore.effects.AreaEffectBuilder;
 import com.chaosbuffalo.mkcore.effects.ParticleEffect;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
@@ -66,14 +67,17 @@ public class FireArmor extends MKAbility {
 //        return ModSounds.spell_buff_5;
 //    }
 
+    private int getDuration(IMKEntityData entityData, int level) {
+        int duration = (BASE_DURATION + DURATION_SCALE * level) * GameConstants.TICKS_PER_SECOND;
+        return MKCombatFormulas.applyBuffDurationModifier(entityData, duration);
+    }
+
     @Override
     public void endCast(LivingEntity entity, IMKEntityData data, AbilityContext context) {
         super.endCast(entity, data, context);
         int level = 1;
 
-        // What to do for each target hit
-        int duration = (BASE_DURATION + DURATION_SCALE * level) * GameConstants.TICKS_PER_SECOND;
-//        duration = PlayerFormulas.applyBuffDurationBonus(data, duration);
+        int duration = getDuration(data, level);
 
         EffectInstance absorbEffect = new EffectInstance(Effects.ABSORPTION, duration, level + 1, false, true);
 
