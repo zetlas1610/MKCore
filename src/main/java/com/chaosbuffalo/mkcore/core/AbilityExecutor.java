@@ -6,7 +6,7 @@ import com.chaosbuffalo.mkcore.abilities.*;
 import com.chaosbuffalo.mkcore.client.sound.MovingSoundCasting;
 import com.chaosbuffalo.mkcore.effects.PassiveEffect;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
-import com.chaosbuffalo.mkcore.network.EntityStartCastPacket;
+import com.chaosbuffalo.mkcore.network.EntityCastPacket;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.utils.SoundUtils;
 import net.minecraft.client.Minecraft;
@@ -124,7 +124,7 @@ public class AbilityExecutor {
         if (startCastCallback != null) {
             startCastCallback.accept(abilityInfo.getAbility());
         }
-        PacketHandler.sendToTrackingMaybeSelf(new EntityStartCastPacket(entityData, abilityInfo.getId(), castTime), entityData.getEntity());
+        PacketHandler.sendToTrackingMaybeSelf(EntityCastPacket.start(entityData, abilityInfo.getId(), castTime), entityData.getEntity());
     }
 
     public void startCastClient(ResourceLocation abilityId, int castTicks) {
@@ -138,6 +138,20 @@ public class AbilityExecutor {
         } else {
             clearCastingAbility();
         }
+    }
+
+    public void interruptCast() {
+        if (!isCasting())
+            return;
+
+        if (currentCast.getAbility().isInterruptible()) {
+            currentCast.interrupt();
+            clearCastingAbility();
+        }
+    }
+
+    protected void onAbilityInterrupted(MKAbility ability, int ticks) {
+        MKCore.LOGGER.info("onAbilityInterrupted {} {}", ability, ticks);
     }
 
     private void updateCurrentCast() {
@@ -166,8 +180,6 @@ public class AbilityExecutor {
             return false;
         }
 
-        consumeResource(ability);
-
         int castTime = entityData.getStats().getAbilityCastTime(ability);
         startCast(context, info, castTime);
         if (castTime > 0) {
@@ -180,6 +192,7 @@ public class AbilityExecutor {
 
     protected void completeAbility(MKAbility ability, MKAbilityInfo info, AbilityContext context) {
         // Finish the cast
+        consumeResource(ability);
         ability.endCast(entityData.getEntity(), entityData, context);
         if (completeAbilityCallback != null){
             completeAbilityCallback.accept(ability);
@@ -225,6 +238,10 @@ public class AbilityExecutor {
             return castTicks;
         }
 
+        public MKAbility getAbility() {
+            return ability;
+        }
+
         public ResourceLocation getAbilityId() {
             return ability.getAbilityId();
         }
@@ -254,6 +271,10 @@ public class AbilityExecutor {
         abstract void activeTick();
 
         abstract void finish();
+
+        void interrupt() {
+            executor.onAbilityInterrupted(ability, castTicks);
+        }
     }
 
     static class ServerCastingState extends EntityCastingState {
@@ -279,6 +300,13 @@ public class AbilityExecutor {
         void finish() {
             executor.completeAbility(ability, info, abilityContext);
         }
+
+        @Override
+        void interrupt() {
+            MKCore.LOGGER.info("server interrupt");
+            super.interrupt();
+            PacketHandler.sendToTrackingMaybeSelf(EntityCastPacket.interrupt(executor.entityData), executor.entityData.getEntity());
+        }
     }
 
     static class ClientCastingState extends EntityCastingState {
@@ -287,6 +315,13 @@ public class AbilityExecutor {
 
         public ClientCastingState(AbilityExecutor executor, MKAbility ability, int castTicks) {
             super(executor, ability, castTicks);
+        }
+
+        private void stopSound() {
+            if (playing && sound != null) {
+                Minecraft.getInstance().getSoundHandler().stop(sound);
+                playing = false;
+            }
         }
 
         @Override
@@ -307,13 +342,17 @@ public class AbilityExecutor {
 
         @Override
         void finish() {
-            if (playing && sound != null) {
-                Minecraft.getInstance().getSoundHandler().stop(sound);
-                playing = false;
-            }
+            stopSound();
             if (executor.completeAbilityCallback != null){
                 executor.completeAbilityCallback.accept(ability);
             }
+        }
+
+        @Override
+        public void interrupt() {
+            MKCore.LOGGER.info("client interrupt");
+            super.interrupt();
+            stopSound();
         }
     }
 
