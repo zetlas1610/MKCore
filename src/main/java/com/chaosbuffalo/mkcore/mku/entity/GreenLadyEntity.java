@@ -67,7 +67,7 @@ public class GreenLadyEntity extends MKEntity implements IAbilityTrainingEntity 
                 PacketHandler.sendMessage(new OpenLearnAbilitiesGuiPacket(playerData, abilityTrainer), (ServerPlayerEntity) player);
             });
         }
-        return ActionResultType.PASS;
+        return ActionResultType.SUCCESS;
     }
 
 

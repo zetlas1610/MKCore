@@ -154,6 +154,10 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         castTime = castTicks;
     }
 
+    public boolean canApplyCastingSpeedModifier() {
+        return true;
+    }
+
     public float getDistance() {
         return 1.0f;
     }

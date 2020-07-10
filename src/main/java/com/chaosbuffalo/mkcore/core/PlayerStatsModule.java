@@ -174,7 +174,7 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
     @Override
     public int getAbilityCastTime(MKAbility ability) {
         int ticks = ability.getCastTime(playerData);
-        return MKCombatFormulas.applyCastTimeReduction(playerData, ticks);
+        return ability.canApplyCastingSpeedModifier() ? MKCombatFormulas.applyCastTimeModifier(playerData, ticks) : ticks;
     }
 
     @Override
