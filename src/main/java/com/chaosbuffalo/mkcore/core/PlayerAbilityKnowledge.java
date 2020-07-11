@@ -16,8 +16,9 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 
-public class PlayerAbilityKnowledge extends PlayerSyncComponent {
+public class PlayerAbilityKnowledge implements IPlayerSyncComponentProvider {
     private final MKPlayerData playerData;
+    private final PlayerSyncComponent sync = new PlayerSyncComponent("abilities");
     private final Map<ResourceLocation, MKAbilityInfo> abilityInfoMap = new HashMap<>();
     private final SyncMapUpdater<ResourceLocation, MKAbilityInfo> abilityUpdater =
             new SyncMapUpdater<>("known",
@@ -28,9 +29,13 @@ public class PlayerAbilityKnowledge extends PlayerSyncComponent {
             );
 
     public PlayerAbilityKnowledge(MKPlayerData playerData) {
-        super("abilities");
         this.playerData = playerData;
-        addPrivate(abilityUpdater);
+        addSyncPrivate(abilityUpdater);
+    }
+
+    @Override
+    public PlayerSyncComponent getSyncComponent() {
+        return sync;
     }
 
     @Nullable

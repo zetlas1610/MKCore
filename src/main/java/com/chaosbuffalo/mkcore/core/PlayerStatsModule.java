@@ -3,7 +3,6 @@ package com.chaosbuffalo.mkcore.core;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
 import com.chaosbuffalo.mkcore.sync.SyncFloat;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -11,19 +10,21 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
 
-public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModule {
-    private final MKPlayerData playerData;
-    private float regenTime;
-    private final AbilityTracker abilityTracker;
+public class PlayerStatsModule extends EntityStatsModule implements IStatsModule, IPlayerSyncComponentProvider {
+    private final PlayerSyncComponent sync = new PlayerSyncComponent("stats");
+    private float manaRegenTimer;
     private final SyncFloat mana = new SyncFloat("mana", 0f);
 
     public PlayerStatsModule(MKPlayerData playerData) {
-        super("stats");
-        this.playerData = playerData;
-        regenTime = 0f;
-        addPublic(mana);
-        abilityTracker = AbilityTracker.getTracker(playerData.getEntity());
-        addPrivate(abilityTracker);
+        super(playerData);
+        manaRegenTimer = 0f;
+        addSyncPublic(mana);
+        addSyncPrivate(abilityTracker);
+    }
+
+    @Override
+    public PlayerSyncComponent getSyncComponent() {
+        return sync;
     }
 
     public float getCritChanceForDamageType(MKDamageType damageType) {
@@ -32,11 +33,6 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
 
     public float getCritMultiplierForDamageType(MKDamageType damageType) {
         return damageType.getCritMultiplier(getEntity(), null);
-    }
-
-    @Override
-    public float getDamageTypeBonus(MKDamageType damageType) {
-        return (float) getEntity().getAttribute(damageType.getDamageAttribute()).getValue();
     }
 
     public float getDamageMultiplierForDamageType(MKDamageType damageType) {
@@ -68,26 +64,6 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
         return (float) getEntity().getAttribute(MKAttributes.MELEE_CRIT_MULTIPLIER).getValue();
     }
 
-    @Override
-    public float getHealBonus() {
-        return (float) getEntity().getAttribute(MKAttributes.HEAL_BONUS).getValue();
-    }
-
-    @Override
-    public float getHealth() {
-        return getEntity().getHealth();
-    }
-
-    @Override
-    public void setHealth(float value) {
-        getEntity().setHealth(value);
-    }
-
-    @Override
-    public float getMaxHealth() {
-        return getEntity().getMaxHealth();
-    }
-
     public float getMana() {
         return mana.get();
     }
@@ -115,7 +91,7 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
     }
 
     public void tick() {
-        abilityTracker.tick();
+        super.tick();
         updateMana();
     }
 
@@ -131,11 +107,11 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
         if (getMana() == max)
             return;
 
-        regenTime += 1 / 20f;
+        manaRegenTimer += 1 / 20f;
 
         // if getManaRegenRate == 1, this is 1 mana per 3 seconds
         float i_regen = 3.0f / getManaRegenRate();
-        while (regenTime >= i_regen) {
+        while (manaRegenTimer >= i_regen) {
             float current = getMana();
             if (current < max) {
 //                MKCore.LOGGER.info("regen {} {} {}", regenTime, i_regen, current);
@@ -143,7 +119,7 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
                 float newValue = current + 1;
                 setMana(newValue, newValue == max);
             }
-            regenTime -= i_regen;
+            manaRegenTimer -= i_regen;
         }
     }
 
@@ -160,21 +136,9 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
         return true;
     }
 
-    @Override
-    public int getAbilityCooldown(MKAbility ability) {
-        int ticks = ability.getCooldown(playerData);
-        return MKCombatFormulas.applyCooldownReduction(playerData, ticks);
-    }
-
     public float getAbilityManaCost(MKAbility ability) {
-        float manaCost = ability.getManaCost(playerData);
-        return MKCombatFormulas.applyManaCostReduction(playerData, manaCost);
-    }
-
-    @Override
-    public int getAbilityCastTime(MKAbility ability) {
-        int ticks = ability.getCastTime(playerData);
-        return ability.canApplyCastingSpeedModifier() ? MKCombatFormulas.applyCastTimeModifier(playerData, ticks) : ticks;
+        float manaCost = ability.getManaCost(entityData);
+        return MKCombatFormulas.applyManaCostReduction(entityData, manaCost);
     }
 
     @Override
@@ -182,20 +146,6 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
         if (getMana() < getAbilityManaCost(ability))
             return false;
         return true;
-    }
-
-    @Override
-    public void setTimer(ResourceLocation id, int cooldown) {
-        if (cooldown > 0) {
-            abilityTracker.setCooldown(id, cooldown);
-        } else {
-            abilityTracker.removeCooldown(id);
-        }
-    }
-
-    @Override
-    public int getTimer(ResourceLocation id) {
-        return abilityTracker.getCooldownTicks(id);
     }
 
     public float getTimerPercent(ResourceLocation abilityId, float partialTicks) {
@@ -213,16 +163,6 @@ public class PlayerStatsModule extends PlayerSyncComponent implements IStatsModu
             getEntity().sendMessage(line);
         });
     }
-
-    @Override
-    public void resetAllTimers() {
-        abilityTracker.removeAll();
-    }
-
-    private PlayerEntity getEntity() {
-        return playerData.getEntity();
-    }
-
 
     @Override
     public void serialize(CompoundNBT nbt) {

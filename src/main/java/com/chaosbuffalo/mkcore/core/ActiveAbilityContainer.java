@@ -18,8 +18,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
-public class ActiveAbilityContainer extends PlayerSyncComponent implements IActiveAbilityContainer {
+public class ActiveAbilityContainer implements IActiveAbilityContainer, IPlayerSyncComponentProvider {
     protected final MKPlayerData playerData;
+    protected final PlayerSyncComponent sync;
     protected final String name;
     private final List<ResourceLocation> activeAbilities;
     private final SyncListUpdater<ResourceLocation> activeUpdater;
@@ -27,15 +28,20 @@ public class ActiveAbilityContainer extends PlayerSyncComponent implements IActi
     protected final MKAbility.AbilityType type;
 
     public ActiveAbilityContainer(MKPlayerData playerData, String name, MKAbility.AbilityType type, int defaultSize, int max) {
-        super(name);
+        sync = new PlayerSyncComponent(name);
         this.playerData = playerData;
         this.name = name;
         this.type = type;
         activeAbilities = NonNullList.withSize(max, MKCoreRegistry.INVALID_ABILITY);
         activeUpdater = new ResourceListUpdater("active", () -> activeAbilities);
         slots = new SyncInt("slots", defaultSize);
-        addPrivate(activeUpdater);
-        addPrivate(slots);
+        addSyncPrivate(activeUpdater);
+        addSyncPrivate(slots);
+    }
+
+    @Override
+    public PlayerSyncComponent getSyncComponent() {
+        return sync;
     }
 
     public MKAbility.AbilityType getType() {

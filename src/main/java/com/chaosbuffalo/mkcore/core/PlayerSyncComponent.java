@@ -33,19 +33,19 @@ public class PlayerSyncComponent {
         children.forEach(c -> c.detach(engine));
     }
 
-    protected void addChild(PlayerSyncComponent component) {
+    public void addChild(PlayerSyncComponent component) {
         children.add(component);
     }
 
-    protected void addPublic(ISyncObject syncObject) {
+    public void addPublic(ISyncObject syncObject) {
         publicUpdater.add(syncObject);
     }
 
-    protected void addPrivate(ISyncObject syncObject) {
+    public void addPrivate(ISyncObject syncObject) {
         addPrivate(syncObject, false);
     }
 
-    protected void addPrivate(ISyncObject syncObject, boolean forceUpdate) {
+    public void addPrivate(ISyncObject syncObject, boolean forceUpdate) {
         privateUpdater.add(syncObject);
         if (forceUpdate) {
             privateUpdater.forceDirty();

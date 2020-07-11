@@ -3,6 +3,7 @@ package com.chaosbuffalo.mkcore.core.talents;
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.core.IPlayerSyncComponentProvider;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.core.PlayerSyncComponent;
 import com.chaosbuffalo.mkcore.sync.SyncGroup;
@@ -21,9 +22,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class PlayerTalentKnowledge extends PlayerSyncComponent {
+public class PlayerTalentKnowledge implements IPlayerSyncComponentProvider {
     private final MKPlayerData playerData;
-
+    private final PlayerSyncComponent sync = new PlayerSyncComponent("talents");
     private final SyncInt talentPoints = new SyncInt("points", 0);
     private final SyncInt totalTalentPoints = new SyncInt("totalPoints", 0);
     private final Map<ResourceLocation, TalentTreeRecord> talentTreeRecordMap = new HashMap<>();
@@ -32,18 +33,22 @@ public class PlayerTalentKnowledge extends PlayerSyncComponent {
     private final KnownTalentCache talentCache = new KnownTalentCache(this);
 
     public PlayerTalentKnowledge(MKPlayerData playerData) {
-        super("talents");
         this.playerData = playerData;
 
         passiveContainer = new PassiveTalentContainer(playerData, "passives");
         ultimateContainer = new UltimateTalentContainer(playerData, "ultimates");
-        addChild(passiveContainer);
-        addChild(ultimateContainer);
-        addPrivate(talentPoints);
-        addPrivate(totalTalentPoints);
+        addSyncChild(passiveContainer);
+        addSyncChild(ultimateContainer);
+        addSyncPrivate(talentPoints);
+        addSyncPrivate(totalTalentPoints);
         if (!playerData.isServerSide()) {
-            addPrivate(new ClientTreeSyncGroup());
+            addSyncPrivate(new ClientTreeSyncGroup());
         }
+    }
+
+    @Override
+    public PlayerSyncComponent getSyncComponent() {
+        return sync;
     }
 
     public int getTotalTalentPoints() {
@@ -85,7 +90,7 @@ public class PlayerTalentKnowledge extends PlayerSyncComponent {
     public boolean unlockTree(ResourceLocation treeId) {
         TalentTreeRecord record = unlockTreeInternal(treeId);
         if (record != null) {
-            addPrivate(record.getUpdater(), true);
+            sync.addPrivate(record.getUpdater(), true);
             return true;
         }
         return false;

@@ -184,7 +184,7 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
             super(playerData);
 
             setActivePersona(createNewPersona("client_persona"));
-            getActivePersona().getKnowledge().attach(playerData.getUpdateEngine());
+            getActivePersona().getKnowledge().getSyncComponent().attach(playerData.getUpdateEngine());
         }
     }
 
