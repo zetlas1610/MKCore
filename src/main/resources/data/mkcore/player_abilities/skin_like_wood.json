@@ -1,5 +1,6 @@
 {
-  "castTime": 0,
   "cooldown": 60,
-  "manaCost": 2.0
+  "manaCost": 2.0,
+  "castTime": 0,
+  "attributes": {}
 }
