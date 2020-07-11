@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkcore.abilities.attributes;
 
-import com.google.gson.JsonObject;
-import net.minecraft.nbt.CompoundNBT;
+import com.mojang.datafixers.Dynamic;
+import com.mojang.datafixers.types.DynamicOps;
 
 public class IntAttribute extends AbilityAttribute<Integer> {
 
@@ -10,23 +10,12 @@ public class IntAttribute extends AbilityAttribute<Integer> {
     }
 
     @Override
-    public CompoundNBT serialize() {
-        CompoundNBT nbt = new CompoundNBT();
-        nbt.putInt("value", getValue());
-        return nbt;
+    public <D> D serialize(DynamicOps<D> ops) {
+        return ops.createInt(getValue());
     }
 
     @Override
-    public void deserialize(CompoundNBT nbt) {
-        if (nbt.contains("value")) {
-            setValue(nbt.getInt("value"));
-        }
-    }
-
-    @Override
-    public void readFromDataPack(JsonObject obj) {
-        if (obj.has("value")) {
-            setValue(obj.get("value").getAsInt());
-        }
+    public <D> void deserialize(Dynamic<D> dynamic) {
+        setValue(dynamic.asInt(getDefaultValue()));
     }
 }

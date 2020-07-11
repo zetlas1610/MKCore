@@ -7,6 +7,8 @@ import com.chaosbuffalo.mkcore.network.PlayerAbilitiesSyncPacket;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.mojang.datafixers.Dynamic;
+import com.mojang.datafixers.types.JsonOps;
 import net.minecraft.client.resources.JsonReloadListener;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.profiler.IProfiler;
@@ -75,7 +77,7 @@ public class AbilityManager extends JsonReloadListener {
             MKCore.LOGGER.warn("Failed to parse ability data for : {}", abilityLoc);
             return false;
         }
-        ability.readFromDataPack(json);
+        ability.deserializeDynamic(new Dynamic<>(JsonOps.INSTANCE, json));
         return true;
     }
 }

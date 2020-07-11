@@ -54,7 +54,7 @@ public class DataGenerators {
                 String name = key.getPath().substring(8); // skip ability.
                 Path path = outputFolder.resolve("data/" + key.getNamespace() + "/player_abilities/" + name + ".json");
                 try {
-                    JsonElement element = new Dynamic<>(NBTDynamicOps.INSTANCE, ability.serialize()).convert(JsonOps.INSTANCE).getValue();
+                    JsonElement element = ability.serializeDynamic(JsonOps.INSTANCE);
                     IDataProvider.save(GSON, cache, element, path);
                 } catch (IOException e) {
                     MKCore.LOGGER.error("Couldn't write ability {}", path, e);
