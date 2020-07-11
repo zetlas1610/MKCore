@@ -2,10 +2,10 @@ package com.chaosbuffalo.mkcore.mku.entity.ai;
 
 import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.abilities.ai.BrainAbilityContext;
-import com.chaosbuffalo.mkcore.abilities.MKAbilityMemories;
 import com.chaosbuffalo.mkcore.abilities.AbilityContext;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.abilities.MKAbilityMemories;
+import com.chaosbuffalo.mkcore.abilities.ai.BrainAbilityContext;
 import com.chaosbuffalo.mkcore.mku.entity.MKEntity;
 import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKUMemoryModuleTypes;
 import net.minecraft.entity.LivingEntity;

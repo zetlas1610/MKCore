@@ -21,7 +21,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.ITextComponent;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.function.BiFunction;
 
 public abstract class AbilityPanelScreen extends MKScreen implements IPlayerDataAwareScreen {
@@ -50,7 +52,7 @@ public abstract class AbilityPanelScreen extends MKScreen implements IPlayerData
         setDoAbilityDrag(false);
     }
 
-    public boolean shouldAbilityDrag(){
+    public boolean shouldAbilityDrag() {
         return doAbilityDrag;
     }
 
@@ -58,11 +60,11 @@ public abstract class AbilityPanelScreen extends MKScreen implements IPlayerData
         this.doAbilityDrag = doAbilityDrag;
     }
 
-    protected MKLayout getRootLayout(int xPos, int yPos, int xOffset, int width, boolean addStateButtons){
+    protected MKLayout getRootLayout(int xPos, int yPos, int xOffset, int width, boolean addStateButtons) {
         MKLayout root = new MKLayout(xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
         root.setMargins(5, 5, 5, 5);
         root.setPaddingTop(5).setPaddingBot(5);
-        if (addStateButtons){
+        if (addStateButtons) {
             MKLayout statebuttons = getStateButtons(xPos + xOffset, yPos + 8, width);
             root.addWidget(statebuttons);
         }
@@ -78,7 +80,7 @@ public abstract class AbilityPanelScreen extends MKScreen implements IPlayerData
     @Override
     public void addRestoreStateCallbacks() {
         super.addRestoreStateCallbacks();
-        if (ability != null){
+        if (ability != null) {
             final MKAbility abilityInf = getAbility();
             addPostSetupCallback(() -> {
                 setAbility(abilityInf);
@@ -87,24 +89,24 @@ public abstract class AbilityPanelScreen extends MKScreen implements IPlayerData
         restoreScrollingPanelState();
     }
 
-    private MKLayout getStateButtons(int xPos, int yPos, int width){
+    private MKLayout getStateButtons(int xPos, int yPos, int width) {
         MKLayout layout = new MKStackLayoutHorizontal(xPos, yPos, 24);
         layout.setMarginLeft(4).setMarginRight(4).setMarginTop(2).setMarginBot(2)
                 .setPaddingLeft(2).setPaddingRight(2);
-        for (String state : states){
+        for (String state : states) {
             MKButton button = new MKButton(I18n.format(String.format("mkcore.gui.character.%s", state)));
             button.setWidth(60);
-            if (getState().equals(state)){
+            if (getState().equals(state)) {
                 button.setEnabled(false);
             }
             addPreDrawRunnable(() -> {
-                if (state.equals(getState())){
+                if (state.equals(getState())) {
                     button.setEnabled(false);
                 } else {
                     button.setEnabled(true);
                 }
             });
-            button.setPressedCallback((btn, mouseButton)-> {
+            button.setPressedCallback((btn, mouseButton) -> {
                 pushState(state);
                 return true;
             });
@@ -113,7 +115,7 @@ public abstract class AbilityPanelScreen extends MKScreen implements IPlayerData
         return layout;
     }
 
-    protected MKLayout createScrollingPanelWithContent(BiFunction<MKPlayerData, Integer, MKWidget> contentCreator){
+    protected MKLayout createScrollingPanelWithContent(BiFunction<MKPlayerData, Integer, MKWidget> contentCreator) {
         int xPos = width / 2 - PANEL_WIDTH / 2;
         int yPos = height / 2 - PANEL_HEIGHT / 2;
         MKLayout root = new MKLayout(xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
@@ -121,7 +123,7 @@ public abstract class AbilityPanelScreen extends MKScreen implements IPlayerData
         root.setPaddingTop(5).setPaddingBot(5);
         TextureRegion dataBoxRegion = GuiTextures.CORE_TEXTURES.getRegion(GuiTextures.DATA_BOX);
         int xOffset = GuiTextures.CORE_TEXTURES.getCenterXOffset(GuiTextures.DATA_BOX, GuiTextures.BACKGROUND_320_240);
-        if (minecraft == null || minecraft.player == null || dataBoxRegion == null){
+        if (minecraft == null || minecraft.player == null || dataBoxRegion == null) {
             return root;
         }
         MKLayout statebuttons = getStateButtons(xPos + xOffset, yPos + 8,
@@ -140,19 +142,19 @@ public abstract class AbilityPanelScreen extends MKScreen implements IPlayerData
         return root;
     }
 
-    protected void restoreScrollingPanelState(){
-        if (currentScrollingPanel != null){
+    protected void restoreScrollingPanelState() {
+        if (currentScrollingPanel != null) {
             double offsetX = currentScrollingPanel.getContentScrollView().getOffsetX();
             double offsetY = currentScrollingPanel.getContentScrollView().getOffsetY();
             double listOffsetX = currentScrollingPanel.getListScrollView().getOffsetX();
             double listOffsetY = currentScrollingPanel.getListScrollView().getOffsetY();
             addPostSetupCallback(() -> {
-                if (currentScrollingPanel != null){
+                if (currentScrollingPanel != null) {
                     currentScrollingPanel.getContentScrollView().setOffsetX(offsetX);
                     currentScrollingPanel.getContentScrollView().setOffsetY(offsetY);
                     currentScrollingPanel.getListScrollView().setOffsetX(listOffsetX);
                     currentScrollingPanel.getListScrollView().setOffsetY(listOffsetY);
-                    if (wasResized){
+                    if (wasResized) {
                         MKCore.LOGGER.info("Setting scrollviews back to top because resize");
                         currentScrollingPanel.getListScrollView().setToRight();
                         currentScrollingPanel.getListScrollView().setToTop();
@@ -184,7 +186,7 @@ public abstract class AbilityPanelScreen extends MKScreen implements IPlayerData
     }
 
     public ScrollingListPanelLayout getAbilityScrollPanel(int xPos, int yPos, int width, int height,
-                                                          MKPlayerData pData, List<MKAbility> abilities){
+                                                          MKPlayerData pData, List<MKAbility> abilities) {
         ScrollingListPanelLayout panel = new ScrollingListPanelLayout(
                 xPos, yPos, width, height);
         AbilityInfoWidget infoWidget = new AbilityInfoWidget(0, 0,
@@ -244,7 +246,7 @@ public abstract class AbilityPanelScreen extends MKScreen implements IPlayerData
         return ability;
     }
 
-    public void clearDragging(){
+    public void clearDragging() {
         this.dragging = null;
         isDraggingAbility = false;
     }

@@ -75,11 +75,11 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         setUseCondition(new StandardUseCondition(this));
     }
 
-    protected List<Object> getDescriptionArgs(IMKEntityData entityData){
+    protected List<Object> getDescriptionArgs(IMKEntityData entityData) {
         return new ArrayList<>();
     }
 
-    public List<ITextComponent> getDescriptionsForEntity(IMKEntityData entityData){
+    public List<ITextComponent> getDescriptionsForEntity(IMKEntityData entityData) {
         List<ITextComponent> descriptions = new ArrayList<>();
         descriptions.add(AbilityDescriptions.getManaCostDescription(this, entityData));
         descriptions.add(AbilityDescriptions.getCooldownDescription(this, entityData));
@@ -130,7 +130,7 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         return String.format("%s.%s.name", abilityId.getNamespace(), abilityId.getPath());
     }
 
-    public String getDescriptionTranslationKey(){
+    public String getDescriptionTranslationKey() {
         ResourceLocation abilityId = getRegistryName();
         return String.format("%s.%s.description", abilityId.getNamespace(), abilityId.getPath());
     }
@@ -254,7 +254,7 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         entityData.getAbilityExecutor().startAbility(context, this);
     }
 
-    public ITextComponent getTargetContextLocalization(){
+    public ITextComponent getTargetContextLocalization() {
         return new TranslationTextComponent("mkcore.ability_description.target_type",
                 getTargetContext().getLocalizedDescription());
     }

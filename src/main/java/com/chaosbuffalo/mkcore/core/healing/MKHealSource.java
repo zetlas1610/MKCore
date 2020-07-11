@@ -18,7 +18,7 @@ public class MKHealSource {
 
 
     public MKHealSource(ResourceLocation abilityId, Entity source, @Nullable Entity trueSourceIn,
-                        MKDamageType damageType, float modifierScaling){
+                        MKDamageType damageType, float modifierScaling) {
         this.trueSource = trueSourceIn;
         this.immediateSource = source;
         this.abilityId = abilityId;
@@ -28,12 +28,12 @@ public class MKHealSource {
     }
 
     public static MKHealSource getHolyHeal(ResourceLocation abilityId, Entity source,
-                                           @Nullable Entity trueSourceIn, float modifierScaling){
+                                           @Nullable Entity trueSourceIn, float modifierScaling) {
         return new MKHealSource(abilityId, source, trueSourceIn, ModDamageTypes.HolyDamage, modifierScaling);
     }
 
     public static MKHealSource getNatureHeal(ResourceLocation abilityId, Entity source,
-                                             @Nullable Entity trueSourceIn, float modifierScaling){
+                                             @Nullable Entity trueSourceIn, float modifierScaling) {
         return new MKHealSource(abilityId, source, trueSourceIn, ModDamageTypes.NatureDamage, modifierScaling);
     }
 

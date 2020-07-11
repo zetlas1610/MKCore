@@ -56,11 +56,11 @@ public class ScrollingListPanelLayout extends MKLayout {
         return contentScrollView;
     }
 
-    public void setList(IMKWidget widget){
+    public void setList(IMKWidget widget) {
         listScrollView.addWidget(widget);
     }
 
-    public void setContent(IMKWidget widget){
+    public void setContent(IMKWidget widget) {
         contentScrollView.addWidget(widget);
     }
 

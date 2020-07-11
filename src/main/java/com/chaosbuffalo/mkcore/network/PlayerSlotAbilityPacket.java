@@ -39,7 +39,7 @@ public class PlayerSlotAbilityPacket {
         NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             ServerPlayerEntity entity = ctx.getSender();
-            if (entity == null){
+            if (entity == null) {
                 return;
             }
             entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(playerData -> {

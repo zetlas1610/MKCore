@@ -22,8 +22,6 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class GreenLadyEntity extends MKEntity implements IAbilityTrainingEntity {

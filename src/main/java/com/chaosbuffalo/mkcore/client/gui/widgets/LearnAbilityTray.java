@@ -6,7 +6,6 @@ import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerLearnAbilityRequestPacket;
 import com.chaosbuffalo.mkwidgets.client.gui.constraints.LayoutRelativeWidthConstraint;
 import com.chaosbuffalo.mkwidgets.client.gui.instructions.HoveringTextInstruction;
-import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutHorizontal;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutVertical;
 import com.chaosbuffalo.mkwidgets.client.gui.math.Vec2i;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKButton;
@@ -65,7 +64,7 @@ public class LearnAbilityTray extends MKStackLayoutVertical {
             ArrayList<String> texts = unmetRequirements.stream()
                     .map(ITextComponent::getFormattedText)
                     .collect(Collectors.toCollection(ArrayList::new));
-            for (String text : texts){
+            for (String text : texts) {
                 MKText reqText = new MKText(font, text);
                 reqText.setMultiline(true);
                 reqlayout.addConstraintToWidget(new LayoutRelativeWidthConstraint(1.0f), reqText);

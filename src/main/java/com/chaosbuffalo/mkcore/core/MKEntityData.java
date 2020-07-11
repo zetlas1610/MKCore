@@ -62,7 +62,7 @@ public class MKEntityData implements IMKEntityData {
 
     @Override
     public void deserialize(CompoundNBT nbt) {
-        if (nbt.contains("knowledge")){
+        if (nbt.contains("knowledge")) {
             getKnowledge().deserialize(nbt.getCompound("knowledge"));
         }
     }

@@ -2,7 +2,6 @@ package com.chaosbuffalo.mkcore.client.gui.widgets;
 
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.client.gui.AbilityPanelScreen;
-import com.chaosbuffalo.mkcore.client.gui.CharacterScreen;
 import com.chaosbuffalo.mkwidgets.client.gui.actions.WidgetHoldingDragState;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKImage;
 import net.minecraft.client.Minecraft;
@@ -22,7 +21,7 @@ public class AbilityIconText extends IconText {
 
     @Override
     public boolean onMousePressed(Minecraft minecraft, double mouseX, double mouseY, int mouseButton) {
-        if (screen.shouldAbilityDrag()){
+        if (screen.shouldAbilityDrag()) {
             screen.setDragState(new WidgetHoldingDragState(new MKImage(0, 0, icon.getWidth(),
                     icon.getHeight(), icon.getImageLoc())), this);
             screen.setDragging(ability);

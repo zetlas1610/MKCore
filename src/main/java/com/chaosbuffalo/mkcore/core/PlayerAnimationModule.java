@@ -7,13 +7,14 @@ public class PlayerAnimationModule {
     private int castAnimTimer;
     private PlayerVisualCastState playerVisualCastState;
     private MKAbility castingAbility;
+
     public enum PlayerVisualCastState {
         NONE,
         CASTING,
         RELEASE,
     }
 
-    public PlayerAnimationModule(MKPlayerData playerData){
+    public PlayerAnimationModule(MKPlayerData playerData) {
         this.playerData = playerData;
         playerVisualCastState = PlayerVisualCastState.NONE;
         castAnimTimer = 0;
@@ -36,26 +37,26 @@ public class PlayerAnimationModule {
         return castAnimTimer;
     }
 
-    protected void updateEntityCastState(){
-        if (castAnimTimer > 0){
+    protected void updateEntityCastState() {
+        if (castAnimTimer > 0) {
             castAnimTimer--;
-            if (castAnimTimer == 0){
+            if (castAnimTimer == 0) {
                 castingAbility = null;
                 playerVisualCastState = PlayerVisualCastState.NONE;
             }
         }
     }
 
-    public void tick(){
+    public void tick() {
         updateEntityCastState();
     }
 
-    public void startCast(MKAbility ability){
+    public void startCast(MKAbility ability) {
         playerVisualCastState = PlayerVisualCastState.CASTING;
         castingAbility = ability;
     }
 
-    public void endCast(MKAbility ability){
+    public void endCast(MKAbility ability) {
         castingAbility = ability;
         playerVisualCastState = PlayerVisualCastState.RELEASE;
         castAnimTimer = 15;

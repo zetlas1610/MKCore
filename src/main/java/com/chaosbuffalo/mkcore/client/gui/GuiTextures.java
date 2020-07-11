@@ -22,7 +22,7 @@ public class GuiTextures {
 
     static {
         CORE_TEXTURES.addTextureRegion(MANA_REGION, 326, 51, 3, 8);
-        CORE_TEXTURES.addTextureRegion(CAST_BAR_REGION,  326, 45, 50, 3);
+        CORE_TEXTURES.addTextureRegion(CAST_BAR_REGION, 326, 45, 50, 3);
         CORE_TEXTURES.addTextureRegion(ABILITY_BAR_ULT, 392, 0, 20, 20);
         CORE_TEXTURES.addTextureRegion(ABILITY_BAR_REG, 392, 22, 20, 20);
         CORE_TEXTURES.addTextureRegion(ABILITY_SLOT_REG, 326, 0, 20, 20);

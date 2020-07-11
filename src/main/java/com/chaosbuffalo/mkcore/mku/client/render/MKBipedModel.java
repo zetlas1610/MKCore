@@ -21,13 +21,13 @@ public class MKBipedModel<T extends MKEntity> extends BipedModel<T> {
                                   float ageInTicks, float netHeadYaw, float headPitch) {
         super.setRotationAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         AdditionalBipedAnimation<MKEntity> animation = getAdditionalAnimation(entityIn);
-        if (animation != null){
+        if (animation != null) {
             animation.apply(entityIn);
         }
     }
 
-    public AdditionalBipedAnimation<MKEntity> getAdditionalAnimation(T entityIn){
-        switch (entityIn.getVisualCastState()){
+    public AdditionalBipedAnimation<MKEntity> getAdditionalAnimation(T entityIn) {
+        switch (entityIn.getVisualCastState()) {
             case CASTING:
                 return castAnimation;
             case RELEASE:

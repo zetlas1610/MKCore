@@ -1,13 +1,10 @@
 package com.chaosbuffalo.mkcore.client.gui;
 
 import com.chaosbuffalo.mkcore.Capabilities;
-import com.chaosbuffalo.mkcore.GameConstants;
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.client.gui.widgets.LearnAbilityTray;
 import com.chaosbuffalo.mkcore.client.gui.widgets.ScrollingListPanelLayout;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKLayout;
-import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKText;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKWidget;
 import com.chaosbuffalo.mkwidgets.utils.TextureRegion;
 import net.minecraft.util.text.ITextComponent;
@@ -52,7 +49,7 @@ public class LearnAbilitiesScreen extends AbilityPanelScreen {
             int contentY = yPos + DATA_BOX_OFFSET;
             int contentWidth = dataBoxRegion.width;
             int contentHeight = dataBoxRegion.height;
-            LearnAbilityTray tray = new LearnAbilityTray(contentX, yPos + 3,  contentWidth, pData, font, entityId);
+            LearnAbilityTray tray = new LearnAbilityTray(contentX, yPos + 3, contentWidth, pData, font, entityId);
             abilityTray = tray;
             root.addWidget(tray);
             ScrollingListPanelLayout panel = getAbilityScrollPanel(contentX, contentY,

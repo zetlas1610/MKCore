@@ -15,9 +15,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
@@ -90,8 +88,8 @@ public class MKCore {
         return playerEntity.getCapability(Capabilities.PLAYER_CAPABILITY);
     }
 
-    public static LazyOptional<? extends IMKEntityData> getEntityData(Entity entity){
-        if (entity instanceof PlayerEntity){
+    public static LazyOptional<? extends IMKEntityData> getEntityData(Entity entity) {
+        if (entity instanceof PlayerEntity) {
             return entity.getCapability(Capabilities.PLAYER_CAPABILITY);
         } else {
             return entity.getCapability(Capabilities.ENTITY_CAPABILITY);

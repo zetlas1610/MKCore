@@ -3,7 +3,6 @@ package com.chaosbuffalo.mkcore.client.gui.widgets;
 import com.chaosbuffalo.mkcore.client.gui.CharacterScreen;
 import com.chaosbuffalo.mkcore.client.gui.constraints.CenterYWithOffsetConstraint;
 import com.chaosbuffalo.mkcore.core.talents.TalentTreeRecord;
-import com.chaosbuffalo.mkwidgets.client.gui.constraints.CenterYConstraint;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutHorizontal;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKText;
 import net.minecraft.client.Minecraft;
@@ -42,10 +41,10 @@ public class TalentListEntry extends MKStackLayoutHorizontal {
 
     @Override
     public void postDraw(Minecraft mc, int x, int y, int width, int height, int mouseX, int mouseY, float partialTicks) {
-        if (isHovered()){
+        if (isHovered()) {
             mkFill(x, y, x + width, y + height, 0x55ffffff);
         }
-        if (record.equals(screen.getCurrentTree())){
+        if (record.equals(screen.getCurrentTree())) {
             mkFill(x, y, x + width, y + height, 0x99ffffff);
         }
     }

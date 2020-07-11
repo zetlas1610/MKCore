@@ -14,7 +14,9 @@ import com.chaosbuffalo.mkwidgets.client.gui.constraints.LayoutRelativeWidthCons
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKLayout;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutHorizontal;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutVertical;
-import com.chaosbuffalo.mkwidgets.client.gui.widgets.*;
+import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKRectangle;
+import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKText;
+import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKWidget;
 import com.chaosbuffalo.mkwidgets.utils.TextureRegion;
 import com.google.common.collect.Sets;
 import net.minecraft.client.resources.I18n;
@@ -35,11 +37,12 @@ public class CharacterScreen extends AbilityPanelScreen {
     private TalentTreeRecord currentTree;
     private ScrollingListPanelLayout talentScrollPanel;
     private static final ArrayList<IAttribute> STAT_PANEL_ATTRIBUTES = new ArrayList<>();
+
     public static class AbilitySlotKey {
         public MKAbility.AbilityType type;
         public int slot;
 
-        public AbilitySlotKey(MKAbility.AbilityType type, int index){
+        public AbilitySlotKey(MKAbility.AbilityType type, int index) {
             this.type = type;
             this.slot = index;
         }
@@ -51,19 +54,20 @@ public class CharacterScreen extends AbilityPanelScreen {
 
         @Override
         public boolean equals(Object other) {
-            if (other instanceof AbilitySlotKey){
-                AbilitySlotKey otherKey = (AbilitySlotKey)other;
+            if (other instanceof AbilitySlotKey) {
+                AbilitySlotKey otherKey = (AbilitySlotKey) other;
                 return slot == otherKey.slot && type.equals(otherKey.type);
             }
             return false;
         }
     }
+
     private final Map<AbilitySlotKey, AbilitySlotWidget> abilitySlots;
 
-    public List<AbilitySlotWidget> getSlotsForType(MKAbility.AbilityType slotType){
+    public List<AbilitySlotWidget> getSlotsForType(MKAbility.AbilityType slotType) {
         List<AbilitySlotWidget> widgets = new ArrayList<>();
-        for (AbilitySlotWidget slot : abilitySlots.values()){
-            if (slot.getSlotType().equals(slotType)){
+        for (AbilitySlotWidget slot : abilitySlots.values()) {
+            if (slot.getSlotType().equals(slotType)) {
                 widgets.add(slot);
             }
         }
@@ -99,7 +103,7 @@ public class CharacterScreen extends AbilityPanelScreen {
     }
 
     private MKWidget createStatList(MKPlayerData pData, int panelWidth, List<IAttribute> toDisplay) {
-        if (getMinecraft().player == null){
+        if (getMinecraft().player == null) {
             return null;
         }
         AbstractAttributeMap attributes = getMinecraft().player.getAttributes();
@@ -114,11 +118,11 @@ public class CharacterScreen extends AbilityPanelScreen {
         return stackLayout;
     }
 
-    private MKWidget createTalentsPage(){
+    private MKWidget createTalentsPage() {
         int xPos = width / 2 - PANEL_WIDTH / 2;
         int yPos = height / 2 - PANEL_HEIGHT / 2;
         TextureRegion dataBoxRegion = GuiTextures.CORE_TEXTURES.getRegion(GuiTextures.DATA_BOX);
-        if (minecraft == null || minecraft.player == null || dataBoxRegion == null){
+        if (minecraft == null || minecraft.player == null || dataBoxRegion == null) {
             return new MKLayout(xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
         }
         int xOffset = GuiTextures.CORE_TEXTURES.getCenterXOffset(
@@ -174,11 +178,11 @@ public class CharacterScreen extends AbilityPanelScreen {
     }
 
 
-    private MKWidget createAbilitiesPage(){
+    private MKWidget createAbilitiesPage() {
         int xPos = width / 2 - PANEL_WIDTH / 2;
         int yPos = height / 2 - PANEL_HEIGHT / 2;
         TextureRegion dataBoxRegion = GuiTextures.CORE_TEXTURES.getRegion(GuiTextures.DATA_BOX);
-        if (minecraft == null || minecraft.player == null || dataBoxRegion == null){
+        if (minecraft == null || minecraft.player == null || dataBoxRegion == null) {
             return new MKLayout(xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
         }
         int xOffset = GuiTextures.CORE_TEXTURES.getCenterXOffset(
@@ -227,7 +231,7 @@ public class CharacterScreen extends AbilityPanelScreen {
         return root;
     }
 
-    private MKWidget createDamageTypeList(MKPlayerData pData, int panelWidth){
+    private MKWidget createDamageTypeList(MKPlayerData pData, int panelWidth) {
         AbstractAttributeMap attributes = getMinecraft().player.getAttributes();
         MKStackLayoutVertical stackLayout = new MKStackLayoutVertical(0, 0, panelWidth);
         stackLayout.setMarginTop(4).setMarginBot(4).setPaddingTop(2).setMarginLeft(4)
@@ -235,8 +239,8 @@ public class CharacterScreen extends AbilityPanelScreen {
         stackLayout.doSetChildWidth(false);
         List<MKDamageType> damageTypes = new ArrayList<>(MKCoreRegistry.DAMAGE_TYPES.getValues());
         damageTypes.sort(Comparator.comparing(MKDamageType::getDisplayName));
-        for (MKDamageType damageType : damageTypes){
-            if (damageType.shouldDisplay()){
+        for (MKDamageType damageType : damageTypes) {
+            if (damageType.shouldDisplay()) {
                 IconText iconText = new IconText(0, 0, 16,
                         damageType.getDisplayName(), damageType.getIcon(), font, 16, 2);
                 iconText.getText().setColor(0xffffffff);
@@ -269,15 +273,15 @@ public class CharacterScreen extends AbilityPanelScreen {
                     attribute.getAttribute().getName())), attribute.getValue());
             textWidget.setText(newText);
             double baseValue = attribute.getBaseValue();
-            if (attr.equals(SharedMonsterAttributes.ATTACK_SPEED) && minecraft.player != null){
+            if (attr.equals(SharedMonsterAttributes.ATTACK_SPEED) && minecraft.player != null) {
                 ItemStack itemInHand = minecraft.player.getHeldItemMainhand();
-                if (!itemInHand.equals(ItemStack.EMPTY)){
-                    if (itemInHand.getAttributeModifiers(EquipmentSlotType.MAINHAND).containsKey(attr.getName())){
+                if (!itemInHand.equals(ItemStack.EMPTY)) {
+                    if (itemInHand.getAttributeModifiers(EquipmentSlotType.MAINHAND).containsKey(attr.getName())) {
                         Collection<AttributeModifier> itemAttackSpeed = itemInHand.getAttributeModifiers(EquipmentSlotType.MAINHAND)
                                 .get(attr.getName());
                         double attackSpeed = 4.0;
-                        for (AttributeModifier mod : itemAttackSpeed){
-                            if (mod.getOperation().equals(AttributeModifier.Operation.ADDITION)){
+                        for (AttributeModifier mod : itemAttackSpeed) {
+                            if (mod.getOperation().equals(AttributeModifier.Operation.ADDITION)) {
                                 attackSpeed += mod.getAmount();
                             }
                         }
@@ -293,15 +297,15 @@ public class CharacterScreen extends AbilityPanelScreen {
                 textWidget.setColor(BASE_COLOR);
             }
         });
-       return textWidget;
+        return textWidget;
     }
 
-    private MKLayout getLayoutOfAbilitySlots(int x, int y, MKAbility.AbilityType slotType, int count){
+    private MKLayout getLayoutOfAbilitySlots(int x, int y, MKAbility.AbilityType slotType, int count) {
         MKStackLayoutHorizontal layout = new MKStackLayoutHorizontal(x, y, 24);
         layout.setPaddings(2, 2, 0, 0);
         layout.setMargins(2, 2, 2, 2);
-        for (int i = 0; i < count; i++){
-            AbilitySlotWidget slot = new AbilitySlotWidget(0, 0, slotType, i,  this);
+        for (int i = 0; i < count; i++) {
+            AbilitySlotWidget slot = new AbilitySlotWidget(0, 0, slotType, i, this);
             abilitySlots.put(new AbilitySlotKey(slot.getSlotType(), slot.getSlotIndex()), slot);
             layout.addWidget(slot);
         }
@@ -312,9 +316,9 @@ public class CharacterScreen extends AbilityPanelScreen {
     @Override
     public void pushState(String newState) {
         super.pushState(newState);
-        if (newState.equals("talents")){
+        if (newState.equals("talents")) {
             currentScrollingPanel = talentScrollPanel;
-        } else if (newState.equals("abilities")){
+        } else if (newState.equals("abilities")) {
             currentScrollingPanel = abilitiesScrollPanel;
         }
     }
@@ -336,7 +340,7 @@ public class CharacterScreen extends AbilityPanelScreen {
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int mouseButton) {
         boolean handled = super.mouseReleased(mouseX, mouseY, mouseButton);
-        if (isDraggingAbility){
+        if (isDraggingAbility) {
             clearDragging();
             clearDragState();
             return true;
@@ -346,7 +350,7 @@ public class CharacterScreen extends AbilityPanelScreen {
 
     @Override
     public void clearDragging() {
-        for (AbilitySlotWidget widget : abilitySlots.values()){
+        for (AbilitySlotWidget widget : abilitySlots.values()) {
             widget.setBackgroundColor(0xffffffff);
             widget.setIconColor(0xffffffff);
         }
@@ -359,8 +363,8 @@ public class CharacterScreen extends AbilityPanelScreen {
         Set<MKAbility.AbilityType> types = Sets.newHashSet(MKAbility.AbilityType.Active, MKAbility.AbilityType.Passive,
                 MKAbility.AbilityType.Ultimate);
         types.remove(dragging.getType());
-        for (MKAbility.AbilityType type : types){
-            for (AbilitySlotWidget widget : getSlotsForType(type)){
+        for (MKAbility.AbilityType type : types) {
+            for (AbilitySlotWidget widget : getSlotsForType(type)) {
                 widget.setBackgroundColor(0xff555555);
                 widget.setIconColor(0xff555555);
             }
@@ -371,17 +375,17 @@ public class CharacterScreen extends AbilityPanelScreen {
     public void addRestoreStateCallbacks() {
         String state = getState();
         super.addRestoreStateCallbacks();
-        if (state.equals("abilities")){
+        if (state.equals("abilities")) {
             final MKAbility abilityInf = getAbility();
             addPostSetupCallback(() -> {
-                if (infoWidget != null){
+                if (infoWidget != null) {
                     infoWidget.setAbility(abilityInf);
                 }
             });
-        } else if (state.equals("talents")){
+        } else if (state.equals("talents")) {
             final TalentTreeRecord current = getCurrentTree();
             addPostSetupCallback(() -> {
-                if (talentTreeWidget != null){
+                if (talentTreeWidget != null) {
                     talentTreeWidget.setTreeRecord(current);
                 }
             });

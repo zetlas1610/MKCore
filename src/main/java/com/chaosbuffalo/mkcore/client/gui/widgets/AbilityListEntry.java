@@ -29,7 +29,7 @@ public class AbilityListEntry extends MKStackLayoutHorizontal {
         icon = new MKImage(0, 0, 16, 16, ability.getAbilityIcon()) {
             @Override
             public boolean onMousePressed(Minecraft minecraft, double mouseX, double mouseY, int mouseButton) {
-                if (screen.shouldAbilityDrag()){
+                if (screen.shouldAbilityDrag()) {
                     screen.setDragState(new WidgetHoldingDragState(new MKImage(0, 0, icon.getWidth(),
                             icon.getHeight(), icon.getImageLoc())), this);
                     screen.setDragging(ability);
@@ -50,10 +50,10 @@ public class AbilityListEntry extends MKStackLayoutHorizontal {
 
     @Override
     public void postDraw(Minecraft mc, int x, int y, int width, int height, int mouseX, int mouseY, float partialTicks) {
-        if (isHovered()){
+        if (isHovered()) {
             mkFill(x, y, x + width, y + height, 0x55ffffff);
         }
-        if (ability.equals(screen.getAbility())){
+        if (ability.equals(screen.getAbility())) {
             mkFill(x, y, x + width, y + height, 0x99ffffff);
         }
     }

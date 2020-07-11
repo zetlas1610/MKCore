@@ -33,16 +33,16 @@ public class EntityAbilityKnowledge implements IAbilityKnowledge, IMKSerializabl
         return Collections.unmodifiableCollection(abilityInfoMap.values());
     }
 
-    public void updatePriorityOrder(){
+    public void updatePriorityOrder() {
         priorityOrder = new ArrayList<>(getAbilities());
         priorityOrder.sort(Comparator.comparingInt((x) -> abilityPriorities.getOrDefault(x.getId(), 1)));
     }
 
-    public List<MKAbilityInfo> getAbilitiesPriorityOrder(){
+    public List<MKAbilityInfo> getAbilitiesPriorityOrder() {
         return priorityOrder;
     }
 
-    private boolean learnAbilityInternal(MKAbility ability){
+    private boolean learnAbilityInternal(MKAbility ability) {
         MKAbilityInfo info = getAbilityInfo(ability.getAbilityId());
         if (info == null) {
             info = ability.createAbilityInfo();
@@ -60,9 +60,9 @@ public class EntityAbilityKnowledge implements IAbilityKnowledge, IMKSerializabl
         return true;
     }
 
-    public boolean learnAbility(MKAbility ability, int priority){
+    public boolean learnAbility(MKAbility ability, int priority) {
         boolean ret = learnAbilityInternal(ability);
-        if (ret){
+        if (ret) {
             abilityPriorities.put(ability.getAbilityId(), priority);
             updatePriorityOrder();
         }
@@ -99,14 +99,14 @@ public class EntityAbilityKnowledge implements IAbilityKnowledge, IMKSerializabl
     @Override
     public void serialize(CompoundNBT tag) {
         CompoundNBT abilityInfos = new CompoundNBT();
-        for (Entry<ResourceLocation, MKAbilityInfo> entry : abilityInfoMap.entrySet()){
+        for (Entry<ResourceLocation, MKAbilityInfo> entry : abilityInfoMap.entrySet()) {
             CompoundNBT entryNbt = new CompoundNBT();
             entry.getValue().serialize(entryNbt);
             abilityInfos.put(entry.getKey().toString(), entryNbt);
         }
         tag.put("abilities", abilityInfos);
         CompoundNBT priorities = new CompoundNBT();
-        for (Entry<ResourceLocation, Integer> priortyEntry : abilityPriorities.entrySet()){
+        for (Entry<ResourceLocation, Integer> priortyEntry : abilityPriorities.entrySet()) {
             priorities.putInt(priortyEntry.getKey().toString(), priortyEntry.getValue());
         }
         tag.put("priorities", priorities);
@@ -122,21 +122,21 @@ public class EntityAbilityKnowledge implements IAbilityKnowledge, IMKSerializabl
 
     @Override
     public boolean deserialize(CompoundNBT tag) {
-        if (tag.contains("abilities")){
+        if (tag.contains("abilities")) {
             CompoundNBT abilityInfo = tag.getCompound("abilities");
-            for (String key : abilityInfo.keySet()){
+            for (String key : abilityInfo.keySet()) {
                 ResourceLocation loc = new ResourceLocation(key);
                 MKAbilityInfo info = createAbilityInfo(loc);
-                if (info != null){
-                    if (info.deserialize(abilityInfo.getCompound(key))){
+                if (info != null) {
+                    if (info.deserialize(abilityInfo.getCompound(key))) {
                         abilityInfoMap.put(loc, info);
                     }
                 }
             }
         }
-        if (tag.contains("priorities")){
+        if (tag.contains("priorities")) {
             CompoundNBT priorityInfo = tag.getCompound("priorities");
-            for (String key : priorityInfo.keySet()){
+            for (String key : priorityInfo.keySet()) {
                 ResourceLocation loc = new ResourceLocation(key);
                 abilityPriorities.put(loc, priorityInfo.getInt(key));
             }

@@ -13,6 +13,7 @@ public class MKConfig {
     private static final ForgeConfigSpec CLIENT_SPEC;
     public static final Server SERVER;
     private static final ForgeConfigSpec SERVER_SPEC;
+
     static {
         final Pair<Client, ForgeConfigSpec> clientSpecPair = new ForgeConfigSpec.Builder().configure(Client::new);
         CLIENT_SPEC = clientSpecPair.getRight();
