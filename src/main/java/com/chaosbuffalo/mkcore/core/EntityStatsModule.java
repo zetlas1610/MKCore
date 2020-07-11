@@ -31,6 +31,11 @@ public class EntityStatsModule implements IStatsModule {
     }
 
     @Override
+    public float getBuffDurationModifier() {
+        return (float) getEntity().getAttribute(MKAttributes.BUFF_DURATION).getValue();
+    }
+
+    @Override
     public float getHealth() {
         return getEntity().getHealth();
     }

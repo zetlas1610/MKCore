@@ -1,8 +1,6 @@
 package com.chaosbuffalo.mkcore.core;
 
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.MKCoreRegistry;
-import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
 import com.chaosbuffalo.mkcore.core.talents.PlayerTalentModule;
 import com.chaosbuffalo.mkcore.sync.UpdateEngine;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
@@ -66,18 +64,13 @@ public class MKPlayerData implements IMKEntityData {
 
     private void registerAttributes() {
         AbstractAttributeMap attributes = player.getAttributes();
+        MKAttributes.registerEntityAttributes(attributes);
         attributes.registerAttribute(MKAttributes.MAX_MANA);
         attributes.registerAttribute(MKAttributes.MANA_REGEN);
-        attributes.registerAttribute(MKAttributes.COOLDOWN);
-        attributes.registerAttribute(MKAttributes.CASTING_SPEED);
         attributes.registerAttribute(MKAttributes.MELEE_CRIT);
         attributes.registerAttribute(MKAttributes.MELEE_CRIT_MULTIPLIER);
         attributes.registerAttribute(MKAttributes.SPELL_CRIT);
         attributes.registerAttribute(MKAttributes.SPELL_CRIT_MULTIPLIER);
-        attributes.registerAttribute(MKAttributes.HEAL_BONUS);
-        for (MKDamageType damageType : MKCoreRegistry.DAMAGE_TYPES.getValues()) {
-            damageType.addAttributes(attributes);
-        }
     }
 
     public void onJoinWorld() {

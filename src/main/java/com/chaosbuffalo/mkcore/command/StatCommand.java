@@ -30,8 +30,9 @@ public class StatCommand {
                 .then(createSimpleFloatStat("health", PlayerStatsModule::getHealth, PlayerStatsModule::setHealth))
                 .then(createAttributeStat("max_health", SharedMonsterAttributes.MAX_HEALTH))
                 .then(createAttributeStat("armor", SharedMonsterAttributes.ARMOR))
-                .then(createAttributeStat("manaregen", MKAttributes.MANA_REGEN))
-                .then(createAttributeStat("maxmana", MKAttributes.MAX_MANA))
+                .then(createAttributeStat("armor_toughness", SharedMonsterAttributes.ARMOR_TOUGHNESS))
+                .then(createAttributeStat("mana_regen", MKAttributes.MANA_REGEN))
+                .then(createAttributeStat("max_mana", MKAttributes.MAX_MANA))
                 .then(createAttributeStat("cdr", MKAttributes.COOLDOWN))
                 .then(createAttributeStat("melee_crit", MKAttributes.MELEE_CRIT))
                 .then(createAttributeStat("melee_crit_multiplier", MKAttributes.MELEE_CRIT_MULTIPLIER))
@@ -59,6 +60,7 @@ public class StatCommand {
                 .then(createAttributeStat("ranged_crit_multiplier", MKAttributes.RANGED_CRIT_MULTIPLIER))
                 .then(createAttributeStat("ranged_resist", MKAttributes.RANGED_RESISTANCE))
                 .then(createAttributeStat("cast_speed", MKAttributes.CASTING_SPEED))
+                .then(createAttributeStat("buff_duration", MKAttributes.BUFF_DURATION))
                 ;
     }
 

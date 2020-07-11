@@ -79,6 +79,7 @@ public class CharacterScreen extends AbilityPanelScreen {
         STAT_PANEL_ATTRIBUTES.add(SharedMonsterAttributes.ARMOR_TOUGHNESS);
         STAT_PANEL_ATTRIBUTES.add(SharedMonsterAttributes.ATTACK_DAMAGE);
         STAT_PANEL_ATTRIBUTES.add(MKAttributes.HEAL_BONUS);
+        STAT_PANEL_ATTRIBUTES.add(MKAttributes.BUFF_DURATION);
         STAT_PANEL_ATTRIBUTES.add(SharedMonsterAttributes.ATTACK_SPEED);
         STAT_PANEL_ATTRIBUTES.add(SharedMonsterAttributes.MOVEMENT_SPEED);
         STAT_PANEL_ATTRIBUTES.add(MKAttributes.COOLDOWN);

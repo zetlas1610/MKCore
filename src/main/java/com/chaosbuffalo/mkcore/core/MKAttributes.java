@@ -1,5 +1,8 @@
 package com.chaosbuffalo.mkcore.core;
 
+import com.chaosbuffalo.mkcore.MKCoreRegistry;
+import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
+import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 
 public class MKAttributes {
@@ -62,6 +65,10 @@ public class MKAttributes {
 
     public static final RangedAttribute CASTING_SPEED = (RangedAttribute) new RangedAttribute(null, "mk.casting_speed", 1, 0.25, 1.5)
             .setDescription("Casting Speed")
+            .setShouldWatch(true);
+
+    public static final RangedAttribute BUFF_DURATION = (RangedAttribute) new RangedAttribute(null, "mk.buff_duration", 1.0, 0.0, 5.0)
+            .setDescription("Buff Duration")
             .setShouldWatch(true);
 
     public static final RangedAttribute ELEMENTAL_RESISTANCE = (RangedAttribute) new RangedAttribute(null, "mk.elemental_resistance", 0, -1.0, 1.0)
@@ -127,4 +134,14 @@ public class MKAttributes {
     public static final RangedAttribute POISON_DAMAGE = (RangedAttribute) new RangedAttribute(null, "mk.poison_damage", 0, 0, 2048)
             .setDescription("Poison Damage")
             .setShouldWatch(true);
+
+    public static void registerEntityAttributes(AbstractAttributeMap attributes) {
+        attributes.registerAttribute(MKAttributes.COOLDOWN);
+        attributes.registerAttribute(MKAttributes.CASTING_SPEED);
+        attributes.registerAttribute(MKAttributes.HEAL_BONUS);
+        attributes.registerAttribute(MKAttributes.BUFF_DURATION);
+        for (MKDamageType damageType : MKCoreRegistry.DAMAGE_TYPES.getValues()) {
+            damageType.addAttributes(attributes);
+        }
+    }
 }

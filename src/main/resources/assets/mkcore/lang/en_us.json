@@ -19,6 +19,7 @@
   "attribute.name.mk.ranged_crit_multiplier": "Ranged Crit Multiplier",
   "attribute.name.mk.cooldown_rate": "Cooldown Rate",
   "attribute.name.mk.heal_bonus": "Heal Bonus",
+  "attribute.name.mk.buff_duration": "Buff Duration",
   "attribute.name.mk.casting_speed": "Casting Speed",
   "attribute.name.mk.elemental_damage": "Elemental Damage",
   "attribute.name.mk.elemental_resistance": "Elemental Resistance",

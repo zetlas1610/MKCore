@@ -11,6 +11,8 @@ public interface IStatsModule {
 
     float getHealBonus();
 
+    float getBuffDurationModifier();
+
     float getHealth();
 
     void setHealth(float value);
