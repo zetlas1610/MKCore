@@ -4,10 +4,13 @@ import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerLearnAbilityRequestPacket;
+import com.chaosbuffalo.mkwidgets.client.gui.constraints.LayoutRelativeWidthConstraint;
 import com.chaosbuffalo.mkwidgets.client.gui.instructions.HoveringTextInstruction;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutHorizontal;
+import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutVertical;
 import com.chaosbuffalo.mkwidgets.client.gui.math.Vec2i;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKButton;
+import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKScrollView;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKText;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -17,32 +20,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class LearnAbilityTray extends MKStackLayoutHorizontal {
+public class LearnAbilityTray extends MKStackLayoutVertical {
     private MKAbility ability;
     private List<ITextComponent> unmetRequirements;
     private final MKPlayerData playerData;
     private final FontRenderer font;
     private final int trainerEntityId;
 
-    public LearnAbilityTray(int x, int y, int height, MKPlayerData playerData, FontRenderer font, int trainerEntityId) {
-        super(x, y, height);
+    public LearnAbilityTray(int x, int y, int width, MKPlayerData playerData, FontRenderer font, int trainerEntityId) {
+        super(x, y, width);
         this.playerData = playerData;
         this.trainerEntityId = trainerEntityId;
         unmetRequirements = new ArrayList<>();
         this.font = font;
         this.ability = null;
-        setPaddingLeft(2);
-        setPaddingRight(2);
+        setPaddingTop(1);
+        setPaddingBot(1);
         setup();
     }
 
     public void setup() {
         clearWidgets();
         if (getAbility() != null) {
-            MKText abilityName = new MKText(font, getAbility().getAbilityName());
-            abilityName.setWidth(font.getStringWidth(getAbility().getAbilityName()));
+            IconText abilityName = new IconText(0, 0, 16, getAbility().getAbilityName(),
+                    getAbility().getAbilityIcon(), font, 16, 1);
             addWidget(abilityName);
-
             boolean isKnown = playerData.getKnowledge().getKnownAbilityInfo(getAbility().getAbilityId()) != null;
             boolean canLearn = unmetRequirements.isEmpty() && !isKnown;
             String knowText;
@@ -56,6 +58,24 @@ public class LearnAbilityTray extends MKStackLayoutHorizontal {
             MKText doesKnowWid = new MKText(font, knowText);
             doesKnowWid.setWidth(font.getStringWidth(knowText));
             addWidget(doesKnowWid);
+            MKScrollView reqScrollView = new MKScrollView(0, 0, getWidth(), 20,
+                    true);
+            MKStackLayoutVertical reqlayout = new MKStackLayoutVertical(0, 0, getWidth());
+            reqScrollView.addWidget(reqlayout);
+            ArrayList<String> texts = unmetRequirements.stream()
+                    .map(ITextComponent::getFormattedText)
+                    .collect(Collectors.toCollection(ArrayList::new));
+            for (String text : texts){
+                MKText reqText = new MKText(font, text);
+                reqText.setMultiline(true);
+                reqlayout.addConstraintToWidget(new LayoutRelativeWidthConstraint(1.0f), reqText);
+                reqlayout.addWidget(reqText);
+            }
+            reqlayout.manualRecompute();
+            addWidget(reqScrollView);
+            manualRecompute();
+            reqScrollView.setToTop();
+            reqScrollView.setToRight();
 
             MKButton learnButton = new MKButton(0, 0, "Learn") {
 
@@ -68,11 +88,10 @@ public class LearnAbilityTray extends MKStackLayoutHorizontal {
                 public void onMouseHover(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
                     super.onMouseHover(mc, mouseX, mouseY, partialTicks);
                     if (!isKnown && unmetRequirements.size() > 0) {
-                        ArrayList<String> texts = unmetRequirements.stream()
-                                .map(ITextComponent::getFormattedText)
-                                .collect(Collectors.toCollection(ArrayList::new));
                         if (getScreen() != null) {
-                            getScreen().addPostRenderInstruction(new HoveringTextInstruction(texts, getParentCoords(new Vec2i(mouseX, mouseY))));
+                            getScreen().addPostRenderInstruction(new HoveringTextInstruction(
+                                    "You do not meet the requirements to learn this ability.",
+                                    getParentCoords(new Vec2i(mouseX, mouseY))));
                         }
                     }
                 }
