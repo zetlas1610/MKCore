@@ -4,6 +4,7 @@ import com.chaosbuffalo.mkcore.MKConfig;
 import com.chaosbuffalo.mkcore.client.rendering.MKPlayerRenderer;
 import com.chaosbuffalo.mkcore.mku.client.render.GreenLadyRenderer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.SpriteRenderer;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 public class RenderRegistry {
@@ -12,6 +13,8 @@ public class RenderRegistry {
         RenderingRegistry.registerEntityRenderingHandler(
                 MKUEntityTypes.GREEN_LADY.get(),
                 GreenLadyRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(MKUEntityTypes.GEYSER_PROJECTILE.get(),
+                r -> new SpriteRenderer<>(r, Minecraft.getInstance().getItemRenderer()));
 
         if (MKConfig.CLIENT.enablePlayerCastAnimations.get()) {
             Minecraft.getInstance().getRenderManager().skinMap.put("default",

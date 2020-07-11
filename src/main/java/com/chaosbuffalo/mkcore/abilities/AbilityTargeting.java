@@ -30,6 +30,10 @@ public class AbilityTargeting {
             .setDescriptionKey("mkcore.ability_target.pbaoe")
             .addDescription(AbilityDescriptions::getRangeDescription);
 
+    public static AbilityTargetSelector PROJECTILE = new AbilityTargetSelector((entityData, mkAbility) -> AbilityContext.EMPTY)
+            .setDescriptionKey("mkcore.ability_target.projectile")
+            .addDescription(AbilityDescriptions::getRangeDescription);
+
 
     private static AbilityContext selectSelf(IMKEntityData entityData, MKAbility ability) {
         MKCore.LOGGER.info("AbilityTargeting.SELF {} {}", ability.getAbilityId(), entityData.getEntity());

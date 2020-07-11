@@ -143,6 +143,10 @@ public abstract class BaseProjectileEntity extends Entity implements IProjectile
         this.groundProcTime = newVal;
     }
 
+    public void setShooter(@Nullable Entity entityIn) {
+        this.shootingEntity = entityIn == null ? null : entityIn.getUniqueID();
+    }
+
     @OnlyIn(Dist.CLIENT)
     public boolean isInRangeToRenderDist(double distance) {
         double edgeLength = this.getBoundingBox().getAverageEdgeLength() * 10.0D;
