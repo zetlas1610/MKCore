@@ -22,6 +22,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.ITextComponent;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 public abstract class AbilityPanelScreen extends MKScreen implements IPlayerDataAwareScreen {
@@ -113,7 +114,8 @@ public abstract class AbilityPanelScreen extends MKScreen implements IPlayerData
         return layout;
     }
 
-    protected MKLayout createScrollingPanelWithContent(BiFunction<MKPlayerData, Integer, MKWidget> contentCreator){
+    protected MKLayout createScrollingPanelWithContent(BiFunction<MKPlayerData, Integer, MKWidget> contentCreator,
+                                                       BiConsumer<MKPlayerData, MKLayout> headerCreator){
         int xPos = width / 2 - PANEL_WIDTH / 2;
         int yPos = height / 2 - PANEL_HEIGHT / 2;
         MKLayout root = new MKLayout(xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
@@ -129,6 +131,11 @@ public abstract class AbilityPanelScreen extends MKScreen implements IPlayerData
         root.addWidget(statebuttons);
         minecraft.player.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent((pData) -> {
             // Stat Panel
+            MKLayout headerLayout = new MKLayout(xPos, statebuttons.getY() + statebuttons.getHeight(), PANEL_WIDTH,
+                    DATA_BOX_OFFSET - statebuttons.getHeight() - 8);
+            headerLayout.setMargins(4, 4, 0, 0);
+            headerCreator.accept(pData, headerLayout);
+            root.addWidget(headerLayout);
             MKScrollView scrollView = new MKScrollView(xPos + xOffset + 4,
                     yPos + DATA_BOX_OFFSET + 4,
                     dataBoxRegion.width - 8, dataBoxRegion.height - 8, true);

@@ -11,6 +11,7 @@ import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
 import com.chaosbuffalo.mkcore.core.talents.TalentTreeRecord;
 import com.chaosbuffalo.mkwidgets.client.gui.constraints.LayoutRelativeWidthConstraint;
+import com.chaosbuffalo.mkwidgets.client.gui.constraints.MarginConstraint;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKLayout;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutHorizontal;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutVertical;
@@ -319,6 +320,32 @@ public class CharacterScreen extends AbilityPanelScreen {
         }
     }
 
+    public void setupStatsHeader(MKPlayerData playerData, MKLayout layout){
+        MKStackLayoutVertical stackLayout = new MKStackLayoutVertical(0, 0, layout.getWidth());
+        layout.addConstraintToWidget(new MarginConstraint(MarginConstraint.MarginType.LEFT), stackLayout);
+        layout.addConstraintToWidget(new MarginConstraint(MarginConstraint.MarginType.TOP), stackLayout);
+        layout.addConstraintToWidget(new LayoutRelativeWidthConstraint(1.0f), stackLayout);
+        stackLayout.setMargins(4, 4, 4, 4);
+        stackLayout.setPaddingTop(2);
+        stackLayout.setPaddingBot(2);
+        layout.addWidget(stackLayout);
+        layout.manualRecompute();
+        String personaNameText = I18n.format("mkcore.gui.character.persona_name",
+                playerData.getPersonaManager().getActivePersona().getName());
+        MKText personaName = new MKText(font, personaNameText);
+        stackLayout.addWidget(personaName);
+        String healthText = I18n.format("mkcore.gui.character.current_health",
+                String.format("%.0f", playerData.getStats().getHealth()),
+                String.format("%.0f", playerData.getStats().getMaxHealth()));
+        MKText health = new MKText(font, healthText);
+        String manaText = I18n.format("mkcore.gui.character.current_mana",
+                String.format("%.0f", playerData.getStats().getMana()),
+                String.format("%.0f", playerData.getStats().getMaxMana()));
+        MKText mana = new MKText(font, manaText);
+        stackLayout.addWidget(health);
+        stackLayout.addWidget(mana);
+    }
+
     @Override
     public void setupScreen() {
         super.setupScreen();
@@ -326,8 +353,9 @@ public class CharacterScreen extends AbilityPanelScreen {
         currentScrollingPanel = null;
         talentTreeWidget = null;
         addState("stats", () -> createScrollingPanelWithContent((pData, width) ->
-                createStatList(pData, width, STAT_PANEL_ATTRIBUTES)));
-        addState("damages", () -> createScrollingPanelWithContent(this::createDamageTypeList));
+                createStatList(pData, width, STAT_PANEL_ATTRIBUTES), this::setupStatsHeader));
+        addState("damages", () -> createScrollingPanelWithContent(this::createDamageTypeList,
+                (pData, layout) -> {}));
         addState("abilities", this::createAbilitiesPage);
         addState("talents", this::createTalentsPage);
         pushState("stats");
