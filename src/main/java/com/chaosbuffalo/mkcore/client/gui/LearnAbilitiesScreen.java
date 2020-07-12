@@ -1,14 +1,11 @@
 package com.chaosbuffalo.mkcore.client.gui;
 
 import com.chaosbuffalo.mkcore.Capabilities;
-import com.chaosbuffalo.mkcore.GameConstants;
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
-import com.chaosbuffalo.mkcore.abilities.training.AbilityRequirementEntry;
+import com.chaosbuffalo.mkcore.abilities.training.AbilityRequirementEvaluation;
 import com.chaosbuffalo.mkcore.client.gui.widgets.LearnAbilityTray;
 import com.chaosbuffalo.mkcore.client.gui.widgets.ScrollingListPanelLayout;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKLayout;
-import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKText;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKWidget;
 import com.chaosbuffalo.mkwidgets.utils.TextureRegion;
 import net.minecraft.util.text.ITextComponent;
@@ -19,11 +16,11 @@ import java.util.List;
 import java.util.Map;
 
 public class LearnAbilitiesScreen extends AbilityPanelScreen {
-    private final Map<MKAbility, List<AbilityRequirementEntry>> abilities;
+    private final Map<MKAbility, List<AbilityRequirementEvaluation>> abilities;
     private final int entityId;
     private LearnAbilityTray abilityTray;
 
-    public LearnAbilitiesScreen(ITextComponent title, Map<MKAbility, List<AbilityRequirementEntry>> abilities, int entityId) {
+    public LearnAbilitiesScreen(ITextComponent title, Map<MKAbility, List<AbilityRequirementEvaluation>> abilities, int entityId) {
         super(title);
         this.abilities = abilities;
         this.entityId = entityId;

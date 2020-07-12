@@ -2,8 +2,7 @@ package com.chaosbuffalo.mkcore.network;
 
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
-import com.chaosbuffalo.mkcore.abilities.training.AbilityRequirementEntry;
-import com.chaosbuffalo.mkcore.abilities.training.IAbilityLearnRequirement;
+import com.chaosbuffalo.mkcore.abilities.training.AbilityRequirementEvaluation;
 import com.chaosbuffalo.mkcore.abilities.training.IAbilityTrainer;
 import com.chaosbuffalo.mkcore.client.gui.LearnAbilitiesScreen;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
@@ -23,7 +22,7 @@ import java.util.stream.Collectors;
 
 public class OpenLearnAbilitiesGuiPacket {
     private final int entityId;
-    private final Map<MKAbility, List<AbilityRequirementEntry>> abilityInfo;
+    private final Map<MKAbility, List<AbilityRequirementEvaluation>> abilityInfo;
 
     public OpenLearnAbilitiesGuiPacket(MKPlayerData playerData, IAbilityTrainer trainingEntity) {
         this.abilityInfo = new HashMap<>();
@@ -31,7 +30,7 @@ public class OpenLearnAbilitiesGuiPacket {
         trainingEntity.getTrainableAbilities(playerData).forEach(entry -> {
             abilityInfo.put(entry.getAbility(), entry.getRequirements()
                     .stream()
-                    .map(req -> new AbilityRequirementEntry(req.describe(),
+                    .map(req -> new AbilityRequirementEvaluation(req.describe(),
                             req.check(playerData, entry.getAbility())))
                     .collect(Collectors.toList())
             );
@@ -46,10 +45,10 @@ public class OpenLearnAbilitiesGuiPacket {
             ResourceLocation loc = buffer.readResourceLocation();
             MKAbility ability = MKCoreRegistry.getAbility(loc);
             if (ability != null) {
-                List<AbilityRequirementEntry> descriptions = new ArrayList<>();
+                List<AbilityRequirementEvaluation> descriptions = new ArrayList<>();
                 int descCount = buffer.readVarInt();
                 for (int j = 0; j < descCount; j++) {
-                    descriptions.add(new AbilityRequirementEntry(buffer.readTextComponent(), buffer.readBoolean()));
+                    descriptions.add(new AbilityRequirementEvaluation(buffer.readTextComponent(), buffer.readBoolean()));
                 }
                 abilityInfo.put(ability, descriptions);
             }
@@ -62,7 +61,7 @@ public class OpenLearnAbilitiesGuiPacket {
         abilityInfo.forEach((key, descriptions) -> {
             buffer.writeResourceLocation(key.getAbilityId());
             buffer.writeVarInt(descriptions.size());
-            for (AbilityRequirementEntry description : descriptions) {
+            for (AbilityRequirementEvaluation description : descriptions) {
                 buffer.writeTextComponent(description.requirementDescription);
                 buffer.writeBoolean(description.isMet);
             }

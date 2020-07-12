@@ -1,11 +1,10 @@
 package com.chaosbuffalo.mkcore.client.gui.widgets;
 
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
-import com.chaosbuffalo.mkcore.abilities.training.AbilityRequirementEntry;
+import com.chaosbuffalo.mkcore.abilities.training.AbilityRequirementEvaluation;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerLearnAbilityRequestPacket;
-import com.chaosbuffalo.mkwidgets.client.gui.constraints.HorizontalStackConstraint;
 import com.chaosbuffalo.mkwidgets.client.gui.constraints.LayoutRelativeWidthConstraint;
 import com.chaosbuffalo.mkwidgets.client.gui.instructions.HoveringTextInstruction;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutHorizontal;
@@ -16,7 +15,6 @@ import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKScrollView;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKText;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
@@ -26,7 +24,7 @@ import java.util.stream.Collectors;
 
 public class LearnAbilityTray extends MKStackLayoutVertical {
     private MKAbility ability;
-    private List<AbilityRequirementEntry> unmetRequirements;
+    private List<AbilityRequirementEvaluation> unmetRequirements;
     private final MKPlayerData playerData;
     private final FontRenderer font;
     private final int trainerEntityId;
@@ -124,7 +122,7 @@ public class LearnAbilityTray extends MKStackLayoutVertical {
         }
     }
 
-    public void setAbility(MKAbility ability, List<AbilityRequirementEntry> requirements) {
+    public void setAbility(MKAbility ability, List<AbilityRequirementEvaluation> requirements) {
         this.ability = ability;
         this.unmetRequirements = requirements;
         setup();
