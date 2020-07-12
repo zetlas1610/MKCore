@@ -20,7 +20,7 @@ public class IconText extends MKStackLayoutHorizontal {
         icon = new MKImage(0, 0, iconWidth, height, iconLoc);
         addWidget(icon);
         text = new MKText(font, textStr);
-        text.setWidth(100);
+        text.setWidth(font.getStringWidth(textStr));
         text.setColor(0xffffffff);
         addWidget(text);
         addConstraintToWidget(new CenterYWithOffsetConstraint(offset), text);

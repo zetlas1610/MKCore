@@ -11,6 +11,7 @@ import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
 import com.chaosbuffalo.mkcore.core.talents.TalentTreeRecord;
 import com.chaosbuffalo.mkwidgets.client.gui.constraints.LayoutRelativeWidthConstraint;
+import com.chaosbuffalo.mkwidgets.client.gui.constraints.MarginConstraint;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKLayout;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutHorizontal;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutVertical;
@@ -19,6 +20,8 @@ import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKText;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKWidget;
 import com.chaosbuffalo.mkwidgets.utils.TextureRegion;
 import com.google.common.collect.Sets;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
@@ -27,6 +30,13 @@ import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.CClientStatusPacket;
+import net.minecraft.stats.IStatFormatter;
+import net.minecraft.stats.Stat;
+import net.minecraft.stats.Stats;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.*;
@@ -324,14 +334,92 @@ public class CharacterScreen extends AbilityPanelScreen {
     }
 
     @Override
+    protected void init() {
+        super.init();
+        if (minecraft != null && minecraft.getConnection() != null){
+            minecraft.getConnection().sendPacket(new CClientStatusPacket(CClientStatusPacket.State.REQUEST_STATS));
+        }
+
+    }
+
+    private void addStatTextToLayout(MKLayout layout, ResourceLocation statName,
+                                     ClientPlayerEntity clientPlayer){
+        Stat<ResourceLocation> statType = Stats.CUSTOM.get(statName);
+        String formattedValue = statType.format(clientPlayer.getStats().getValue(Stats.CUSTOM, statName));
+        TranslationTextComponent statNameTranslated = new TranslationTextComponent("stat." +
+                statType.getValue().toString().replace(':', '.'));
+        MKText statText = new MKText(font, String.format("%s: %s", statNameTranslated.getFormattedText(), formattedValue));
+        layout.addWidget(statText);
+        addPreDrawRunnable(() -> {
+            String val = statType.format(clientPlayer.getStats().getValue(Stats.CUSTOM, statName));
+            statText.setText(String.format("%s: %s", statNameTranslated.getFormattedText(), val));
+        });
+    }
+
+    public void setupDamageHeader(MKPlayerData playerData, MKLayout layout){
+        MKStackLayoutVertical stackLayout = new MKStackLayoutVertical(0, 0, layout.getWidth());
+        layout.addConstraintToWidget(new MarginConstraint(MarginConstraint.MarginType.LEFT), stackLayout);
+        layout.addConstraintToWidget(new MarginConstraint(MarginConstraint.MarginType.TOP), stackLayout);
+        layout.addConstraintToWidget(new LayoutRelativeWidthConstraint(1.0f), stackLayout);
+        stackLayout.setMargins(4, 4, 4, 4);
+        stackLayout.setPaddingTop(2);
+        stackLayout.setPaddingBot(2);
+        layout.addWidget(stackLayout);
+        ClientPlayerEntity clientPlayer = Minecraft.getInstance().player;
+        if (clientPlayer != null){
+            addStatTextToLayout(stackLayout, Stats.DAMAGE_DEALT, clientPlayer);
+            addStatTextToLayout(stackLayout, Stats.DAMAGE_TAKEN, clientPlayer);
+            addStatTextToLayout(stackLayout, Stats.DAMAGE_RESISTED, clientPlayer);
+        }
+
+
+    }
+
+    public void setupStatsHeader(MKPlayerData playerData, MKLayout layout){
+        MKStackLayoutVertical stackLayout = new MKStackLayoutVertical(0, 0, layout.getWidth());
+        layout.addConstraintToWidget(new MarginConstraint(MarginConstraint.MarginType.LEFT), stackLayout);
+        layout.addConstraintToWidget(new MarginConstraint(MarginConstraint.MarginType.TOP), stackLayout);
+        layout.addConstraintToWidget(new LayoutRelativeWidthConstraint(1.0f), stackLayout);
+        stackLayout.setMargins(4, 4, 4, 4);
+        stackLayout.setPaddingTop(2);
+        stackLayout.setPaddingBot(2);
+        layout.addWidget(stackLayout);
+        String personaNameText = I18n.format("mkcore.gui.character.persona_name",
+                playerData.getPersonaManager().getActivePersona().getName());
+        MKText personaName = new MKText(font, personaNameText);
+        stackLayout.addWidget(personaName);
+        String healthText = I18n.format("mkcore.gui.character.current_health",
+                String.format("%.0f", playerData.getStats().getHealth()),
+                String.format("%.0f", playerData.getStats().getMaxHealth()));
+        MKText health = new MKText(font, healthText);
+        String manaText = I18n.format("mkcore.gui.character.current_mana",
+                String.format("%.0f", playerData.getStats().getMana()),
+                String.format("%.0f", playerData.getStats().getMaxMana()));
+        MKText mana = new MKText(font, manaText);
+        addPreDrawRunnable(() -> {
+            mana.setText(I18n.format("mkcore.gui.character.current_mana",
+                    String.format("%.0f", playerData.getStats().getMana()),
+                    String.format("%.0f", playerData.getStats().getMaxMana())));
+        });
+        addPreDrawRunnable(() -> {
+            health.setText(I18n.format("mkcore.gui.character.current_health",
+                    String.format("%.0f", playerData.getStats().getHealth()),
+                    String.format("%.0f", playerData.getStats().getMaxHealth())));
+        });
+        stackLayout.addWidget(health);
+        stackLayout.addWidget(mana);
+    }
+
+    @Override
     public void setupScreen() {
         super.setupScreen();
         infoWidget = null;
         currentScrollingPanel = null;
         talentTreeWidget = null;
         addState("stats", () -> createScrollingPanelWithContent((pData, width) ->
-                createStatList(pData, width, STAT_PANEL_ATTRIBUTES)));
-        addState("damages", () -> createScrollingPanelWithContent(this::createDamageTypeList));
+                createStatList(pData, width, STAT_PANEL_ATTRIBUTES), this::setupStatsHeader));
+        addState("damages", () -> createScrollingPanelWithContent(this::createDamageTypeList,
+                this::setupDamageHeader));
         addState("abilities", this::createAbilitiesPage);
         addState("talents", this::createTalentsPage);
         pushState("stats");
