@@ -4,14 +4,12 @@ import com.chaosbuffalo.mkcore.init.ModTags;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.mojang.datafixers.Dynamic;
 import com.mojang.datafixers.types.JsonOps;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
 import net.minecraft.data.ItemTagsProvider;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NBTDynamicOps;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -54,7 +52,7 @@ public class DataGenerators {
                 String name = key.getPath().substring(8); // skip ability.
                 Path path = outputFolder.resolve("data/" + key.getNamespace() + "/player_abilities/" + name + ".json");
                 try {
-                    JsonElement element = new Dynamic<>(NBTDynamicOps.INSTANCE, ability.serialize()).convert(JsonOps.INSTANCE).getValue();
+                    JsonElement element = ability.serializeDynamic(JsonOps.INSTANCE);
                     IDataProvider.save(GSON, cache, element, path);
                 } catch (IOException e) {
                     MKCore.LOGGER.error("Couldn't write ability {}", path, e);

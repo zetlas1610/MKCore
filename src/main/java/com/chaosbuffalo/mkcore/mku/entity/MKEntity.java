@@ -1,8 +1,8 @@
 package com.chaosbuffalo.mkcore.mku.entity;
 
 import com.chaosbuffalo.mkcore.Capabilities;
-import com.chaosbuffalo.mkcore.abilities.MKAbilityMemories;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.abilities.MKAbilityMemories;
 import com.chaosbuffalo.mkcore.mku.entity.ai.memory.MKUMemoryModuleTypes;
 import com.chaosbuffalo.mkcore.mku.entity.ai.memory.ThreatMapEntry;
 import com.chaosbuffalo.mkcore.mku.entity.ai.sensor.MKSensorTypes;
@@ -27,6 +27,7 @@ public abstract class MKEntity extends CreatureEntity {
     private int castAnimTimer;
     private VisualCastState visualCastState;
     private MKAbility castingAbility;
+
     public enum VisualCastState {
         NONE,
         CASTING,
@@ -51,10 +52,10 @@ public abstract class MKEntity extends CreatureEntity {
         this.brain.setMemory(MKUMemoryModuleTypes.THREAT_MAP, newMap);
     }
 
-    protected void updateEntityCastState(){
-        if (castAnimTimer > 0){
+    protected void updateEntityCastState() {
+        if (castAnimTimer > 0) {
             castAnimTimer--;
-            if (castAnimTimer == 0){
+            if (castAnimTimer == 0) {
                 castingAbility = null;
                 visualCastState = VisualCastState.NONE;
             }
@@ -81,12 +82,12 @@ public abstract class MKEntity extends CreatureEntity {
         return castingAbility;
     }
 
-    public void startCast(MKAbility ability){
+    public void startCast(MKAbility ability) {
         visualCastState = VisualCastState.CASTING;
         castingAbility = ability;
     }
 
-    public void endCast(MKAbility ability){
+    public void endCast(MKAbility ability) {
         castingAbility = ability;
         visualCastState = VisualCastState.RELEASE;
         castAnimTimer = 15;

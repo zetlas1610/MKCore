@@ -40,8 +40,8 @@ public class TalentTreeWidget extends MKLayout {
         setup();
     }
 
-    public void setup(){
-        if (treeRecord == null){
+    public void setup() {
+        if (treeRecord == null) {
             MKText noSelectPrompt = new MKText(fontRenderer,
                     new TranslationTextComponent("mkcore.gui.select_talent_tree"));
             addConstraintToWidget(new MarginConstraint(MarginConstraint.MarginType.TOP), noSelectPrompt);
@@ -58,7 +58,7 @@ public class TalentTreeWidget extends MKLayout {
             int talentButtonYMargin = getMarginTop();
             Map<String, TalentTreeDefinition.TalentLineDefinition> lineDefs = treeRecord
                     .getTreeDefinition().getTalentLines();
-            int count =  lineDefs.size();
+            int count = lineDefs.size();
             int talentWidth = talentButtonWidth * count + treeRenderingMarginX + (count - 1) * treeRenderingPaddingX;
             int spacePerColumn = talentWidth / count;
             int columnOffset = (spacePerColumn - talentButtonWidth) / 2;
@@ -72,11 +72,11 @@ public class TalentTreeWidget extends MKLayout {
                 TalentTreeDefinition.TalentLineDefinition lineDef = lineDefs.get(name);
                 for (int talentIndex = 0; talentIndex < lineDef.getLength(); talentIndex++) {
                     TalentRecord record = treeRecord.getNodeRecord(name, talentIndex);
-                    if (record == null){
+                    if (record == null) {
                         continue;
                     }
                     TalentRecord nextRecord = treeRecord.getNodeRecord(name, talentIndex + 1);
-                    if (nextRecord != null){
+                    if (nextRecord != null) {
                         int lineColor = nextRecord.isKnown() ? 0x99ffffff : 0xff555555;
                         MKRectangle rect = new MKRectangle(
                                 getX() + talentXOffset + spacePerColumn * i + columnOffsetTotal + TalentButton.SLOT_X_OFFSET
@@ -85,7 +85,7 @@ public class TalentTreeWidget extends MKLayout {
                                         + TalentButton.SLOT_Y_OFFSET + TalentButton.SLOT_HEIGHT / 2,
                                 2, talentButtonHeight + talentButtonYMargin,
                                 lineColor
-                                );
+                        );
                         addWidget(rect);
                     }
                     TalentButton button = new TalentButton(talentIndex, name, record,

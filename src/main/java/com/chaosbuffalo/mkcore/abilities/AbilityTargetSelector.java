@@ -3,8 +3,6 @@ package com.chaosbuffalo.mkcore.abilities;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.description.AbilityDescriptions;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
-import com.chaosbuffalo.targeting_api.TargetingContext;
-import com.chaosbuffalo.targeting_api.TargetingContexts;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.util.text.ITextComponent;
@@ -14,8 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class AbilityTargetSelector {
 
@@ -42,12 +38,12 @@ public class AbilityTargetSelector {
         return this;
     }
 
-    public AbilityTargetSelector addDescription(BiFunction<MKAbility, IMKEntityData, ITextComponent> description){
+    public AbilityTargetSelector addDescription(BiFunction<MKAbility, IMKEntityData, ITextComponent> description) {
         additionalDescriptors.add(description);
         return this;
     }
 
-    public boolean doShowTargetType(){
+    public boolean doShowTargetType() {
         return showTargetType;
     }
 
@@ -61,7 +57,7 @@ public class AbilityTargetSelector {
         });
     }
 
-    public ITextComponent getLocalizedDescriptionForContext(){
+    public ITextComponent getLocalizedDescriptionForContext() {
         return new TranslationTextComponent("mkcore.ability_description.target",
                 I18n.format(getDescriptionKey()));
     }

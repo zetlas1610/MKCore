@@ -77,7 +77,7 @@ public class LearnAbilityTray extends MKStackLayoutVertical {
                             String.format("  - %s", x.requirementDescription.getFormattedText()))
                             .applyTextStyle(x.isMet ? TextFormatting.GREEN : TextFormatting.BLACK).getFormattedText())
                     .collect(Collectors.toCollection(ArrayList::new));
-            for (String text : texts){
+            for (String text : texts) {
                 MKText reqText = new MKText(font, text);
                 reqText.setMultiline(true);
                 reqlayout.addConstraintToWidget(new LayoutRelativeWidthConstraint(1.0f), reqText);

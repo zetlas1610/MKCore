@@ -1,8 +1,8 @@
 package com.chaosbuffalo.mkcore.abilities.ai.conditions;
 
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
-import com.chaosbuffalo.mkcore.abilities.ai.AbilityTargetingDecision;
 import com.chaosbuffalo.mkcore.abilities.ai.AbilityDecisionContext;
+import com.chaosbuffalo.mkcore.abilities.ai.AbilityTargetingDecision;
 import com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy.FollowMovementStrategy;
 import com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy.MovementStrategy;
 import net.minecraft.entity.LivingEntity;

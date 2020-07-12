@@ -31,7 +31,6 @@ public class AbilityTargeting {
             .addDescription(AbilityDescriptions::getRangeDescription);
 
 
-
     private static AbilityContext selectSelf(IMKEntityData entityData, MKAbility ability) {
         MKCore.LOGGER.info("AbilityTargeting.SELF {} {}", ability.getAbilityId(), entityData.getEntity());
         return AbilityContext.selfTarget(entityData);

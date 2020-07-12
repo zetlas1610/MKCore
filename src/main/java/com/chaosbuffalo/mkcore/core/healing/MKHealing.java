@@ -9,12 +9,12 @@ import net.minecraftforge.common.MinecraftForge;
 
 public class MKHealing {
 
-    public static void healEntityFrom(LivingEntity target, float amount, MKHealSource healSource){
+    public static void healEntityFrom(LivingEntity target, float amount, MKHealSource healSource) {
         float finalValue = MKCore.getEntityData(healSource.getTrueSource())
                 .map(data -> MKCombatFormulas.applyHealBonus(data, amount, healSource.getModifierScaling()))
                 .orElse(amount);
         MKAbilityHealEvent event = new MKAbilityHealEvent(target, finalValue, healSource);
-        if (!MinecraftForge.EVENT_BUS.post(event)){
+        if (!MinecraftForge.EVENT_BUS.post(event)) {
             if (MKConfig.SERVER.healsDamageUndead.get() && target.isEntityUndead() && healSource.doesDamageUndead()) {
                 float healDamageMultiplier = MKConfig.SERVER.undeadHealDamageMultiplier.get().floatValue();
                 target.attackEntityFrom(MKDamageSource.causeAbilityDamage(healSource.getDamageType(),

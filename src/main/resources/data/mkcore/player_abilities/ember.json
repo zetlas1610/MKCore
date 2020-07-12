@@ -1,13 +1,9 @@
 {
-  "castTime": 10,
   "cooldown": 80,
+  "manaCost": 6.0,
+  "castTime": 10,
   "attributes": {
-    "damage": {
-      "value": 6.0
-    },
-    "burnTime": {
-      "value": 5
-    }
-  },
-  "manaCost": 6.0
+    "damage": 6.0,
+    "burnTime": 5
+  }
 }

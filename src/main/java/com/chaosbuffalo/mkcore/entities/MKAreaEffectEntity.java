@@ -2,12 +2,11 @@ package com.chaosbuffalo.mkcore.entities;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
-import com.chaosbuffalo.mkcore.effects.SpellManager;
 import com.chaosbuffalo.mkcore.effects.SpellEffectBase;
+import com.chaosbuffalo.mkcore.effects.SpellManager;
 import com.chaosbuffalo.targeting_api.Targeting;
 import com.chaosbuffalo.targeting_api.TargetingContext;
 import net.minecraft.entity.*;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;

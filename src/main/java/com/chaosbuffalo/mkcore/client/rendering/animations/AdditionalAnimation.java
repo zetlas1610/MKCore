@@ -6,13 +6,13 @@ import net.minecraft.entity.LivingEntity;
 public abstract class AdditionalAnimation<T extends LivingEntity> {
     private final Model model;
 
-    public AdditionalAnimation(Model model){
+    public AdditionalAnimation(Model model) {
         this.model = model;
     }
 
     public abstract void apply(T entity);
 
-    public Model getModel(){
+    public Model getModel() {
         return model;
     }
 }

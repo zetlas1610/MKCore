@@ -13,7 +13,8 @@ import com.chaosbuffalo.mkcore.network.PlayerSlotAbilityPacket;
 import com.chaosbuffalo.mkwidgets.client.gui.UIConstants;
 import com.chaosbuffalo.mkwidgets.client.gui.actions.IDragState;
 import com.chaosbuffalo.mkwidgets.client.gui.actions.WidgetHoldingDragState;
-import com.chaosbuffalo.mkwidgets.client.gui.constraints.*;
+import com.chaosbuffalo.mkwidgets.client.gui.constraints.FillConstraint;
+import com.chaosbuffalo.mkwidgets.client.gui.constraints.MarginConstraint;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKLayout;
 import com.chaosbuffalo.mkwidgets.client.gui.math.IntColor;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKImage;
@@ -42,12 +43,12 @@ public class AbilitySlotWidget extends MKLayout {
     }
 
     public void setIconColor(int color) {
-        if (icon != null){
+        if (icon != null) {
             icon.setColor(new IntColor(color));
         }
     }
 
-    public void setBackgroundColor(int color){
+    public void setBackgroundColor(int color) {
         background.setColor(new IntColor(color));
     }
 
@@ -81,13 +82,13 @@ public class AbilitySlotWidget extends MKLayout {
         addConstraintToWidget(new FillConstraint(), background);
     }
 
-    private void setupIcon(ResourceLocation abilityName){
-        if (icon != null){
+    private void setupIcon(ResourceLocation abilityName) {
+        if (icon != null) {
             removeWidget(icon);
         }
-        if (!this.abilityName.equals(MKCoreRegistry.INVALID_ABILITY)){
+        if (!this.abilityName.equals(MKCoreRegistry.INVALID_ABILITY)) {
             MKAbility ability = MKCoreRegistry.getAbility(abilityName);
-            if (ability != null){
+            if (ability != null) {
                 MKCore.LOGGER.info("Adding icon to slot {} {}", ability.getAbilityIcon(), slotIndex);
                 icon = new MKImage(0, 0, 16, 16, ability.getAbilityIcon());
                 addWidget(icon);
@@ -97,8 +98,8 @@ public class AbilitySlotWidget extends MKLayout {
         }
     }
 
-    private boolean getUnlocked(MKAbility.AbilityType slotType, int slotIndex){
-        switch (slotType){
+    private boolean getUnlocked(MKAbility.AbilityType slotType, int slotIndex) {
+        switch (slotType) {
             case Ultimate:
                 return slotIndex < GameConstants.DEFAULT_ULTIMATES;
             case Passive:
@@ -108,8 +109,8 @@ public class AbilitySlotWidget extends MKLayout {
         }
     }
 
-    private MKImage getImageForSlotType(MKAbility.AbilityType slotType, boolean unlocked){
-        switch (slotType){
+    private MKImage getImageForSlotType(MKAbility.AbilityType slotType, boolean unlocked) {
+        switch (slotType) {
             case Ultimate:
                 return GuiTextures.CORE_TEXTURES.getImageForRegion(unlocked ?
                                 GuiTextures.ABILITY_SLOT_ULT : GuiTextures.ABILITY_SLOT_ULT_LOCKED,
@@ -129,7 +130,7 @@ public class AbilitySlotWidget extends MKLayout {
         return abilityName;
     }
 
-    private void setSlotToAbility(ResourceLocation ability){
+    private void setSlotToAbility(ResourceLocation ability) {
         PacketHandler.sendMessageToServer(new PlayerSlotAbilityPacket(slotType, slotIndex, ability));
     }
 
@@ -140,10 +141,10 @@ public class AbilitySlotWidget extends MKLayout {
 
     @Override
     public boolean onMousePressed(Minecraft minecraft, double mouseX, double mouseY, int mouseButton) {
-        if (mouseButton == UIConstants.MOUSE_BUTTON_LEFT){
-            if (!(abilityName.equals(MKCoreRegistry.INVALID_ABILITY))){
+        if (mouseButton == UIConstants.MOUSE_BUTTON_LEFT) {
+            if (!(abilityName.equals(MKCoreRegistry.INVALID_ABILITY))) {
                 MKAbility ability = MKCoreRegistry.getAbility(getAbilityName());
-                if (ability == null){
+                if (ability == null) {
                     return false;
                 }
                 screen.setDragState(new WidgetHoldingDragState(new MKImage(0, 0, icon.getWidth(),
@@ -152,7 +153,7 @@ public class AbilitySlotWidget extends MKLayout {
                 icon.setColor(new IntColor(0xff555555));
                 return true;
             }
-        } else if (mouseButton == UIConstants.MOUSE_BUTTON_RIGHT){
+        } else if (mouseButton == UIConstants.MOUSE_BUTTON_RIGHT) {
             setSlotToAbility(MKCoreRegistry.INVALID_ABILITY);
             return true;
         }
@@ -161,9 +162,9 @@ public class AbilitySlotWidget extends MKLayout {
 
     @Override
     public boolean onMouseRelease(double mouseX, double mouseY, int mouseButton) {
-        if (screen.isDraggingAbility()){
+        if (screen.isDraggingAbility()) {
             MKCore.LOGGER.info("adding ability {} to slot {} {} {} {}", screen.getDragging(), slotIndex, unlocked, screen.getDragging().getType(), slotType);
-            if (unlocked && screen.getDragging().getType().equals(slotType)){
+            if (unlocked && screen.getDragging().getType().equals(slotType)) {
                 ResourceLocation ability = screen.getDragging().getAbilityId();
                 setSlotToAbility(ability);
             }

@@ -8,7 +8,7 @@ public class CenterYWithOffsetConstraint extends CenterYConstraint {
 
     private final int offset;
 
-    public CenterYWithOffsetConstraint(int offset){
+    public CenterYWithOffsetConstraint(int offset) {
         this.offset = offset;
     }
 

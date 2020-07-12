@@ -2,10 +2,8 @@ package com.chaosbuffalo.mkcore.client.sound;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.core.AbilityExecutor;
-import com.chaosbuffalo.mkcore.core.PlayerAbilityExecutor;
 import net.minecraft.client.audio.TickableSound;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;

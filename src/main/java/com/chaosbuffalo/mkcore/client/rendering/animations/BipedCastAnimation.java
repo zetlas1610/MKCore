@@ -1,6 +1,5 @@
 package com.chaosbuffalo.mkcore.client.rendering.animations;
 
-import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.MKCore;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.entity.LivingEntity;

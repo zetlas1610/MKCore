@@ -29,9 +29,9 @@ public class AbilityInfoWidget extends MKStackLayoutVertical {
         setup();
     }
 
-    public void setup(){
-        if (ability == null){
-            MKText noSelectPrompt = new MKText(fontRenderer,new TranslationTextComponent("mkcore.gui.select_ability"));
+    public void setup() {
+        if (ability == null) {
+            MKText noSelectPrompt = new MKText(fontRenderer, new TranslationTextComponent("mkcore.gui.select_ability"));
             noSelectPrompt.setColor(0xffffffff);
             addWidget(noSelectPrompt);
         } else {
@@ -40,7 +40,7 @@ public class AbilityInfoWidget extends MKStackLayoutVertical {
                     this.ability.getAbilityIcon(),
                     fontRenderer, 16, screen, this.ability);
             addWidget(abilityIcon);
-            for (ITextComponent desc : this.ability.getDescriptionsForEntity(playerData)){
+            for (ITextComponent desc : this.ability.getDescriptionsForEntity(playerData)) {
                 MKText text = new MKText(fontRenderer, desc);
                 text.setColor(0xaaffffff);
                 text.setMultiline(true);

@@ -2,7 +2,10 @@ package com.chaosbuffalo.mkcore.core;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
-import com.chaosbuffalo.mkcore.abilities.*;
+import com.chaosbuffalo.mkcore.abilities.AbilityContext;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
+import com.chaosbuffalo.mkcore.abilities.MKToggleAbility;
 import com.chaosbuffalo.mkcore.client.sound.MovingSoundCasting;
 import com.chaosbuffalo.mkcore.effects.PassiveEffect;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
@@ -132,7 +135,7 @@ public class AbilityExecutor {
         MKAbility ability = MKCoreRegistry.getAbility(abilityId);
         if (ability != null) {
             currentCast = createClientCastingState(ability, castTicks);
-            if (startCastCallback != null){
+            if (startCastCallback != null) {
                 startCastCallback.accept(ability);
             }
         } else {
@@ -194,7 +197,7 @@ public class AbilityExecutor {
         // Finish the cast
         consumeResource(ability);
         ability.endCast(entityData.getEntity(), entityData, context);
-        if (completeAbilityCallback != null){
+        if (completeAbilityCallback != null) {
             completeAbilityCallback.accept(ability);
         }
         int cooldown = entityData.getStats().getAbilityCooldown(ability);
@@ -343,7 +346,7 @@ public class AbilityExecutor {
         @Override
         void finish() {
             stopSound();
-            if (executor.completeAbilityCallback != null){
+            if (executor.completeAbilityCallback != null) {
                 executor.completeAbilityCallback.accept(ability);
             }
         }
