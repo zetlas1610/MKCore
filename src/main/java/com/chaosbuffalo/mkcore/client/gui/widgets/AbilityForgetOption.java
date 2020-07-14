@@ -13,7 +13,7 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
 
-class AbilityForgetOption extends MKLayout {
+public class AbilityForgetOption extends MKLayout {
 
     private final List<ResourceLocation> abilitySlots;
     private final ResourceLocation loc;
