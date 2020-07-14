@@ -75,6 +75,10 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         setUseCondition(new StandardUseCondition(this));
     }
 
+    public boolean requiresSlot(){
+        return true;
+    }
+
     protected List<Object> getDescriptionArgs(IMKEntityData entityData) {
         return new ArrayList<>();
     }

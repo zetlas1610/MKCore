@@ -46,6 +46,11 @@ public class HealingRain extends MKAbility {
     }
 
     @Override
+    public boolean requiresSlot() {
+        return false;
+    }
+
+    @Override
     public boolean isInterruptible() {
         return false;
     }

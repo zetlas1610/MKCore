@@ -79,5 +79,6 @@
   "mkcore.gui.character.persona_name": "Persona: %s",
   "mkcore.gui.character.current_health": "Health: %s / %s",
   "mkcore.gui.character.current_mana": "Mana: %s / %s",
+  "mkcore.gui.character.forget_ability": "Your memory is full, you must forget an ability to learn %s.",
   "mkcore.THISNEEDSTOBELAST": "ITBETTERBELAST"
 }

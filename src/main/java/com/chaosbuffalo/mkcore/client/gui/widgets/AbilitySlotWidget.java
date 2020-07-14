@@ -15,8 +15,10 @@ import com.chaosbuffalo.mkwidgets.client.gui.actions.IDragState;
 import com.chaosbuffalo.mkwidgets.client.gui.actions.WidgetHoldingDragState;
 import com.chaosbuffalo.mkwidgets.client.gui.constraints.FillConstraint;
 import com.chaosbuffalo.mkwidgets.client.gui.constraints.MarginConstraint;
+import com.chaosbuffalo.mkwidgets.client.gui.instructions.HoveringTextInstruction;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKLayout;
 import com.chaosbuffalo.mkwidgets.client.gui.math.IntColor;
+import com.chaosbuffalo.mkwidgets.client.gui.math.Vec2i;
 import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,7 +29,7 @@ public class AbilitySlotWidget extends MKLayout {
     private boolean unlocked;
     private final int slotIndex;
     private CharacterScreen screen;
-    private ResourceLocation abilityName;
+    private ResourceLocation abilityId;
     private MKImage background;
     private MKImage icon;
 
@@ -37,7 +39,7 @@ public class AbilitySlotWidget extends MKLayout {
         this.screen = screen;
         this.slotIndex = slotIndex;
         this.setMargins(2, 2, 2, 2);
-        this.abilityName = MKCoreRegistry.INVALID_ABILITY;
+        this.abilityId = MKCoreRegistry.INVALID_ABILITY;
         this.icon = null;
         refreshSlot();
     }
@@ -65,9 +67,9 @@ public class AbilitySlotWidget extends MKLayout {
         if (playerEntity == null)
             return;
         MKCore.getPlayer(playerEntity).ifPresent((playerData -> {
-            abilityName = playerData.getKnowledge().getAbilityInSlot(slotType, slotIndex);
+            abilityId = playerData.getKnowledge().getAbilityInSlot(slotType, slotIndex);
             setupBackground(playerData);
-            setupIcon(abilityName);
+            setupIcon(abilityId);
         }));
     }
 
@@ -86,7 +88,7 @@ public class AbilitySlotWidget extends MKLayout {
         if (icon != null) {
             removeWidget(icon);
         }
-        if (!this.abilityName.equals(MKCoreRegistry.INVALID_ABILITY)) {
+        if (!this.abilityId.equals(MKCoreRegistry.INVALID_ABILITY)) {
             MKAbility ability = MKCoreRegistry.getAbility(abilityName);
             if (ability != null) {
                 MKCore.LOGGER.info("Adding icon to slot {} {}", ability.getAbilityIcon(), slotIndex);
@@ -126,8 +128,8 @@ public class AbilitySlotWidget extends MKLayout {
         }
     }
 
-    public ResourceLocation getAbilityName() {
-        return abilityName;
+    public ResourceLocation getAbilityId() {
+        return abilityId;
     }
 
     private void setSlotToAbility(ResourceLocation ability) {
@@ -142,8 +144,8 @@ public class AbilitySlotWidget extends MKLayout {
     @Override
     public boolean onMousePressed(Minecraft minecraft, double mouseX, double mouseY, int mouseButton) {
         if (mouseButton == UIConstants.MOUSE_BUTTON_LEFT) {
-            if (!(abilityName.equals(MKCoreRegistry.INVALID_ABILITY))) {
-                MKAbility ability = MKCoreRegistry.getAbility(getAbilityName());
+            if (!(abilityId.equals(MKCoreRegistry.INVALID_ABILITY))) {
+                MKAbility ability = MKCoreRegistry.getAbility(getAbilityId());
                 if (ability == null) {
                     return false;
                 }
@@ -173,5 +175,23 @@ public class AbilitySlotWidget extends MKLayout {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void postDraw(Minecraft mc, int x, int y, int width, int height, int mouseX, int mouseY, float partialTicks) {
+        if (isHovered()){
+            if (getScreen() != null){
+                if (!getAbilityId().equals(MKCoreRegistry.INVALID_ABILITY)){
+                    MKAbility ability = MKCoreRegistry.getAbility(getAbilityId());
+                    if (ability != null){
+                        getScreen().addPostRenderInstruction(new HoveringTextInstruction(
+                                ability.getAbilityName(),
+                                getParentCoords(new Vec2i(mouseX, mouseY))));
+                    }
+                }
+
+            }
+
+        }
     }
 }

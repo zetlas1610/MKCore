@@ -64,7 +64,12 @@ public class SyncListUpdater<T> implements ISyncObject {
             T decoded = valueDecoder.apply(entry.get("v"));
             List<T> abilityList = parent.get();
             if (abilityList != null) {
-                abilityList.set(index, decoded);
+                if (abilityList.size() > index){
+                    abilityList.set(index, decoded);
+                } else {
+                    abilityList.add(decoded);
+                }
+
             }
         }
     }

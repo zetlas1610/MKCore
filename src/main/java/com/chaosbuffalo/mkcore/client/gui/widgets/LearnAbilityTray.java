@@ -1,7 +1,10 @@
 package com.chaosbuffalo.mkcore.client.gui.widgets;
 
+import com.chaosbuffalo.mkcore.MKCore;
+import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.training.AbilityRequirementEvaluation;
+import com.chaosbuffalo.mkcore.client.gui.GuiTextures;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerLearnAbilityRequestPacket;
@@ -10,11 +13,12 @@ import com.chaosbuffalo.mkwidgets.client.gui.instructions.HoveringTextInstructio
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutHorizontal;
 import com.chaosbuffalo.mkwidgets.client.gui.layouts.MKStackLayoutVertical;
 import com.chaosbuffalo.mkwidgets.client.gui.math.Vec2i;
-import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKButton;
-import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKScrollView;
-import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKText;
+import com.chaosbuffalo.mkwidgets.client.gui.screens.IMKScreen;
+import com.chaosbuffalo.mkwidgets.client.gui.widgets.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
@@ -27,7 +31,10 @@ public class LearnAbilityTray extends MKStackLayoutVertical {
     private List<AbilityRequirementEvaluation> unmetRequirements;
     private final MKPlayerData playerData;
     private final FontRenderer font;
+    protected final int POPUP_WIDTH = 180;
+    protected final int POPUP_HEIGHT = 201;
     private final int trainerEntityId;
+    private MKModal chooseSlotWidget;
 
     public LearnAbilityTray(int x, int y, int width, MKPlayerData playerData, FontRenderer font, int trainerEntityId) {
         super(x, y, width);
@@ -43,9 +50,55 @@ public class LearnAbilityTray extends MKStackLayoutVertical {
         setup();
     }
 
+    private MKModal getChooseSlotPopup(){
+        if (getScreen() == null){
+            return null;
+        }
+        IMKScreen screen = getScreen();
+        MKModal popup = new MKModal();
+        int screenWidth = screen.getWidth();
+        int screenHeight = screen.getHeight();
+        int xPos = (screenWidth - POPUP_WIDTH) / 2;
+        int yPos = (screenHeight - POPUP_HEIGHT) / 2;
+        MKImage background = GuiTextures.CORE_TEXTURES.getImageForRegion(
+                GuiTextures.BACKGROUND_180_200, xPos, yPos, POPUP_WIDTH, POPUP_HEIGHT);
+        popup.addWidget(background);
+        String promptText = I18n.format("mkcore.gui.character.forget_ability",
+                getAbility().getAbilityName());
+        MKText prompt = new MKText(font, promptText, xPos + 6, yPos + 6);
+        prompt.setWidth(POPUP_WIDTH - 10);
+        prompt.setMultiline(true);
+        popup.addWidget(prompt);
+        MKScrollView scrollview = new MKScrollView(xPos + 15, yPos + 40, POPUP_WIDTH - 30,
+                POPUP_HEIGHT - 45, true);
+        popup.addWidget(scrollview);
+        MKStackLayoutVertical abilities = new MKStackLayoutVertical(0, 0, scrollview.getWidth());
+        abilities.setPaddingBot(2);
+        abilities.setPaddingTop(2);
+        abilities.setMargins(2, 2, 2, 2);
+        abilities.doSetChildWidth(true);
+        List<ResourceLocation> abilitySlots = playerData.getKnowledge().getKnownAbilities().getAbilitySlots();
+        for (ResourceLocation loc : abilitySlots){
+            MKAbility ability = MKCoreRegistry.getAbility(loc);
+            if (ability != null){
+                AbilityForgetOption abilityIcon = new AbilityForgetOption(ability, abilitySlots,
+                        getAbility().getAbilityId(), popup, font, trainerEntityId);
+                abilities.addWidget(abilityIcon);
+            }
+        }
+        scrollview.addWidget(abilities);
+        abilities.manualRecompute();
+        scrollview.setToRight();
+        scrollview.setToTop();
+
+        return popup;
+    }
+
     public void setup() {
         clearWidgets();
+        chooseSlotWidget = null;
         if (getAbility() != null) {
+            chooseSlotWidget = getChooseSlotPopup();
             MKStackLayoutHorizontal nameTray = new MKStackLayoutHorizontal(0, 0, 20);
             nameTray.setPaddingRight(4);
             nameTray.setPaddingLeft(4);
@@ -54,11 +107,11 @@ public class LearnAbilityTray extends MKStackLayoutVertical {
             nameTray.addWidget(abilityName);
             addWidget(nameTray);
             boolean isKnown = playerData.getKnowledge().getKnownAbilityInfo(getAbility().getAbilityId()) != null;
-            boolean canLearn = unmetRequirements.isEmpty() && !isKnown;
+            boolean canLearn = unmetRequirements.stream().allMatch(x -> x.isMet);
             String knowText;
             if (isKnown) {
                 knowText = "already known";
-            } else if (unmetRequirements.size() > 0) {
+            } else if (!canLearn) {
                 knowText = "unmet req";
             } else {
                 knowText = "can learn";
@@ -111,7 +164,25 @@ public class LearnAbilityTray extends MKStackLayoutVertical {
                 learnButton.setWidth(font.getStringWidth("Learn") + 10);
                 learnButton.setEnabled(canLearn);
                 learnButton.setPressedCallback((button, buttonType) -> {
-                    PacketHandler.sendMessageToServer(new PlayerLearnAbilityRequestPacket(getAbility().getAbilityId(), trainerEntityId));
+                    if (getAbility().requiresSlot()){
+                        if (!playerData.getKnowledge()
+                                .getKnownAbilities().isAbilitySlotsFull()){
+                            MKCore.LOGGER.info("Ability slots {}",
+                                    playerData.getKnowledge().getKnownAbilities().getSlottedAbilitiesCount());
+                            PacketHandler.sendMessageToServer(new PlayerLearnAbilityRequestPacket(
+                                    getAbility().getAbilityId(), playerData.getKnowledge()
+                                    .getKnownAbilities().getSlottedAbilitiesCount(), trainerEntityId));
+                        } else {
+                            MKCore.LOGGER.info("Ability slots full {} ",
+                                    playerData.getKnowledge().getKnownAbilities().getSlottedAbilitiesCount());
+                            if (getScreen() != null && chooseSlotWidget != null){
+                                getScreen().addModal(chooseSlotWidget);
+                            }
+                        }
+                    } else {
+                        PacketHandler.sendMessageToServer(new PlayerLearnAbilityRequestPacket(
+                                getAbility().getAbilityId(), trainerEntityId));
+                    }
                     return true;
                 });
                 nameTray.addWidget(learnButton);
@@ -131,4 +202,5 @@ public class LearnAbilityTray extends MKStackLayoutVertical {
     public MKAbility getAbility() {
         return ability;
     }
+
 }
