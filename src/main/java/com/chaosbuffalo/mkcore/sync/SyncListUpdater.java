@@ -7,6 +7,7 @@ import net.minecraftforge.common.util.Constants;
 
 import java.util.BitSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -18,6 +19,7 @@ public class SyncListUpdater<T> implements ISyncObject {
     private final int nbtValueType;
     private final BitSet dirtyEntries = new BitSet();
     private ISyncNotifier parentNotifier = ISyncNotifier.NONE;
+    private T defaultValue;
 
     public SyncListUpdater(String name, Supplier<List<T>> list, Function<T, INBT> valueEncoder, Function<INBT, T> valueDecoder, int nbtValueType) {
         this.name = name;
@@ -27,10 +29,28 @@ public class SyncListUpdater<T> implements ISyncObject {
         this.nbtValueType = nbtValueType;
     }
 
+    public SyncListUpdater<T> setDefaultValue(T defaultValue) {
+        this.defaultValue = defaultValue;
+        return this;
+    }
+
+    protected boolean isDefaultValue(T value) {
+        return defaultValue != null && value.equals(getDefaultValue());
+    }
+
+    protected T getDefaultValue() {
+        Objects.requireNonNull(defaultValue);
+        return defaultValue;
+    }
+
     private CompoundNBT makeSparseEntry(int index, T value) {
         CompoundNBT tag = new CompoundNBT();
         tag.putInt("i", index);
-        tag.put("v", valueEncoder.apply(value));
+        if (isDefaultValue(value)) {
+            tag.putBoolean("d", true);
+        } else {
+            tag.put("v", valueEncoder.apply(value));
+        }
         return tag;
     }
 
@@ -68,10 +88,7 @@ public class SyncListUpdater<T> implements ISyncObject {
         for (int i = 0; i < list.size(); i++) {
             INBT entry = list.get(i);
             T decoded = valueDecoder.apply(entry);
-            List<T> abilityList = parent.get();
-            if (abilityList != null) {
-                abilityList.set(i, decoded);
-            }
+            parent.get().set(i, decoded);
         }
     }
 
@@ -79,11 +96,13 @@ public class SyncListUpdater<T> implements ISyncObject {
         for (int i = 0; i < list.size(); i++) {
             CompoundNBT entry = list.getCompound(i);
             int index = entry.getInt("i");
-            T decoded = valueDecoder.apply(entry.get("v"));
-            List<T> abilityList = parent.get();
-            if (abilityList != null) {
-                abilityList.set(index, decoded);
+            T decoded;
+            if (entry.getBoolean("d")) {
+                decoded = getDefaultValue();
+            } else {
+                decoded = valueDecoder.apply(entry.get("v"));
             }
+            parent.get().set(index, decoded);
         }
     }
 
