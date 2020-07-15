@@ -46,7 +46,7 @@ public class HealingRain extends MKAbility {
     }
 
     @Override
-    public boolean requiresSlot() {
+    public boolean isPoolAbility() {
         return false;
     }
 

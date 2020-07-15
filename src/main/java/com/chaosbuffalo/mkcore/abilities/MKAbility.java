@@ -75,7 +75,7 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         setUseCondition(new StandardUseCondition(this));
     }
 
-    public boolean requiresSlot(){
+    public boolean isPoolAbility(){
         return true;
     }
 

@@ -32,7 +32,7 @@ public abstract class PassiveTalentAbility extends MKAbility {
     public abstract PassiveTalentEffect getPassiveEffect();
 
     @Override
-    public boolean requiresSlot() {
+    public boolean isPoolAbility() {
         return false;
     }
 

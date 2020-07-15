@@ -168,7 +168,7 @@ public class LearnAbilityTray extends MKStackLayoutVertical {
                 learnButton.setWidth(font.getStringWidth(learnButtonText) + 10);
                 learnButton.setEnabled(canLearn);
                 learnButton.setPressedCallback((button, buttonType) -> {
-                    if (getAbility().requiresSlot()){
+                    if (getAbility().isPoolAbility()){
                         if (!playerData.getKnowledge()
                                 .getKnownAbilities().isAbilityPoolFull()){
                             MKCore.LOGGER.info("Ability pool {}",
