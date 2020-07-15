@@ -33,7 +33,7 @@ public class ActiveAbilityContainer implements IActiveAbilityContainer, IPlayerS
         this.name = name;
         this.type = type;
         activeAbilities = NonNullList.withSize(max, MKCoreRegistry.INVALID_ABILITY);
-        activeUpdater = new ResourceListUpdater("active", () -> activeAbilities);
+        activeUpdater = new ResourceListUpdater("active", () -> activeAbilities).setDefaultValue(MKCoreRegistry.INVALID_ABILITY);
         slots = new SyncInt("slots", defaultSize);
         addSyncPrivate(activeUpdater);
         addSyncPrivate(slots);
