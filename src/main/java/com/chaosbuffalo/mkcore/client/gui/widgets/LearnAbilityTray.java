@@ -34,7 +34,7 @@ public class LearnAbilityTray extends MKStackLayoutVertical {
     protected final int POPUP_WIDTH = 180;
     protected final int POPUP_HEIGHT = 201;
     private final int trainerEntityId;
-    private MKModal chooseSlotWidget;
+    private MKModal choosePoolSlotWidget;
 
     public LearnAbilityTray(int x, int y, int width, MKPlayerData playerData, FontRenderer font, int trainerEntityId) {
         super(x, y, width);
@@ -50,7 +50,7 @@ public class LearnAbilityTray extends MKStackLayoutVertical {
         setup();
     }
 
-    private MKModal getChooseSlotPopup(){
+    private MKModal getChoosePoolSlotWidget(){
         if (getScreen() == null){
             return null;
         }
@@ -77,8 +77,11 @@ public class LearnAbilityTray extends MKStackLayoutVertical {
         abilities.setPaddingTop(2);
         abilities.setMargins(2, 2, 2, 2);
         abilities.doSetChildWidth(true);
-        List<ResourceLocation> abilitySlots = playerData.getKnowledge().getKnownAbilities().getAbilitySlots();
+        List<ResourceLocation> abilitySlots = playerData.getKnowledge().getKnownAbilities().getAbilityPool();
         for (ResourceLocation loc : abilitySlots){
+            if (loc.equals(MKCoreRegistry.INVALID_ABILITY)){
+                continue;
+            }
             MKAbility ability = MKCoreRegistry.getAbility(loc);
             if (ability != null){
                 AbilityForgetOption abilityIcon = new AbilityForgetOption(ability, abilitySlots,
@@ -96,9 +99,9 @@ public class LearnAbilityTray extends MKStackLayoutVertical {
 
     public void setup() {
         clearWidgets();
-        chooseSlotWidget = null;
+        choosePoolSlotWidget = null;
         if (getAbility() != null) {
-            chooseSlotWidget = getChooseSlotPopup();
+            choosePoolSlotWidget = getChoosePoolSlotWidget();
             MKStackLayoutHorizontal nameTray = new MKStackLayoutHorizontal(0, 0, 20);
             nameTray.setPaddingRight(4);
             nameTray.setPaddingLeft(4);
@@ -110,11 +113,11 @@ public class LearnAbilityTray extends MKStackLayoutVertical {
             boolean canLearn = unmetRequirements.stream().allMatch(x -> x.isMet);
             String knowText;
             if (isKnown) {
-                knowText = "already known";
+                knowText = I18n.format("mkcore.gui.character.already_known");
             } else if (!canLearn) {
-                knowText = "unmet req";
+                knowText = I18n.format("mkcore.gui.character.unmet_req");
             } else {
-                knowText = "can learn";
+                knowText = I18n.format("mkcore.gui.character.can_learn");
             }
             MKText doesKnowWid = new MKText(font, knowText);
             doesKnowWid.setWidth(font.getStringWidth(knowText));
@@ -142,7 +145,8 @@ public class LearnAbilityTray extends MKStackLayoutVertical {
             reqScrollView.setToTop();
             reqScrollView.setToRight();
             if (!isKnown){
-                MKButton learnButton = new MKButton(0, 0, "Learn") {
+                String learnButtonText = I18n.format("mkcore.gui.character.learn");
+                MKButton learnButton = new MKButton(0, 0, learnButtonText) {
 
                     @Override
                     public boolean checkHovered(int mouseX, int mouseY) {
@@ -155,28 +159,28 @@ public class LearnAbilityTray extends MKStackLayoutVertical {
                         if (unmetRequirements.size() > 0) {
                             if (getScreen() != null) {
                                 getScreen().addPostRenderInstruction(new HoveringTextInstruction(
-                                        "You do not meet the requirements to learn this ability.",
+                                        I18n.format("mkcore.gui.character.unmet_req_tooltip"),
                                         getParentCoords(new Vec2i(mouseX, mouseY))));
                             }
                         }
                     }
                 };
-                learnButton.setWidth(font.getStringWidth("Learn") + 10);
+                learnButton.setWidth(font.getStringWidth(learnButtonText) + 10);
                 learnButton.setEnabled(canLearn);
                 learnButton.setPressedCallback((button, buttonType) -> {
                     if (getAbility().requiresSlot()){
                         if (!playerData.getKnowledge()
-                                .getKnownAbilities().isAbilitySlotsFull()){
-                            MKCore.LOGGER.info("Ability slots {}",
-                                    playerData.getKnowledge().getKnownAbilities().getSlottedAbilitiesCount());
+                                .getKnownAbilities().isAbilityPoolFull()){
+                            MKCore.LOGGER.info("Ability pool {}",
+                                    playerData.getKnowledge().getKnownAbilities().getCurrentPoolCount());
                             PacketHandler.sendMessageToServer(new PlayerLearnAbilityRequestPacket(
                                     getAbility().getAbilityId(), playerData.getKnowledge()
-                                    .getKnownAbilities().getSlottedAbilitiesCount(), trainerEntityId));
+                                    .getKnownAbilities().getCurrentPoolCount(), trainerEntityId));
                         } else {
-                            MKCore.LOGGER.info("Ability slots full {} ",
-                                    playerData.getKnowledge().getKnownAbilities().getSlottedAbilitiesCount());
-                            if (getScreen() != null && chooseSlotWidget != null){
-                                getScreen().addModal(chooseSlotWidget);
+                            MKCore.LOGGER.info("Ability pool full {} ",
+                                    playerData.getKnowledge().getKnownAbilities().getCurrentPoolCount());
+                            if (getScreen() != null && choosePoolSlotWidget != null){
+                                getScreen().addModal(choosePoolSlotWidget);
                             }
                         }
                     } else {
@@ -188,7 +192,7 @@ public class LearnAbilityTray extends MKStackLayoutVertical {
                 nameTray.addWidget(learnButton);
             }
         } else {
-            MKText prompt = new MKText(font, "Select an ability to learn.");
+            MKText prompt = new MKText(font, I18n.format("mkcore.gui.character.learn_ability_prompt"));
             addWidget(prompt);
         }
     }

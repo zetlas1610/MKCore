@@ -39,8 +39,8 @@ public class AbilityCommand {
                                 .executes(AbilityCommand::unlearnAbility)))
                 .then(Commands.literal("list")
                         .executes(AbilityCommand::listAbilities))
-                .then(Commands.literal("slot_count")
-                        .then(Commands.argument("slotCount", IntegerArgumentType.integer())
+                .then(Commands.literal("pool_count")
+                        .then(Commands.argument("poolCount", IntegerArgumentType.integer())
                                 .executes(AbilityCommand::setSlotCount)))
                 ;
     }
@@ -89,9 +89,9 @@ public class AbilityCommand {
 
     static int setSlotCount(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
         ServerPlayerEntity player = ctx.getSource().asPlayer();
-        int slotCount = IntegerArgumentType.getInteger(ctx, "slotCount");
+        int poolCount = IntegerArgumentType.getInteger(ctx, "poolCount");
         MKCore.getPlayer(player).ifPresent(cap -> cap.getKnowledge()
-                .getKnownAbilities().setSlots(slotCount));
+                .getKnownAbilities().setPoolSize(poolCount));
         return Command.SINGLE_SUCCESS;
     }
 

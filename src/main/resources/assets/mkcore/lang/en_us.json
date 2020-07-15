@@ -80,5 +80,10 @@
   "mkcore.gui.character.current_health": "Health: %s / %s",
   "mkcore.gui.character.current_mana": "Mana: %s / %s",
   "mkcore.gui.character.forget_ability": "Your memory is full, you must forget an ability to learn %s.",
-  "mkcore.THISNEEDSTOBELAST": "ITBETTERBELAST"
+  "mkcore.gui.character.already_known": "Already Known",
+  "mkcore.gui.character.unmet_req": "Unmet Requirement",
+  "mkcore.gui.character.can_learn": "Can Learn",
+  "mkcore.gui.character.learn": "Learn",
+  "mkcore.gui.character.unmet_req_tooltip": "You do not meet the requirements to learn this ability.",
+  "mkcore.gui.character.learn_ability_prompt": "Select an ability to learn."
 }

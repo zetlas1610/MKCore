@@ -21,8 +21,8 @@ public class PlayerAbilityKnowledge implements IPlayerSyncComponentProvider {
     private final MKPlayerData playerData;
     private final PlayerSyncComponent sync = new PlayerSyncComponent("abilities");
     private final Map<ResourceLocation, MKAbilityInfo> abilityInfoMap = new HashMap<>();
-    private final List<ResourceLocation> abilitySlots;
-    private final SyncInt slotCount = new SyncInt("slotCount", GameConstants.DEFAULT_ABILITY_SLOTS);
+    private final List<ResourceLocation> abilityPool;
+    private final SyncInt poolCount = new SyncInt("poolCount", GameConstants.DEFAULT_ABILITY_POOL_SIZE);
     private final SyncMapUpdater<ResourceLocation, MKAbilityInfo> abilityUpdater =
             new SyncMapUpdater<>("known",
                     () -> abilityInfoMap,
@@ -34,35 +34,35 @@ public class PlayerAbilityKnowledge implements IPlayerSyncComponentProvider {
 
     public PlayerAbilityKnowledge(MKPlayerData playerData) {
         this.playerData = playerData;
-        abilitySlots = NonNullList.withSize(GameConstants.MAX_ABILITY_SLOTS, MKCoreRegistry.INVALID_ABILITY);;
+        abilityPool = NonNullList.withSize(GameConstants.MAX_ABILITY_POOL_SIZE, MKCoreRegistry.INVALID_ABILITY);;
         addSyncPrivate(abilityUpdater);
-        addSyncPrivate(slotCount);
-        slotUpdater = new ResourceListUpdater("abilitySlots", () -> abilitySlots);
+        addSyncPrivate(poolCount);
+        slotUpdater = new ResourceListUpdater("abilityPool", () -> abilityPool);
         addSyncPrivate(slotUpdater);
     }
 
-    public int getAbilitySlotCount(){
-        return slotCount.get();
+    public int getAbilityPoolSize(){
+        return poolCount.get();
     }
 
-    public void addSlots(int toAdd){
-        slotCount.add(toAdd);
+    public void addPoolSize(int toAdd){
+        poolCount.add(toAdd);
     }
 
-    public void setSlots(int count){
-        slotCount.set(Math.min(count, GameConstants.MAX_ABILITY_SLOTS));
+    public void setPoolSize(int count){
+        poolCount.set(Math.min(count, GameConstants.MAX_ABILITY_POOL_SIZE));
     }
 
-    public List<ResourceLocation> getAbilitySlots() {
-        return abilitySlots;
+    public List<ResourceLocation> getAbilityPool() {
+        return abilityPool;
     }
 
-    public int getSlottedAbilitiesCount(){
-        return (int) abilitySlots.stream().filter(x -> !x.equals(MKCoreRegistry.INVALID_ABILITY)).count();
+    public int getCurrentPoolCount(){
+        return (int) abilityPool.stream().filter(x -> !x.equals(MKCoreRegistry.INVALID_ABILITY)).count();
     }
 
-    public boolean isAbilitySlotsFull(){
-        return getSlottedAbilitiesCount() >= getAbilitySlotCount();
+    public boolean isAbilityPoolFull(){
+        return getCurrentPoolCount() >= getAbilityPoolSize();
     }
 
     @Override
@@ -84,14 +84,14 @@ public class PlayerAbilityKnowledge implements IPlayerSyncComponentProvider {
     }
 
     public boolean slotAbility(MKAbility ability, int slot){
-        if (slot > GameConstants.MAX_ABILITY_SLOTS || slot > getAbilitySlotCount() - 1){
+        if (slot > GameConstants.MAX_ABILITY_POOL_SIZE || slot > getAbilityPoolSize() - 1){
             return false;
         }
         MKCore.LOGGER.info("Slotting {} to {}", ability.getAbilityId(), slot);
-        if (!abilitySlots.get(slot).equals(MKCoreRegistry.INVALID_ABILITY)){
-            playerData.getKnowledge().unlearnAbility(abilitySlots.get(slot));
+        if (!abilityPool.get(slot).equals(MKCoreRegistry.INVALID_ABILITY)){
+            playerData.getKnowledge().unlearnAbility(abilityPool.get(slot));
         }
-        abilitySlots.set(slot, ability.getRegistryName());
+        abilityPool.set(slot, ability.getRegistryName());
         slotUpdater.setDirty(slot);
         return learnAbility(ability);
     }
@@ -123,9 +123,9 @@ public class PlayerAbilityKnowledge implements IPlayerSyncComponentProvider {
             MKCore.LOGGER.error("{} tried to unlearn unknown ability {}", playerData.getEntity(), abilityId);
             return false;
         }
-        if (abilitySlots.contains(abilityId)){
-            int index = abilitySlots.indexOf(abilityId);
-            abilitySlots.set(index, MKCoreRegistry.INVALID_ABILITY);
+        if (abilityPool.contains(abilityId)){
+            int index = abilityPool.indexOf(abilityId);
+            abilityPool.set(index, MKCoreRegistry.INVALID_ABILITY);
             slotUpdater.setDirty(index);
         }
         info.setKnown(false);
@@ -152,13 +152,13 @@ public class PlayerAbilityKnowledge implements IPlayerSyncComponentProvider {
     public void serialize(CompoundNBT tag) {
         abilityUpdater.serializeStorage(tag, "abilities");
         slotUpdater.serializeStorage(tag);
-        tag.putInt("slotCount", slotCount.get());
+        tag.putInt("poolCount", poolCount.get());
     }
 
     public void deserialize(CompoundNBT tag) {
         abilityUpdater.deserializeStorage(tag, "abilities");
         slotUpdater.deserializeStorage(tag);
-        slotCount.set(tag.getInt("slotCount"));
+        poolCount.set(tag.getInt("poolCount"));
     }
 
     private static MKAbilityInfo createAbilityInfo(ResourceLocation abilityId) {
