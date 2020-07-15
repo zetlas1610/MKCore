@@ -18,30 +18,30 @@ import java.util.function.Supplier;
 public class PlayerLearnAbilityRequestPacket {
     private final int entityId;
     private final ResourceLocation abilityId;
-    private final int slot;
-    private static final int NO_SLOT_REQUIRED = -1;
+    private final int poolIndex;
+    private static final int NO_POOL_REQUIRED = -1;
 
-    public PlayerLearnAbilityRequestPacket(ResourceLocation abilityId, int slot, int entityId) {
+    public PlayerLearnAbilityRequestPacket(ResourceLocation abilityId, int poolIndex, int entityId) {
         this.entityId = entityId;
-        this.slot = slot;
+        this.poolIndex = poolIndex;
         this.abilityId = abilityId;
     }
 
     public PlayerLearnAbilityRequestPacket(ResourceLocation abilityId, int entityId){
-        this(abilityId, NO_SLOT_REQUIRED, entityId);
+        this(abilityId, NO_POOL_REQUIRED, entityId);
     }
 
 
     public PlayerLearnAbilityRequestPacket(PacketBuffer buffer) {
         entityId = buffer.readInt();
         abilityId = buffer.readResourceLocation();
-        slot = buffer.readInt();
+        poolIndex = buffer.readInt();
     }
 
     public void toBytes(PacketBuffer buffer) {
         buffer.writeInt(entityId);
         buffer.writeResourceLocation(abilityId);
-        buffer.writeInt(slot);
+        buffer.writeInt(poolIndex);
     }
 
     public void handle(Supplier<NetworkEvent.Context> supplier) {
@@ -68,10 +68,10 @@ public class PlayerLearnAbilityRequestPacket {
                     }
 
                     entry.getRequirements().forEach(r -> r.onLearned(playerData, ability));
-                    if (slot == NO_SLOT_REQUIRED){
+                    if (poolIndex == NO_POOL_REQUIRED){
                         playerData.getKnowledge().learnAbility(ability);
                     } else {
-                        playerData.getKnowledge().slotAbility(ability, slot);
+                        playerData.getKnowledge().learnPooledAbility(ability, poolIndex);
                     }
                 });
             }
