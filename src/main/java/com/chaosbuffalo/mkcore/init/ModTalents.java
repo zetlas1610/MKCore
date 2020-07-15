@@ -27,6 +27,7 @@ public class ModTalents {
                 MKCore.makeRL("talent.max_health"),
                 (RangedAttribute) SharedMonsterAttributes.MAX_HEALTH,
                 UUID.fromString("5d95bcd4-a06e-415a-add0-f1f85e20b18b"))
+                .setRequiresStatRefresh(true)
                 .setDefaultPerRank(1);
         event.getRegistry().register(maxHealth);
 
@@ -74,6 +75,7 @@ public class ModTalents {
                 MKCore.makeRL("talent.max_mana"),
                 MKAttributes.MAX_MANA,
                 UUID.fromString("50338dba-eaca-4ec8-a71f-13b5924496f4"))
+                .setRequiresStatRefresh(true)
                 .setDefaultPerRank(1);
         event.getRegistry().register(maxMana);
 

@@ -164,6 +164,23 @@ public class PlayerStatsModule extends EntityStatsModule implements IStatsModule
         });
     }
 
+    public void refreshStats() {
+        if (getHealth() > getMaxHealth()) {
+            setHealth(MathHelper.clamp(getHealth(), 0, getMaxHealth()));
+        }
+        if (getMana() > getMaxMana()) {
+            setMana(getMana());
+        }
+    }
+
+    public void onPersonaActivated() {
+        refreshStats();
+    }
+
+    public void onPersonaDeactivated() {
+
+    }
+
     @Override
     public void serialize(CompoundNBT nbt) {
         abilityTracker.serialize(nbt);
