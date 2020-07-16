@@ -31,6 +31,10 @@ public abstract class PassiveTalentAbility extends MKAbility {
 
     public abstract PassiveTalentEffect getPassiveEffect();
 
+    @Override
+    public boolean isPoolAbility() {
+        return false;
+    }
 
     @Override
     public List<ITextComponent> getDescriptionsForEntity(IMKEntityData entityData) {

@@ -93,6 +93,19 @@ public class PlayerKnowledge implements IAbilityKnowledge, IPlayerSyncComponentP
         return learnAbility(ability, ability.getType().canPlaceOnActionBar());
     }
 
+    public boolean learnPooledAbility(MKAbility ability, int poolIndex){
+        if (knownAbilities.learnPooledAbility(ability, poolIndex)){
+            if (ability.getType().canPlaceOnActionBar()){
+                getAbilityContainer(ability.getType()).tryPlaceOnBar(ability.getAbilityId());
+            }
+            return true;
+        } else {
+            MKCore.LOGGER.error("learnPooledAbility({}) to index {} for {} failure",
+                    ability.getAbilityId(), poolIndex, getPlayer());
+            return false;
+        }
+    }
+
     public boolean learnAbility(MKAbility ability, boolean placeOnBar) {
         if (knownAbilities.learnAbility(ability)) {
             if (placeOnBar) {

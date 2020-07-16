@@ -7,6 +7,7 @@ import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.core.PlayerAbilityKnowledge;
 import com.chaosbuffalo.mkcore.utils.TextUtils;
 import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -38,6 +39,9 @@ public class AbilityCommand {
                                 .executes(AbilityCommand::unlearnAbility)))
                 .then(Commands.literal("list")
                         .executes(AbilityCommand::listAbilities))
+                .then(Commands.literal("pool_count")
+                        .then(Commands.argument("poolCount", IntegerArgumentType.integer())
+                                .executes(AbilityCommand::setSlotCount)))
                 ;
     }
 
@@ -80,6 +84,14 @@ public class AbilityCommand {
             MKCore.getPlayer(player).ifPresent(cap -> cap.getKnowledge().learnAbility(ability));
         }
 
+        return Command.SINGLE_SUCCESS;
+    }
+
+    static int setSlotCount(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
+        ServerPlayerEntity player = ctx.getSource().asPlayer();
+        int poolCount = IntegerArgumentType.getInteger(ctx, "poolCount");
+        MKCore.getPlayer(player).ifPresent(cap -> cap.getKnowledge()
+                .getKnownAbilities().setPoolSize(poolCount));
         return Command.SINGLE_SUCCESS;
     }
 

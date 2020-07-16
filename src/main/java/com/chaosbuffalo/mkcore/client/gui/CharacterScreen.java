@@ -31,12 +31,9 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CClientStatusPacket;
-import net.minecraft.stats.IStatFormatter;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.*;
@@ -339,7 +336,6 @@ public class CharacterScreen extends AbilityPanelScreen {
         if (minecraft != null && minecraft.getConnection() != null){
             minecraft.getConnection().sendPacket(new CClientStatusPacket(CClientStatusPacket.State.REQUEST_STATS));
         }
-
     }
 
     private void addStatTextToLayout(MKLayout layout, ResourceLocation statName,
