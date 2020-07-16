@@ -16,6 +16,7 @@ public class AttributeTalent extends BaseTalent {
     private AttributeModifier.Operation operation;
     private boolean renderAsPercentage;
     private double defaultPerRank;
+    private boolean requiresStatRefresh;
 
     public AttributeTalent(ResourceLocation name, RangedAttribute attr, UUID id) {
         super(name);
@@ -50,6 +51,11 @@ public class AttributeTalent extends BaseTalent {
 
     public AttributeTalent setDefaultPerRank(double valuePerRank) {
         defaultPerRank = valuePerRank;
+        return this;
+    }
+
+    public AttributeTalent setRequiresStatRefresh(boolean needs) {
+        requiresStatRefresh = needs;
         return this;
     }
 
@@ -92,6 +98,10 @@ public class AttributeTalent extends BaseTalent {
 
     public double getDefaultPerRank() {
         return defaultPerRank;
+    }
+
+    public boolean requiresStatRefresh() {
+        return requiresStatRefresh;
     }
 
     @Override

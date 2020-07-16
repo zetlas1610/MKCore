@@ -83,6 +83,9 @@ public class AttributeTalentHandler extends TalentTypeHandler {
 //        MKCore.LOGGER.info("PlayerTalentModule.applyAttribute mod {}", mod);
         instance.removeModifier(mod);
         instance.applyModifier(mod);
+        if (entry.getAttributeTalent().requiresStatRefresh()) {
+            playerData.getStats().refreshStats();
+        }
 
 //        dumpDirtyAttributes("applyAttribute");
     }

@@ -167,18 +167,20 @@ public class MKPlayerData implements IMKEntityData {
         }
     }
 
-    public void onPersonaActivated(PersonaManager.Persona persona) {
-        persona.getKnowledge().getSyncComponent().attach(updateEngine);
-        persona.getKnowledge().onPersonaActivated();
+    public void onPersonaActivated() {
+        getKnowledge().getSyncComponent().attach(updateEngine);
+        getKnowledge().onPersonaActivated();
         getTalentHandler().onPersonaActivated();
         getAbilityExecutor().onPersonaActivated();
+        getStats().onPersonaActivated();
     }
 
-    public void onPersonaDeactivated(PersonaManager.Persona persona) {
-        persona.getKnowledge().onPersonaDeactivated();
-        persona.getKnowledge().getSyncComponent().detach(updateEngine);
+    public void onPersonaDeactivated() {
+        getKnowledge().onPersonaDeactivated();
+        getKnowledge().getSyncComponent().detach(updateEngine);
         getTalentHandler().onPersonaDeactivated();
         getAbilityExecutor().onPersonaDeactivated();
+        getStats().onPersonaDeactivated();
     }
 
     @Override
