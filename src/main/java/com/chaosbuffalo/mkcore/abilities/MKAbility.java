@@ -40,18 +40,24 @@ import java.util.stream.Collectors;
 public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
 
     public enum AbilityType {
-        Active(true),
-        Passive(false),
-        Ultimate(true);
+        Active(true, true),
+        Passive(false, false),
+        Ultimate(true, false);
 
         final boolean canSlot;
+        final boolean usesPool;
 
-        AbilityType(boolean canSlot) {
+        AbilityType(boolean canSlot, boolean usesPool) {
             this.canSlot = canSlot;
+            this.usesPool = usesPool;
         }
 
         public boolean canPlaceOnActionBar() {
             return canSlot;
+        }
+
+        public boolean isPoolAbility() {
+            return usesPool;
         }
     }
 
@@ -73,10 +79,6 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         this.manaCost = 1;
         this.attributes = new ArrayList<>();
         setUseCondition(new StandardUseCondition(this));
-    }
-
-    public boolean isPoolAbility(){
-        return true;
     }
 
     protected List<Object> getDescriptionArgs(IMKEntityData entityData) {
