@@ -46,11 +46,6 @@ public class HealingRain extends MKAbility {
     }
 
     @Override
-    public boolean isPoolAbility() {
-        return false;
-    }
-
-    @Override
     public boolean isInterruptible() {
         return false;
     }
