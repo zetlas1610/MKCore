@@ -131,7 +131,7 @@ public class LearnAbilityTray extends MKStackLayoutVertical {
             ArrayList<String> texts = unmetRequirements.stream()
                     .map((x) -> new StringTextComponent(
                             String.format("  - %s", x.requirementDescription.getFormattedText()))
-                            .applyTextStyle(x.isMet ? TextFormatting.GREEN : TextFormatting.BLACK).getFormattedText())
+                            .applyTextStyle(x.isMet ? TextFormatting.DARK_GREEN : TextFormatting.BLACK).getFormattedText())
                     .collect(Collectors.toCollection(ArrayList::new));
             for (String text : texts) {
                 MKText reqText = new MKText(font, text);
