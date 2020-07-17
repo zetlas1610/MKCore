@@ -13,7 +13,7 @@ public interface IMKEntityData {
 
     IStatsModule getStats();
 
-    void serialize(CompoundNBT nbt);
+    CompoundNBT serialize();
 
     void deserialize(CompoundNBT nbt);
 

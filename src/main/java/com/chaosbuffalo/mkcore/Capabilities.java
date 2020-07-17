@@ -69,9 +69,7 @@ public class Capabilities {
         @Nullable
         @Override
         public INBT writeNBT(Capability<T> capability, T instance, Direction side) {
-            CompoundNBT tag = new CompoundNBT();
-            instance.serialize(tag);
-            return tag;
+            return instance.serialize();
         }
 
         @Override

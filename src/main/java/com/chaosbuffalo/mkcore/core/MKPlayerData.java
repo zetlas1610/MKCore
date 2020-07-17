@@ -118,8 +118,7 @@ public class MKPlayerData implements IMKEntityData {
     public void clone(IMKEntityData previous, boolean death) {
         MKCore.LOGGER.info("onDeath!");
 
-        CompoundNBT tag = new CompoundNBT();
-        previous.serialize(tag);
+        CompoundNBT tag = previous.serialize();
         deserialize(tag);
     }
 
@@ -184,16 +183,18 @@ public class MKPlayerData implements IMKEntityData {
     }
 
     @Override
-    public void serialize(CompoundNBT tag) {
+    public CompoundNBT serialize() {
+        CompoundNBT tag = new CompoundNBT();
         tag.put("persona", personaManager.serialize());
-        getStats().serialize(tag);
+        tag.put("stats", getStats().serialize());
+        return tag;
     }
 
     @Override
     public void deserialize(CompoundNBT tag) {
         MKCore.LOGGER.info("MKPlayerData.deserialize");
         personaManager.deserialize(tag.getCompound("persona"));
-        getStats().deserialize(tag);
+        getStats().deserialize(tag.getCompound("stats"));
     }
 
     public void addSpellTag(String tag) {

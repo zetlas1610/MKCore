@@ -31,7 +31,7 @@ public interface IStatsModule {
 
     void resetAllTimers();
 
-    void serialize(CompoundNBT nbt);
+    CompoundNBT serialize();
 
     void deserialize(CompoundNBT nbt);
 }
