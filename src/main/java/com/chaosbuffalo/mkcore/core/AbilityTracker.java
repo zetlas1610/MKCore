@@ -79,18 +79,15 @@ public class AbilityTracker implements ISyncObject {
     protected void onTimerRemoved(ResourceLocation id) {
     }
 
-    public void serialize(CompoundNBT nbt) {
+    public CompoundNBT serialize() {
         CompoundNBT root = new CompoundNBT();
         iterateActive((id, cd) -> root.putInt(id.toString(), cd));
-        nbt.put("cooldowns", root);
+        return root;
     }
 
-    public void deserialize(CompoundNBT nbt) {
-        if (nbt.contains("cooldowns")) {
-            CompoundNBT root = nbt.getCompound("cooldowns");
-            for (String key : root.keySet()) {
-                setCooldownInternal(new ResourceLocation(key), root.getInt(key));
-            }
+    public void deserialize(CompoundNBT root) {
+        for (String key : root.keySet()) {
+            setCooldownInternal(new ResourceLocation(key), root.getInt(key));
         }
     }
 
@@ -176,7 +173,7 @@ public class AbilityTracker implements ISyncObject {
 
         @Override
         public void serializeFull(CompoundNBT tag) {
-            serialize(tag);
+            tag.put("cooldowns", serialize());
             dirty.clear();
         }
     }
@@ -202,7 +199,7 @@ public class AbilityTracker implements ISyncObject {
 
     @Override
     public void deserializeUpdate(CompoundNBT tag) {
-        deserialize(tag);
+        deserialize(tag.getCompound("cooldowns"));
     }
 
     @Override

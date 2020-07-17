@@ -15,16 +15,14 @@ public class SyncListUpdater<T> implements ISyncObject {
     private final String name;
     private final Function<T, INBT> valueEncoder;
     private final Function<INBT, T> valueDecoder;
-    private final int nbtListType;
     private final BitSet dirtyEntries = new BitSet();
     private ISyncNotifier parentNotifier = ISyncNotifier.NONE;
 
-    public SyncListUpdater(String name, Supplier<List<T>> list, Function<T, INBT> valueEncoder, Function<INBT, T> valueDecoder, int nbtListType) {
+    public SyncListUpdater(String name, Supplier<List<T>> list, Function<T, INBT> valueEncoder, Function<INBT, T> valueDecoder) {
         this.name = name;
         this.parent = list;
         this.valueDecoder = valueDecoder;
         this.valueEncoder = valueEncoder;
-        this.nbtListType = nbtListType;
     }
 
     private CompoundNBT makeEntry(int index, T value) {
@@ -99,20 +97,26 @@ public class SyncListUpdater<T> implements ISyncObject {
         dirtyEntries.clear();
     }
 
-    public void serializeStorage(CompoundNBT tag) {
-        ListNBT list = new ListNBT();
-        parent.get().forEach(r -> list.add(valueEncoder.apply(r)));
-        tag.put(name, list);
-    }
-
-    public void deserializeStorage(CompoundNBT tag) {
-        ListNBT list = tag.getList(name, nbtListType);
+    private void deserializeList(ListNBT list) {
         List<T> parentList = parent.get();
         for (int i = 0; i < list.size(); i++) {
             T decoded = valueDecoder.apply(list.get(i));
             if (i < parentList.size()) {
                 parentList.set(i, decoded);
             }
+        }
+    }
+
+    public INBT serializeStorage() {
+        ListNBT list = new ListNBT();
+        parent.get().forEach(r -> list.add(valueEncoder.apply(r)));
+        return list;
+    }
+
+    public void deserializeStorage(INBT tag) {
+        if (tag instanceof ListNBT) {
+            ListNBT list = (ListNBT) tag;
+            deserializeList(list);
         }
     }
 }

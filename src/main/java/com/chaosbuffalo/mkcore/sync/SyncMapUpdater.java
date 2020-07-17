@@ -2,14 +2,12 @@ package com.chaosbuffalo.mkcore.sync;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.nbt.INBT;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -18,13 +16,14 @@ public class SyncMapUpdater<K, V extends IMKSerializable<CompoundNBT>> implement
 
     private final String rootName;
     private final Supplier<Map<K, V>> mapSupplier;
-    private final BiConsumer<V, CompoundNBT> keyEncoder;
-    private final Function<CompoundNBT, K> keyDecoder;
+    private final Function<K, String> keyEncoder;
+    private final Function<String, K> keyDecoder;
     private final Set<K> dirty = new HashSet<>();
     private final Function<K, V> factory;
     private ISyncNotifier parentNotifier = ISyncNotifier.NONE;
 
-    public SyncMapUpdater(String rootName, Supplier<Map<K, V>> mapSupplier, BiConsumer<V, CompoundNBT> keyEncoder, Function<CompoundNBT, K> keyDecoder, Function<K, V> factory) {
+    public SyncMapUpdater(String rootName, Supplier<Map<K, V>> mapSupplier,
+                          Function<K, String> keyEncoder, Function<String, K> keyDecoder, Function<K, V> factory) {
         this.rootName = rootName;
         this.mapSupplier = mapSupplier;
         this.keyEncoder = keyEncoder;
@@ -55,42 +54,7 @@ public class SyncMapUpdater<K, V extends IMKSerializable<CompoundNBT>> implement
             mapSupplier.get().clear();
         }
 
-        ListNBT list = root.getList("l", Constants.NBT.TAG_COMPOUND);
-        deserializeList(list);
-    }
-
-    private void deserializeList(ListNBT list) {
-        for (int i = 0; i < list.size(); i++) {
-            CompoundNBT entryTag = list.getCompound(i);
-//            MKCore.LOGGER.info("update {} {}", i, entryTag);
-            K decodedKey = keyDecoder.apply(entryTag);
-            V current = mapSupplier.get().computeIfAbsent(decodedKey, factory);
-            if (current == null)
-                continue;
-
-            if (!current.deserialize(entryTag)) {
-                MKCore.LOGGER.error("Failed to deserialize ability update for {}", decodedKey);
-                continue;
-            }
-            mapSupplier.get().put(decodedKey, current);
-        }
-    }
-
-    private CompoundNBT serializeEntry(V value) {
-        CompoundNBT entryTag = new CompoundNBT();
-        keyEncoder.accept(value, entryTag);
-        value.serialize(entryTag);
-        return entryTag;
-    }
-
-    private ListNBT serializeList(Collection<K> infoCollection) {
-        ListNBT list = new ListNBT();
-        infoCollection.forEach(key -> {
-            V value = mapSupplier.get().get(key);
-            CompoundNBT entryTag = serializeEntry(value);
-            list.add(entryTag);
-        });
-        return list;
+        deserializeList(root.getCompound("l"));
     }
 
     @Override
@@ -99,8 +63,7 @@ public class SyncMapUpdater<K, V extends IMKSerializable<CompoundNBT>> implement
             return;
 
         CompoundNBT root = new CompoundNBT();
-        ListNBT list = serializeList(dirty);
-        root.put("l", list);
+        root.put("l", serializeList(dirty));
         tag.put(rootName, root);
 
         dirty.clear();
@@ -109,22 +72,58 @@ public class SyncMapUpdater<K, V extends IMKSerializable<CompoundNBT>> implement
     @Override
     public void serializeFull(CompoundNBT tag) {
         CompoundNBT root = new CompoundNBT();
-        ListNBT list = serializeList(mapSupplier.get().keySet());
         root.putBoolean("f", true);
-        root.put("l", list);
+        root.put("l", serializeStorage());
         tag.put(rootName, root);
 
         dirty.clear();
     }
 
-    public void serializeStorage(CompoundNBT tag, String tagName) {
-        ListNBT list = serializeList(mapSupplier.get().keySet());
-        tag.put(tagName, list);
+    private CompoundNBT serializeList(Collection<K> infoCollection) {
+        CompoundNBT list = new CompoundNBT();
+        Map<K, V> map = mapSupplier.get();
+        infoCollection.forEach(key -> {
+            V value = map.get(key);
+            if (value != null) {
+                list.put(keyEncoder.apply(key), value.serialize());
+            }
+        });
+        return list;
     }
 
-    public void deserializeStorage(CompoundNBT tag, String tagName) {
-        ListNBT list = tag.getList(tagName, Constants.NBT.TAG_COMPOUND);
-        mapSupplier.get().clear();
-        deserializeList(list);
+    private void deserializeList(CompoundNBT tag) {
+        Map<K, V> map = mapSupplier.get();
+        for (String key : tag.keySet()) {
+            CompoundNBT entryTag = tag.getCompound(key);
+//            MKCore.LOGGER.info("update {} {}", i, entryTag);
+            K decodedKey = keyDecoder.apply(key);
+            if (decodedKey == null) {
+                MKCore.LOGGER.error("Failed to decode map key {}", key);
+                continue;
+            }
+            V current = map.computeIfAbsent(decodedKey, factory);
+            if (current == null) {
+                MKCore.LOGGER.error("Failed to compute map value for key {}", decodedKey);
+                continue;
+            }
+
+            if (!current.deserialize(entryTag)) {
+                MKCore.LOGGER.error("Failed to deserialize map value for {}", decodedKey);
+                continue;
+            }
+            map.put(decodedKey, current);
+        }
+    }
+
+    public INBT serializeStorage() {
+        return serializeList(mapSupplier.get().keySet());
+    }
+
+    public void deserializeStorage(INBT tag) {
+        if (tag instanceof CompoundNBT) {
+            CompoundNBT list = (CompoundNBT) tag;
+            mapSupplier.get().clear();
+            deserializeList(list);
+        }
     }
 }

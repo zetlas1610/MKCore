@@ -89,8 +89,8 @@ public class EntityStatsModule implements IStatsModule {
     }
 
     @Override
-    public void serialize(CompoundNBT nbt) {
-
+    public CompoundNBT serialize() {
+        return new CompoundNBT();
     }
 
     @Override

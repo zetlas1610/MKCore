@@ -182,16 +182,18 @@ public class PlayerStatsModule extends EntityStatsModule implements IStatsModule
     }
 
     @Override
-    public void serialize(CompoundNBT nbt) {
-        abilityTracker.serialize(nbt);
-        nbt.putFloat("mana", mana.get());
+    public CompoundNBT serialize() {
+        CompoundNBT tag = new CompoundNBT();
+        tag.put("cooldowns", abilityTracker.serialize());
+        tag.putFloat("mana", mana.get());
+        return tag;
     }
 
     @Override
-    public void deserialize(CompoundNBT nbt) {
-        abilityTracker.deserialize(nbt);
-        if (nbt.contains("mana")) {
-            setMana(nbt.getFloat("mana"));
+    public void deserialize(CompoundNBT tag) {
+        abilityTracker.deserialize(tag.getCompound("cooldowns"));
+        if (tag.contains("mana")) {
+            setMana(tag.getFloat("mana"));
         }
     }
 }
