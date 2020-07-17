@@ -6,6 +6,7 @@ import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
 import com.chaosbuffalo.mkcore.client.gui.widgets.*;
+import com.chaosbuffalo.mkcore.core.AbilitySlotType;
 import com.chaosbuffalo.mkcore.core.MKAttributes;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageType;
@@ -46,10 +47,10 @@ public class CharacterScreen extends AbilityPanelScreen {
     private static final ArrayList<IAttribute> STAT_PANEL_ATTRIBUTES = new ArrayList<>();
 
     public static class AbilitySlotKey {
-        public MKAbility.AbilityType type;
+        public AbilitySlotType type;
         public int slot;
 
-        public AbilitySlotKey(MKAbility.AbilityType type, int index) {
+        public AbilitySlotKey(AbilitySlotType type, int index) {
             this.type = type;
             this.slot = index;
         }
@@ -71,7 +72,7 @@ public class CharacterScreen extends AbilityPanelScreen {
 
     private final Map<AbilitySlotKey, AbilitySlotWidget> abilitySlots;
 
-    public List<AbilitySlotWidget> getSlotsForType(MKAbility.AbilityType slotType) {
+    public List<AbilitySlotWidget> getSlotsForType(AbilitySlotType slotType) {
         List<AbilitySlotWidget> widgets = new ArrayList<>();
         for (AbilitySlotWidget slot : abilitySlots.values()) {
             if (slot.getSlotType().equals(slotType)) {
@@ -203,12 +204,12 @@ public class CharacterScreen extends AbilityPanelScreen {
             activesLabel.setX(slotsX);
             activesLabel.setY(slotsY - 12);
             root.addWidget(activesLabel);
-            MKLayout regularSlots = getLayoutOfAbilitySlots(slotsX, slotsY, MKAbility.AbilityType.Active
+            MKLayout regularSlots = getLayoutOfAbilitySlots(slotsX, slotsY, AbilitySlotType.Basic
                     , GameConstants.MAX_ACTIVES);
             root.addWidget(regularSlots);
             regularSlots.manualRecompute();
             int ultSlotsX = regularSlots.getX() + regularSlots.getWidth() + 30;
-            MKLayout ultSlots = getLayoutOfAbilitySlots(ultSlotsX, slotsY, MKAbility.AbilityType.Ultimate,
+            MKLayout ultSlots = getLayoutOfAbilitySlots(ultSlotsX, slotsY, AbilitySlotType.Ultimate,
                     GameConstants.MAX_ULTIMATES);
             root.addWidget(ultSlots);
             ultSlots.manualRecompute();
@@ -217,7 +218,7 @@ public class CharacterScreen extends AbilityPanelScreen {
             ultLabel.setY(slotsY - 12);
             root.addWidget(ultLabel);
             int passiveSlotX = ultSlots.getX() + ultSlots.getWidth() + 30;
-            MKLayout passiveSlots = getLayoutOfAbilitySlots(passiveSlotX, slotsY, MKAbility.AbilityType.Passive,
+            MKLayout passiveSlots = getLayoutOfAbilitySlots(passiveSlotX, slotsY, AbilitySlotType.Passive,
                     GameConstants.MAX_PASSIVES);
             MKText passivesLabel = new MKText(font, new TranslationTextComponent("mkcore.gui.passives"));
             passivesLabel.setX(passiveSlotX);
@@ -307,7 +308,7 @@ public class CharacterScreen extends AbilityPanelScreen {
         return textWidget;
     }
 
-    private MKLayout getLayoutOfAbilitySlots(int x, int y, MKAbility.AbilityType slotType, int count) {
+    private MKLayout getLayoutOfAbilitySlots(int x, int y, AbilitySlotType slotType, int count) {
         MKStackLayoutHorizontal layout = new MKStackLayoutHorizontal(x, y, 24);
         layout.setPaddings(2, 2, 0, 0);
         layout.setMargins(2, 2, 2, 2);
@@ -444,15 +445,14 @@ public class CharacterScreen extends AbilityPanelScreen {
     @Override
     public void setDragging(MKAbility dragging) {
         super.setDragging(dragging);
-        Set<MKAbility.AbilityType> types = Sets.newHashSet(MKAbility.AbilityType.Active, MKAbility.AbilityType.Passive,
-                MKAbility.AbilityType.Ultimate);
-        types.remove(dragging.getType());
-        for (MKAbility.AbilityType type : types) {
-            for (AbilitySlotWidget widget : getSlotsForType(type)) {
-                widget.setBackgroundColor(0xff555555);
-                widget.setIconColor(0xff555555);
-            }
-        }
+        Arrays.stream(AbilitySlotType.values())
+                .filter(type -> type != dragging.getType().getSlotType())
+                .forEach(type -> {
+                    for (AbilitySlotWidget widget : getSlotsForType(type)) {
+                        widget.setBackgroundColor(0xff555555);
+                        widget.setIconColor(0xff555555);
+                    }
+                });
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
+import com.chaosbuffalo.mkcore.core.AbilitySlotType;
 import com.chaosbuffalo.mkcore.core.PlayerAbilityKnowledge;
 import com.chaosbuffalo.mkcore.utils.TextUtils;
 import com.mojang.brigadier.Command;
@@ -53,7 +54,7 @@ public class AbilityCommand {
                                 .getKnownAbilities()
                                 .getAbilities()
                                 .stream()
-                                .filter(info -> info.getAbility().getType() == MKAbility.AbilityType.Active)
+                                .filter(info -> info.getAbility().getType().fitsSlot(AbilitySlotType.Basic))
                                 .filter(MKAbilityInfo::isCurrentlyKnown)
                                 .map(MKAbilityInfo::getId)
                                 .map(ResourceLocation::toString))
@@ -68,7 +69,7 @@ public class AbilityCommand {
                         .map(playerData -> {
                             Set<MKAbility> allAbilities = new HashSet<>(MKCoreRegistry.ABILITIES.getValues());
                             allAbilities.removeIf(ability -> playerData.getKnowledge().knowsAbility(ability.getAbilityId()));
-                            allAbilities.removeIf(ability -> ability.getType() != MKAbility.AbilityType.Active);
+                            allAbilities.removeIf(ability -> ability.getType().getSlotType() != AbilitySlotType.Basic);
                             return allAbilities.stream().map(MKAbility::getAbilityId).map(ResourceLocation::toString);
                         })
                         .orElse(Stream.empty()),

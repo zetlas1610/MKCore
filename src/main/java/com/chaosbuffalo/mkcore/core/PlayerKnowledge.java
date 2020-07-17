@@ -22,7 +22,7 @@ public class PlayerKnowledge implements IAbilityKnowledge, IPlayerSyncComponentP
     private final PlayerActionBar actionBar;
     private final PlayerAbilityKnowledge knownAbilities;
     private final PlayerTalentKnowledge talentKnowledge;
-    private final Map<MKAbility.AbilityType, IActiveAbilityContainer> abilitySlotContainers = new HashMap<>();
+    private final Map<AbilitySlotType, IActiveAbilityContainer> abilitySlotContainers = new HashMap<>();
 
     public PlayerKnowledge(MKPlayerData playerData) {
         this.playerData = playerData;
@@ -32,9 +32,9 @@ public class PlayerKnowledge implements IAbilityKnowledge, IPlayerSyncComponentP
         addSyncChild(actionBar);
         addSyncChild(knownAbilities);
         addSyncChild(talentKnowledge);
-        registerAbilityContainer(MKAbility.AbilityType.Active, actionBar);
-        registerAbilityContainer(MKAbility.AbilityType.Passive, talentKnowledge.getPassiveContainer());
-        registerAbilityContainer(MKAbility.AbilityType.Ultimate, talentKnowledge.getUltimateContainer());
+        registerAbilityContainer(AbilitySlotType.Basic, actionBar);
+        registerAbilityContainer(AbilitySlotType.Passive, talentKnowledge.getPassiveContainer());
+        registerAbilityContainer(AbilitySlotType.Ultimate, talentKnowledge.getUltimateContainer());
     }
 
     @Override
@@ -59,15 +59,15 @@ public class PlayerKnowledge implements IAbilityKnowledge, IPlayerSyncComponentP
     }
 
     @Nonnull
-    public IActiveAbilityContainer getAbilityContainer(MKAbility.AbilityType type) {
+    public IActiveAbilityContainer getAbilityContainer(AbilitySlotType type) {
         return abilitySlotContainers.getOrDefault(type, IActiveAbilityContainer.EMPTY);
     }
 
-    public void registerAbilityContainer(MKAbility.AbilityType type, IActiveAbilityContainer container) {
+    public void registerAbilityContainer(AbilitySlotType type, IActiveAbilityContainer container) {
         abilitySlotContainers.put(type, container);
     }
 
-    public ResourceLocation getAbilityInSlot(MKAbility.AbilityType type, int slot) {
+    public ResourceLocation getAbilityInSlot(AbilitySlotType type, int slot) {
         return getAbilityContainer(type).getAbilityInSlot(slot);
     }
 
@@ -96,7 +96,7 @@ public class PlayerKnowledge implements IAbilityKnowledge, IPlayerSyncComponentP
     public boolean learnPooledAbility(MKAbility ability, int poolIndex){
         if (knownAbilities.learnPooledAbility(ability, poolIndex)){
             if (ability.getType().canPlaceOnActionBar()){
-                getAbilityContainer(ability.getType()).tryPlaceOnBar(ability.getAbilityId());
+                getAbilityContainer(ability.getType().getSlotType()).tryPlaceOnBar(ability.getAbilityId());
             }
             return true;
         } else {
@@ -109,7 +109,7 @@ public class PlayerKnowledge implements IAbilityKnowledge, IPlayerSyncComponentP
     public boolean learnAbility(MKAbility ability, boolean placeOnBar) {
         if (knownAbilities.learnAbility(ability)) {
             if (placeOnBar) {
-                getAbilityContainer(ability.getType()).tryPlaceOnBar(ability.getAbilityId());
+                getAbilityContainer(ability.getType().getSlotType()).tryPlaceOnBar(ability.getAbilityId());
             }
             return true;
         } else {
@@ -128,7 +128,7 @@ public class PlayerKnowledge implements IAbilityKnowledge, IPlayerSyncComponentP
         if (knownAbilities.unlearnAbility(abilityId)) {
             // FIXME: maybe generalize this
             playerData.getAbilityExecutor().onAbilityUnlearned(ability);
-            getAbilityContainer(ability.getType()).onAbilityUnlearned(ability.getAbilityId());
+            getAbilityContainer(ability.getType().getSlotType()).onAbilityUnlearned(ability.getAbilityId());
             return true;
         }
         return false;

@@ -2,6 +2,7 @@ package com.chaosbuffalo.mkcore.network;
 
 import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.core.AbilitySlotType;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -10,16 +11,16 @@ import java.util.function.Supplier;
 
 public class ExecuteActiveAbilityPacket {
 
-    private final MKAbility.AbilityType type;
+    private final AbilitySlotType type;
     private final int slot;
 
-    public ExecuteActiveAbilityPacket(MKAbility.AbilityType type, int slot) {
+    public ExecuteActiveAbilityPacket(AbilitySlotType type, int slot) {
         this.type = type;
         this.slot = slot;
     }
 
     public ExecuteActiveAbilityPacket(PacketBuffer buffer) {
-        type = buffer.readEnumValue(MKAbility.AbilityType.class);
+        type = buffer.readEnumValue(AbilitySlotType.class);
         slot = buffer.readVarInt();
     }
 

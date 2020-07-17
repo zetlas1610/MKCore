@@ -2,6 +2,7 @@ package com.chaosbuffalo.mkcore;
 
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.client.gui.CharacterScreen;
+import com.chaosbuffalo.mkcore.core.AbilitySlotType;
 import com.chaosbuffalo.mkcore.core.MKRangedAttribute;
 import com.chaosbuffalo.mkcore.item.ArmorClass;
 import com.chaosbuffalo.mkcore.network.ExecuteActiveAbilityPacket;
@@ -93,7 +94,7 @@ public class ClientEventHandler {
     }
 
 
-    static void handleAbilityBarPressed(PlayerEntity player, MKAbility.AbilityType type, int slot) {
+    static void handleAbilityBarPressed(PlayerEntity player, AbilitySlotType type, int slot) {
         if (isOnGlobalCooldown())
             return;
 
@@ -125,14 +126,14 @@ public class ClientEventHandler {
         for (int i = 0; i < activeAbilityBinds.length; i++) {
             KeyBinding bind = activeAbilityBinds[i];
             while (bind.isPressed()) {
-                handleAbilityBarPressed(player, MKAbility.AbilityType.Active, i);
+                handleAbilityBarPressed(player, AbilitySlotType.Basic, i);
             }
         }
 
         for (int i = 0; i < ultimateAbilityBinds.length; i++) {
             KeyBinding bind = ultimateAbilityBinds[i];
             while (bind.isPressed()) {
-                handleAbilityBarPressed(player, MKAbility.AbilityType.Ultimate, i);
+                handleAbilityBarPressed(player, AbilitySlotType.Ultimate, i);
             }
         }
     }

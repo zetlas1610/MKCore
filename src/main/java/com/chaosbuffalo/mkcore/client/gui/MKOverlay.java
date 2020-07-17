@@ -7,6 +7,7 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
+import com.chaosbuffalo.mkcore.core.AbilitySlotType;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.core.PlayerAbilityExecutor;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -84,16 +85,16 @@ public class MKOverlay {
         return Math.max(barStart, MIN_BAR_START_Y);
     }
 
-    private String getTextureForType(MKAbility.AbilityType type) {
-        if (type == MKAbility.AbilityType.Active) {
+    private String getTextureForType(AbilitySlotType type) {
+        if (type == AbilitySlotType.Basic) {
             return GuiTextures.ABILITY_BAR_REG;
-        } else if (type == MKAbility.AbilityType.Ultimate) {
+        } else if (type == AbilitySlotType.Ultimate) {
             return GuiTextures.ABILITY_BAR_ULT;
         }
         return null;
     }
 
-    private void drawBarSlots(MKAbility.AbilityType type, int startSlot, int slotCount, int totalSlots) {
+    private void drawBarSlots(AbilitySlotType type, int startSlot, int slotCount, int totalSlots) {
         GuiTextures.CORE_TEXTURES.bind(mc);
         RenderSystem.disableLighting();
         int xOffset = 0;
@@ -107,7 +108,7 @@ public class MKOverlay {
         }
     }
 
-    private int drawAbilities(MKPlayerData data, MKAbility.AbilityType type, int startingSlot, int totalSlots, float partialTicks) {
+    private int drawAbilities(MKPlayerData data, AbilitySlotType type, int startingSlot, int totalSlots, float partialTicks) {
         RenderSystem.disableLighting();
 
         final int slotAbilityOffsetX = 2;
@@ -184,13 +185,13 @@ public class MKOverlay {
             drawMana(cap);
             drawCastBar(cap);
 
-            int totalSlots = Arrays.stream(MKAbility.AbilityType.values())
-                    .filter(MKAbility.AbilityType::canPlaceOnActionBar)
+            int totalSlots = Arrays.stream(AbilitySlotType.values())
+                    .filter(AbilitySlotType::isExecutable)
                     .mapToInt(type -> cap.getKnowledge().getAbilityContainer(type).getCurrentSlotCount())
                     .sum();
 
-            int slot = drawAbilities(cap, MKAbility.AbilityType.Active, 0, totalSlots, event.getPartialTicks());
-            slot = drawAbilities(cap, MKAbility.AbilityType.Ultimate, slot, totalSlots, event.getPartialTicks());
+            int slot = drawAbilities(cap, AbilitySlotType.Basic, 0, totalSlots, event.getPartialTicks());
+            slot = drawAbilities(cap, AbilitySlotType.Ultimate, slot, totalSlots, event.getPartialTicks());
         });
     }
 }

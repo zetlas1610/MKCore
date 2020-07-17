@@ -13,7 +13,7 @@ import net.minecraft.util.ResourceLocation;
 public class PlayerActionBar extends ActiveAbilityContainer implements IActiveAbilityContainer {
 
     public PlayerActionBar(MKPlayerData playerData) {
-        super(playerData, "action_bar", MKAbility.AbilityType.Active, GameConstants.DEFAULT_ACTIVES, GameConstants.MAX_ACTIVES);
+        super(playerData, "action_bar", AbilitySlotType.Basic, GameConstants.DEFAULT_ACTIVES, GameConstants.MAX_ACTIVES);
     }
 
     private void checkHotBar(ResourceLocation abilityId) {
