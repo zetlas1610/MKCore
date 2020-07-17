@@ -1,5 +1,6 @@
 package com.chaosbuffalo.mkcore.command;
 
+import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
@@ -40,9 +41,10 @@ public class AbilityCommand {
                                 .executes(AbilityCommand::unlearnAbility)))
                 .then(Commands.literal("list")
                         .executes(AbilityCommand::listAbilities))
-                .then(Commands.literal("pool_count")
-                        .then(Commands.argument("poolCount", IntegerArgumentType.integer())
-                                .executes(AbilityCommand::setSlotCount)))
+                .then(Commands.literal("pool_size")
+                        .then(Commands.argument("size", IntegerArgumentType.integer(GameConstants.DEFAULT_ABILITY_POOL_SIZE, GameConstants.MAX_ABILITY_POOL_SIZE))
+                                .executes(AbilityCommand::setSlotCount))
+                        .executes(AbilityCommand::showSlotCount))
                 ;
     }
 
@@ -90,9 +92,18 @@ public class AbilityCommand {
 
     static int setSlotCount(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
         ServerPlayerEntity player = ctx.getSource().asPlayer();
-        int poolCount = IntegerArgumentType.getInteger(ctx, "poolCount");
-        MKCore.getPlayer(player).ifPresent(cap -> cap.getKnowledge()
-                .getKnownAbilities().setPoolSize(poolCount));
+        int size = IntegerArgumentType.getInteger(ctx, "size");
+        MKCore.getPlayer(player).ifPresent(cap -> cap.getKnowledge().getKnownAbilities().setAbilityPoolSize(size));
+        return Command.SINGLE_SUCCESS;
+    }
+
+    static int showSlotCount(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
+        ServerPlayerEntity player = ctx.getSource().asPlayer();
+        MKCore.getPlayer(player).ifPresent(cap -> {
+            int currentSize = cap.getKnowledge().getKnownAbilities().getCurrentPoolCount();
+            int maxSize = cap.getKnowledge().getKnownAbilities().getAbilityPoolSize();
+            TextUtils.sendPlayerChatMessage(player, String.format("Ability Pool: %d/%d", currentSize, maxSize));
+        });
         return Command.SINGLE_SUCCESS;
     }
 

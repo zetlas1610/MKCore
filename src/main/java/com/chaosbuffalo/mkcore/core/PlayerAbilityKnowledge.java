@@ -5,15 +5,15 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.MKAbilityInfo;
-import com.chaosbuffalo.mkcore.sync.ResourceListUpdater;
 import com.chaosbuffalo.mkcore.sync.SyncInt;
 import com.chaosbuffalo.mkcore.sync.SyncMapUpdater;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -21,8 +21,7 @@ public class PlayerAbilityKnowledge implements IPlayerSyncComponentProvider {
     private final MKPlayerData playerData;
     private final PlayerSyncComponent sync = new PlayerSyncComponent("abilities");
     private final Map<ResourceLocation, MKAbilityInfo> abilityInfoMap = new HashMap<>();
-    private final List<ResourceLocation> abilityPool;
-    private final SyncInt poolCount = new SyncInt("poolCount", GameConstants.DEFAULT_ABILITY_POOL_SIZE);
+    private final SyncInt poolSize = new SyncInt("poolSize", GameConstants.DEFAULT_ABILITY_POOL_SIZE);
     private final SyncMapUpdater<ResourceLocation, MKAbilityInfo> knownAbilityUpdater =
             new SyncMapUpdater<>("known",
                     () -> abilityInfoMap,
@@ -30,38 +29,41 @@ public class PlayerAbilityKnowledge implements IPlayerSyncComponentProvider {
                     ResourceLocation::tryCreate,
                     PlayerAbilityKnowledge::createAbilityInfo
             );
-    private final ResourceListUpdater poolUpdater;
 
     public PlayerAbilityKnowledge(MKPlayerData playerData) {
         this.playerData = playerData;
-        abilityPool = NonNullList.withSize(GameConstants.MAX_ABILITY_POOL_SIZE, MKCoreRegistry.INVALID_ABILITY);;
         addSyncPrivate(knownAbilityUpdater);
-        addSyncPrivate(poolCount);
-        poolUpdater = new ResourceListUpdater("abilityPool", () -> abilityPool);
-        addSyncPrivate(poolUpdater);
+        addSyncPrivate(poolSize);
     }
 
-    public int getAbilityPoolSize(){
-        return poolCount.get();
+    public int getAbilityPoolSize() {
+        return poolSize.get();
     }
 
-    public void addPoolSize(int toAdd){
-        poolCount.add(toAdd);
+    public void modifyAbilityPoolSize(int delta) {
+        poolSize.add(delta);
     }
 
-    public void setPoolSize(int count){
-        poolCount.set(Math.min(count, GameConstants.MAX_ABILITY_POOL_SIZE));
+    public void setAbilityPoolSize(int count) {
+        poolSize.set(MathHelper.clamp(count, GameConstants.DEFAULT_ABILITY_POOL_SIZE, GameConstants.MAX_ABILITY_POOL_SIZE));
     }
 
-    public List<ResourceLocation> getAbilityPool() {
-        return abilityPool;
+    private Stream<ResourceLocation> getPoolAbilityStream() {
+        // This can be cached easily if it ever becomes a problem
+        return getKnownStream()
+                .filter(info -> info.getAbility().getType().isPoolAbility())
+                .map(MKAbilityInfo::getId);
     }
 
-    public int getCurrentPoolCount(){
-        return (int) abilityPool.stream().filter(x -> !x.equals(MKCoreRegistry.INVALID_ABILITY)).count();
+    public List<ResourceLocation> getPoolAbilities() {
+        return getPoolAbilityStream().collect(Collectors.toList());
     }
 
-    public boolean isAbilityPoolFull(){
+    public int getCurrentPoolCount() {
+        return (int) getPoolAbilityStream().count();
+    }
+
+    public boolean isAbilityPoolFull() {
         return getCurrentPoolCount() >= getAbilityPoolSize();
     }
 
@@ -83,20 +85,15 @@ public class PlayerAbilityKnowledge implements IPlayerSyncComponentProvider {
         return abilityInfoMap.values().stream().filter(MKAbilityInfo::isCurrentlyKnown);
     }
 
-    public boolean learnPooledAbility(MKAbility ability, int poolIndex){
-        if (poolIndex > GameConstants.MAX_ABILITY_POOL_SIZE || poolIndex > getAbilityPoolSize() - 1){
-            return false;
-        }
-        MKCore.LOGGER.info("Adding {} to the ability pool in slot {}", ability.getAbilityId(), poolIndex);
-        if (!abilityPool.get(poolIndex).equals(MKCoreRegistry.INVALID_ABILITY)){
-            playerData.getKnowledge().unlearnAbility(abilityPool.get(poolIndex));
-        }
-        abilityPool.set(poolIndex, ability.getRegistryName());
-        poolUpdater.setDirty(poolIndex);
-        return learnAbility(ability);
+    public boolean hasRoomForAbility(MKAbility ability) {
+        return !ability.getType().isPoolAbility() || !isAbilityPoolFull();
     }
 
     public boolean learnAbility(MKAbility ability) {
+        if (!hasRoomForAbility(ability)) {
+            MKCore.LOGGER.warn("Player {} tried to learn pool ability {} with a full pool ({}/{})", playerData::getEntity, ability::getAbilityId, this::getCurrentPoolCount, this::getAbilityPoolSize);
+            return false;
+        }
         MKAbilityInfo info = getAbilityInfo(ability.getAbilityId());
         if (info == null) {
             info = ability.createAbilityInfo();
@@ -123,11 +120,6 @@ public class PlayerAbilityKnowledge implements IPlayerSyncComponentProvider {
             MKCore.LOGGER.error("{} tried to unlearn unknown ability {}", playerData.getEntity(), abilityId);
             return false;
         }
-        if (abilityPool.contains(abilityId)){
-            int index = abilityPool.indexOf(abilityId);
-            abilityPool.set(index, MKCoreRegistry.INVALID_ABILITY);
-            poolUpdater.setDirty(index);
-        }
         info.setKnown(false);
         markDirty(info);
         return true;
@@ -152,15 +144,13 @@ public class PlayerAbilityKnowledge implements IPlayerSyncComponentProvider {
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
         tag.put("known", knownAbilityUpdater.serializeStorage());
-        tag.put("abilityPool", poolUpdater.serializeStorage());
-        tag.putInt("poolCount", poolCount.get());
+        tag.putInt("poolSize", poolSize.get());
         return tag;
     }
 
     public void deserialize(CompoundNBT tag) {
         knownAbilityUpdater.deserializeStorage(tag.get("known"));
-        poolUpdater.deserializeStorage(tag.get("abilityPool"));
-        poolCount.set(tag.getInt("poolCount"));
+        setAbilityPoolSize(tag.getInt("poolSize"));
     }
 
     private static MKAbilityInfo createAbilityInfo(ResourceLocation abilityId) {
