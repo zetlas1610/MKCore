@@ -26,8 +26,8 @@ public class PlayerAbilityKnowledge implements IPlayerSyncComponentProvider {
     private final SyncMapUpdater<ResourceLocation, MKAbilityInfo> knownAbilityUpdater =
             new SyncMapUpdater<>("known",
                     () -> abilityInfoMap,
-                    MKAbilityInfo::encodeId,
-                    MKAbilityInfo::decodeId,
+                    ResourceLocation::toString,
+                    ResourceLocation::tryCreate,
                     PlayerAbilityKnowledge::createAbilityInfo
             );
     private final ResourceListUpdater poolUpdater;
