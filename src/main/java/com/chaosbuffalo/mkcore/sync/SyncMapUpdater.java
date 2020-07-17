@@ -77,9 +77,8 @@ public class SyncMapUpdater<K, V extends IMKSerializable<CompoundNBT>> implement
     }
 
     private CompoundNBT serializeEntry(V value) {
-        CompoundNBT entryTag = new CompoundNBT();
+        CompoundNBT entryTag = value.serialize();
         keyEncoder.accept(value, entryTag);
-        value.serialize(entryTag);
         return entryTag;
     }
 

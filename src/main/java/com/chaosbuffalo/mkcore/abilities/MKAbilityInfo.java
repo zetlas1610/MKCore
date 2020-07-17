@@ -35,9 +35,11 @@ public class MKAbilityInfo implements IMKSerializable<CompoundNBT> {
     }
 
     @Override
-    public void serialize(CompoundNBT tag) {
+    public CompoundNBT serialize() {
+        CompoundNBT tag = new CompoundNBT();
         encodeId(this, tag);
         tag.putBoolean("known", known);
+        return tag;
     }
 
     @Override

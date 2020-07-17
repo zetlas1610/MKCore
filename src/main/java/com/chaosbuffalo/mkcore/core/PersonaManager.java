@@ -19,21 +19,18 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
     }
 
     @Override
-    public void serialize(CompoundNBT tag) {
+    public CompoundNBT serialize() {
         if (activePersona == null) {
             // When creating a new character it comes to serialize first, so create the default persona here if none is active
             loadPersona(DEFAULT_PERSONA_NAME);
         }
 
+        CompoundNBT tag = new CompoundNBT();
         CompoundNBT personaRoot = new CompoundNBT();
-        personas.forEach((name, persona) -> {
-            CompoundNBT personaTag = new CompoundNBT();
-            persona.serialize(personaTag);
-            personaRoot.put(name, personaTag);
-        });
-
+        personas.forEach((name, persona) -> personaRoot.put(name, persona.serialize()));
         tag.put("personas", personaRoot);
         tag.putString("activePersona", getActivePersona().getName());
+        return tag;
     }
 
     private void loadPersona(String name) {
@@ -163,11 +160,12 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
         }
 
         @Override
-        public void serialize(CompoundNBT tag) {
+        public CompoundNBT serialize() {
+            CompoundNBT tag = new CompoundNBT();
             CompoundNBT knowledgeTag = new CompoundNBT();
             knowledge.serialize(knowledgeTag);
             tag.put("knowledge", knowledgeTag);
-
+            return tag;
         }
 
         @Override

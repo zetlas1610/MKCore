@@ -97,19 +97,15 @@ public class EntityAbilityKnowledge implements IAbilityKnowledge, IMKSerializabl
     }
 
     @Override
-    public void serialize(CompoundNBT tag) {
+    public CompoundNBT serialize() {
+        CompoundNBT tag = new CompoundNBT();
         CompoundNBT abilityInfos = new CompoundNBT();
-        for (Entry<ResourceLocation, MKAbilityInfo> entry : abilityInfoMap.entrySet()) {
-            CompoundNBT entryNbt = new CompoundNBT();
-            entry.getValue().serialize(entryNbt);
-            abilityInfos.put(entry.getKey().toString(), entryNbt);
-        }
+        abilityInfoMap.forEach((key, value) -> abilityInfos.put(key.toString(), value.serialize()));
         tag.put("abilities", abilityInfos);
         CompoundNBT priorities = new CompoundNBT();
-        for (Entry<ResourceLocation, Integer> priortyEntry : abilityPriorities.entrySet()) {
-            priorities.putInt(priortyEntry.getKey().toString(), priortyEntry.getValue());
-        }
+        abilityPriorities.forEach((key, value) -> priorities.putInt(key.toString(), value));
         tag.put("priorities", priorities);
+        return tag;
     }
 
     private static MKAbilityInfo createAbilityInfo(ResourceLocation abilityId) {

@@ -54,16 +54,14 @@ public class MKEntityData implements IMKEntityData {
     }
 
     @Override
-    public void serialize(CompoundNBT nbt) {
-        CompoundNBT knowledgeTag = new CompoundNBT();
-        getKnowledge().serialize(knowledgeTag);
-        nbt.put("knowledge", knowledgeTag);
+    public void serialize(CompoundNBT tag) {
+        tag.put("knowledge", getKnowledge().serialize());
     }
 
     @Override
-    public void deserialize(CompoundNBT nbt) {
-        if (nbt.contains("knowledge")) {
-            getKnowledge().deserialize(nbt.getCompound("knowledge"));
+    public void deserialize(CompoundNBT tag) {
+        if (tag.contains("knowledge")) {
+            getKnowledge().deserialize(tag.getCompound("knowledge"));
         }
     }
 }

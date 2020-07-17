@@ -184,16 +184,16 @@ public class MKPlayerData implements IMKEntityData {
     }
 
     @Override
-    public void serialize(CompoundNBT nbt) {
-        personaManager.serialize(nbt);
-        getStats().serialize(nbt);
+    public void serialize(CompoundNBT tag) {
+        tag.put("persona", personaManager.serialize());
+        getStats().serialize(tag);
     }
 
     @Override
-    public void deserialize(CompoundNBT nbt) {
+    public void deserialize(CompoundNBT tag) {
         MKCore.LOGGER.info("MKPlayerData.deserialize");
-        personaManager.deserialize(nbt);
-        getStats().deserialize(nbt);
+        personaManager.deserialize(tag.getCompound("persona"));
+        getStats().deserialize(tag);
     }
 
     public void addSpellTag(String tag) {
