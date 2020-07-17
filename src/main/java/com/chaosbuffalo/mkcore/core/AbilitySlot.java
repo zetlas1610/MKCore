@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.core;
 
-public enum AbilitySlotType {
+public enum AbilitySlot {
     Basic(true),
     Passive(false),
     Ultimate(true),
@@ -8,7 +8,7 @@ public enum AbilitySlotType {
 
     final boolean executable;
 
-    AbilitySlotType(boolean executable) {
+    AbilitySlot(boolean executable) {
         this.executable = executable;
     }
 

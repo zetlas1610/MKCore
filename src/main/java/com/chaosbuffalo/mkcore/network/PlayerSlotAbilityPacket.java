@@ -2,8 +2,7 @@ package com.chaosbuffalo.mkcore.network;
 
 import com.chaosbuffalo.mkcore.Capabilities;
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.abilities.MKAbility;
-import com.chaosbuffalo.mkcore.core.AbilitySlotType;
+import com.chaosbuffalo.mkcore.core.AbilitySlot;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -13,11 +12,11 @@ import java.util.function.Supplier;
 
 public class PlayerSlotAbilityPacket {
 
-    private final AbilitySlotType type;
+    private final AbilitySlot type;
     private final ResourceLocation ability;
     private final int slotIndex;
 
-    public PlayerSlotAbilityPacket(AbilitySlotType type, int slotIndex, ResourceLocation ability) {
+    public PlayerSlotAbilityPacket(AbilitySlot type, int slotIndex, ResourceLocation ability) {
         this.type = type;
         this.slotIndex = slotIndex;
         this.ability = ability;
@@ -26,7 +25,7 @@ public class PlayerSlotAbilityPacket {
 
     public PlayerSlotAbilityPacket(PacketBuffer buf) {
         ability = buf.readResourceLocation();
-        type = buf.readEnumValue(AbilitySlotType.class);
+        type = buf.readEnumValue(AbilitySlot.class);
         slotIndex = buf.readInt();
     }
 

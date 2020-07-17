@@ -22,7 +22,7 @@ public class PlayerKnowledge implements IAbilityKnowledge, IPlayerSyncComponentP
     private final PlayerActionBar actionBar;
     private final PlayerAbilityKnowledge knownAbilities;
     private final PlayerTalentKnowledge talentKnowledge;
-    private final Map<AbilitySlotType, IActiveAbilityContainer> abilitySlotContainers = new HashMap<>();
+    private final Map<AbilitySlot, IActiveAbilityContainer> abilitySlotContainers = new HashMap<>();
 
     public PlayerKnowledge(MKPlayerData playerData) {
         this.playerData = playerData;
@@ -32,9 +32,9 @@ public class PlayerKnowledge implements IAbilityKnowledge, IPlayerSyncComponentP
         addSyncChild(actionBar);
         addSyncChild(knownAbilities);
         addSyncChild(talentKnowledge);
-        registerAbilityContainer(AbilitySlotType.Basic, actionBar);
-        registerAbilityContainer(AbilitySlotType.Passive, talentKnowledge.getPassiveContainer());
-        registerAbilityContainer(AbilitySlotType.Ultimate, talentKnowledge.getUltimateContainer());
+        registerAbilityContainer(AbilitySlot.Basic, actionBar);
+        registerAbilityContainer(AbilitySlot.Passive, talentKnowledge.getPassiveContainer());
+        registerAbilityContainer(AbilitySlot.Ultimate, talentKnowledge.getUltimateContainer());
     }
 
     @Override
@@ -59,15 +59,15 @@ public class PlayerKnowledge implements IAbilityKnowledge, IPlayerSyncComponentP
     }
 
     @Nonnull
-    public IActiveAbilityContainer getAbilityContainer(AbilitySlotType type) {
+    public IActiveAbilityContainer getAbilityContainer(AbilitySlot type) {
         return abilitySlotContainers.getOrDefault(type, IActiveAbilityContainer.EMPTY);
     }
 
-    public void registerAbilityContainer(AbilitySlotType type, IActiveAbilityContainer container) {
+    public void registerAbilityContainer(AbilitySlot type, IActiveAbilityContainer container) {
         abilitySlotContainers.put(type, container);
     }
 
-    public ResourceLocation getAbilityInSlot(AbilitySlotType type, int slot) {
+    public ResourceLocation getAbilityInSlot(AbilitySlot type, int slot) {
         return getAbilityContainer(type).getAbilityInSlot(slot);
     }
 

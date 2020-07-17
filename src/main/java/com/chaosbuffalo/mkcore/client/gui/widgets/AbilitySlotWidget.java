@@ -6,7 +6,7 @@ import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.client.gui.CharacterScreen;
 import com.chaosbuffalo.mkcore.client.gui.GuiTextures;
-import com.chaosbuffalo.mkcore.core.AbilitySlotType;
+import com.chaosbuffalo.mkcore.core.AbilitySlot;
 import com.chaosbuffalo.mkcore.core.IActiveAbilityContainer;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
@@ -26,7 +26,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 
 public class AbilitySlotWidget extends MKLayout {
-    private AbilitySlotType slotType;
+    private AbilitySlot slotType;
     private boolean unlocked;
     private final int slotIndex;
     private CharacterScreen screen;
@@ -34,7 +34,7 @@ public class AbilitySlotWidget extends MKLayout {
     private MKImage background;
     private MKImage icon;
 
-    public AbilitySlotWidget(int x, int y, AbilitySlotType slotType, int slotIndex, CharacterScreen screen) {
+    public AbilitySlotWidget(int x, int y, AbilitySlot slotType, int slotIndex, CharacterScreen screen) {
         super(x, y, 20, 20);
         this.slotType = slotType;
         this.screen = screen;
@@ -59,7 +59,7 @@ public class AbilitySlotWidget extends MKLayout {
         return slotIndex;
     }
 
-    public AbilitySlotType getSlotType() {
+    public AbilitySlot getSlotType() {
         return slotType;
     }
 
@@ -112,7 +112,7 @@ public class AbilitySlotWidget extends MKLayout {
         }
     }
 
-    private MKImage getImageForSlotType(AbilitySlotType slotType, boolean unlocked) {
+    private MKImage getImageForSlotType(AbilitySlot slotType, boolean unlocked) {
         switch (slotType) {
             case Ultimate:
                 return GuiTextures.CORE_TEXTURES.getImageForRegion(unlocked ?

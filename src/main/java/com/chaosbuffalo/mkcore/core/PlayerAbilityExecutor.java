@@ -21,7 +21,7 @@ public class PlayerAbilityExecutor extends AbilityExecutor {
         return (MKPlayerData) entityData;
     }
 
-    public void executeHotBarAbility(AbilitySlotType type, int slot) {
+    public void executeHotBarAbility(AbilitySlot type, int slot) {
         ResourceLocation abilityId = getPlayerData().getKnowledge().getAbilityInSlot(type, slot);
         if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY))
             return;
@@ -85,7 +85,7 @@ public class PlayerAbilityExecutor extends AbilityExecutor {
         }
     }
 
-    public void onSlotChanged(AbilitySlotType type, int index, ResourceLocation previous, ResourceLocation newAbility) {
+    public void onSlotChanged(AbilitySlot type, int index, ResourceLocation previous, ResourceLocation newAbility) {
         MKCore.LOGGER.info("PlayerAbilityExecutor.onSlotChanged({}, {}, {}, {})", type, index, previous, newAbility);
 
         IActiveAbilityContainer container = getPlayerData().getKnowledge().getAbilityContainer(type);

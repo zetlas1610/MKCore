@@ -25,9 +25,9 @@ public class ActiveAbilityContainer implements IActiveAbilityContainer, IPlayerS
     private final List<ResourceLocation> activeAbilities;
     private final SyncListUpdater<ResourceLocation> activeUpdater;
     private final SyncInt slots;
-    protected final AbilitySlotType type;
+    protected final AbilitySlot type;
 
-    public ActiveAbilityContainer(MKPlayerData playerData, String name, AbilitySlotType type, int defaultSize, int max) {
+    public ActiveAbilityContainer(MKPlayerData playerData, String name, AbilitySlot type, int defaultSize, int max) {
         sync = new PlayerSyncComponent(name);
         this.playerData = playerData;
         this.name = name;
@@ -44,7 +44,7 @@ public class ActiveAbilityContainer implements IActiveAbilityContainer, IPlayerS
         return sync;
     }
 
-    public AbilitySlotType getType() {
+    public AbilitySlot getType() {
         return type;
     }
 

@@ -3,7 +3,7 @@ package com.chaosbuffalo.mkcore.core.talents;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
-import com.chaosbuffalo.mkcore.core.AbilitySlotType;
+import com.chaosbuffalo.mkcore.core.AbilitySlot;
 import com.chaosbuffalo.mkcore.core.ActiveAbilityContainer;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import net.minecraft.util.ResourceLocation;
@@ -11,7 +11,7 @@ import net.minecraft.util.ResourceLocation;
 public class ActiveTalentAbilityContainer extends ActiveAbilityContainer {
     protected TalentType<?> talentType;
 
-    public ActiveTalentAbilityContainer(MKPlayerData playerData, String name, AbilitySlotType type, int defaultSize, int max, TalentType<?> talentType) {
+    public ActiveTalentAbilityContainer(MKPlayerData playerData, String name, AbilitySlot type, int defaultSize, int max, TalentType<?> talentType) {
         super(playerData, name, type, defaultSize, max);
         this.talentType = talentType;
     }
