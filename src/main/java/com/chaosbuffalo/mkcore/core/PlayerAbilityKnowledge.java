@@ -23,7 +23,7 @@ public class PlayerAbilityKnowledge implements IPlayerSyncComponentProvider {
     private final Map<ResourceLocation, MKAbilityInfo> abilityInfoMap = new HashMap<>();
     private final List<ResourceLocation> abilityPool;
     private final SyncInt poolCount = new SyncInt("poolCount", GameConstants.DEFAULT_ABILITY_POOL_SIZE);
-    private final SyncMapUpdater<ResourceLocation, MKAbilityInfo> abilityUpdater =
+    private final SyncMapUpdater<ResourceLocation, MKAbilityInfo> knownAbilityUpdater =
             new SyncMapUpdater<>("known",
                     () -> abilityInfoMap,
                     MKAbilityInfo::encodeId,
@@ -35,7 +35,7 @@ public class PlayerAbilityKnowledge implements IPlayerSyncComponentProvider {
     public PlayerAbilityKnowledge(MKPlayerData playerData) {
         this.playerData = playerData;
         abilityPool = NonNullList.withSize(GameConstants.MAX_ABILITY_POOL_SIZE, MKCoreRegistry.INVALID_ABILITY);;
-        addSyncPrivate(abilityUpdater);
+        addSyncPrivate(knownAbilityUpdater);
         addSyncPrivate(poolCount);
         poolUpdater = new ResourceListUpdater("abilityPool", () -> abilityPool);
         addSyncPrivate(poolUpdater);
@@ -146,18 +146,20 @@ public class PlayerAbilityKnowledge implements IPlayerSyncComponentProvider {
     }
 
     public void markDirty(MKAbilityInfo info) {
-        abilityUpdater.markDirty(info.getId());
+        knownAbilityUpdater.markDirty(info.getId());
     }
 
-    public void serialize(CompoundNBT tag) {
-        abilityUpdater.serializeStorage(tag, "abilities");
-        poolUpdater.serializeStorage(tag);
+    public CompoundNBT serialize() {
+        CompoundNBT tag = new CompoundNBT();
+        tag.put("known", knownAbilityUpdater.serializeStorage());
+        tag.put("abilityPool", poolUpdater.serializeStorage());
         tag.putInt("poolCount", poolCount.get());
+        return tag;
     }
 
     public void deserialize(CompoundNBT tag) {
-        abilityUpdater.deserializeStorage(tag, "abilities");
-        poolUpdater.deserializeStorage(tag);
+        knownAbilityUpdater.deserializeStorage(tag.get("known"));
+        poolUpdater.deserializeStorage(tag.get("abilityPool"));
         poolCount.set(tag.getInt("poolCount"));
     }
 

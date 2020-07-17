@@ -139,15 +139,17 @@ public class PlayerKnowledge implements IAbilityKnowledge, IPlayerSyncComponentP
         return knownAbilities.knowsAbility(abilityId);
     }
 
-    public void serialize(CompoundNBT tag) {
+    public CompoundNBT serialize() {
+        CompoundNBT tag = new CompoundNBT();
         tag.put("talents", talentKnowledge.serializeNBT());
-        knownAbilities.serialize(tag);
+        tag.put("abilities", knownAbilities.serialize());
         tag.put("action_bar", actionBar.serializeNBT());
+        return tag;
     }
 
     public void deserialize(CompoundNBT tag) {
         talentKnowledge.deserializeNBT(tag.get("talents"));
-        knownAbilities.deserialize(tag);
+        knownAbilities.deserialize(tag.getCompound("abilities"));
         actionBar.deserialize(tag.get("action_bar"));
     }
 

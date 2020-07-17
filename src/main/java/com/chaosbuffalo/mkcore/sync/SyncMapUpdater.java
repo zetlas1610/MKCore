@@ -2,6 +2,7 @@ package com.chaosbuffalo.mkcore.sync;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 
@@ -116,14 +117,16 @@ public class SyncMapUpdater<K, V extends IMKSerializable<CompoundNBT>> implement
         dirty.clear();
     }
 
-    public void serializeStorage(CompoundNBT tag, String tagName) {
+    public INBT serializeStorage() {
         ListNBT list = serializeList(mapSupplier.get().keySet());
-        tag.put(tagName, list);
+        return list;
     }
 
-    public void deserializeStorage(CompoundNBT tag, String tagName) {
-        ListNBT list = tag.getList(tagName, Constants.NBT.TAG_COMPOUND);
-        mapSupplier.get().clear();
-        deserializeList(list);
+    public void deserializeStorage(INBT tag) {
+        if (tag instanceof ListNBT) {
+            ListNBT list = (ListNBT) tag;
+            mapSupplier.get().clear();
+            deserializeList(list);
+        }
     }
 }

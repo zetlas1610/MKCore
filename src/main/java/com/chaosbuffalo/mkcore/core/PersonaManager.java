@@ -162,9 +162,7 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
         @Override
         public CompoundNBT serialize() {
             CompoundNBT tag = new CompoundNBT();
-            CompoundNBT knowledgeTag = new CompoundNBT();
-            knowledge.serialize(knowledgeTag);
-            tag.put("knowledge", knowledgeTag);
+            tag.put("knowledge", knowledge.serialize());
             return tag;
         }
 

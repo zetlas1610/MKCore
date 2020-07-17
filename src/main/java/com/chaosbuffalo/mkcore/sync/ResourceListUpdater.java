@@ -3,14 +3,13 @@ package com.chaosbuffalo.mkcore.sync;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
 import java.util.function.Supplier;
 
 public class ResourceListUpdater extends SyncListUpdater<ResourceLocation> {
     public ResourceListUpdater(String name, Supplier<List<ResourceLocation>> list) {
-        super(name, list, ResourceListUpdater::encode, ResourceListUpdater::decode, Constants.NBT.TAG_STRING);
+        super(name, list, ResourceListUpdater::encode, ResourceListUpdater::decode);
     }
 
     private static INBT encode(ResourceLocation location) {
