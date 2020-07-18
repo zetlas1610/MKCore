@@ -1,6 +1,5 @@
 package com.chaosbuffalo.mkcore.client.gui.widgets;
 
-import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
@@ -98,17 +97,6 @@ public class AbilitySlotWidget extends MKLayout {
                 addConstraintToWidget(new MarginConstraint(MarginConstraint.MarginType.TOP), icon);
                 addConstraintToWidget(new MarginConstraint(MarginConstraint.MarginType.LEFT), icon);
             }
-        }
-    }
-
-    private boolean getUnlocked(MKAbility.AbilityType slotType, int slotIndex) {
-        switch (slotType) {
-            case Ultimate:
-                return slotIndex < GameConstants.DEFAULT_ULTIMATES;
-            case Passive:
-                return slotIndex < GameConstants.DEFAULT_PASSIVES;
-            default:
-                return slotIndex < GameConstants.DEFAULT_ACTIVES;
         }
     }
 

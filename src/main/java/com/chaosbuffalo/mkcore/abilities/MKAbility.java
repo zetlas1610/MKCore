@@ -41,9 +41,12 @@ import java.util.stream.Collectors;
 public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
 
     public enum AbilityType {
-        Active(AbilitySlot.Basic, true, true),
-        Passive(AbilitySlot.Passive, false, false),
-        Ultimate(AbilitySlot.Ultimate, true, false);
+        PooledActive(AbilitySlot.Basic, true, true),
+        PooledPassive(AbilitySlot.Passive, false, true),
+        PooledUltimate(AbilitySlot.Ultimate, true, true),
+        Active(AbilitySlot.Basic, true, false),
+        Ultimate(AbilitySlot.Ultimate, true, false),
+        Passive(AbilitySlot.Passive, false, false);
 
         final AbilitySlot slotType;
         final boolean canSlot;
@@ -198,7 +201,7 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
     }
 
     public AbilityType getType() {
-        return AbilityType.Active;
+        return AbilityType.PooledActive;
     }
 
     public abstract TargetingContext getTargetContext();

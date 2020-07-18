@@ -48,6 +48,11 @@ public class PhoenixAspectAbility extends MKAbility {
     }
 
     @Override
+    public AbilityType getType() {
+        return AbilityType.PooledUltimate;
+    }
+
+    @Override
     public TargetingContext getTargetContext() {
         return TargetingContexts.FRIENDLY;
     }
