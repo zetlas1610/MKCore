@@ -2,7 +2,7 @@ package com.chaosbuffalo.mkcore.core.talents;
 
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.core.AbilitySlot;
 import com.chaosbuffalo.mkcore.core.IPlayerSyncComponentProvider;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.core.PlayerSyncComponent;
@@ -205,7 +205,7 @@ public class PlayerTalentKnowledge implements IPlayerSyncComponentProvider {
     static class PassiveTalentContainer extends ActiveTalentAbilityContainer {
 
         public PassiveTalentContainer(MKPlayerData playerData, String name) {
-            super(playerData, name, MKAbility.AbilityType.Passive, GameConstants.DEFAULT_PASSIVES, GameConstants.MAX_PASSIVES, TalentType.PASSIVE);
+            super(playerData, name, AbilitySlot.Passive, GameConstants.DEFAULT_PASSIVES, GameConstants.MAX_PASSIVES, TalentType.PASSIVE);
         }
 
         @Override
@@ -218,7 +218,7 @@ public class PlayerTalentKnowledge implements IPlayerSyncComponentProvider {
     static class UltimateTalentContainer extends ActiveTalentAbilityContainer {
 
         public UltimateTalentContainer(MKPlayerData playerData, String name) {
-            super(playerData, name, MKAbility.AbilityType.Ultimate, GameConstants.DEFAULT_ULTIMATES, GameConstants.MAX_ULTIMATES, TalentType.ULTIMATE);
+            super(playerData, name, AbilitySlot.Ultimate, GameConstants.DEFAULT_ULTIMATES, GameConstants.MAX_ULTIMATES, TalentType.ULTIMATE);
         }
 
         @Override

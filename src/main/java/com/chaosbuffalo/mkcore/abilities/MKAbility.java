@@ -6,6 +6,7 @@ import com.chaosbuffalo.mkcore.abilities.ai.conditions.AbilityUseCondition;
 import com.chaosbuffalo.mkcore.abilities.ai.conditions.StandardUseCondition;
 import com.chaosbuffalo.mkcore.abilities.attributes.IAbilityAttribute;
 import com.chaosbuffalo.mkcore.abilities.description.AbilityDescriptions;
+import com.chaosbuffalo.mkcore.core.AbilitySlot;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.init.ModSounds;
 import com.chaosbuffalo.mkcore.utils.RayTraceUtils;
@@ -40,16 +41,22 @@ import java.util.stream.Collectors;
 public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
 
     public enum AbilityType {
-        Active(true, true),
-        Passive(false, false),
-        Ultimate(true, false);
+        Active(AbilitySlot.Basic, true, true),
+        Passive(AbilitySlot.Passive, false, false),
+        Ultimate(AbilitySlot.Ultimate, true, false);
 
+        final AbilitySlot slotType;
         final boolean canSlot;
         final boolean usesPool;
 
-        AbilityType(boolean canSlot, boolean usesPool) {
+        AbilityType(AbilitySlot slotType, boolean canSlot, boolean usesPool) {
+            this.slotType = slotType;
             this.canSlot = canSlot;
             this.usesPool = usesPool;
+        }
+
+        public AbilitySlot getSlotType() {
+            return slotType;
         }
 
         public boolean canPlaceOnActionBar() {
@@ -58,6 +65,10 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
 
         public boolean isPoolAbility() {
             return usesPool;
+        }
+
+        public boolean fitsSlot(AbilitySlot slotType) {
+            return slotType == getSlotType();
         }
     }
 
