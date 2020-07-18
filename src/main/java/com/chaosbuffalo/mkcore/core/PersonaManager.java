@@ -173,14 +173,12 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
         public CompoundNBT serialize() {
             CompoundNBT tag = new CompoundNBT();
             tag.put("knowledge", knowledge.serialize());
-            MinecraftForge.EVENT_BUS.post(new PersonaEvent.PersonaSerializationEvent(this, tag));
             return tag;
         }
 
         @Override
         public boolean deserialize(CompoundNBT tag) {
             knowledge.deserialize(tag.getCompound("knowledge"));
-            MinecraftForge.EVENT_BUS.post(new PersonaEvent.PersonaDeserializationEvent(this, tag));
             return true;
         }
     }

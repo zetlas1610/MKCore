@@ -15,28 +15,6 @@ public class PersonaEvent extends Event {
         return persona;
     }
 
-    public static class PersonaSerializationEvent extends PersonaEvent {
-        private final CompoundNBT personaTag;
-
-        public PersonaSerializationEvent(PersonaManager.Persona persona,
-                                         CompoundNBT personaTag) {
-            super(persona);
-            this.personaTag = personaTag;
-        }
-
-        public CompoundNBT getPersonaNBT() {
-            return personaTag;
-        }
-    }
-
-    public static class PersonaDeserializationEvent extends PersonaSerializationEvent {
-
-        public PersonaDeserializationEvent(PersonaManager.Persona persona,
-                                           CompoundNBT personaTag) {
-            super(persona, personaTag);
-        }
-    }
-
     public static class PersonaActivated extends PersonaEvent {
 
         public PersonaActivated(PersonaManager.Persona persona) {
