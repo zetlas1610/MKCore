@@ -1,9 +1,11 @@
 package com.chaosbuffalo.mkcore.core;
 
 import com.chaosbuffalo.mkcore.MKCore;
+import com.chaosbuffalo.mkcore.events.PersonaEvent;
 import com.chaosbuffalo.mkcore.sync.IMKSerializable;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.common.MinecraftForge;
 
 import java.util.*;
 
@@ -136,19 +138,23 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
             Persona current = getActivePersona();
             MKCore.LOGGER.debug("activatePersona({}) - deactivating previous {}", persona.getName(), current.getName());
             playerData.onPersonaDeactivated();
+            MinecraftForge.EVENT_BUS.post(new PersonaEvent.PersonaDeactivated(current));
         }
 
         setActivePersona(persona);
         playerData.onPersonaActivated();
+        MinecraftForge.EVENT_BUS.post(new PersonaEvent.PersonaActivated(persona));
     }
 
     public static class Persona implements IMKSerializable<CompoundNBT> {
         private final String name;
         private final PlayerKnowledge knowledge;
+        private final MKPlayerData data;
 
         public Persona(MKPlayerData playerData, String name) {
             this.name = name;
             knowledge = new PlayerKnowledge(playerData);
+            data = playerData;
         }
 
         public String getName() {
@@ -157,6 +163,10 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
 
         public PlayerKnowledge getKnowledge() {
             return knowledge;
+        }
+
+        public MKPlayerData getPlayerData() {
+            return data;
         }
 
         @Override
