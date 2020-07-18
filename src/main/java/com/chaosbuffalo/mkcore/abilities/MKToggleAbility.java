@@ -53,7 +53,7 @@ public abstract class MKToggleAbility extends MKAbility {
 
     @Override
     public AbilityType getType() {
-        return AbilityType.Active;
+        return AbilityType.PooledActive;
     }
 
     public void applyEffect(LivingEntity entity, IMKEntityData entityData) {
