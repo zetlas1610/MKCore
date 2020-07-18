@@ -46,6 +46,11 @@ public class WhirlwindBlades extends MKAbility {
     }
 
     @Override
+    public AbilityType getType() {
+        return AbilityType.PooledUltimate;
+    }
+
+    @Override
     public boolean canApplyCastingSpeedModifier() {
         return false;
     }
