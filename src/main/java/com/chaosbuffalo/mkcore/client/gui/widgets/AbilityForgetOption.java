@@ -15,17 +15,15 @@ import java.util.List;
 
 public class AbilityForgetOption extends MKLayout {
 
-    private final List<ResourceLocation> abilitySlots;
     private final ResourceLocation loc;
     private final MKModal popup;
     private final MKAbility ability;
     private final int trainerEntityId;
 
-    public AbilityForgetOption(MKAbility ability, List<ResourceLocation> abilitySlots,
+    public AbilityForgetOption(MKAbility ability,
                                ResourceLocation loc, MKModal popup,
                                FontRenderer font, int trainerEntity) {
         super(0, 0, 200, 16);
-        this.abilitySlots = abilitySlots;
         this.loc = loc;
         this.popup = popup;
         this.ability = ability;
@@ -41,7 +39,7 @@ public class AbilityForgetOption extends MKLayout {
     public boolean onMousePressed(Minecraft minecraft, double mouseX, double mouseY, int mouseButton) {
         MKCore.LOGGER.info("In mouse release for popup {}", getAbility().getAbilityId());
         PacketHandler.sendMessageToServer(new PlayerLearnAbilityRequestPacket(
-                loc, abilitySlots.indexOf(getAbility().getAbilityId()), trainerEntityId));
+                loc, getAbility().getAbilityId(), trainerEntityId));
         if (getScreen() != null){
             getScreen().closeModal(popup);
         }
