@@ -1,6 +1,5 @@
 package com.chaosbuffalo.mkcore.client.gui.widgets;
 
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerLearnAbilityRequestPacket;
@@ -10,8 +9,6 @@ import com.chaosbuffalo.mkwidgets.client.gui.widgets.MKModal;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.ResourceLocation;
-
-import java.util.List;
 
 public class AbilityForgetOption extends MKLayout {
 
@@ -37,7 +34,6 @@ public class AbilityForgetOption extends MKLayout {
 
     @Override
     public boolean onMousePressed(Minecraft minecraft, double mouseX, double mouseY, int mouseButton) {
-        MKCore.LOGGER.info("In mouse release for popup {}", getAbility().getAbilityId());
         PacketHandler.sendMessageToServer(new PlayerLearnAbilityRequestPacket(
                 loc, getAbility().getAbilityId(), trainerEntityId));
         if (getScreen() != null){

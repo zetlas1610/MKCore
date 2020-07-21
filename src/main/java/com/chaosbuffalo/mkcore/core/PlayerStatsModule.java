@@ -114,8 +114,6 @@ public class PlayerStatsModule extends EntityStatsModule implements IStatsModule
         while (manaRegenTimer >= i_regen) {
             float current = getMana();
             if (current < max) {
-//                MKCore.LOGGER.info("regen {} {} {}", regenTime, i_regen, current);
-//                MKCore.LOGGER.info("Updating mana {} to {}", current, value);
                 float newValue = current + 1;
                 setMana(newValue, newValue == max);
             }

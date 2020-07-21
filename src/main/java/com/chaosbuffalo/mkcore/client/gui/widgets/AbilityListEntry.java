@@ -60,7 +60,6 @@ public class AbilityListEntry extends MKStackLayoutHorizontal {
 
     @Override
     public boolean onMousePressed(Minecraft minecraft, double mouseX, double mouseY, int mouseButton) {
-        MKCore.LOGGER.info("On mouse press: {}", ability.getAbilityId());
         infoWidget.setAbility(ability);
         screen.setAbility(ability);
         return true;

@@ -1,7 +1,6 @@
 package com.chaosbuffalo.mkcore.network;
 
 import com.chaosbuffalo.mkcore.Capabilities;
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.core.AbilitySlot;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -42,10 +41,8 @@ public class PlayerSlotAbilityPacket {
             if (entity == null) {
                 return;
             }
-            entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(playerData -> {
-                MKCore.LOGGER.info("PlayerSlotAbilityPacket.handle {} {} {}", type, slotIndex, ability);
-                playerData.getKnowledge().getAbilityContainer(type).setAbilityInSlot(slotIndex, ability);
-            });
+            entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(playerData ->
+                    playerData.getKnowledge().getAbilityContainer(type).setAbilityInSlot(slotIndex, ability));
         });
         ctx.setPacketHandled(true);
     }

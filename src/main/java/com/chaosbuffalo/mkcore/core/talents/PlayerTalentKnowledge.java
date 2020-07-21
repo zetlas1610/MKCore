@@ -130,12 +130,6 @@ public class PlayerTalentKnowledge implements IPlayerSyncComponentProvider {
     }
 
     public boolean grantTalentPoints(int amount) {
-//        int limit = MKConfig.talentPointLimit.get();
-//        if (limit > 0 && totalTalentPoints.get() >= limit) {
-//            MKCore.LOGGER.warn("Failed to give {} talent points to player {} - already at server talent limit", amount, playerData.getEntity());
-//            return false;
-//        }
-
         if (amount > 0) {
             talentPoints.add(amount);
             totalTalentPoints.add(amount);
@@ -243,12 +237,10 @@ public class PlayerTalentKnowledge implements IPlayerSyncComponentProvider {
         builder.put(ops.createString("loadedPassives"), passiveContainer.serialize(ops));
         builder.put(ops.createString("loadedUltimates"), ultimateContainer.serialize(ops));
 
-        //        MKCore.LOGGER.info("talents serialize {}", value);
         return ops.createMap(builder.build());
     }
 
     public <T> void deserialize(Dynamic<T> dynamic) {
-//        MKCore.LOGGER.info("talents deserialize {}", dynamic);
         talentPoints.set(dynamic.get("talentPoints").asInt(0));
         totalTalentPoints.set(dynamic.get("totalPoints").asInt(0));
 
@@ -264,7 +256,6 @@ public class PlayerTalentKnowledge implements IPlayerSyncComponentProvider {
 
     private <T> void deserializeTree(ResourceLocation id, Dynamic<T> dyn) {
         if (unlockTree(id)) {
-//            MKCore.LOGGER.info("PlayerTalentKnowledge.deserializeTree unlocked tree {}", id);
             if (!getTree(id).deserialize(dyn)) {
                 MKCore.LOGGER.error("Player {} had invalid talent layout. Needs reset.", playerData.getEntity());
             }

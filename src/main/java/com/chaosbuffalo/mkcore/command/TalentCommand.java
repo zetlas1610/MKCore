@@ -297,7 +297,6 @@ public class TalentCommand {
     }
 
     static int learnTalent(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
-        MKCore.LOGGER.info("TalentCommand in learnTalent");
         ServerPlayerEntity player = ctx.getSource().asPlayer();
         ResourceLocation talentId = ctx.getArgument("tree", ResourceLocation.class);
         String line = StringArgumentType.getString(ctx, "line");

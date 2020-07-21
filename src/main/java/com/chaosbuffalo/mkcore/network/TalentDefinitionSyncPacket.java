@@ -51,11 +51,8 @@ public class TalentDefinitionSyncPacket {
         MKCore.LOGGER.debug("Handling player talent definition update packet");
         ctx.enqueueWork(() -> {
             for (Map.Entry<ResourceLocation, CompoundNBT> abilityData : data.entrySet()) {
-
                 TalentTreeDefinition definition = TalentTreeDefinition.deserialize(abilityData.getKey(), new Dynamic<>(NBTDynamicOps.INSTANCE, abilityData.getValue()));
-//                MKCore.LOGGER.info("got talent update for {} - {}", abilityData.getKey(), abilityData.getValue());
                 MKCore.getTalentManager().registerTalentTree(definition);
-
             }
         });
         ctx.setPacketHandled(true);

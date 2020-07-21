@@ -113,7 +113,7 @@ public class TalentTreeRecord {
     }
 
     public boolean trySpendPoint(String line, int index) {
-        MKCore.LOGGER.info("trySpendPoint({}, {})", line, index);
+        MKCore.LOGGER.debug("trySpendPoint({}, {})", line, index);
         TalentRecord record = getNodeRecord(line, index);
         if (record == null)
             return false;
@@ -127,7 +127,7 @@ public class TalentTreeRecord {
     }
 
     public boolean tryRefundPoint(String line, int index) {
-        MKCore.LOGGER.info("tryRefundPoint({}, {})", line, index);
+        MKCore.LOGGER.debug("tryRefundPoint({}, {})", line, index);
         TalentRecord record = getNodeRecord(line, index);
         if (record == null || !record.isKnown())
             return false;
@@ -169,7 +169,6 @@ public class TalentTreeRecord {
     }
 
     private <T> void deserializeLineRecord(String name, Dynamic<T> dyn) {
-//        MKCore.LOGGER.info("TalentTreeRecord.deserializeLineRecord line {} {}", name, dyn);
         TalentLineRecord lineRecord = getLineRecord(name);
         if (lineRecord == null) {
             MKCore.LOGGER.error("TalentTreeRecord.deserializeLineRecord line {} - line does not exist!", name);
@@ -224,12 +223,8 @@ public class TalentTreeRecord {
         }
 
         public <T> void deserialize(Dynamic<T> dynamic) {
-//            MKCore.LOGGER.info("TalentLineRecord.deserialize {}", dynamic);
             List<Dynamic<T>> entries = dynamic.asList(Function.identity());
-            IntStream.range(0, entries.size()).forEach(i -> {
-//                MKCore.LOGGER.info("TalentLineRecord.deserialize entry {}", entries.get(i));
-                getRecord(i).deserialize(entries.get(i));
-            });
+            IntStream.range(0, entries.size()).forEach(i -> getRecord(i).deserialize(entries.get(i)));
         }
     }
 
@@ -260,8 +255,6 @@ public class TalentTreeRecord {
         @Override
         public void deserializeUpdate(CompoundNBT tag) {
             CompoundNBT root = tag.getCompound(getTreeDefinition().getTreeId().toString());
-
-//            MKCore.LOGGER.info("TalentTreeUpdater.deserialize {}", tag);
 
             if (root.getBoolean("f")) {
                 lines.clear();
@@ -317,8 +310,6 @@ public class TalentTreeRecord {
             root.put("u", updateTag);
             tag.put(getTreeDefinition().getTreeId().toString(), root);
 
-//            MKCore.LOGGER.info("TalentTreeUpdater.serializeUpdate {}", tag);
-
             updatedLines.clear();
         }
 
@@ -339,8 +330,6 @@ public class TalentTreeRecord {
 
             root.put("u", updateTag);
             tag.put(getTreeDefinition().getTreeId().toString(), root);
-
-//            MKCore.LOGGER.info("TalentTreeUpdater.serializeFull {}", tag);
 
             updatedLines.clear();
         }

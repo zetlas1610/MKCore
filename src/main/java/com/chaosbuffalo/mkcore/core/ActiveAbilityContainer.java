@@ -76,12 +76,10 @@ public class ActiveAbilityContainer implements IActiveAbilityContainer, IPlayerS
     }
 
     protected void onSlotLocked(int slot) {
-        MKCore.LOGGER.info("onSlotDeactivated({}, {})", getType(), slot);
         clearSlot(slot);
     }
 
     protected void onSlotUnlocked(int slot) {
-        MKCore.LOGGER.info("onSlotActivated({}, {})", getType(), slot);
     }
 
     protected boolean canSlotAbility(int slot, ResourceLocation abilityId) {
@@ -112,7 +110,7 @@ public class ActiveAbilityContainer implements IActiveAbilityContainer, IPlayerS
 
     @Override
     public void setAbilityInSlot(int index, ResourceLocation abilityId) {
-        MKCore.LOGGER.info("ActiveAbilityContainer.setAbilityInSlot({}, {}, {})", type, index, abilityId);
+        MKCore.LOGGER.debug("ActiveAbilityContainer.setAbilityInSlot({}, {}, {})", type, index, abilityId);
 
         if (abilityId.equals(MKCoreRegistry.INVALID_ABILITY)) {
             setSlotInternal(index, MKCoreRegistry.INVALID_ABILITY);
@@ -125,6 +123,7 @@ public class ActiveAbilityContainer implements IActiveAbilityContainer, IPlayerS
         }
 
         if (!canSlotAbility(index, abilityId)) {
+            MKCore.LOGGER.error("setAbilityInSlot({}, {}, {}) - blocked by ability container", type, index, abilityId);
             return;
         }
 
@@ -152,7 +151,7 @@ public class ActiveAbilityContainer implements IActiveAbilityContainer, IPlayerS
     }
 
     protected void setSlotInternal(int index, ResourceLocation abilityId) {
-        MKCore.LOGGER.info("ActiveAbilityContainer.setSlotInternal({}, {}, {})", type, index, abilityId);
+        MKCore.LOGGER.debug("ActiveAbilityContainer.setSlotInternal({}, {}, {})", type, index, abilityId);
         ResourceLocation previous = activeAbilities.set(index, abilityId);
         activeUpdater.setDirty(index);
         if (playerData.getEntity().isAddedToWorld()) {
@@ -197,7 +196,6 @@ public class ActiveAbilityContainer implements IActiveAbilityContainer, IPlayerS
             passives.get(i).ifPresent(idString -> {
                 ResourceLocation abilityId = new ResourceLocation(idString);
                 MKAbility ability = MKCoreRegistry.getAbility(abilityId);
-//                MKCore.LOGGER.info("PlayerTalentKnowledge.deserializeAbilityList {} {} {} {}", fieldName, index, abilityId, ability);
                 if (ability != null) {
                     consumer.accept(index, abilityId);
                 }

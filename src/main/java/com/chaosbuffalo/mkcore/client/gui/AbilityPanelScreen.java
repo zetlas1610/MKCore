@@ -221,7 +221,6 @@ public abstract class AbilityPanelScreen extends MKScreen implements IPlayerData
 
     @Override
     public void onPlayerDataUpdate() {
-        MKCore.LOGGER.info("CharacterScreen.onPlayerDataUpdate");
         flagNeedSetup();
     }
 

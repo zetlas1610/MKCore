@@ -86,7 +86,7 @@ public class PlayerAbilityExecutor extends AbilityExecutor {
     }
 
     public void onSlotChanged(AbilitySlot type, int index, ResourceLocation previous, ResourceLocation newAbility) {
-        MKCore.LOGGER.info("PlayerAbilityExecutor.onSlotChanged({}, {}, {}, {})", type, index, previous, newAbility);
+        MKCore.LOGGER.debug("PlayerAbilityExecutor.onSlotChanged({}, {}, {}, {})", type, index, previous, newAbility);
 
         IActiveAbilityContainer container = getPlayerData().getKnowledge().getAbilityContainer(type);
 

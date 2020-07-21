@@ -93,9 +93,7 @@ public class EmberAbility extends MKAbility {
     @Override
     public void endCast(LivingEntity entity, IMKEntityData data, AbilityContext context) {
         super.endCast(entity, data, context);
-        MKCore.LOGGER.info("EmberAbility.endCast {}", entity);
         context.getMemory(MKAbilityMemories.ABILITY_TARGET).ifPresent(targetEntity -> {
-            MKCore.LOGGER.info("with target {}", targetEntity);
             int burnDuration = burnTime.getValue();
             float amount = damage.getValue();
             MKCore.LOGGER.info("Ember damage {} burnTime {}", amount, burnDuration);

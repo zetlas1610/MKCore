@@ -104,7 +104,7 @@ public class UpdateEngine {
     }
 
     public void deserializeUpdate(CompoundNBT updateTag, boolean privateUpdate) {
-        MKCore.LOGGER.info("deserializeClientUpdatePre private:{} {}", privateUpdate, updateTag);
+//        MKCore.LOGGER.info("deserializeClientUpdatePre private:{} {}", privateUpdate, updateTag);
         publicUpdater.deserializeUpdate(updateTag);
         if (privateUpdate) {
             privateUpdater.deserializeUpdate(updateTag);

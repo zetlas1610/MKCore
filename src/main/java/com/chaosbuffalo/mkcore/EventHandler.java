@@ -51,7 +51,6 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void onPlayerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
-        MKCore.LOGGER.info("PlayerChangedDimensionEvent {}", event::getEntity);
         if (event.getEntity() instanceof PlayerEntity) {
             MKCore.getPlayer(event.getEntity()).ifPresent(MKPlayerData::onJoinWorld);
         }
@@ -94,7 +93,6 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void onPlayerDataUpdated(PlayerDataEvent.Updated event) {
-        MKCore.LOGGER.info("onPlayerDataUpdated {}", event.getPlayer());
         if (event.getPlayer().getEntityWorld().isRemote) {
             PlayerEntity local = Minecraft.getInstance().player;
             if (local == null || !event.getPlayer().isEntityEqual(local))

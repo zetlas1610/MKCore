@@ -95,7 +95,6 @@ public class SyncMapUpdater<K, V extends IMKSerializable<CompoundNBT>> implement
         Map<K, V> map = mapSupplier.get();
         for (String key : tag.keySet()) {
             CompoundNBT entryTag = tag.getCompound(key);
-//            MKCore.LOGGER.info("update {} {}", i, entryTag);
             K decodedKey = keyDecoder.apply(key);
             if (decodedKey == null) {
                 MKCore.LOGGER.error("Failed to decode map key {}", key);

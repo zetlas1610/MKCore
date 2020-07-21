@@ -246,7 +246,7 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
     }
 
     public <T> void deserializeDynamic(Dynamic<T> dynamic) {
-        MKCore.LOGGER.info("ability deserialize {}", dynamic.getValue());
+        MKCore.LOGGER.debug("ability deserialize {}", dynamic.getValue());
         setCooldownTicks(dynamic.get("cooldown").asInt(getBaseCooldown()));
         setManaCost(dynamic.get("manaCost").asFloat(getBaseManaCost()));
         setCastTime(dynamic.get("castTime").asInt(getBaseCastTime()));
