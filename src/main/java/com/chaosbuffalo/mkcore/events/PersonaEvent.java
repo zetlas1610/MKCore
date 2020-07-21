@@ -1,7 +1,6 @@
 package com.chaosbuffalo.mkcore.events;
 
 import com.chaosbuffalo.mkcore.core.PersonaManager;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.eventbus.api.Event;
 
 public class PersonaEvent extends Event {

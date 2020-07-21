@@ -166,11 +166,11 @@ public class AbilitySlotWidget extends MKLayout {
 
     @Override
     public void postDraw(Minecraft mc, int x, int y, int width, int height, int mouseX, int mouseY, float partialTicks) {
-        if (isHovered()){
-            if (getScreen() != null){
-                if (!getAbilityId().equals(MKCoreRegistry.INVALID_ABILITY)){
+        if (isHovered()) {
+            if (getScreen() != null) {
+                if (!getAbilityId().equals(MKCoreRegistry.INVALID_ABILITY)) {
                     MKAbility ability = MKCoreRegistry.getAbility(getAbilityId());
-                    if (ability != null){
+                    if (ability != null) {
                         getScreen().addPostRenderInstruction(new HoveringTextInstruction(
                                 ability.getAbilityName(),
                                 getParentCoords(new Vec2i(mouseX, mouseY))));

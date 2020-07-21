@@ -1,6 +1,5 @@
 package com.chaosbuffalo.mkcore.client.gui.widgets;
 
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.client.gui.AbilityPanelScreen;
 import com.chaosbuffalo.mkcore.client.gui.constraints.CenterYWithOffsetConstraint;

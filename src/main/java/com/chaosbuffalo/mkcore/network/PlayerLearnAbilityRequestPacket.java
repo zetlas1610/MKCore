@@ -26,7 +26,7 @@ public class PlayerLearnAbilityRequestPacket {
         this.replacingId = replacingId;
     }
 
-    public PlayerLearnAbilityRequestPacket(ResourceLocation abilityId, int entityId){
+    public PlayerLearnAbilityRequestPacket(ResourceLocation abilityId, int entityId) {
         this(abilityId, MKCoreRegistry.INVALID_ABILITY, entityId);
     }
 

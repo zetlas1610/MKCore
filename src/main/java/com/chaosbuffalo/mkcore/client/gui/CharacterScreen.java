@@ -333,13 +333,13 @@ public class CharacterScreen extends AbilityPanelScreen {
     @Override
     protected void init() {
         super.init();
-        if (minecraft != null && minecraft.getConnection() != null){
+        if (minecraft != null && minecraft.getConnection() != null) {
             minecraft.getConnection().sendPacket(new CClientStatusPacket(CClientStatusPacket.State.REQUEST_STATS));
         }
     }
 
     private void addStatTextToLayout(MKLayout layout, ResourceLocation statName,
-                                     ClientPlayerEntity clientPlayer){
+                                     ClientPlayerEntity clientPlayer) {
         Stat<ResourceLocation> statType = Stats.CUSTOM.get(statName);
         String formattedValue = statType.format(clientPlayer.getStats().getValue(Stats.CUSTOM, statName));
         TranslationTextComponent statNameTranslated = new TranslationTextComponent("stat." +
@@ -352,7 +352,7 @@ public class CharacterScreen extends AbilityPanelScreen {
         });
     }
 
-    public void setupDamageHeader(MKPlayerData playerData, MKLayout layout){
+    public void setupDamageHeader(MKPlayerData playerData, MKLayout layout) {
         MKStackLayoutVertical stackLayout = new MKStackLayoutVertical(0, 0, layout.getWidth());
         layout.addConstraintToWidget(new MarginConstraint(MarginConstraint.MarginType.LEFT), stackLayout);
         layout.addConstraintToWidget(new MarginConstraint(MarginConstraint.MarginType.TOP), stackLayout);
@@ -362,7 +362,7 @@ public class CharacterScreen extends AbilityPanelScreen {
         stackLayout.setPaddingBot(2);
         layout.addWidget(stackLayout);
         ClientPlayerEntity clientPlayer = Minecraft.getInstance().player;
-        if (clientPlayer != null){
+        if (clientPlayer != null) {
             addStatTextToLayout(stackLayout, Stats.DAMAGE_DEALT, clientPlayer);
             addStatTextToLayout(stackLayout, Stats.DAMAGE_TAKEN, clientPlayer);
             addStatTextToLayout(stackLayout, Stats.DAMAGE_RESISTED, clientPlayer);
@@ -371,7 +371,7 @@ public class CharacterScreen extends AbilityPanelScreen {
 
     }
 
-    public void setupStatsHeader(MKPlayerData playerData, MKLayout layout){
+    public void setupStatsHeader(MKPlayerData playerData, MKLayout layout) {
         MKStackLayoutVertical stackLayout = new MKStackLayoutVertical(0, 0, layout.getWidth());
         layout.addConstraintToWidget(new MarginConstraint(MarginConstraint.MarginType.LEFT), stackLayout);
         layout.addConstraintToWidget(new MarginConstraint(MarginConstraint.MarginType.TOP), stackLayout);

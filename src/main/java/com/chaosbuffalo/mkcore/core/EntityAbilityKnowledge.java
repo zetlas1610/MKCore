@@ -10,7 +10,6 @@ import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.Map.Entry;
 
 public class EntityAbilityKnowledge implements IAbilityKnowledge, IMKSerializable<CompoundNBT> {
     private final MKEntityData entityData;

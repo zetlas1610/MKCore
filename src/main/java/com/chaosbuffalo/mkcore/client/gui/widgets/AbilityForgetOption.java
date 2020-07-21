@@ -36,7 +36,7 @@ public class AbilityForgetOption extends MKLayout {
     public boolean onMousePressed(Minecraft minecraft, double mouseX, double mouseY, int mouseButton) {
         PacketHandler.sendMessageToServer(new PlayerLearnAbilityRequestPacket(
                 loc, getAbility().getAbilityId(), trainerEntityId));
-        if (getScreen() != null){
+        if (getScreen() != null) {
             getScreen().closeModal(popup);
         }
         return true;
