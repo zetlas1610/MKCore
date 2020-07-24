@@ -6,10 +6,12 @@ import com.chaosbuffalo.mkcore.sync.IMKSerializable;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.util.*;
 
 public class PersonaManager implements IMKSerializable<CompoundNBT> {
+    private static final List<IPersonaExtensionProvider> extensionProviders = new ArrayList<>(4);
     public static final String DEFAULT_PERSONA_NAME = "default";
 
     private final MKPlayerData playerData;
@@ -18,6 +20,10 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
 
     public PersonaManager(MKPlayerData playerData) {
         this.playerData = playerData;
+    }
+
+    public static void registerExtension(IPersonaExtensionProvider provider) {
+        extensionProviders.add(provider);
     }
 
     @Override
@@ -45,7 +51,7 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
         CompoundNBT personaRoot = tag.getCompound("personas");
         for (String name : personaRoot.keySet()) {
             CompoundNBT personaTag = personaRoot.getCompound(name);
-            Persona persona = new Persona(playerData, name);
+            Persona persona = createNewPersona(name);
             if (!persona.deserialize(personaTag)) {
                 MKCore.LOGGER.error("Failed to deserialize persona {} for {}", name, playerData.getEntity());
                 continue;
@@ -64,7 +70,9 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
     }
 
     protected Persona createNewPersona(String name) {
-        return new Persona(playerData, name);
+        Persona persona = new Persona(playerData, name);
+        extensionProviders.forEach(provider -> persona.registerExtension(provider.create(persona)));
+        return persona;
     }
 
     protected void setActivePersona(Persona persona) {
@@ -72,8 +80,7 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
     }
 
     public Persona getActivePersona() {
-        Objects.requireNonNull(activePersona);
-        return activePersona;
+        return Objects.requireNonNull(activePersona);
     }
 
     public Collection<String> getPersonaNames() {
@@ -117,10 +124,6 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
         return true;
     }
 
-    public void activatePersona(PersonaManager.Persona persona) {
-        activatePersonaInternal(persona, false);
-    }
-
     public boolean activatePersona(String name) {
         PersonaManager.Persona newPersona = getPersona(name);
         if (newPersona == null) {
@@ -128,7 +131,7 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
             return false;
         }
 
-        activatePersona(newPersona);
+        activatePersonaInternal(newPersona, false);
         return true;
     }
 
@@ -137,12 +140,12 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
         if (!firstActivation && getActivePersona() != persona) {
             Persona current = getActivePersona();
             MKCore.LOGGER.debug("activatePersona({}) - deactivating previous {}", persona.getName(), current.getName());
-            playerData.onPersonaDeactivated();
+            current.deactivate();
             MinecraftForge.EVENT_BUS.post(new PersonaEvent.PersonaDeactivated(current));
         }
 
         setActivePersona(persona);
-        playerData.onPersonaActivated();
+        persona.activate();
         MinecraftForge.EVENT_BUS.post(new PersonaEvent.PersonaActivated(persona));
     }
 
@@ -150,6 +153,7 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
         private final String name;
         private final PlayerKnowledge knowledge;
         private final MKPlayerData data;
+        private final Map<Class<? extends IPersonaExtension>, IPersonaExtension> extensions = new IdentityHashMap<>();
 
         public Persona(MKPlayerData playerData, String name) {
             this.name = name;
@@ -169,16 +173,61 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
             return data;
         }
 
+        private void registerExtension(IPersonaExtension extension) {
+            extensions.put(extension.getClass(), extension);
+        }
+
+        public <T extends IPersonaExtension> T getExtension(Class<T> clazz) {
+//            MKCore.LOGGER.info("getExtension {} {}", extensions.size(), extensions.values().stream().map(Objects::toString).collect(Collectors.joining(",")));
+            IPersonaExtension extension = extensions.get(clazz);
+            return extension == null ? null : clazz.cast(extension);
+        }
+
+        public void activate() {
+            getPlayerData().onPersonaActivated();
+            extensions.values().forEach(IPersonaExtension::onPersonaActivated);
+        }
+
+        public void deactivate() {
+            getPlayerData().onPersonaDeactivated();
+            extensions.values().forEach(IPersonaExtension::onPersonaDeactivated);
+        }
+
+        private CompoundNBT serializeExtensions() {
+            CompoundNBT root = new CompoundNBT();
+            extensions.values().forEach(extension -> {
+                CompoundNBT output = extension.serialize();
+                if (output != null) {
+                    root.put(extension.getName().toString(), output);
+                }
+            });
+            return root;
+        }
+
+        private void deserializeExtensions(CompoundNBT root) {
+            if (root.isEmpty())
+                return;
+
+            extensions.values().forEach(extension -> {
+                String name = extension.getName().toString();
+                if (root.contains(name)) {
+                    extension.deserialize(root.getCompound(name));
+                }
+            });
+        }
+
         @Override
         public CompoundNBT serialize() {
             CompoundNBT tag = new CompoundNBT();
             tag.put("knowledge", knowledge.serialize());
+            tag.put("extensions", serializeExtensions());
             return tag;
         }
 
         @Override
         public boolean deserialize(CompoundNBT tag) {
             knowledge.deserialize(tag.getCompound("knowledge"));
+            deserializeExtensions(tag.getCompound("extensions"));
             return true;
         }
     }

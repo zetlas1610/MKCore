@@ -4,9 +4,12 @@ import com.chaosbuffalo.mkcore.abilities.AbilityManager;
 import com.chaosbuffalo.mkcore.client.gui.MKOverlay;
 import com.chaosbuffalo.mkcore.command.MKCommand;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
+import com.chaosbuffalo.mkcore.core.IPersonaExtensionProvider;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
+import com.chaosbuffalo.mkcore.core.PersonaManager;
 import com.chaosbuffalo.mkcore.core.talents.TalentManager;
 import com.chaosbuffalo.mkcore.mku.MKUEntityTypes;
+import com.chaosbuffalo.mkcore.mku.PersonaTest;
 import com.chaosbuffalo.mkcore.mku.RenderRegistry;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import net.minecraft.entity.Entity;
@@ -18,6 +21,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -39,6 +43,8 @@ public class MKCore {
         INSTANCE = this;
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+        // Register the processIMC method for modloading
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
@@ -53,6 +59,7 @@ public class MKCore {
         LOGGER.info("HELLO FROM PREINIT");
         PacketHandler.setupHandler();
         Capabilities.registerCapabilities();
+        PersonaManager.registerExtension(PersonaTest.CustomPersonaData::new);
     }
 
     @SubscribeEvent
@@ -78,6 +85,18 @@ public class MKCore {
         // do something when the server starts
         LOGGER.info("HELLO from server starting");
         MKCommand.register(event.getCommandDispatcher());
+    }
+
+    private void processIMC(final InterModProcessEvent event)
+    {
+        MKCore.LOGGER.info("MKCore.processIMC");
+        event.getIMCStream().forEach(m -> {
+            if (m.getMethod().equals("register_persona_extension")) {
+                MKCore.LOGGER.info("IMC register persona extension from mod {} {}", m.getSenderModId(), m.getMethod());
+                IPersonaExtensionProvider factory = (IPersonaExtensionProvider) m.getMessageSupplier().get();
+                PersonaManager.registerExtension(factory);
+            }
+        });
     }
 
     public static ResourceLocation makeRL(String path) {

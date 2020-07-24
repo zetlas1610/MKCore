@@ -178,6 +178,10 @@ public class MKPlayerData implements IMKEntityData {
         getStats().onPersonaDeactivated();
     }
 
+    public <T extends IPersonaExtension> T getPersonaExtension(Class<T> clazz) {
+        return getPersonaManager().getActivePersona().getExtension(clazz);
+    }
+
     @Override
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
