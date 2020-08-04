@@ -60,6 +60,7 @@ public class MKCore {
         PacketHandler.setupHandler();
         Capabilities.registerCapabilities();
         PersonaManager.registerExtension(PersonaTest.CustomPersonaData::new);
+        MKCommand.registerArguments();
     }
 
     @SubscribeEvent
@@ -84,7 +85,7 @@ public class MKCore {
     public void onServerStarting(FMLServerStartingEvent event) {
         // do something when the server starts
         LOGGER.info("HELLO from server starting");
-        MKCommand.register(event.getCommandDispatcher());
+        MKCommand.registerCommands(event.getCommandDispatcher());
     }
 
     private void processIMC(final InterModProcessEvent event)
