@@ -7,6 +7,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -61,25 +63,28 @@ public class EntityCastPacket {
         }
     }
 
+    @OnlyIn(Dist.CLIENT)
+    private void handleClient() {
+        World world = Minecraft.getInstance().world;
+        if (world == null)
+            return;
+
+        Entity entity = world.getEntityByID(entityId);
+        if (entity == null)
+            return;
+
+        MKCore.getEntityData(entity).ifPresent(entityData -> {
+            if (action == CastAction.START) {
+                entityData.getAbilityExecutor().startCastClient(abilityId, castTicks);
+            } else if (action == CastAction.INTERRUPT) {
+                entityData.getAbilityExecutor().interruptCast();
+            }
+        });
+    }
+
     public void handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            World world = Minecraft.getInstance().world;
-            if (world == null)
-                return;
-
-            Entity entity = world.getEntityByID(entityId);
-            if (entity == null)
-                return;
-
-            MKCore.getEntityData(entity).ifPresent(entityData -> {
-                if (action == CastAction.START) {
-                    entityData.getAbilityExecutor().startCastClient(abilityId, castTicks);
-                } else if (action == CastAction.INTERRUPT) {
-                    entityData.getAbilityExecutor().interruptCast();
-                }
-            });
-        });
+        ctx.enqueueWork(this::handleClient);
         ctx.setPacketHandled(true);
     }
 }

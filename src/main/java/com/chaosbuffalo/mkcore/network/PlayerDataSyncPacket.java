@@ -6,6 +6,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.UUID;
@@ -36,20 +38,23 @@ public class PlayerDataSyncPacket {
 //        MKCore.LOGGER.info("sync toBytes priv:{} {}", privateUpdate, updateTag);
     }
 
+    @OnlyIn(Dist.CLIENT)
+    private void handleClient() {
+        World world = Minecraft.getInstance().world;
+        if (world == null) {
+            return;
+        }
+        PlayerEntity entity = world.getPlayerByUuid(targetUUID);
+        if (entity == null)
+            return;
+
+        entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap ->
+                cap.getUpdateEngine().deserializeUpdate(updateTag, privateUpdate));
+    }
+
     public void handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            World world = Minecraft.getInstance().world;
-            if (world == null) {
-                return;
-            }
-            PlayerEntity entity = world.getPlayerByUuid(targetUUID);
-            if (entity == null)
-                return;
-
-            entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap ->
-                    cap.getUpdateEngine().deserializeUpdate(updateTag, privateUpdate));
-        });
+        ctx.enqueueWork(this::handleClient);
         ctx.setPacketHandled(true);
     }
 

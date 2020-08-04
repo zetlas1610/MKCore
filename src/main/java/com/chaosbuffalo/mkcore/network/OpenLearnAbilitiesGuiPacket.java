@@ -11,6 +11,8 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.ArrayList;
@@ -68,12 +70,15 @@ public class OpenLearnAbilitiesGuiPacket {
         });
     }
 
+    @OnlyIn(Dist.CLIENT)
+    private void handleClient() {
+        ITextComponent text = new StringTextComponent("Learn Abilities");
+        Minecraft.getInstance().displayGuiScreen(new LearnAbilitiesScreen(text, abilityInfo, entityId));
+    }
+
     public void handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            ITextComponent text = new StringTextComponent("Learn Abilities");
-            Minecraft.getInstance().displayGuiScreen(new LearnAbilitiesScreen(text, abilityInfo, entityId));
-        });
+        ctx.enqueueWork(this::handleClient);
         ctx.setPacketHandled(true);
     }
 }
