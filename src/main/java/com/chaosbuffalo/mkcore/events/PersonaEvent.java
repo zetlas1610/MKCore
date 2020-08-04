@@ -1,29 +1,29 @@
 package com.chaosbuffalo.mkcore.events;
 
-import com.chaosbuffalo.mkcore.core.PersonaManager;
+import com.chaosbuffalo.mkcore.core.persona.Persona;
 import net.minecraftforge.eventbus.api.Event;
 
 public class PersonaEvent extends Event {
-    private final PersonaManager.Persona persona;
+    private final Persona persona;
 
-    public PersonaEvent(PersonaManager.Persona persona) {
+    public PersonaEvent(Persona persona) {
         this.persona = persona;
     }
 
-    public PersonaManager.Persona getPersona() {
+    public Persona getPersona() {
         return persona;
     }
 
     public static class PersonaActivated extends PersonaEvent {
 
-        public PersonaActivated(PersonaManager.Persona persona) {
+        public PersonaActivated(Persona persona) {
             super(persona);
         }
     }
 
     public static class PersonaDeactivated extends PersonaEvent {
 
-        public PersonaDeactivated(PersonaManager.Persona persona) {
+        public PersonaDeactivated(Persona persona) {
             super(persona);
         }
     }

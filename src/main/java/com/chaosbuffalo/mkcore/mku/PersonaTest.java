@@ -1,18 +1,18 @@
 package com.chaosbuffalo.mkcore.mku;
 
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.core.IPersonaExtension;
-import com.chaosbuffalo.mkcore.core.PersonaManager;
+import com.chaosbuffalo.mkcore.core.persona.IPersonaExtension;
+import com.chaosbuffalo.mkcore.core.persona.Persona;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 
 public class PersonaTest {
 
     public static class CustomPersonaData implements IPersonaExtension {
-        private final PersonaManager.Persona persona;
+        private final Persona persona;
         private int counter;
 
-        public CustomPersonaData(PersonaManager.Persona persona) {
+        public CustomPersonaData(Persona persona) {
             this.persona = persona;
             counter = 1;
         }
