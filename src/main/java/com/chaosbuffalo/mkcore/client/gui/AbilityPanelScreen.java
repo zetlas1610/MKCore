@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.client.gui;
 
-import com.chaosbuffalo.mkcore.Capabilities;
+import com.chaosbuffalo.mkcore.CoreCapabilities;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.client.gui.widgets.AbilityInfoWidget;
@@ -131,7 +131,7 @@ public abstract class AbilityPanelScreen extends MKScreen implements IPlayerData
         MKLayout statebuttons = getStateButtons(xPos + xOffset, yPos + 8,
                 dataBoxRegion.width);
         root.addWidget(statebuttons);
-        minecraft.player.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent((pData) -> {
+        minecraft.player.getCapability(CoreCapabilities.PLAYER_CAPABILITY).ifPresent((pData) -> {
             // Stat Panel
             MKLayout headerLayout = new MKLayout(xPos, statebuttons.getY() + statebuttons.getHeight(), PANEL_WIDTH,
                     DATA_BOX_OFFSET - statebuttons.getHeight() - 8);

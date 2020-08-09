@@ -50,7 +50,7 @@ public class MKCore {
         // some preinit code
         LOGGER.info("HELLO FROM PREINIT");
         PacketHandler.setupHandler();
-        Capabilities.registerCapabilities();
+        CoreCapabilities.registerCapabilities();
     }
 
     @SubscribeEvent
@@ -83,14 +83,14 @@ public class MKCore {
     }
 
     public static LazyOptional<MKPlayerData> getPlayer(Entity playerEntity) {
-        return playerEntity.getCapability(Capabilities.PLAYER_CAPABILITY);
+        return playerEntity.getCapability(CoreCapabilities.PLAYER_CAPABILITY);
     }
 
     public static LazyOptional<? extends IMKEntityData> getEntityData(Entity entity) {
         if (entity instanceof PlayerEntity) {
-            return entity.getCapability(Capabilities.PLAYER_CAPABILITY);
+            return entity.getCapability(CoreCapabilities.PLAYER_CAPABILITY);
         } else {
-            return entity.getCapability(Capabilities.ENTITY_CAPABILITY);
+            return entity.getCapability(CoreCapabilities.ENTITY_CAPABILITY);
         }
     }
 

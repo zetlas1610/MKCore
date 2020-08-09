@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.events;
 
-import com.chaosbuffalo.mkcore.Capabilities;
+import com.chaosbuffalo.mkcore.CoreCapabilities;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageSource;
 import com.chaosbuffalo.mkcore.effects.SpellTriggers;
@@ -37,7 +37,7 @@ public class CombatEventHandler {
         // Player is the source
         if (trueSource instanceof ServerPlayerEntity) {
             ServerPlayerEntity playerSource = (ServerPlayerEntity) trueSource;
-            playerSource.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(
+            playerSource.getCapability(CoreCapabilities.PLAYER_CAPABILITY).ifPresent(
                     (sourceData) -> SpellTriggers.PLAYER_HURT_ENTITY.onPlayerHurtEntity(event, source, livingTarget,
                             playerSource, sourceData)
             );
@@ -46,7 +46,7 @@ public class CombatEventHandler {
         // Player is the victim
         if (livingTarget instanceof ServerPlayerEntity) {
             ServerPlayerEntity playerTarget = (ServerPlayerEntity) livingTarget;
-            playerTarget.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(
+            playerTarget.getCapability(CoreCapabilities.PLAYER_CAPABILITY).ifPresent(
                     (targetData) -> SpellTriggers.ENTITY_HURT_PLAYER.onEntityHurtPlayer(event, source,
                             playerTarget, targetData)
             );

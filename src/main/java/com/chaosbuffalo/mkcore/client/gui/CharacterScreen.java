@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.client.gui;
 
-import com.chaosbuffalo.mkcore.Capabilities;
+import com.chaosbuffalo.mkcore.CoreCapabilities;
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
@@ -135,7 +135,7 @@ public class CharacterScreen extends AbilityPanelScreen {
         int xOffset = GuiTextures.CORE_TEXTURES.getCenterXOffset(
                 GuiTextures.DATA_BOX, GuiTextures.BACKGROUND_320_240);
         MKLayout root = getRootLayout(xPos, yPos, xOffset, dataBoxRegion.width, true);
-        minecraft.player.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent((pData) -> {
+        minecraft.player.getCapability(CoreCapabilities.PLAYER_CAPABILITY).ifPresent((pData) -> {
             int contentX = xPos + xOffset;
             int contentY = yPos + DATA_BOX_OFFSET;
             int contentWidth = dataBoxRegion.width;
@@ -195,7 +195,7 @@ public class CharacterScreen extends AbilityPanelScreen {
         int xOffset = GuiTextures.CORE_TEXTURES.getCenterXOffset(
                 GuiTextures.DATA_BOX, GuiTextures.BACKGROUND_320_240);
         MKLayout root = getRootLayout(xPos, yPos, xOffset, dataBoxRegion.width, true);
-        minecraft.player.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent((pData) -> {
+        minecraft.player.getCapability(CoreCapabilities.PLAYER_CAPABILITY).ifPresent((pData) -> {
             // Stat Panel
             int slotsY = yPos + DATA_BOX_OFFSET - 28;
             int slotsX = xPos + xOffset + 4;

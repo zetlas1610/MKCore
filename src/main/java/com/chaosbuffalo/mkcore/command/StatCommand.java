@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.command;
 
-import com.chaosbuffalo.mkcore.Capabilities;
+import com.chaosbuffalo.mkcore.CoreCapabilities;
 import com.chaosbuffalo.mkcore.core.MKAttributes;
 import com.chaosbuffalo.mkcore.core.PlayerStatsModule;
 import com.chaosbuffalo.mkcore.utils.TextUtils;
@@ -66,7 +66,7 @@ public class StatCommand {
 
     static ArgumentBuilder<CommandSource, ?> createSimpleFloatStat(String name, Function<PlayerStatsModule, Float> getter, BiConsumer<PlayerStatsModule, Float> setter) {
         ToIntFunction<PlayerEntity> getAction = playerEntity -> {
-            playerEntity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap ->
+            playerEntity.getCapability(CoreCapabilities.PLAYER_CAPABILITY).ifPresent(cap ->
                     TextUtils.sendPlayerChatMessage(playerEntity, String.format("%s is %f", name, getter.apply(cap.getStats()))));
 
             return Command.SINGLE_SUCCESS;
@@ -75,7 +75,7 @@ public class StatCommand {
         ToIntBiFunction<PlayerEntity, Float> setAction;
         if (setter != null) {
             setAction = (playerEntity, value) -> {
-                playerEntity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap -> {
+                playerEntity.getCapability(CoreCapabilities.PLAYER_CAPABILITY).ifPresent(cap -> {
                     TextUtils.sendPlayerChatMessage(playerEntity, String.format("Setting %s to %f", name, value));
                     setter.accept(cap.getStats(), value);
                     TextUtils.sendPlayerChatMessage(playerEntity, String.format("%s is now %f",

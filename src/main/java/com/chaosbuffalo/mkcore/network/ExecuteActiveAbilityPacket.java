@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.network;
 
-import com.chaosbuffalo.mkcore.Capabilities;
+import com.chaosbuffalo.mkcore.CoreCapabilities;
 import com.chaosbuffalo.mkcore.core.AbilitySlot;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -35,7 +35,7 @@ public class ExecuteActiveAbilityPacket {
             if (entity == null)
                 return;
 
-            entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap ->
+            entity.getCapability(CoreCapabilities.PLAYER_CAPABILITY).ifPresent(cap ->
                     cap.getAbilityExecutor().executeHotBarAbility(type, slot));
         });
         ctx.setPacketHandled(true);

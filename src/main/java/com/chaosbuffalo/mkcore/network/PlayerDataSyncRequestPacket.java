@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.network;
 
-import com.chaosbuffalo.mkcore.Capabilities;
+import com.chaosbuffalo.mkcore.CoreCapabilities;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -27,7 +27,7 @@ public class PlayerDataSyncRequestPacket {
             if (entity == null)
                 return;
 
-            entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(MKPlayerData::initialSync);
+            entity.getCapability(CoreCapabilities.PLAYER_CAPABILITY).ifPresent(MKPlayerData::initialSync);
         });
         ctx.setPacketHandled(true);
     }

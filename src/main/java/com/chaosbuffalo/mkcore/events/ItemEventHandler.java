@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.events;
 
-import com.chaosbuffalo.mkcore.Capabilities;
+import com.chaosbuffalo.mkcore.CoreCapabilities;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.effects.SpellTriggers;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -18,7 +18,7 @@ public class ItemEventHandler {
 
         ServerPlayerEntity player = (ServerPlayerEntity) event.getEntityLiving();
 
-        player.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent((playerData) -> {
+        player.getCapability(CoreCapabilities.PLAYER_CAPABILITY).ifPresent((playerData) -> {
             playerData.getEquipment().onEquipmentChange(event.getSlot(), event.getFrom(), event.getTo());
             SpellTriggers.PLAYER_EQUIPMENT_CHANGE.onEquipmentChange(event, playerData, player);
         });

@@ -24,7 +24,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class Capabilities {
+public class CoreCapabilities {
 
     public static ResourceLocation PLAYER_CAP_ID = MKCore.makeRL("player_data");
     public static ResourceLocation ENTITY_CAP_ID = MKCore.makeRL("entity_data");
@@ -43,7 +43,7 @@ public class Capabilities {
     public static void registerCapabilities() {
         CapabilityManager.INSTANCE.register(MKPlayerData.class, new MKDataStorage<>(), MKPlayerData::new);
         CapabilityManager.INSTANCE.register(MKEntityData.class, new MKDataStorage<>(), MKEntityData::new);
-        MinecraftForge.EVENT_BUS.register(Capabilities.class);
+        MinecraftForge.EVENT_BUS.register(CoreCapabilities.class);
     }
 
     @SuppressWarnings("unused")
@@ -84,7 +84,7 @@ public class Capabilities {
         private final MKEntityData entityHandler;
 
         public EntityDataProvider(LivingEntity entity) {
-            entityHandler = Capabilities.ENTITY_CAPABILITY.getDefaultInstance();
+            entityHandler = CoreCapabilities.ENTITY_CAPABILITY.getDefaultInstance();
             if (entityHandler != null) {
                 entityHandler.attach(entity);
             }
@@ -93,19 +93,19 @@ public class Capabilities {
         @Nonnull
         @Override
         public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-            return Capabilities.ENTITY_CAPABILITY.orEmpty(cap, LazyOptional.of(() -> entityHandler));
+            return CoreCapabilities.ENTITY_CAPABILITY.orEmpty(cap, LazyOptional.of(() -> entityHandler));
         }
 
         @Override
         public CompoundNBT serializeNBT() {
-            return (CompoundNBT) Capabilities.ENTITY_CAPABILITY.getStorage().writeNBT(
-                    Capabilities.ENTITY_CAPABILITY, entityHandler, null);
+            return (CompoundNBT) CoreCapabilities.ENTITY_CAPABILITY.getStorage().writeNBT(
+                    CoreCapabilities.ENTITY_CAPABILITY, entityHandler, null);
         }
 
         @Override
         public void deserializeNBT(CompoundNBT nbt) {
-            Capabilities.ENTITY_CAPABILITY.getStorage().readNBT(
-                    Capabilities.ENTITY_CAPABILITY, entityHandler, null, nbt);
+            CoreCapabilities.ENTITY_CAPABILITY.getStorage().readNBT(
+                    CoreCapabilities.ENTITY_CAPABILITY, entityHandler, null, nbt);
         }
     }
 
@@ -114,7 +114,7 @@ public class Capabilities {
         private final MKPlayerData playerHandler;
 
         public PlayerDataProvider(PlayerEntity playerEntity) {
-            playerHandler = Capabilities.PLAYER_CAPABILITY.getDefaultInstance();
+            playerHandler = CoreCapabilities.PLAYER_CAPABILITY.getDefaultInstance();
             if (playerHandler != null) {
                 playerHandler.attach(playerEntity);
             }
@@ -123,17 +123,17 @@ public class Capabilities {
         @Nonnull
         @Override
         public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-            return Capabilities.PLAYER_CAPABILITY.orEmpty(cap, LazyOptional.of(() -> playerHandler));
+            return CoreCapabilities.PLAYER_CAPABILITY.orEmpty(cap, LazyOptional.of(() -> playerHandler));
         }
 
         @Override
         public CompoundNBT serializeNBT() {
-            return (CompoundNBT) Capabilities.PLAYER_CAPABILITY.getStorage().writeNBT(Capabilities.PLAYER_CAPABILITY, playerHandler, null);
+            return (CompoundNBT) CoreCapabilities.PLAYER_CAPABILITY.getStorage().writeNBT(CoreCapabilities.PLAYER_CAPABILITY, playerHandler, null);
         }
 
         @Override
         public void deserializeNBT(CompoundNBT nbt) {
-            Capabilities.PLAYER_CAPABILITY.getStorage().readNBT(Capabilities.PLAYER_CAPABILITY, playerHandler, null, nbt);
+            CoreCapabilities.PLAYER_CAPABILITY.getStorage().readNBT(CoreCapabilities.PLAYER_CAPABILITY, playerHandler, null, nbt);
         }
     }
 }

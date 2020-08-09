@@ -25,9 +25,9 @@ public class EventHandler {
         LivingEntity living = event.getEntityLiving();
 
         if (living instanceof PlayerEntity) {
-            living.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(MKPlayerData::update);
+            living.getCapability(CoreCapabilities.PLAYER_CAPABILITY).ifPresent(MKPlayerData::update);
         } else {
-            living.getCapability(Capabilities.ENTITY_CAPABILITY).ifPresent(MKEntityData::update);
+            living.getCapability(CoreCapabilities.ENTITY_CAPABILITY).ifPresent(MKEntityData::update);
         }
     }
 
@@ -62,8 +62,8 @@ public class EventHandler {
         PlayerEntity player = evt.getPlayer();
         PlayerEntity oldPlayer = evt.getOriginal();
 
-        player.getCapability(Capabilities.PLAYER_CAPABILITY)
-                .ifPresent(newCap -> oldPlayer.getCapability(Capabilities.PLAYER_CAPABILITY)
+        player.getCapability(CoreCapabilities.PLAYER_CAPABILITY)
+                .ifPresent(newCap -> oldPlayer.getCapability(CoreCapabilities.PLAYER_CAPABILITY)
                         .ifPresent(oldCap -> newCap.clone(oldCap, evt.isWasDeath())));
     }
 
@@ -74,7 +74,7 @@ public class EventHandler {
             PlayerEntity player = event.getPlayer();
             ServerPlayerEntity target = (ServerPlayerEntity) event.getTarget();
 
-            player.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap -> cap.fullSyncTo(target));
+            player.getCapability(CoreCapabilities.PLAYER_CAPABILITY).ifPresent(cap -> cap.fullSyncTo(target));
         }
     }
 

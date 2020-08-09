@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkcore.client.gui;
 
 
-import com.chaosbuffalo.mkcore.Capabilities;
+import com.chaosbuffalo.mkcore.CoreCapabilities;
 import com.chaosbuffalo.mkcore.ClientEventHandler;
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
@@ -171,15 +171,15 @@ public class MKOverlay {
 
     @SuppressWarnings("unused")
     @SubscribeEvent
-    public void onRenderExperienceBar(RenderGameOverlayEvent event) {
-        if (event.isCancelable() || event.getType() != RenderGameOverlayEvent.ElementType.EXPERIENCE) {
+    public void onRender(RenderGameOverlayEvent.Post event) {
+        if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) {
             return;
         }
 
         if (mc == null || mc.player == null)
             return;
 
-        mc.player.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap -> {
+        mc.player.getCapability(CoreCapabilities.PLAYER_CAPABILITY).ifPresent(cap -> {
 
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             drawMana(cap);

@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.effects;
 
-import com.chaosbuffalo.mkcore.Capabilities;
+import com.chaosbuffalo.mkcore.CoreCapabilities;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
@@ -50,7 +50,7 @@ public class SpellTriggers {
     private static boolean startTrigger(Entity source, String tag) {
         if (source instanceof PlayerEntity) {
 //            Log.info("startTrigger - %s", tag);
-            return source.getCapability(Capabilities.PLAYER_CAPABILITY).map(cap -> {
+            return source.getCapability(CoreCapabilities.PLAYER_CAPABILITY).map(cap -> {
                 if (cap.hasSpellTag(tag)) {
 //                Log.info("startTrigger - BLOCKING %s", tag);
                     return false;
@@ -66,7 +66,7 @@ public class SpellTriggers {
     private static void endTrigger(Entity source, String tag) {
         if (source instanceof PlayerEntity) {
 //            Log.info("endTrigger - %s", tag);
-            source.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap -> cap.removeSpellTag(tag));
+            source.getCapability(CoreCapabilities.PLAYER_CAPABILITY).ifPresent(cap -> cap.removeSpellTag(tag));
         }
     }
 

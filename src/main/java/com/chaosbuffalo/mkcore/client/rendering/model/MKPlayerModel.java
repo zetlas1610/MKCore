@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.client.rendering.model;
 
-import com.chaosbuffalo.mkcore.Capabilities;
+import com.chaosbuffalo.mkcore.CoreCapabilities;
 import com.chaosbuffalo.mkcore.client.rendering.animations.AdditionalBipedAnimation;
 import com.chaosbuffalo.mkcore.client.rendering.animations.BipedCastAnimation;
 import com.chaosbuffalo.mkcore.client.rendering.animations.PlayerCompleteCastAnimation;
@@ -20,7 +20,7 @@ public class MKPlayerModel extends PlayerModel<AbstractClientPlayerEntity> {
     @Override
     public void setRotationAngles(AbstractClientPlayerEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         super.setRotationAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        entityIn.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(mkEntityData -> {
+        entityIn.getCapability(CoreCapabilities.PLAYER_CAPABILITY).ifPresent(mkEntityData -> {
             AdditionalBipedAnimation<PlayerEntity> animation = getAdditionalAnimation(mkEntityData);
             if (animation != null) {
                 animation.apply(entityIn);

@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.network;
 
-import com.chaosbuffalo.mkcore.Capabilities;
+import com.chaosbuffalo.mkcore.CoreCapabilities;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -47,7 +47,7 @@ public class TalentPointActionPacket {
             if (entity == null)
                 return;
 
-            entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap -> {
+            entity.getCapability(CoreCapabilities.PLAYER_CAPABILITY).ifPresent(cap -> {
                 if (action == Action.SPEND) {
                     cap.getKnowledge().getTalentKnowledge().spendTalentPoint(talentTree, line, index);
                 } else if (action == Action.REFUND) {

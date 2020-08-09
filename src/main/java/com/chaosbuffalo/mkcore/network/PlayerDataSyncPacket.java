@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.network;
 
-import com.chaosbuffalo.mkcore.Capabilities;
+import com.chaosbuffalo.mkcore.CoreCapabilities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -47,7 +47,7 @@ public class PlayerDataSyncPacket {
             if (entity == null)
                 return;
 
-            entity.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent(cap ->
+            entity.getCapability(CoreCapabilities.PLAYER_CAPABILITY).ifPresent(cap ->
                     cap.getUpdateEngine().deserializeUpdate(updateTag, privateUpdate));
         });
         ctx.setPacketHandled(true);

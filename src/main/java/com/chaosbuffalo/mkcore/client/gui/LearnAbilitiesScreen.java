@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkcore.client.gui;
 
-import com.chaosbuffalo.mkcore.Capabilities;
+import com.chaosbuffalo.mkcore.CoreCapabilities;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.training.AbilityRequirementEvaluation;
 import com.chaosbuffalo.mkcore.client.gui.widgets.LearnAbilityTray;
@@ -45,7 +45,7 @@ public class LearnAbilitiesScreen extends AbilityPanelScreen {
         int xOffset = GuiTextures.CORE_TEXTURES.getCenterXOffset(
                 GuiTextures.DATA_BOX, GuiTextures.BACKGROUND_320_240);
         MKLayout root = getRootLayout(xPos, yPos, xOffset, dataBoxRegion.width, false);
-        minecraft.player.getCapability(Capabilities.PLAYER_CAPABILITY).ifPresent((pData) -> {
+        minecraft.player.getCapability(CoreCapabilities.PLAYER_CAPABILITY).ifPresent((pData) -> {
             int contentX = xPos + xOffset;
             int contentY = yPos + DATA_BOX_OFFSET;
             int contentWidth = dataBoxRegion.width;
