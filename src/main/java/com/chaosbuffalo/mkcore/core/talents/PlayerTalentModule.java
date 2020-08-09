@@ -28,7 +28,6 @@ public class PlayerTalentModule {
     }
 
     public void onPersonaActivated() {
-//        MKCore.LOGGER.info("PlayerTalentModule.onPersonaActivated");
         typeHandlerMap.clear();
 
         playerData.getKnowledge()
@@ -40,7 +39,6 @@ public class PlayerTalentModule {
     }
 
     public void onPersonaDeactivated() {
-//        MKCore.LOGGER.info("PlayerTalentModule.onPersonaDeactivated");
         typeHandlerMap.values().forEach(TalentTypeHandler::onPersonaDeactivated);
     }
 

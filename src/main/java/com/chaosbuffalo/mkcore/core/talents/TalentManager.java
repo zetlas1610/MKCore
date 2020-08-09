@@ -43,11 +43,10 @@ public class TalentManager extends JsonReloadListener {
                          @Nonnull IResourceManager resourceManagerIn,
                          @Nonnull IProfiler profilerIn) {
 
-        MKCore.LOGGER.info("In apply reload for TalentLoader");
+        MKCore.LOGGER.info("Loading Talent definitions from json");
         boolean wasChanged = false;
         for (Map.Entry<ResourceLocation, JsonObject> entry : objectIn.entrySet()) {
             ResourceLocation location = entry.getKey();
-            MKCore.LOGGER.info("Found file: {}", location);
             if (location.getPath().startsWith("_"))
                 continue; //Forge: filter anything beginning with "_" as it's used for metadata.
             if (parse(entry.getKey(), entry.getValue())) {
@@ -64,7 +63,6 @@ public class TalentManager extends JsonReloadListener {
         MKCore.LOGGER.debug("Parsing Talent Tree Json for {}", loc);
         ResourceLocation treeId = new ResourceLocation(loc.getNamespace(), "talent_tree." + loc.getPath());
 
-        MKCore.LOGGER.debug("Creating new talent tree {}", treeId);
         TalentTreeDefinition talentTree = TalentTreeDefinition.deserialize(treeId, new Dynamic<>(JsonOps.INSTANCE, json));
 
         registerTalentTree(talentTree);
@@ -108,7 +106,6 @@ public class TalentManager extends JsonReloadListener {
     @SuppressWarnings("unused")
     @SubscribeEvent
     public void playerLoggedInEvent(PlayerEvent.PlayerLoggedInEvent event) {
-        MKCore.LOGGER.info("Player logged in talent manager");
         if (event.getPlayer() instanceof ServerPlayerEntity) {
             TalentDefinitionSyncPacket updatePacket = new TalentDefinitionSyncPacket(talentTreeMap.values());
             PacketHandler.sendMessage(updatePacket, (ServerPlayerEntity) event.getPlayer());

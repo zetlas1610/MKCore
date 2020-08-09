@@ -35,7 +35,7 @@ public class AbilityManager extends JsonReloadListener {
     @Override
     protected void apply(Map<ResourceLocation, JsonObject> objectIn, IResourceManager resourceManagerIn,
                          IProfiler profilerIn) {
-        MKCore.LOGGER.debug("In apply reload for AbilityManager");
+        MKCore.LOGGER.debug("Loading ability definitions from Json");
         boolean wasChanged = false;
         for (Map.Entry<ResourceLocation, JsonObject> entry : objectIn.entrySet()) {
             ResourceLocation resourcelocation = entry.getKey();

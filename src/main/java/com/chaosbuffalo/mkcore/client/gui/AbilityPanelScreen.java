@@ -21,10 +21,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.ITextComponent;
 
-import java.util.function.BiConsumer;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 public abstract class AbilityPanelScreen extends MKScreen implements IPlayerDataAwareScreen {
@@ -117,7 +117,7 @@ public abstract class AbilityPanelScreen extends MKScreen implements IPlayerData
     }
 
     protected MKLayout createScrollingPanelWithContent(BiFunction<MKPlayerData, Integer, MKWidget> contentCreator,
-                                                       BiConsumer<MKPlayerData, MKLayout> headerCreator){
+                                                       BiConsumer<MKPlayerData, MKLayout> headerCreator) {
         int xPos = width / 2 - PANEL_WIDTH / 2;
         int yPos = height / 2 - PANEL_HEIGHT / 2;
         MKLayout root = new MKLayout(xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
@@ -221,7 +221,6 @@ public abstract class AbilityPanelScreen extends MKScreen implements IPlayerData
 
     @Override
     public void onPlayerDataUpdate() {
-        MKCore.LOGGER.info("CharacterScreen.onPlayerDataUpdate");
         flagNeedSetup();
     }
 

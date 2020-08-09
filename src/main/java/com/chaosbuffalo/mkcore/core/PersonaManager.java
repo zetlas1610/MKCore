@@ -86,7 +86,7 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
 
     public boolean createPersona(String name) {
         if (hasPersona(name)) {
-            MKCore.LOGGER.info("Cannot create a persona named {}! Persona with that name already exists.", name);
+            MKCore.LOGGER.error("Cannot create a persona named {}! Persona with that name already exists.", name);
             return false;
         }
 

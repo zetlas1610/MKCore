@@ -97,4 +97,8 @@ public class MKCore {
     public static TalentManager getTalentManager() {
         return INSTANCE.talentManager;
     }
+
+    public static AbilityManager getAbilityManager() {
+        return INSTANCE.abilityManager;
+    }
 }

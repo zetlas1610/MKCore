@@ -1,6 +1,5 @@
 package com.chaosbuffalo.mkcore.abilities;
 
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.description.AbilityDescriptions;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import net.minecraft.client.resources.I18n;
@@ -80,7 +79,6 @@ public class AbilityTargetSelector {
     }
 
     public boolean validateContext(IMKEntityData entityData, AbilityContext context) {
-        MKCore.LOGGER.info("AbilityTargetSelector.validateContext {}", entityData.getEntity());
         return requiredMemories == null || requiredMemories.stream().allMatch(context::hasMemory);
     }
 }

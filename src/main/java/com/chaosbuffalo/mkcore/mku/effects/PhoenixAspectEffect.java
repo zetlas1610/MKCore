@@ -44,7 +44,6 @@ public class PhoenixAspectEffect extends PassiveEffect {
 
     @Override
     public void onPotionAdd(SpellCast cast, LivingEntity target, AbstractAttributeMap attributes, int amplifier) {
-        MKCore.LOGGER.info("PhoenixAspectPotion.onPotionAdd {}", target);
         if (target instanceof ServerPlayerEntity) {
             ServerPlayerEntity player = (ServerPlayerEntity) target;
             player.abilities.allowFlying = true;
@@ -54,7 +53,6 @@ public class PhoenixAspectEffect extends PassiveEffect {
 
     @Override
     public void onPotionRemove(SpellCast cast, LivingEntity target, AbstractAttributeMap attributes, int amplifier) {
-        MKCore.LOGGER.info("PhoenixAspectPotion.onPotionRemove {}", target);
         if (target instanceof ServerPlayerEntity) {
             ServerPlayerEntity player = (ServerPlayerEntity) target;
             player.abilities.allowFlying = false;

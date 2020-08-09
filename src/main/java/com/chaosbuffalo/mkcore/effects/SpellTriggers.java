@@ -39,8 +39,10 @@ public class SpellTriggers {
     }
 
     public static boolean isMinecraftPhysicalDamage(DamageSource source) {
-        return (!source.isFireDamage() && !source.isExplosion() && !source.isMagicDamage() &&
-                source.getDamageType().equals("player"));
+        return !source.isFireDamage() &&
+                !source.isExplosion() &&
+                !source.isMagicDamage() &&
+                source.getDamageType().equals("player");
     }
 
     public static boolean isProjectileDamage(DamageSource source) {
@@ -52,13 +54,11 @@ public class SpellTriggers {
 //            Log.info("startTrigger - %s", tag);
             return source.getCapability(CoreCapabilities.PLAYER_CAPABILITY).map(cap -> {
                 if (cap.hasSpellTag(tag)) {
-//                Log.info("startTrigger - BLOCKING %s", tag);
                     return false;
                 }
                 cap.addSpellTag(tag);
                 return true;
             }).orElse(true);
-
         }
         return true;
     }

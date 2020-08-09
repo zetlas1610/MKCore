@@ -32,9 +32,6 @@ public interface IMKInfiniteEffect {
         EffectInstance effect = target.getActivePotionEffect(spellEffect);
         if (effect == null)
             return false;
-//        MKCore.LOGGER.info("IMKPassiveEffect.checkRefresh() {} {}", target, effect);
-
-//        MKCore.LOGGER.info("IMKPassiveEffect.checkRefresh() cur:{} r:{} p:{} refrdy:{} prdrdy:{}", effect.getDuration(), getRefreshDuration(), getPassiveDuration(), effect.getDuration() <= getRefreshDuration(), effect.getDuration() % period == 0);
 
         int remaining = effect.getDuration() % period;
         boolean periodTriggered = remaining == 0;

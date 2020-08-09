@@ -68,12 +68,8 @@ public class TalentTreeDefinition {
     public static <T> TalentTreeDefinition deserialize(ResourceLocation treeId, Dynamic<T> dynamic) {
         int version = dynamic.get("version").asInt(1);
 
-//        MKCore.LOGGER.info("TalentTree.deserialize {} {}", treeId, version);
-
         TalentTreeDefinition tree = new TalentTreeDefinition(treeId, version);
         dynamic.get("lines").asList(d -> TalentLineDefinition.deserialize(tree, d)).forEach(tree::addLine);
-
-//        MKCore.LOGGER.info("TalentTree.deserialize lines {} {}", treeId, tree.talentLines.size());
 
         return tree;
     }
@@ -133,8 +129,6 @@ public class TalentTreeDefinition {
 
             TalentLineDefinition line = new TalentLineDefinition(tree, nameOpt.get());
 
-//            MKCore.LOGGER.info("TalentLine.deserialize {}", line.name);
-
             List<Dynamic<T>> rawNodes = dynamic.get("talents").asList(Function.identity());
             rawNodes.forEach(talent -> {
                 TalentNode node = line.deserializeNode(talent);
@@ -145,8 +139,6 @@ public class TalentTreeDefinition {
 
                 line.addNode(node);
             });
-
-//            MKCore.LOGGER.info(" nodes {} valid {}", rawNodes.size(), line.getLength());
 
             return line;
         }

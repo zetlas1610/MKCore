@@ -35,8 +35,6 @@ public class AttributeTalentHandler extends TalentTypeHandler {
     }
 
     private void updateTalentRecord(TalentRecord record, boolean applyImmediately) {
-//        MKCore.LOGGER.info("AttributeTalentHandler.updateTalentRecord {} {}", record, applyImmediately);
-
         if (record.getNode() instanceof AttributeTalentNode) {
             AttributeTalentNode node = (AttributeTalentNode) record.getNode();
 
@@ -70,8 +68,6 @@ public class AttributeTalentHandler extends TalentTypeHandler {
     }
 
     private void applyAttribute(AttributeEntry entry) {
-//        MKCore.LOGGER.info("PlayerTalentModule.applyAttribute {}", entry);
-
         IAttributeInstance instance = playerData.getEntity().getAttribute(entry.getAttribute());
         //noinspection ConstantConditions
         if (instance == null) {
@@ -80,7 +76,6 @@ public class AttributeTalentHandler extends TalentTypeHandler {
         }
 
         AttributeModifier mod = entry.getModifier();
-//        MKCore.LOGGER.info("PlayerTalentModule.applyAttribute mod {}", mod);
         instance.removeModifier(mod);
         instance.applyModifier(mod);
         if (entry.getAttributeTalent().requiresStatRefresh()) {
@@ -92,9 +87,7 @@ public class AttributeTalentHandler extends TalentTypeHandler {
 
     private void removeAttribute(AttributeTalent attributeTalent) {
         AttributeEntry entry = attributeEntryMap.get(attributeTalent);
-//        MKCore.LOGGER.info("PlayerTalentModule.removeAttribute {}", entry);
         if (entry != null) {
-//            MKCore.LOGGER.info("PlayerTalentModule.removeAttribute found entry {}", entry);
             IAttributeInstance instance = playerData.getEntity().getAttribute(entry.getAttribute());
             //noinspection ConstantConditions
             if (instance != null) {
@@ -105,7 +98,6 @@ public class AttributeTalentHandler extends TalentTypeHandler {
     }
 
     private void removeAllAttributeModifiers() {
-//        MKCore.LOGGER.info("PlayerTalentModule.clearAttributeModifiers");
         attributeEntryMap.forEach((talent, entry) -> removeAttribute(talent));
         attributeEntryMap.clear();
 
@@ -115,7 +107,6 @@ public class AttributeTalentHandler extends TalentTypeHandler {
 
 
     private void applyAllAttributeModifiers() {
-//        MKCore.LOGGER.info("PlayerTalentModule.recalculateTalentAttributes");
         attributeEntryMap.forEach((talent, entry) -> applyAttribute(entry));
     }
 
@@ -149,7 +140,6 @@ public class AttributeTalentHandler extends TalentTypeHandler {
         public AttributeModifier getModifier() {
             double rank = getTotalValue();
             if (modifier == null || modifier.getAmount() != rank) {
-//                MKCore.LOGGER.info("AttributeEntry[{}] getModifier dirty {}", attribute, rank);
                 modifier = attribute.createModifier(rank);
             }
             return modifier;
@@ -158,7 +148,6 @@ public class AttributeTalentHandler extends TalentTypeHandler {
         public double getTotalValue() {
             if (dirty) {
                 value = calculateValue();
-//                MKCore.LOGGER.info("AttributeEntry[{}] getTotalRank dirty {}", attribute, value);
                 dirty = false;
             }
             return value;
@@ -170,7 +159,6 @@ public class AttributeTalentHandler extends TalentTypeHandler {
 
         public void updateTalent(TalentRecord record) {
             boolean changed = records.add(record);
-//            MKCore.LOGGER.info("AttributeEntry[{}] {} changed {}", attribute, record, changed);
             dirty = true;
         }
 

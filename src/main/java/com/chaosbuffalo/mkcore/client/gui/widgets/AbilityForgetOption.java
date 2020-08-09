@@ -1,6 +1,5 @@
 package com.chaosbuffalo.mkcore.client.gui.widgets;
 
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.PlayerLearnAbilityRequestPacket;
@@ -11,21 +10,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.List;
-
 public class AbilityForgetOption extends MKLayout {
 
-    private final List<ResourceLocation> abilitySlots;
     private final ResourceLocation loc;
     private final MKModal popup;
     private final MKAbility ability;
     private final int trainerEntityId;
 
-    public AbilityForgetOption(MKAbility ability, List<ResourceLocation> abilitySlots,
+    public AbilityForgetOption(MKAbility ability,
                                ResourceLocation loc, MKModal popup,
                                FontRenderer font, int trainerEntity) {
         super(0, 0, 200, 16);
-        this.abilitySlots = abilitySlots;
         this.loc = loc;
         this.popup = popup;
         this.ability = ability;
@@ -39,10 +34,9 @@ public class AbilityForgetOption extends MKLayout {
 
     @Override
     public boolean onMousePressed(Minecraft minecraft, double mouseX, double mouseY, int mouseButton) {
-        MKCore.LOGGER.info("In mouse release for popup {}", getAbility().getAbilityId());
         PacketHandler.sendMessageToServer(new PlayerLearnAbilityRequestPacket(
-                loc, abilitySlots.indexOf(getAbility().getAbilityId()), trainerEntityId));
-        if (getScreen() != null){
+                loc, getAbility().getAbilityId(), trainerEntityId));
+        if (getScreen() != null) {
             getScreen().closeModal(popup);
         }
         return true;

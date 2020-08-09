@@ -154,7 +154,7 @@ public class AbilityExecutor {
     }
 
     protected void onAbilityInterrupted(MKAbility ability, int ticks) {
-        MKCore.LOGGER.info("onAbilityInterrupted {} {}", ability, ticks);
+//        MKCore.LOGGER.info("onAbilityInterrupted {} {}", ability, ticks);
     }
 
     private void updateCurrentCast() {
@@ -179,7 +179,7 @@ public class AbilityExecutor {
         }
 
         if (!ability.isExecutableContext(context)) {
-            MKCore.LOGGER.debug("Entity {} tried to execute ability {} with missing memories!", entityData.getEntity(), ability.getAbilityId());
+            MKCore.LOGGER.error("Entity {} tried to execute ability {} with missing memories!", entityData.getEntity(), ability.getAbilityId());
             return false;
         }
 
@@ -306,7 +306,6 @@ public class AbilityExecutor {
 
         @Override
         void interrupt() {
-            MKCore.LOGGER.info("server interrupt");
             super.interrupt();
             PacketHandler.sendToTrackingMaybeSelf(EntityCastPacket.interrupt(executor.entityData), executor.entityData.getEntity());
         }
@@ -353,7 +352,6 @@ public class AbilityExecutor {
 
         @Override
         public void interrupt() {
-            MKCore.LOGGER.info("client interrupt");
             super.interrupt();
             stopSound();
         }

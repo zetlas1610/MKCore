@@ -68,7 +68,7 @@ public class HotBarCommand {
             if (container.setSlots(count)) {
                 MKCore.LOGGER.info("Updated slot count for {}", type);
             } else {
-                MKCore.LOGGER.info("Failed to update slot count for {}", type);
+                MKCore.LOGGER.error("Failed to update slot count for {}", type);
             }
         });
 

@@ -18,7 +18,6 @@ import com.chaosbuffalo.mkwidgets.client.gui.widgets.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
@@ -50,8 +49,8 @@ public class LearnAbilityTray extends MKStackLayoutVertical {
         setup();
     }
 
-    private MKModal getChoosePoolSlotWidget(){
-        if (getScreen() == null){
+    private MKModal getChoosePoolSlotWidget() {
+        if (getScreen() == null) {
             return null;
         }
         IMKScreen screen = getScreen();
@@ -77,18 +76,16 @@ public class LearnAbilityTray extends MKStackLayoutVertical {
         abilities.setPaddingTop(2);
         abilities.setMargins(2, 2, 2, 2);
         abilities.doSetChildWidth(true);
-        List<ResourceLocation> abilitySlots = playerData.getKnowledge().getKnownAbilities().getAbilityPool();
-        for (ResourceLocation loc : abilitySlots){
-            if (loc.equals(MKCoreRegistry.INVALID_ABILITY)){
-                continue;
+        playerData.getKnowledge().getKnownAbilities().getPoolAbilities().forEach(loc -> {
+            if (loc.equals(MKCoreRegistry.INVALID_ABILITY)) {
+                return;
             }
             MKAbility ability = MKCoreRegistry.getAbility(loc);
-            if (ability != null){
-                AbilityForgetOption abilityIcon = new AbilityForgetOption(ability, abilitySlots,
-                        getAbility().getAbilityId(), popup, font, trainerEntityId);
+            if (ability != null) {
+                AbilityForgetOption abilityIcon = new AbilityForgetOption(ability, getAbility().getAbilityId(), popup, font, trainerEntityId);
                 abilities.addWidget(abilityIcon);
             }
-        }
+        });
         scrollview.addWidget(abilities);
         abilities.manualRecompute();
         scrollview.setToRight();
@@ -144,7 +141,7 @@ public class LearnAbilityTray extends MKStackLayoutVertical {
             manualRecompute();
             reqScrollView.setToTop();
             reqScrollView.setToRight();
-            if (!isKnown){
+            if (!isKnown) {
                 String learnButtonText = I18n.format("mkcore.gui.character.learn");
                 MKButton learnButton = new MKButton(0, 0, learnButtonText) {
 
@@ -168,20 +165,12 @@ public class LearnAbilityTray extends MKStackLayoutVertical {
                 learnButton.setWidth(font.getStringWidth(learnButtonText) + 10);
                 learnButton.setEnabled(canLearn);
                 learnButton.setPressedCallback((button, buttonType) -> {
-                    if (getAbility().getType().isPoolAbility()){
-                        if (!playerData.getKnowledge()
-                                .getKnownAbilities().isAbilityPoolFull()){
-                            MKCore.LOGGER.info("Ability pool {}",
-                                    playerData.getKnowledge().getKnownAbilities().getCurrentPoolCount());
-                            PacketHandler.sendMessageToServer(new PlayerLearnAbilityRequestPacket(
-                                    getAbility().getAbilityId(), playerData.getKnowledge()
-                                    .getKnownAbilities().getCurrentPoolCount(), trainerEntityId));
-                        } else {
-                            MKCore.LOGGER.info("Ability pool full {} ",
-                                    playerData.getKnowledge().getKnownAbilities().getCurrentPoolCount());
-                            if (getScreen() != null && choosePoolSlotWidget != null){
-                                getScreen().addModal(choosePoolSlotWidget);
-                            }
+                    if (getAbility().getType().isPoolAbility() &&
+                            playerData.getKnowledge().getKnownAbilities().isAbilityPoolFull()) {
+                        MKCore.LOGGER.info("Ability pool full {} ",
+                                playerData.getKnowledge().getKnownAbilities().getCurrentPoolCount());
+                        if (getScreen() != null && choosePoolSlotWidget != null) {
+                            getScreen().addModal(choosePoolSlotWidget);
                         }
                     } else {
                         PacketHandler.sendMessageToServer(new PlayerLearnAbilityRequestPacket(

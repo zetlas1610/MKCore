@@ -1,6 +1,5 @@
 package com.chaosbuffalo.mkcore.client.gui.widgets;
 
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.client.gui.AbilityPanelScreen;
 import com.chaosbuffalo.mkcore.client.gui.constraints.CenterYWithOffsetConstraint;
@@ -60,7 +59,6 @@ public class AbilityListEntry extends MKStackLayoutHorizontal {
 
     @Override
     public boolean onMousePressed(Minecraft minecraft, double mouseX, double mouseY, int mouseButton) {
-        MKCore.LOGGER.info("On mouse press: {}", ability.getAbilityId());
         infoWidget.setAbility(ability);
         screen.setAbility(ability);
         return true;

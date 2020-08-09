@@ -25,7 +25,6 @@ public class PlayerEquipmentModule {
     }
 
     public void onEquipmentChange(EquipmentSlotType slot, ItemStack from, ItemStack to) {
-//        MKCore.LOGGER.info("PlayerEquipmentModule.onEquipmentChange({}, {}, {})", slot, from, to);
         if (slot.getSlotType() == EquipmentSlotType.Group.ARMOR) {
             handleArmorChange(slot, from, to);
         }
@@ -55,8 +54,6 @@ public class PlayerEquipmentModule {
     }
 
     private void addSlot(EquipmentSlotType slot, ArmorClass itemClass) {
-//        MKCore.LOGGER.debug("PlayerEquipmentModule.addSlot({}, {})", slot, itemClass.getLocation());
-
         itemClass.getPositiveModifierMap(slot).forEach((attr, mod) -> {
             AttributeModifier dup = createSlotModifier(slot, mod);
             playerData.getEntity().getAttribute(attr).applyModifier(dup);

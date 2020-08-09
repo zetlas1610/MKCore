@@ -54,7 +54,7 @@ public class SyncMapUpdater<K, V extends IMKSerializable<CompoundNBT>> implement
             mapSupplier.get().clear();
         }
 
-        deserializeList(root.getCompound("l"));
+        deserializeMap(root.getCompound("l"));
     }
 
     @Override
@@ -63,7 +63,7 @@ public class SyncMapUpdater<K, V extends IMKSerializable<CompoundNBT>> implement
             return;
 
         CompoundNBT root = new CompoundNBT();
-        root.put("l", serializeList(dirty));
+        root.put("l", serializeMap(dirty));
         tag.put(rootName, root);
 
         dirty.clear();
@@ -79,10 +79,10 @@ public class SyncMapUpdater<K, V extends IMKSerializable<CompoundNBT>> implement
         dirty.clear();
     }
 
-    private CompoundNBT serializeList(Collection<K> infoCollection) {
+    private CompoundNBT serializeMap(Collection<K> keyCollection) {
         CompoundNBT list = new CompoundNBT();
         Map<K, V> map = mapSupplier.get();
-        infoCollection.forEach(key -> {
+        keyCollection.forEach(key -> {
             V value = map.get(key);
             if (value != null) {
                 list.put(keyEncoder.apply(key), value.serialize());
@@ -91,11 +91,10 @@ public class SyncMapUpdater<K, V extends IMKSerializable<CompoundNBT>> implement
         return list;
     }
 
-    private void deserializeList(CompoundNBT tag) {
+    private void deserializeMap(CompoundNBT tag) {
         Map<K, V> map = mapSupplier.get();
         for (String key : tag.keySet()) {
             CompoundNBT entryTag = tag.getCompound(key);
-//            MKCore.LOGGER.info("update {} {}", i, entryTag);
             K decodedKey = keyDecoder.apply(key);
             if (decodedKey == null) {
                 MKCore.LOGGER.error("Failed to decode map key {}", key);
@@ -116,14 +115,14 @@ public class SyncMapUpdater<K, V extends IMKSerializable<CompoundNBT>> implement
     }
 
     public INBT serializeStorage() {
-        return serializeList(mapSupplier.get().keySet());
+        return serializeMap(mapSupplier.get().keySet());
     }
 
     public void deserializeStorage(INBT tag) {
         if (tag instanceof CompoundNBT) {
             CompoundNBT list = (CompoundNBT) tag;
             mapSupplier.get().clear();
-            deserializeList(list);
+            deserializeMap(list);
         }
     }
 }

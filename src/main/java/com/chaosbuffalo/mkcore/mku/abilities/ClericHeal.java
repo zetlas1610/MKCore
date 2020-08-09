@@ -67,7 +67,6 @@ public class ClericHeal extends MKAbility {
         super.endCast(entity, data, context);
 
         context.getMemory(MKAbilityMemories.ABILITY_TARGET).ifPresent(target -> {
-            MKCore.LOGGER.info("ClericHeal.endCast {} {}", data.getEntity(), target);
             int level = 1;
             SpellCast heal = ClericHealEffect.Create(entity, BASE_VALUE, VALUE_SCALE).setTarget(target);
             target.addPotionEffect(heal.toPotionEffect(level));

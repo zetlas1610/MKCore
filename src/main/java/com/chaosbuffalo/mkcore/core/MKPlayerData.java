@@ -116,8 +116,6 @@ public class MKPlayerData implements IMKEntityData {
     }
 
     public void clone(IMKEntityData previous, boolean death) {
-        MKCore.LOGGER.info("onDeath!");
-
         CompoundNBT tag = previous.serialize();
         deserialize(tag);
     }
@@ -139,8 +137,6 @@ public class MKPlayerData implements IMKEntityData {
         getStats().tick();
         getAbilityExecutor().tick();
         getAnimationModule().tick();
-
-//        MKCore.LOGGER.info("update {} {}", this.player, mana.get());
 
         if (!isServerSide()) {
             // client-only handling here
@@ -192,7 +188,6 @@ public class MKPlayerData implements IMKEntityData {
 
     @Override
     public void deserialize(CompoundNBT tag) {
-        MKCore.LOGGER.info("MKPlayerData.deserialize");
         personaManager.deserialize(tag.getCompound("persona"));
         getStats().deserialize(tag.getCompound("stats"));
     }

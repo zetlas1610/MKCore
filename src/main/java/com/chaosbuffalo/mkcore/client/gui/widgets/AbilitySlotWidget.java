@@ -91,7 +91,6 @@ public class AbilitySlotWidget extends MKLayout {
         if (!this.abilityId.equals(MKCoreRegistry.INVALID_ABILITY)) {
             MKAbility ability = MKCoreRegistry.getAbility(abilityName);
             if (ability != null) {
-                MKCore.LOGGER.info("Adding icon to slot {} {}", ability.getAbilityIcon(), slotIndex);
                 icon = new MKImage(0, 0, 16, 16, ability.getAbilityIcon());
                 addWidget(icon);
                 addConstraintToWidget(new MarginConstraint(MarginConstraint.MarginType.TOP), icon);
@@ -154,7 +153,6 @@ public class AbilitySlotWidget extends MKLayout {
     @Override
     public boolean onMouseRelease(double mouseX, double mouseY, int mouseButton) {
         if (screen.isDraggingAbility()) {
-            MKCore.LOGGER.info("adding ability {} to slot {} {} {} {}", screen.getDragging(), slotIndex, unlocked, screen.getDragging().getType(), slotType);
             if (unlocked && screen.getDragging().getType().fitsSlot(slotType)) {
                 ResourceLocation ability = screen.getDragging().getAbilityId();
                 setSlotToAbility(ability);
@@ -168,11 +166,11 @@ public class AbilitySlotWidget extends MKLayout {
 
     @Override
     public void postDraw(Minecraft mc, int x, int y, int width, int height, int mouseX, int mouseY, float partialTicks) {
-        if (isHovered()){
-            if (getScreen() != null){
-                if (!getAbilityId().equals(MKCoreRegistry.INVALID_ABILITY)){
+        if (isHovered()) {
+            if (getScreen() != null) {
+                if (!getAbilityId().equals(MKCoreRegistry.INVALID_ABILITY)) {
                     MKAbility ability = MKCoreRegistry.getAbility(getAbilityId());
-                    if (ability != null){
+                    if (ability != null) {
                         getScreen().addPostRenderInstruction(new HoveringTextInstruction(
                                 ability.getAbilityName(),
                                 getParentCoords(new Vec2i(mouseX, mouseY))));
