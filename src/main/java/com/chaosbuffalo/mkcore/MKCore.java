@@ -2,12 +2,11 @@ package com.chaosbuffalo.mkcore;
 
 import com.chaosbuffalo.mkcore.abilities.AbilityManager;
 import com.chaosbuffalo.mkcore.client.gui.MKOverlay;
+import com.chaosbuffalo.mkcore.client.rendering.MKRenderers;
 import com.chaosbuffalo.mkcore.command.MKCommand;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.core.talents.TalentManager;
-import com.chaosbuffalo.mkcore.mku.MKUEntityTypes;
-import com.chaosbuffalo.mkcore.mku.RenderRegistry;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -45,7 +44,6 @@ public class MKCore {
         talentManager = new TalentManager();
 
         MKConfig.init();
-        MKUEntityTypes.ENTITY_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     private void setup(final FMLCommonSetupEvent event) {
@@ -69,7 +67,7 @@ public class MKCore {
         LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().gameSettings);
         MinecraftForge.EVENT_BUS.register(new MKOverlay());
         ClientEventHandler.initKeybindings();
-        RenderRegistry.registerRenderers();
+        MKRenderers.registerPlayerRenderers();
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

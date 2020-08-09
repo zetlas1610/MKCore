@@ -21,7 +21,6 @@ public class MKCoreRegistry {
     public static IForgeRegistry<MKDamageType> DAMAGE_TYPES = null;
     public static IForgeRegistry<BaseTalent> TALENT_TYPES = null;
 
-
     @Nullable
     public static MKAbility getAbility(ResourceLocation abilityId) {
         return ABILITIES.getValue(abilityId);
@@ -30,12 +29,6 @@ public class MKCoreRegistry {
     @Nullable
     public static MKDamageType getDamageType(ResourceLocation damageTypeId) {
         return DAMAGE_TYPES.getValue(damageTypeId);
-    }
-
-    @SubscribeEvent
-    public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
-        // register a new block here
-        MKCore.LOGGER.info("HELLO from Register Block");
     }
 
     @SubscribeEvent

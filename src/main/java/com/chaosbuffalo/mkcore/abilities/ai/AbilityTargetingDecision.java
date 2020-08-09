@@ -1,30 +1,42 @@
 package com.chaosbuffalo.mkcore.abilities.ai;
 
-import com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy.MovementStrategy;
-import com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy.StationaryMovementStrategy;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import net.minecraft.entity.LivingEntity;
 
+import javax.annotation.Nullable;
+
 public class AbilityTargetingDecision {
-    public static final AbilityTargetingDecision UNDECIDED = new AbilityTargetingDecision(null);
-
+    public static final AbilityTargetingDecision UNDECIDED = new AbilityTargetingDecision(null, null);
+    public enum MovementSuggestion {
+        STATIONARY,
+        FOLLOW,
+        KITE,
+    }
     private final LivingEntity target;
-    private final MovementStrategy movementStrategy;
-    private static final MovementStrategy STATIONARY = new StationaryMovementStrategy();
+    private final MovementSuggestion movementSuggestion;
+    private final MKAbility ability;
 
-    public AbilityTargetingDecision(LivingEntity target, MovementStrategy movementStrategy) {
+    public AbilityTargetingDecision(LivingEntity target, MovementSuggestion movementSuggestion, MKAbility ability) {
         this.target = target;
-        this.movementStrategy = movementStrategy;
+        this.movementSuggestion = movementSuggestion;
+        this.ability = ability;
     }
 
-    public AbilityTargetingDecision(LivingEntity target) {
-        this(target, STATIONARY);
+    public AbilityTargetingDecision(LivingEntity target, MKAbility ability) {
+        this(target, MovementSuggestion.STATIONARY, ability);
     }
 
+    @Nullable
+    public MKAbility getAbility() {
+        return ability;
+    }
+
+    @Nullable
     public LivingEntity getTargetEntity() {
         return target;
     }
 
-    public MovementStrategy getMovementStrategy() {
-        return movementStrategy;
+    public MovementSuggestion getMovementSuggestion() {
+        return movementSuggestion;
     }
 }

@@ -3,8 +3,6 @@ package com.chaosbuffalo.mkcore.abilities.ai.conditions;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.ai.AbilityDecisionContext;
 import com.chaosbuffalo.mkcore.abilities.ai.AbilityTargetingDecision;
-import com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy.FollowMovementStrategy;
-import com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy.MovementStrategy;
 import net.minecraft.entity.LivingEntity;
 
 import javax.annotation.Nonnull;
@@ -13,13 +11,13 @@ import java.util.List;
 public class HealCondition extends AbilityUseCondition {
 
     private final float healThreshold;
-    private final MovementStrategy movementStrategy;
+    private final AbilityTargetingDecision.MovementSuggestion movementSuggestion;
     private boolean selfOnly;
 
     public HealCondition(MKAbility ability, float healThreshold) {
         super(ability);
         this.healThreshold = healThreshold;
-        this.movementStrategy = new FollowMovementStrategy(1.0f, Math.round(ability.getDistance()));
+        this.movementSuggestion = AbilityTargetingDecision.MovementSuggestion.FOLLOW;
         selfOnly = false;
     }
 
@@ -40,12 +38,12 @@ public class HealCondition extends AbilityUseCondition {
     @Override
     public AbilityTargetingDecision getDecision(AbilityDecisionContext context) {
         if (getAbility().canSelfCast() && needsHealing(context.getCaster())) {
-            return new AbilityTargetingDecision(context.getCaster());
+            return new AbilityTargetingDecision(context.getCaster(), getAbility());
         } else if (!selfOnly) {
             List<LivingEntity> friends = context.getFriendlies();
             for (LivingEntity target : friends) {
                 if (needsHealing(target)) {
-                    return new AbilityTargetingDecision(target, movementStrategy);
+                    return new AbilityTargetingDecision(target, movementSuggestion, getAbility());
                 }
             }
         }

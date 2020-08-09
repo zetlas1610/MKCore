@@ -25,6 +25,7 @@ repositories {
         name = 'CurseForge'
         url = 'https://minecraft.curseforge.com/api/maven/'
     }
+    mavenLocal()
 }
 
 minecraft {

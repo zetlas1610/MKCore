@@ -3,18 +3,16 @@ package com.chaosbuffalo.mkcore.abilities.ai.conditions;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.abilities.ai.AbilityDecisionContext;
 import com.chaosbuffalo.mkcore.abilities.ai.AbilityTargetingDecision;
-import com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy.KiteMovementStrategy;
-import com.chaosbuffalo.mkcore.mku.entity.ai.movement_strategy.MovementStrategy;
 import net.minecraft.entity.LivingEntity;
 
 import javax.annotation.Nonnull;
 
 public class StandardUseCondition extends AbilityUseCondition {
-    private final MovementStrategy movementStrategy;
+    private final AbilityTargetingDecision.MovementSuggestion movementSuggestion;
 
     public StandardUseCondition(MKAbility ability) {
         super(ability);
-        movementStrategy = new KiteMovementStrategy(ability.getDistance() * .5);
+        movementSuggestion = AbilityTargetingDecision.MovementSuggestion.KITE;
     }
 
     @Nonnull
@@ -22,7 +20,7 @@ public class StandardUseCondition extends AbilityUseCondition {
     public AbilityTargetingDecision getDecision(AbilityDecisionContext context) {
         LivingEntity threatTarget = context.getThreatTarget();
         if (threatTarget != null) {
-            return new AbilityTargetingDecision(threatTarget, movementStrategy);
+            return new AbilityTargetingDecision(threatTarget, movementSuggestion, getAbility());
         }
         return AbilityTargetingDecision.UNDECIDED;
     }
