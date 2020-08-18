@@ -1,6 +1,8 @@
 package com.chaosbuffalo.mkcore.core;
 
 import com.chaosbuffalo.mkcore.MKCore;
+import com.chaosbuffalo.mkcore.core.persona.IPersonaExtension;
+import com.chaosbuffalo.mkcore.core.persona.PersonaManager;
 import com.chaosbuffalo.mkcore.core.talents.PlayerTalentModule;
 import com.chaosbuffalo.mkcore.sync.UpdateEngine;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
@@ -74,6 +76,7 @@ public class MKPlayerData implements IMKEntityData {
     }
 
     public void onJoinWorld() {
+        getPersonaManager().ensurePersonaLoaded();
         getAbilityExecutor().onJoinWorld();
         getTalentHandler().onJoinWorld();
         if (isServerSide()) {
@@ -163,19 +166,19 @@ public class MKPlayerData implements IMKEntityData {
     }
 
     public void onPersonaActivated() {
-        getKnowledge().getSyncComponent().attach(updateEngine);
-        getKnowledge().onPersonaActivated();
         getTalentHandler().onPersonaActivated();
         getAbilityExecutor().onPersonaActivated();
         getStats().onPersonaActivated();
     }
 
     public void onPersonaDeactivated() {
-        getKnowledge().onPersonaDeactivated();
-        getKnowledge().getSyncComponent().detach(updateEngine);
         getTalentHandler().onPersonaDeactivated();
         getAbilityExecutor().onPersonaDeactivated();
         getStats().onPersonaDeactivated();
+    }
+
+    public <T extends IPersonaExtension> T getPersonaExtension(Class<T> clazz) {
+        return getPersonaManager().getActivePersona().getExtension(clazz);
     }
 
     @Override

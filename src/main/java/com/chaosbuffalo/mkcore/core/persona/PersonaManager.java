@@ -1,6 +1,7 @@
-package com.chaosbuffalo.mkcore.core;
+package com.chaosbuffalo.mkcore.core.persona;
 
 import com.chaosbuffalo.mkcore.MKCore;
+import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.events.PersonaEvent;
 import com.chaosbuffalo.mkcore.sync.IMKSerializable;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -10,6 +11,7 @@ import net.minecraftforge.common.MinecraftForge;
 import java.util.*;
 
 public class PersonaManager implements IMKSerializable<CompoundNBT> {
+    private static final List<IPersonaExtensionProvider> extensionProviders = new ArrayList<>(4);
     public static final String DEFAULT_PERSONA_NAME = "default";
 
     private final MKPlayerData playerData;
@@ -20,12 +22,13 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
         this.playerData = playerData;
     }
 
+    public static void registerExtension(IPersonaExtensionProvider provider) {
+        extensionProviders.add(provider);
+    }
+
     @Override
     public CompoundNBT serialize() {
-        if (activePersona == null) {
-            // When creating a new character it comes to serialize first, so create the default persona here if none is active
-            loadPersona(DEFAULT_PERSONA_NAME);
-        }
+        ensurePersonaLoaded();
 
         CompoundNBT tag = new CompoundNBT();
         CompoundNBT personaRoot = new CompoundNBT();
@@ -33,6 +36,13 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
         tag.put("personas", personaRoot);
         tag.putString("activePersona", getActivePersona().getName());
         return tag;
+    }
+
+    public void ensurePersonaLoaded() {
+        if (activePersona == null) {
+            // When creating a new character it comes to serialize first, so create the default persona here if none is active
+            loadPersona(DEFAULT_PERSONA_NAME);
+        }
     }
 
     private void loadPersona(String name) {
@@ -45,7 +55,7 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
         CompoundNBT personaRoot = tag.getCompound("personas");
         for (String name : personaRoot.keySet()) {
             CompoundNBT personaTag = personaRoot.getCompound(name);
-            Persona persona = new Persona(playerData, name);
+            Persona persona = createNewPersona(name);
             if (!persona.deserialize(personaTag)) {
                 MKCore.LOGGER.error("Failed to deserialize persona {} for {}", name, playerData.getEntity());
                 continue;
@@ -64,7 +74,9 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
     }
 
     protected Persona createNewPersona(String name) {
-        return new Persona(playerData, name);
+        Persona persona = new Persona(playerData, name);
+        extensionProviders.forEach(provider -> persona.registerExtension(provider.create(persona)));
+        return persona;
     }
 
     protected void setActivePersona(Persona persona) {
@@ -72,8 +84,7 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
     }
 
     public Persona getActivePersona() {
-        Objects.requireNonNull(activePersona);
-        return activePersona;
+        return Objects.requireNonNull(activePersona);
     }
 
     public Collection<String> getPersonaNames() {
@@ -117,18 +128,14 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
         return true;
     }
 
-    public void activatePersona(PersonaManager.Persona persona) {
-        activatePersonaInternal(persona, false);
-    }
-
     public boolean activatePersona(String name) {
-        PersonaManager.Persona newPersona = getPersona(name);
+        Persona newPersona = getPersona(name);
         if (newPersona == null) {
             MKCore.LOGGER.error("Failed to activate unknown persona {}", name);
             return false;
         }
 
-        activatePersona(newPersona);
+        activatePersonaInternal(newPersona, false);
         return true;
     }
 
@@ -137,50 +144,13 @@ public class PersonaManager implements IMKSerializable<CompoundNBT> {
         if (!firstActivation && getActivePersona() != persona) {
             Persona current = getActivePersona();
             MKCore.LOGGER.debug("activatePersona({}) - deactivating previous {}", persona.getName(), current.getName());
-            playerData.onPersonaDeactivated();
+            current.deactivate();
             MinecraftForge.EVENT_BUS.post(new PersonaEvent.PersonaDeactivated(current));
         }
 
         setActivePersona(persona);
-        playerData.onPersonaActivated();
+        persona.activate();
         MinecraftForge.EVENT_BUS.post(new PersonaEvent.PersonaActivated(persona));
-    }
-
-    public static class Persona implements IMKSerializable<CompoundNBT> {
-        private final String name;
-        private final PlayerKnowledge knowledge;
-        private final MKPlayerData data;
-
-        public Persona(MKPlayerData playerData, String name) {
-            this.name = name;
-            knowledge = new PlayerKnowledge(playerData);
-            data = playerData;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public PlayerKnowledge getKnowledge() {
-            return knowledge;
-        }
-
-        public MKPlayerData getPlayerData() {
-            return data;
-        }
-
-        @Override
-        public CompoundNBT serialize() {
-            CompoundNBT tag = new CompoundNBT();
-            tag.put("knowledge", knowledge.serialize());
-            return tag;
-        }
-
-        @Override
-        public boolean deserialize(CompoundNBT tag) {
-            knowledge.deserialize(tag.getCompound("knowledge"));
-            return true;
-        }
     }
 
     // The client only has a single persona that will be overwritten when the server changes

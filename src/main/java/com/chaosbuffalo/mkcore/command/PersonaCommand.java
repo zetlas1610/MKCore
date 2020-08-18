@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkcore.command;
 
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.core.PersonaManager;
+import com.chaosbuffalo.mkcore.core.persona.PersonaManager;
 import com.chaosbuffalo.mkcore.utils.TextUtils;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -87,6 +87,8 @@ public class PersonaCommand {
             PersonaManager personaManager = playerData.getPersonaManager();
             if (!personaManager.hasPersona(name)) {
                 TextUtils.sendChatMessage(player, String.format("Persona '%s' does not exist!", name));
+            } else if (personaManager.isPersonaActive(name)) {
+                TextUtils.sendChatMessage(player, String.format("Persona '%s' already active", name));
             } else if (personaManager.activatePersona(name)) {
                 TextUtils.sendChatMessage(player, String.format("Activated persona '%s'", name));
             } else {
@@ -106,7 +108,7 @@ public class PersonaCommand {
             if (personaManager.isPersonaActive(name)) {
                 TextUtils.sendChatMessage(player, String.format("Unable to delete active persona '%s'", name));
             } else if (!personaManager.hasPersona(name)) {
-                TextUtils.sendChatMessage(player, String.format("Persona '%s' does not exists!", name));
+                TextUtils.sendChatMessage(player, String.format("Persona '%s' does not exist!", name));
             } else if (personaManager.deletePersona(name)) {
                 TextUtils.sendChatMessage(player, String.format("Deleted persona '%s'", name));
             } else {
