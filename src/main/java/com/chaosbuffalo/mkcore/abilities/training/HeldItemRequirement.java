@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
 public class HeldItemRequirement implements IAbilityLearnRequirement {
     private final Item item;
@@ -35,7 +36,7 @@ public class HeldItemRequirement implements IAbilityLearnRequirement {
     public ITextComponent describe() {
         String handName = hand == Hand.MAIN_HAND ? "Main" : "Off";
         return new StringTextComponent("You must be holding a ")
-                .appendSibling(item.getName())
+                .appendSibling(new TranslationTextComponent(item.getTranslationKey())) // Item.getName is client-only
                 .appendSibling(new StringTextComponent(String.format(" in your %s hand", handName)));
     }
 }

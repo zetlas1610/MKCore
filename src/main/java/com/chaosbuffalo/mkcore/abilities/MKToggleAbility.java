@@ -10,6 +10,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.List;
 
@@ -82,6 +84,7 @@ public abstract class MKToggleAbility extends MKAbility {
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void drawAbilityBarEffect(Minecraft mc, int slotX, int slotY) {
         if (mc.player != null && mc.player.isPotionActive(getToggleEffect())) {
             int iconSize = MKOverlay.ABILITY_ICON_SIZE + 2;

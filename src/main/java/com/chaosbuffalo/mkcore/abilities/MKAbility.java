@@ -29,6 +29,8 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
@@ -160,6 +162,7 @@ public abstract class MKAbility extends ForgeRegistryEntry<MKAbility> {
         return new ResourceLocation(abilityId.getNamespace(), String.format("textures/class/abilities/%s.png", abilityId.getPath().split(Pattern.quote("."))[1]));
     }
 
+    @OnlyIn(Dist.CLIENT)
     public void drawAbilityBarEffect(Minecraft mc, int slotX, int slotY) {
 
     }

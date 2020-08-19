@@ -2,8 +2,10 @@ package com.chaosbuffalo.mkcore;
 
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.client.gui.CharacterScreen;
+import com.chaosbuffalo.mkcore.client.gui.IPlayerDataAwareScreen;
 import com.chaosbuffalo.mkcore.core.AbilitySlot;
 import com.chaosbuffalo.mkcore.core.MKRangedAttribute;
+import com.chaosbuffalo.mkcore.events.PlayerDataEvent;
 import com.chaosbuffalo.mkcore.item.ArmorClass;
 import com.chaosbuffalo.mkcore.network.ExecuteActiveAbilityPacket;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
@@ -19,6 +21,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
@@ -31,7 +34,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(modid = MKCore.MOD_ID, value = Dist.CLIENT)
 public class ClientEventHandler {
 
     private static KeyBinding playerMenuBind;
@@ -143,6 +146,19 @@ public class ClientEventHandler {
         if (event.phase == TickEvent.Phase.START) {
             if (currentGCDTicks > 0) {
                 currentGCDTicks--;
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerDataUpdated(PlayerDataEvent.Updated event) {
+        if (event.getPlayer().getEntityWorld().isRemote) {
+            PlayerEntity local = Minecraft.getInstance().player;
+            if (local == null || !event.getPlayer().isEntityEqual(local))
+                return;
+
+            if (Minecraft.getInstance().currentScreen instanceof IPlayerDataAwareScreen) {
+                ((IPlayerDataAwareScreen) Minecraft.getInstance().currentScreen).onPlayerDataUpdate();
             }
         }
     }

@@ -28,7 +28,7 @@ public class TalentPointActionPacket {
 
     public TalentPointActionPacket(PacketBuffer buffer) {
         talentTree = buffer.readResourceLocation();
-        line = buffer.readString();
+        line = buffer.readString(1024);
         index = buffer.readVarInt();
         action = buffer.readEnumValue(Action.class);
     }

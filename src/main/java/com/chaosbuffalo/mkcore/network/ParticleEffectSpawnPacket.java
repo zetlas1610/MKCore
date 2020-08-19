@@ -7,6 +7,8 @@ import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -108,17 +110,20 @@ public class ParticleEffectSpawnPacket {
         buf.writeDouble(this.headingZ);
     }
 
+    @OnlyIn(Dist.CLIENT)
+    private void handleClient() {
+        //            MKCore.LOGGER.info("Got spawn particle packet");
+        ParticleEffects.spawnParticleEffect(
+                particleID, motionType, data, speed, count,
+                new Vec3d(xPos, yPos, zPos),
+                new Vec3d(radiusX, radiusY, radiusZ),
+                new Vec3d(headingX, headingY, headingZ),
+                Minecraft.getInstance().player.world);
+    }
+
     public void handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-//            MKCore.LOGGER.info("Got spawn particle packet");
-            ParticleEffects.spawnParticleEffect(
-                    particleID, motionType, data, speed, count,
-                    new Vec3d(xPos, yPos, zPos),
-                    new Vec3d(radiusX, radiusY, radiusZ),
-                    new Vec3d(headingX, headingY, headingZ),
-                    Minecraft.getInstance().player.world);
-        });
+        ctx.enqueueWork(this::handleClient);
         ctx.setPacketHandled(true);
     }
 }

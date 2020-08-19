@@ -1,12 +1,9 @@
 package com.chaosbuffalo.mkcore;
 
-import com.chaosbuffalo.mkcore.client.gui.IPlayerDataAwareScreen;
 import com.chaosbuffalo.mkcore.core.MKEntityData;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkcore.core.talents.TalentType;
 import com.chaosbuffalo.mkcore.effects.PassiveTalentEffect;
-import com.chaosbuffalo.mkcore.events.PlayerDataEvent;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -88,19 +85,6 @@ public class EventHandler {
                     event.setCanceled(true);
                 }
             });
-        }
-    }
-
-    @SubscribeEvent
-    public static void onPlayerDataUpdated(PlayerDataEvent.Updated event) {
-        if (event.getPlayer().getEntityWorld().isRemote) {
-            PlayerEntity local = Minecraft.getInstance().player;
-            if (local == null || !event.getPlayer().isEntityEqual(local))
-                return;
-
-            if (Minecraft.getInstance().currentScreen instanceof IPlayerDataAwareScreen) {
-                ((IPlayerDataAwareScreen) Minecraft.getInstance().currentScreen).onPlayerDataUpdate();
-            }
         }
     }
 

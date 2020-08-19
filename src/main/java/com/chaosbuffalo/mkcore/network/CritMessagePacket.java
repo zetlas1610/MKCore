@@ -13,6 +13,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.UUID;
@@ -86,83 +88,86 @@ public class CritMessagePacket {
         }
     }
 
-    public void handle(Supplier<NetworkEvent.Context> supplier) {
-        NetworkEvent.Context ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            Style messageStyle = new Style();
-            PlayerEntity player = Minecraft.getInstance().player;
-            if (player == null) {
+    @OnlyIn(Dist.CLIENT)
+    private void handleClient() {
+        Style messageStyle = new Style();
+        PlayerEntity player = Minecraft.getInstance().player;
+        if (player == null) {
+            return;
+        }
+        boolean isSelf = player.getUniqueID().equals(sourceUUID);
+        PlayerEntity playerSource = player.getEntityWorld().getPlayerByUuid(sourceUUID);
+        Entity target = player.getEntityWorld().getEntityByID(targetId);
+        if (target == null || playerSource == null) {
+            return;
+        }
+        boolean isSelfTarget = player.getEntityId() == targetId;
+        if (isSelf || isSelfTarget) {
+            if (!MKConfig.CLIENT.showMyCrits.get()) {
                 return;
             }
-            boolean isSelf = player.getUniqueID().equals(sourceUUID);
-            PlayerEntity playerSource = player.getEntityWorld().getPlayerByUuid(sourceUUID);
-            Entity target = player.getEntityWorld().getEntityByID(targetId);
-            if (target == null || playerSource == null) {
+        } else {
+            if (!MKConfig.CLIENT.showOthersCrits.get()) {
                 return;
             }
-            boolean isSelfTarget = player.getEntityId() == targetId;
-            if (isSelf || isSelfTarget) {
-                if (!MKConfig.CLIENT.showMyCrits.get()) {
-                    return;
+        }
+        switch (type) {
+            case MELEE_CRIT:
+                messageStyle.setColor(TextFormatting.DARK_RED);
+                if (isSelf) {
+                    player.sendMessage(new StringTextComponent(
+                            String.format("You just crit %s with %s for %s",
+                                    target.getDisplayName().getFormattedText(),
+                                    playerSource.getHeldItemMainhand().getDisplayName().getFormattedText(),
+                                    Math.round(critDamage)))
+                            .setStyle(messageStyle));
+                } else {
+                    player.sendMessage(new StringTextComponent(
+                            String.format("%s just crit %s with %s for %s",
+                                    playerSource.getDisplayName().getFormattedText(),
+                                    target.getDisplayName().getFormattedText(),
+                                    playerSource.getHeldItemMainhand().getDisplayName().getFormattedText(),
+                                    Math.round(critDamage))
+                    ).setStyle(messageStyle));
                 }
-            } else {
-                if (!MKConfig.CLIENT.showOthersCrits.get()) {
-                    return;
+                break;
+            case MK_CRIT:
+                messageStyle.setColor(TextFormatting.AQUA);
+                MKAbility ability = MKCoreRegistry.getAbility(abilityName);
+                MKDamageType mkDamageType = MKCoreRegistry.getDamageType(damageType);
+                if (ability == null || mkDamageType == null) {
+                    break;
                 }
-            }
-            switch (type) {
-                case MELEE_CRIT:
-                    messageStyle.setColor(TextFormatting.DARK_RED);
+                player.sendMessage(mkDamageType.getCritMessage(playerSource, (LivingEntity) target, critDamage, ability, isSelf));
+                break;
+            case PROJECTILE_CRIT:
+                Entity projectile = player.getEntityWorld().getEntityByID(projectileId);
+                if (projectile != null) {
+                    messageStyle.setColor(TextFormatting.LIGHT_PURPLE);
                     if (isSelf) {
                         player.sendMessage(new StringTextComponent(
                                 String.format("You just crit %s with %s for %s",
-                                        target.getDisplayName().getFormattedText(),
-                                        playerSource.getHeldItemMainhand().getDisplayName().getFormattedText(),
+                                        target.getDisplayName().getUnformattedComponentText(),
+                                        projectile.getDisplayName().getUnformattedComponentText(),
                                         Math.round(critDamage)))
                                 .setStyle(messageStyle));
                     } else {
                         player.sendMessage(new StringTextComponent(
                                 String.format("%s just crit %s with %s for %s",
-                                        playerSource.getDisplayName().getFormattedText(),
-                                        target.getDisplayName().getFormattedText(),
-                                        playerSource.getHeldItemMainhand().getDisplayName().getFormattedText(),
+                                        playerSource.getDisplayName().getUnformattedComponentText(),
+                                        target.getDisplayName().getUnformattedComponentText(),
+                                        projectile.getDisplayName().getUnformattedComponentText(),
                                         Math.round(critDamage))
                         ).setStyle(messageStyle));
                     }
-                    break;
-                case MK_CRIT:
-                    messageStyle.setColor(TextFormatting.AQUA);
-                    MKAbility ability = MKCoreRegistry.getAbility(abilityName);
-                    MKDamageType mkDamageType = MKCoreRegistry.getDamageType(damageType);
-                    if (ability == null || mkDamageType == null) {
-                        break;
-                    }
-                    player.sendMessage(mkDamageType.getCritMessage(playerSource, (LivingEntity) target, critDamage, ability, isSelf));
-                    break;
-                case PROJECTILE_CRIT:
-                    Entity projectile = player.getEntityWorld().getEntityByID(projectileId);
-                    if (projectile != null) {
-                        messageStyle.setColor(TextFormatting.LIGHT_PURPLE);
-                        if (isSelf) {
-                            player.sendMessage(new StringTextComponent(
-                                    String.format("You just crit %s with %s for %s",
-                                            target.getDisplayName().getUnformattedComponentText(),
-                                            projectile.getDisplayName().getUnformattedComponentText(),
-                                            Math.round(critDamage)))
-                                    .setStyle(messageStyle));
-                        } else {
-                            player.sendMessage(new StringTextComponent(
-                                    String.format("%s just crit %s with %s for %s",
-                                            playerSource.getDisplayName().getUnformattedComponentText(),
-                                            target.getDisplayName().getUnformattedComponentText(),
-                                            projectile.getDisplayName().getUnformattedComponentText(),
-                                            Math.round(critDamage))
-                            ).setStyle(messageStyle));
-                        }
-                    }
-                    break;
-            }
-        });
+                }
+                break;
+        }
+    }
+
+    public void handle(Supplier<NetworkEvent.Context> supplier) {
+        NetworkEvent.Context ctx = supplier.get();
+        ctx.enqueueWork(this::handleClient);
         ctx.setPacketHandled(true);
     }
 }
